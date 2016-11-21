@@ -33,3 +33,8 @@ gulp.task('sass', function () {
 		.pipe(rename({ extname: '.css' }))
 		.pipe(gulp.dest('./static/assets/css'))
 });
+
+gulp.task('watch', ['default'], function() {
+  gulp.watch(['./assets/js/*.js'], ['browserify'] );
+  gulp.watch(['./assets/sass/*.scss'], ['sass'] );
+});

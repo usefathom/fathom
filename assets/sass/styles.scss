@@ -1,9 +1,23 @@
 body {
   font-family: Arial, Verdana, sans-serif;
   font-size: 14px;
+  color: #333;
+}
+
+h1, h2, h3 {
+  color: #111;
 }
 
 .container {
   max-width: 1020px;
   padding: 0 20px;
+}
+
+table {
+  border-collapse: collapse;
+
+  th, td {
+    border: 1px solid #eee;
+    padding: 4px 8px;
+  }
 }

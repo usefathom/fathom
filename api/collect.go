@@ -21,8 +21,8 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 
   // prepare statement for inserting data
   stmt, err := core.DB.Prepare(`INSERT INTO visits(
-    path,
     ip_address,
+    path,
     referrer_url,
     browser_language,
     browser_name,

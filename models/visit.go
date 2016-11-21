@@ -17,4 +17,5 @@ type Visit struct {
   ScreenResolution string
   VisitorReturning bool
   Country string
+  Timestamp string
 }
