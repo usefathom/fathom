@@ -7,6 +7,8 @@ import (
   "github.com/dannyvankooten/ana/api"
 )
 
+// TODO: Use Gorilla Mux router.
+// TODO: Authentication.
 
 func main() {
     db := core.SetupDatabaseConnection()

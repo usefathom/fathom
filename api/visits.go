@@ -2,7 +2,6 @@ package api
 
 import (
   "net/http"
-  "log"
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/core"
   "encoding/json"
@@ -51,11 +50,4 @@ func GetVisitsRealtimeCount(w http.ResponseWriter, r *http.Request) {
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
-}
-
-// log fatal errors
-func checkError(err error) {
-  if err != nil {
-    log.Fatal(err)
-  }
 }

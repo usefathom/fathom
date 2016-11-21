@@ -17,9 +17,8 @@ class RealtimeVisitsCount extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2>Real-time Visitors</h2>
-        <span className="count">{this.state.count}</span>
+      <div className="block">
+        <span className="count">{this.state.count}</span> <span>visitors on the site right now.</span>
       </div>
     );
   }
