@@ -8,6 +8,7 @@ import (
   "encoding/json"
 )
 
+// URL: /api/visits
 func GetVisitsHandler(w http.ResponseWriter, r *http.Request) {
   stmt, err := core.DB.Prepare(`SELECT
     id,
@@ -19,31 +20,42 @@ func GetVisitsHandler(w http.ResponseWriter, r *http.Request) {
     COALESCE(screen_resolution, '') AS screen_resolution,
     timestamp
     FROM visits`)
-  if err != nil {
-    log.Fatal(err.Error())
-  }
+
+  checkError(err)
   defer stmt.Close()
 
-
   rows, err := stmt.Query()
-  if err != nil {
-    log.Fatal(err.Error())
-  }
+  checkError(err)
 
   results := make([]models.Visit, 0)
   defer rows.Close()
   for rows.Next() {
     var v models.Visit
-    if err := rows.Scan(&v.ID, &v.BrowserName, &v.BrowserLanguage, &v.DeviceOS, &v.IpAddress, &v.Path, &v.ScreenResolution, &v.Timestamp); err != nil {
-      log.Fatal(err)
-    }
-
+    err = rows.Scan(&v.ID, &v.BrowserName, &v.BrowserLanguage, &v.DeviceOS, &v.IpAddress, &v.Path, &v.ScreenResolution, &v.Timestamp);
+    checkError(err)
     results = append(results, v)
-    }
-    if err := rows.Err(); err != nil {
-      log.Fatal(err)
-    }
-
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(results)
   }
+
+  err = rows.Err();
+  checkError(err)
+
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(results)
+}
+
+// URL: /api/visits/count/realtime
+func GetVisitsRealtimeCount(w http.ResponseWriter, r *http.Request) {
+  row := core.DB.QueryRow(`SELECT COUNT(DISTINCT(id)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE)`)
+  var result int
+  row.Scan(&result)
+
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(result)
+}
+
+// log fatal errors
+func checkError(err error) {
+  if err != nil {
+    log.Fatal(err)
+  }
+}
