@@ -1,4 +1,3 @@
-.PHONY: debug
-debug: tracker.go models.go
-	go build
-	$(GOPATH)/bin/ana
+.PHONY: bin
+bin: ana.go models/visit.go
+	go install

@@ -1,27 +1,26 @@
-package ana
+package core
 
 import (
   "database/sql"
-  "log"
   _"github.com/go-sql-driver/mysql"
+  "log"
 )
 
-var db *sql.DB
+var DB *sql.DB
 
-func connectToDatabase() *sql.DB {
+func SetupDatabaseConnection() *sql.DB {
   // setup db connection
   var err error
-  db, err = sql.Open("mysql", "root:root@/ana")
+  DB, err = sql.Open("mysql", "root:root@/ana")
   if err != nil {
       log.Fatal(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
   }
-  defer db.Close()
 
   // Open doesn't open a connection. Validate DSN data:
-  err = db.Ping()
+  err = DB.Ping()
   if err != nil {
       log.Fatal(err.Error()) // proper error handling instead of panic in your app
   }
-  
-  return db
+
+  return DB
 }

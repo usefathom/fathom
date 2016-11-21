@@ -1,4 +1,4 @@
-package ana
+package models
 
 type Visit struct {
   ID int

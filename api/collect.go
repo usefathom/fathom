@@ -1,22 +1,26 @@
-package ana
+package api
 
 import (
   "net/http"
   "log"
   "time"
   "github.com/mssola/user_agent"
+  "github.com/dannyvankooten/ana/models"
+  "github.com/dannyvankooten/ana/core"
 )
 
-func collectHandler(w http.ResponseWriter, r *http.Request) {
+func CollectHandler(w http.ResponseWriter, r *http.Request) {
   log.Printf("[%s] %s %s (%s)\n", time.Now(), r.Method, r.RequestURI, r.UserAgent())
 
   ua := user_agent.New(r.UserAgent())
+
+  // abort if this is a bot.
   if ua.Bot() {
     return
   }
 
   // prepare statement for inserting data
-  stmt, err := db.Prepare(`INSERT INTO visits(
+  stmt, err := core.DB.Prepare(`INSERT INTO visits(
     path,
     ip_address,
     referrer_url,
@@ -35,7 +39,7 @@ func collectHandler(w http.ResponseWriter, r *http.Request) {
   // TODO: Query DB to determine whether visitor is returning
 
   q := r.URL.Query()
-  visit := Visit{
+  visit := models.Visit{
     Path: q.Get("p"),
     IpAddress: r.RemoteAddr,
     ReferrerUrl: q.Get("r"),
@@ -71,14 +75,4 @@ func collectHandler(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
   w.Header().Set("Pragma", "no-cache")
   w.Header().Set("Status", "200")
-}
-
-func main() {
-    db = connectToDatabase()
-
-    http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
-      http.ServeFile(w, r, r.URL.Path[1:])
-    })
-    http.HandleFunc("/collect", collectHandler)
-    http.ListenAndServe(":8080", nil)
 }
