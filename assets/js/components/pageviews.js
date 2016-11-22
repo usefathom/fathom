@@ -19,20 +19,22 @@ class PageviewsList extends React.Component {
     const tableRows = this.state.records.map((p, i) =>
       <tr key={i}>
         <td>{i+1}</td>
-        <td>{p.Path}</td>
+        <td><a href="{p.Path}">{p.Path}</a></td>
         <td>{p.Count}</td>
+        <td>{p.CountUnique}</td>
       </tr>
     );
 
     return (
-      <div>
+      <div className="block">
         <h2>Pageviews</h2>
         <table className="table pageviews">
           <thead>
             <tr>
               <th>#</th>
-              <th>Path</th>
-              <th>Count</th>
+              <th>URL</th>
+              <th>Pageviews</th>
+              <th>Unique</th>
             </tr>
           </thead>
           <tbody>{tableRows}</tbody>

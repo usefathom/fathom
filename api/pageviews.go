@@ -11,7 +11,8 @@ import (
 func GetPageviewsHandler(w http.ResponseWriter, r *http.Request) {
   stmt, err := core.DB.Prepare(`SELECT
       path,
-      COUNT(DISTINCT(ip_address)) AS pageviews
+      COUNT(ip_address) AS pageviews,
+      COUNT(DISTINCT(ip_address)) AS pageviews_unique
     FROM visits
     GROUP BY path`)
   checkError(err)
@@ -24,7 +25,7 @@ func GetPageviewsHandler(w http.ResponseWriter, r *http.Request) {
   defer rows.Close()
   for rows.Next() {
     var p models.Pageview
-    err = rows.Scan(&p.Path, &p.Count);
+    err = rows.Scan(&p.Path, &p.Count, &p.CountUnique);
     checkError(err)
     results = append(results, p)
   }

@@ -1,7 +1,10 @@
+@import "normalize";
+
 body {
   font-family: Arial, Verdana, sans-serif;
   font-size: 14px;
   color: #333;
+  background: #f5f5f5;
 }
 
 h1, h2, h3 {
@@ -22,6 +25,16 @@ table {
   }
 }
 
+.block {
+  width: auto;
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+
+  h1, h2, h3 {
+    margin-top: 0;
+  }
+}
 
 .count {
   font-size: 24px;

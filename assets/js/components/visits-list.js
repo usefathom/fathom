@@ -25,7 +25,7 @@ class VisitsList extends React.Component {
     );
 
     return (
-      <div>
+      <div className="block">
         <h2>Visits</h2>
         <table className="visits-table">
           <thead>

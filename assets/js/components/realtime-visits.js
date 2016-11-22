@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react'
 
 class RealtimeVisitsCount extends React.Component {
