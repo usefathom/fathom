@@ -18,9 +18,11 @@ class RealtimeVisitsCount extends React.Component {
   }
 
   render() {
+    let visitors = this.state.count > 1 ? 'visitors' : 'visitor';
+
     return (
       <div className="block">
-        <span className="count">{this.state.count}</span> <span>visitors on the site right now.</span>
+        <span className="count">{this.state.count}</span> <span>{visitors} on the site right now.</span>
       </div>
     );
   }

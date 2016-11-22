@@ -3,13 +3,10 @@
 import React, { Component } from 'react'
 import Chart from 'chart.js'
 
-function rand(min, max, num) {
-    var rtn = [];
-    while (rtn.length < num) {
-      rtn.push((Math.random() * (max - min)) + min);
-    }
-    return rtn;
-  }
+Chart.defaults.global.tooltips.xPadding = 12;
+Chart.defaults.global.tooltips.yPadding = 12;
+//Chart.defaults.global.scales.yAxes.ticks.beginAtZero = true; // = 12;
+
 
 class VisitsGraph extends React.Component {
   constructor(props) {
@@ -28,39 +25,24 @@ class VisitsGraph extends React.Component {
   }
 
   initChart(ctx) {
-    if( ! this.state.data.length ) {
-      return;
-    }
-
-    console.log(this.state.data.map((d) => d.Label));
-    console.log(this.state.data.map((d) => d.Count ));
-    console.log("Init chart");
-    console.log(ctx);
-
-     var myChart = new Chart(ctx, {
+     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: this.state.data.map((d) => d.Label),
         datasets: [{
             label: '# of Visitors',
             data: this.state.data.map((d) => d.Count),
-            backgroundColor: 'rgba(162, 52, 235, 0.2)'
+            backgroundColor: 'rgba(0, 155, 255, .2)'
         }]
       },
       options: {
-        tooltips: {
-          xPadding: 12,
-          yPadding: 9,
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
+        scale: {
+          ticks: {
+            beginAtZero: true
+          }
         }
-    }
-  });
+      }
+    });
   }
 
   render() {

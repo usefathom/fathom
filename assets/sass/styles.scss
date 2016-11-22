@@ -11,10 +11,7 @@ h1, h2, h3 {
   color: #111;
 }
 
-.container {
-  max-width: 1020px;
-  padding: 0 20px;
-}
+
 
 table {
   border-collapse: collapse;
@@ -23,6 +20,15 @@ table {
     border: 1px solid #eee;
     padding: 4px 8px;
   }
+}
+
+a {
+  color: #09f;
+}
+
+.container {
+  max-width: 1020px;
+  padding: 0 20px;
 }
 
 .block {
@@ -37,7 +43,8 @@ table {
 }
 
 .count {
-  font-size: 24px;
+  font-weight: bold;
+  font-size: 120%;
 }
 
 .subtitle {
