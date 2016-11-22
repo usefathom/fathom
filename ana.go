@@ -3,28 +3,35 @@ package main
 import (
   "net/http"
   "os"
+  "log"
   "github.com/dannyvankooten/ana/core"
   "github.com/dannyvankooten/ana/api"
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
+  "github.com/joho/godotenv"
 )
 
-// TODO: Authentication.
-
 func main() {
-    db := core.SetupDatabaseConnection()
-    defer db.Close()
+  // test .env file
+  err := godotenv.Load()
+  if err != nil {
+    log.Fatal("Error loading .env file")
+  }
 
-    r := mux.NewRouter()
+  db := core.SetupDatabaseConnection()
+  defer db.Close()
 
-    // register routes
-    r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
-    r.HandleFunc("/api/visits/count/day", api.GetVisitsDayCountHandler).Methods("GET")
-    r.HandleFunc("/api/visits/count/realtime", api.GetVisitsRealtimeCount).Methods("GET")
-    r.HandleFunc("/api/visits", api.GetVisitsHandler).Methods("GET")
-    r.HandleFunc("/api/pageviews", api.GetPageviewsHandler).Methods("GET")
-    r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
-    r.Handle("/", http.FileServer(http.Dir("./views/")))
+  r := mux.NewRouter()
 
-    http.ListenAndServe(":8080", handlers.LoggingHandler(os.Stdout, r))
+  // register routes
+  r.Handle("/token", api.GetTokenHandler).Methods("GET")
+  r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
+  r.Handle("/api/visits/count/day", api.Authorize(api.GetVisitsDayCountHandler)).Methods("GET")
+  r.Handle("/api/visits/count/realtime", api.Authorize(api.GetVisitsRealtimeCount)).Methods("GET")
+  r.Handle("/api/visits", api.Authorize(api.GetVisitsHandler)).Methods("GET")
+  r.Handle("/api/pageviews", api.Authorize(api.GetPageviewsHandler)).Methods("GET")
+  r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+  r.Handle("/", http.FileServer(http.Dir("./views/")))
+
+  http.ListenAndServe(":8080", handlers.LoggingHandler(os.Stdout, r))
 }

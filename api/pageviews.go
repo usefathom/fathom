@@ -8,7 +8,7 @@ import (
 )
 
 // URL: /api/pageviews
-func GetPageviewsHandler(w http.ResponseWriter, r *http.Request) {
+var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   stmt, err := core.DB.Prepare(`SELECT
       path,
       COUNT(ip_address) AS pageviews,
@@ -35,4 +35,4 @@ func GetPageviewsHandler(w http.ResponseWriter, r *http.Request) {
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
-}
+})

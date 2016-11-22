@@ -9,7 +9,7 @@ import (
 )
 
 // URL: /api/visits
-func GetVisitsHandler(w http.ResponseWriter, r *http.Request) {
+var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   stmt, err := core.DB.Prepare(`SELECT
     id,
     COALESCE(browser_name, '') AS browser_name,
@@ -48,20 +48,20 @@ func GetVisitsHandler(w http.ResponseWriter, r *http.Request) {
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
-}
+})
 
 // URL: /api/visits/count/realtime
-func GetVisitsRealtimeCount(w http.ResponseWriter, r *http.Request) {
+var GetVisitsRealtimeCount = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   row := core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE)`)
   var result int
   row.Scan(&result)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
-}
+})
 
 // URL: /api/visits/count/day
-func GetVisitsDayCountHandler(w http.ResponseWriter, r *http.Request) {
+var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   stmt, err := core.DB.Prepare(`SELECT
     COUNT(*) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
     FROM visits
@@ -91,4 +91,4 @@ func GetVisitsDayCountHandler(w http.ResponseWriter, r *http.Request) {
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
-}
+})
