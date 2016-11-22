@@ -10,8 +10,10 @@ This is a general draft document for thoughts and todo's.
 - Demographic
   - Country
   - Browser + version
-  - Operating System
+  - Screen resolutions
 - Acquisition
+  - Referral's
+  - Search keywords
 
 
 ### Admin themes

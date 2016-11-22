@@ -23,7 +23,7 @@ gulp.task('browserify', function () {
         .bundle()
         .pipe(source('script.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./static/assets/js/'))
+        .pipe(gulp.dest('./static/js/'))
 });
 
 gulp.task('sass', function () {
@@ -31,7 +31,7 @@ gulp.task('sass', function () {
 	return gulp.src(files)
 		.pipe(sass())
 		.pipe(rename({ extname: '.css' }))
-		.pipe(gulp.dest('./static/assets/css'))
+		.pipe(gulp.dest('./static/css'))
 });
 
 gulp.task('watch', ['default'], function() {
