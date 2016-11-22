@@ -2,10 +2,11 @@ package main
 
 import (
   "net/http"
-
+  "os"
   "github.com/dannyvankooten/ana/core"
   "github.com/dannyvankooten/ana/api"
   "github.com/gorilla/mux"
+  "github.com/gorilla/handlers"
 )
 
 // TODO: Authentication.
@@ -25,9 +26,5 @@ func main() {
     r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
     r.Handle("/", http.FileServer(http.Dir("./views/")))
 
-    // r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    //   http.ServeFile(w, r, "./static/" + r.URL.Path[1:])
-    // })
-
-    http.ListenAndServe(":8080", r)
+    http.ListenAndServe(":8080", handlers.LoggingHandler(os.Stdout, r))
 }
