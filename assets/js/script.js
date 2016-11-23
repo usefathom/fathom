@@ -6,13 +6,15 @@ import LogoutButton from './components/LogoutButton.js';
 import Pageviews from './components/Pageviews.js';
 import Realtime from './components/Realtime.js';
 import Graph from './components/Graph.js';
+import DatePicker from './components/DatePicker.js';
 
 class App extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
+    this.state = window.state = {
       authenticated: document.cookie.indexOf('auth') > -1,
+      period: 7
     }
   }
 
@@ -29,8 +31,9 @@ class App extends Component {
               </div>
             </header>
             <Realtime />
-            <Graph />
-            <Pageviews />
+            <DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} />
+            <Graph period={this.state.period} />
+            <Pageviews period={this.state.period} />
         </div>
       )
     }

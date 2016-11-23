@@ -16,7 +16,13 @@ class Graph extends Component {
       pageviewData: []
     }
     this.fetchData = this.fetchData.bind(this);
-    this.fetchData();
+    this.fetchData(props.period);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if(this.props.period != newProps.period) {
+      this.fetchData(newProps.period)
+    }
   }
 
   refreshChart() {
@@ -47,9 +53,9 @@ class Graph extends Component {
     });
   }
 
-  fetchData() {
+  fetchData(period) {
     // fetch visitor data
-    fetch('/api/visits/count/day', {
+    fetch('/api/visits/count/day?period=' + period, {
       credentials: 'include'
     }).then((r) => r.json())
       .then((data) => {
@@ -58,7 +64,7 @@ class Graph extends Component {
     });
 
     // fetch pageview data
-    fetch('/api/pageviews/count/day', {
+    fetch('/api/pageviews/count/day?period=' + period, {
       credentials: 'include'
     }).then((r) => r.json())
       .then((data) => {

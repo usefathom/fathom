@@ -11,11 +11,17 @@ class Pageviews extends Component {
       records: []
     }
     this.fetchRecords = this.fetchRecords.bind(this);
-    this.fetchRecords();
+    this.fetchRecords(props.period);
   }
 
-  fetchRecords() {
-    return fetch('/api/pageviews', {
+  componentWillReceiveProps(newProps) {
+    if(this.props.period != newProps.period) {
+      this.fetchRecords(newProps.period)
+    }
+  }
+
+  fetchRecords(period) {
+    return fetch('/api/pageviews?period=' + period, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {

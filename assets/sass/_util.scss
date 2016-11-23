@@ -1,0 +1,27 @@
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+.small-margin {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.medium-margin {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}

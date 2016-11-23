@@ -14,11 +14,17 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
       COUNT(ip_address) AS pageviews,
       COUNT(DISTINCT(ip_address)) AS pageviews_unique
     FROM visits
+    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
     GROUP BY path`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query()
+  period := r.URL.Query().Get("period")
+  if period == "" {
+    period = "1"
+  }
+
+  rows, err := stmt.Query(period)
   checkError(err)
 
   results := make([]models.Pageview, 0)
@@ -43,11 +49,17 @@ var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
   stmt, err := core.DB.Prepare(`SELECT
     COUNT(*) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
     FROM visits
+    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query()
+  period := r.URL.Query().Get("period")
+  if period == "" {
+    period = "1"
+  }
+
+  rows, err := stmt.Query(period)
   checkError(err)
 
   type Datapoint struct {
