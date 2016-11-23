@@ -1,56 +1,50 @@
 'use strict';
 
-const m = require('mithril');
-import Login from './components/login.js';
-import Pageviews from './components/pageviews.js';
-import RealtimeVisits from './components/realtime.js';
-import VisitsGraph from './components/visits-graph.js';
-import LogoutButton from './components/logoutButton.js';
+import { h, render, Component } from 'preact';
+import LoginForm from './components/LoginForm.js';
+import LogoutButton from './components/LogoutButton.js';
+import Pageviews from './components/Pageviews.js';
+import Realtime from './components/Realtime.js';
+import Graph from './components/Graph.js';
 
-const App = {
-  controller(args) {
+class App extends Component {
+  constructor(props) {
+    super(props)
+
     this.state = {
-      authenticated: document.cookie.indexOf('auth') > -1
-    };
-
-    this.setState = function(nextState) {
-        m.startComputation();
-        for(var k in nextState) {
-          this.state[k] = nextState[k];
-        }
-        m.endComputation();
+      authenticated: document.cookie.indexOf('auth') > -1,
     }
-  },
-  view(c) {
-    if( ! c.state.authenticated ) {
-      return m('div.container', [
-        m.component(Login, {
-          onAuth: () => {
-            c.setState({ authenticated: true })
-           }
-        })
-      ]);
+  }
+
+  render() {
+
+    // logged-in
+    if( this.state.authenticated ) {
+      return (
+        <div class="container">
+            <header class="header cf">
+              <h1 class="pull-left">Ana <small>open web analytics</small></h1>
+              <div class="pull-right">
+                <LogoutButton onSuccess={() => { this.setState({ authenticated: false })}} />
+              </div>
+            </header>
+            <Realtime />
+            <Graph />
+            <Pageviews />
+        </div>
+      )
     }
 
-    return [
-      m('div.container', [
-        m('div.header.cf', [
-          m('h1.pull-left', 'Ana'),
-          m('div.pull-right', [
-            m.component(LogoutButton, {
-              cb: () => {
-                 c.setState({ authenticated: false })
-               }
-             })
-          ]),
-        ]),
-        m.component(RealtimeVisits),
-        m.component(VisitsGraph),
-        m.component(Pageviews),
-      ])
-    ]
+    // logged-out
+    return (
+        <div class="container">
+          <header class="header cf">
+            <h1 class="pull-left">Ana <small>open web analytics</small></h1>
+          </header>
+          <LoginForm onAuth={() => { this.setState({ authenticated: true })}} />
+        </div>
+    )
   }
 }
 
-
-m.mount(document.getElementById('root'), App)
+render(<App />, document.getElementById('root'));

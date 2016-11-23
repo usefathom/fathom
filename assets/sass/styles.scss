@@ -9,6 +9,12 @@ body {
 
 h1, h2, h3 {
   color: #111;
+
+  small {
+    font-weight: normal;
+    font-style: italic;
+    color: #666;
+  }
 }
 
 table {

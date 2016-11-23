@@ -15,6 +15,12 @@ This is a general draft document for thoughts and todo's.
   - Referral's
   - Search keywords
 
+## Notes
+
+- Every API response has to be JSON
+- Envelope every response with `data` and `message` props.
+- JS client for consuming API.
+
 
 ### Admin themes
 
