@@ -1,20 +1,55 @@
-import React, { Component } from 'react'
+import m from 'mithril';
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+function handleSubmit(e) {
+  e.preventDefault();
 
-  render() {
+  fetch('/api/session', {
+    method: "POST",
+    data: {
+      email: this.data.email(),
+      password: this.data.password()
+    },
+    credentials: 'include'
+  }).then((r) => {
+    if( r.status == 200 ) {
+      this.onAuth();
+      console.log("Authenticated!");
+    }
 
-    return (
-      <div className="block">
-        <h2>Login</h2>
-        <p>
-          <a href="">Sign in</a>
-        </p>
-      </div>
-    );
+    // TODO: Handle errors
+  });
+}
+
+const Login = {
+  controller(args) {
+    this.onAuth = args.onAuth;
+    this.data = {
+      email: m.prop(''),
+      password: m.prop(''),
+    }
+    this.onSubmit = handleSubmit.bind(this);
+  },
+
+  view(c) {
+    return m('div.block', [
+      m('h2', 'Login'),
+      m('form', {
+        method: "POST",
+        onsubmit: c.onSubmit
+      }, [
+        m('div.form-group', [
+          m('label', 'Email address'),
+          m('input', { type: "email", onchange: m.withAttr("value", c.data.email ) }),
+        ]),
+        m('div.form-group', [
+          m('label', 'Password'),
+          m('input', { type: "password", onchange: m.withAttr("value", c.data.password ) }),
+        ]),
+        m('div.form-group', [
+          m('input', { type: "submit", value: "Sign in" }),
+        ]),
+      ])
+    ])
   }
 }
 

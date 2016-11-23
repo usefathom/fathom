@@ -2,50 +2,46 @@ package api
 
 import (
   "net/http"
-  "github.com/dgrijalva/jwt-go"
-  "github.com/dgrijalva/jwt-go/request"
-  "os"
-  "time"
+  "github.com/gorilla/sessions"
 )
 
+var store = sessions.NewFilesystemStore( "./storage/sessions/", []byte("something-very-secret"))
+
+// URL: POST /api/session
+var Login = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    session, _ := store.Get(r, "auth")
+    session.Values["user"] = "Danny"
+    err := session.Save(r, w)
+    checkError(err)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("true"))
+})
+
+// URL: DELETE /api/session
+var Logout = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    session, _ := store.Get(r, "auth")
+    session.Options.MaxAge = -1
+    err := session.Save(r, w)
+    checkError(err)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("true"))
+})
+
+/* middleware */
 func Authorize(next http.Handler) http.Handler {
  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor, keyLookupFunc)
+    session, err := store.Get(r, "auth")
+    checkError(err)
 
-  	if err == nil && token.Valid {
-      next.ServeHTTP(w, r)
+    if user, ok := session.Values["user"]; !ok  {
+      w.WriteHeader(http.StatusUnauthorized)
       return
-  	}
+    }
 
-    w.WriteHeader(http.StatusUnauthorized)
+    next.ServeHTTP(w, r)
   })
 }
-
-func getSigningKey() []byte {
-  return []byte(os.Getenv("APP_SECRET_KEY"))
-}
-
- /* Handlers */
- var GetTokenHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-   // TODO: Check with database here.
-   token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-    "admin": true,
-    "name": "Danny",
-    "exp": time.Now().Add(time.Hour * 24).Unix(),
-  })
-
-   /* Sign the token with our secret */
-   tokenString, _ := token.SignedString(getSigningKey())
-
-   /* Finally, write the token to the browser window */
-   w.Write([]byte(tokenString))
- })
-
-
- func keyLookupFunc(t *jwt.Token) (interface{}, error) {
-     // Look up key in database.
-     // TODO
-
-     //
-     return getSigningKey(), nil
- }

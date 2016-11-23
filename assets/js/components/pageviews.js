@@ -1,47 +1,49 @@
-import React, { Component } from 'react'
+import m from 'mithril';
 
-class PageviewsList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { records: [] };
-    this.refresh() && window.setInterval(this.refresh.bind(this), 60000);
-  }
+function fetchRecords() {
+  return fetch('/api/pageviews', {
+    credentials: 'include'
+  }).then((r) => {
+    if( r.ok ) {
+      return r.json();
+    }
+  }).then((data) => {
+    m.startComputation();
+    this.records(data);
+    m.endComputation();
+  });
+}
 
-  refresh() {
-    return fetch('/api/pageviews')
-      .then((r) => r.json())
-      .then((data) => {
-        this.setState({records: data});
-    });
-  }
+const Pageviews = {
+  controller() {
+    this.records = m.prop([]);
+    fetchRecords.call(this) && window.setInterval(fetchRecords.bind(this), 60000);
+  },
+  view(c) {
+    const tableRows = c.records().map((p, i) => m('tr', [
+      m('td', i+1),
+      m('td', [
+        m('a', { href: p.Path }, p.Path)
+      ]),
+      m('td', p.Count),
+      m('td', p.CountUnique)
+    ]));
 
-  render() {
-    const tableRows = this.state.records.map((p, i) =>
-      <tr key={i}>
-        <td>{i+1}</td>
-        <td><a href="{p.Path}">{p.Path}</a></td>
-        <td>{p.Count}</td>
-        <td>{p.CountUnique}</td>
-      </tr>
-    );
-
-    return (
-      <div className="block">
-        <h2>Pageviews</h2>
-        <table className="table pageviews">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>URL</th>
-              <th>Pageviews</th>
-              <th>Unique</th>
-            </tr>
-          </thead>
-          <tbody>{tableRows}</tbody>
-        </table>
-      </div>
-    );
+    return m('div.block', [
+      m('h2', 'Pageviews'),
+      m('table.table.pageviews', [
+        m('thead', [
+          m('tr', [
+            m('th', '#'),
+            m('th', 'URL'),
+            m('th', 'Pageviews'),
+            m('th', 'Unique'),
+          ]) // tr
+        ]), // thead
+        m('tbody', tableRows )
+      ]) // table
+    ])
   }
 }
 
-export default PageviewsList
+export default Pageviews

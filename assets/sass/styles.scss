@@ -2,7 +2,7 @@
 
 body {
   font-family: Arial, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   color: #333;
   background: #f5f5f5;
 }
@@ -10,8 +10,6 @@ body {
 h1, h2, h3 {
   color: #111;
 }
-
-
 
 table {
   border-collapse: collapse;
@@ -24,6 +22,18 @@ table {
 
 a {
   color: #09f;
+}
+
+label {
+  display: block;
+}
+
+input {
+  padding: 8px;
+
+  &[type="submit"] {
+    cursor: pointer;
+  }
 }
 
 .container {
@@ -40,6 +50,10 @@ a {
   h1, h2, h3 {
     margin-top: 0;
   }
+}
+
+.form-group {
+  margin-bottom: 20px;
 }
 
 .count {

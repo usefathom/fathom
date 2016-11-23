@@ -1,42 +1,43 @@
 'use strict';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import RealtimeVisitsCount from './components/realtime-visits.js';
-import VisitsList from './components/visits-list.js';
-import PageviewsList from './components/pageviews.js';
-import VisitsGraph from './components/visits-graph.js';
+const m = require('mithril');
 import Login from './components/login.js';
+import Pageviews from './components/pageviews.js';
+import RealtimeVisits from './components/realtime.js';
+import VisitsGraph from './components/visits-graph.js';
 
 
-class App extends React.Component {
+const App = {
+  controller(args) {
+    this.state = {
+      authenticated: false
+    };
 
-  constructor(props) {
-    super(props)
-    this.state = { idToken: null }
-  }
-
-  render() {
-    if(this.state.idToken) {
-      return (
-        <div className="container">
-          <h1>Ana</h1>
-          <RealtimeVisitsCount />
-          <VisitsGraph />
-          <PageviewsList />
-        </div>
-      );
-    } else {
-      return (
-        <div className="container">
-          <Login />
-        </div>
-      );
+    this.setState = function(nextState) {
+        m.startComputation();
+        for(var k in nextState) {
+          this.state[k] = nextState[k];
+        }
+        m.endComputation();
     }
+  },
+  view(c) {
+    if( ! c.state.authenticated ) {
+      return m.component(Login, {
+          onAuth: () => { c.setState({ authenticated: true }) }
+        });
+    }
+
+    return [
+      m('div.container', [
+        m('h1', 'Ana'),
+        m.component(RealtimeVisits),
+        m.component(VisitsGraph),
+        m.component(Pageviews),
+      ])
+    ]
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+
+m.mount(document.getElementById('root'), App)

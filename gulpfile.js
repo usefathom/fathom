@@ -18,9 +18,12 @@ gulp.task('browserify', function () {
             entries: './assets/js/script.js',
             debug: true
         })
-        .transform("babelify", {presets: ["es2015", "react"]})
-        .on('error', gutil.log)
+        .transform("babelify", {presets: ["es2015"]})
         .bundle()
+        .on('error', function(err){
+          console.log(err.message);
+          this.emit('end');
+        })
         .pipe(source('script.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./static/js/'))
@@ -30,6 +33,7 @@ gulp.task('sass', function () {
 	var files = './assets/sass/[^_]*.scss';
 	return gulp.src(files)
 		.pipe(sass())
+    .on('error', gutil.log)
 		.pipe(rename({ extname: '.css' }))
 		.pipe(gulp.dest('./static/css'))
 });
