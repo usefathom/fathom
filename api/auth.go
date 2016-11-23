@@ -37,7 +37,7 @@ func Authorize(next http.Handler) http.Handler {
     session, err := store.Get(r, "auth")
     checkError(err)
 
-    if user, ok := session.Values["user"]; !ok  {
+    if _, ok := session.Values["user"]; !ok  {
       w.WriteHeader(http.StatusUnauthorized)
       return
     }

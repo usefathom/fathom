@@ -5,7 +5,7 @@ import Login from './components/login.js';
 import Pageviews from './components/pageviews.js';
 import RealtimeVisits from './components/realtime.js';
 import VisitsGraph from './components/visits-graph.js';
-
+import LogoutButton from './components/logoutButton.js';
 
 const App = {
   controller(args) {
@@ -24,13 +24,24 @@ const App = {
   view(c) {
     if( ! c.state.authenticated ) {
       return m.component(Login, {
-          onAuth: () => { c.setState({ authenticated: true }) }
+          onAuth: () => {
+            c.setState({ authenticated: true })
+           }
         });
     }
 
     return [
       m('div.container', [
-        m('h1', 'Ana'),
+        m('div.header.cf', [
+          m('h1.pull-left', 'Ana'),
+          m('div.pull-right', [
+            m.component(LogoutButton, {
+              cb: () => {
+                 c.setState({ authenticated: false })
+               }
+             })
+          ]),
+        ]),
         m.component(RealtimeVisits),
         m.component(VisitsGraph),
         m.component(Pageviews),

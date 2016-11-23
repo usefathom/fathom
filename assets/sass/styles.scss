@@ -61,5 +61,24 @@ input {
   font-size: 120%;
 }
 
-.subtitle {
+.header {
+  line-height: 40px;
+}
+
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
 }
