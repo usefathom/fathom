@@ -3,28 +3,39 @@
 import { h, render, Component } from 'preact';
 import Chart from 'chart.js'
 
+Chart.defaults.global.tooltips.xPadding = 10;
+Chart.defaults.global.tooltips.yPadding = 10;
+
 class Graph extends Component {
 
   constructor(props) {
     super(props)
 
     this.state = {
-      data: []
+      visitorData: [],
+      pageviewData: []
     }
     this.fetchData = this.fetchData.bind(this);
     this.fetchData();
   }
 
-  initChart() {
-     new Chart(this.ctx, {
+  refreshChart() {
+     this.chart = new Chart(this.ctx, {
       type: 'line',
       data: {
-        labels: this.state.data.map((d) => d.Label),
-        datasets: [{
+        labels: this.state.visitorData.map((d) => d.Label),
+        datasets: [
+          {
             label: '# of Visitors',
-            data: this.state.data.map((d) => d.Count),
-            backgroundColor: 'rgba(0, 155, 255, .2)'
-        }]
+            data: this.state.visitorData.map((d) => d.Count),
+            backgroundColor: 'rgba(0, 0, 255, .2)'
+          },
+          {
+            label: '# of Pageviews',
+            data: this.state.pageviewData.map((d) => d.Count),
+            backgroundColor: 'rgba(0, 0, 125, .2)'
+          }
+      ]
       },
       options: {
         scale: {
@@ -37,13 +48,22 @@ class Graph extends Component {
   }
 
   fetchData() {
-    return fetch('/api/visits/count/day', {
+    // fetch visitor data
+    fetch('/api/visits/count/day', {
       credentials: 'include'
-    })
-      .then((r) => r.json())
+    }).then((r) => r.json())
       .then((data) => {
-        this.setState({ data: data})
-        this.initChart()
+        this.setState({ visitorData: data})
+        this.refreshChart();
+    });
+
+    // fetch pageview data
+    fetch('/api/pageviews/count/day', {
+      credentials: 'include'
+    }).then((r) => r.json())
+      .then((data) => {
+        this.setState({ pageviewData: data})
+        this.refreshChart();
     });
   }
 
