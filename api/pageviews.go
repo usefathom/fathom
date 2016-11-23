@@ -5,6 +5,7 @@ import (
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/core"
   "encoding/json"
+  "strconv"
 )
 
 // URL: /api/pageviews
@@ -54,18 +55,13 @@ var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
   checkError(err)
   defer stmt.Close()
 
-  period := r.URL.Query().Get("period")
-  if period == "" {
-    period = "1"
+  period, err := strconv.Atoi(r.URL.Query().Get("period"))
+  if err != nil || period == 0 {
+    period = 7
   }
 
   rows, err := stmt.Query(period)
   checkError(err)
-
-  type Datapoint struct {
-    Count int
-    Label string
-  }
 
   results := make([]Datapoint, 0)
   defer rows.Close()
@@ -75,6 +71,8 @@ var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     checkError(err)
     results = append(results, v)
   }
+
+  results = fillDatapoints(period, results)
 
   err = rows.Err();
   checkError(err)

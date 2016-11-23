@@ -70,18 +70,13 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   checkError(err)
   defer stmt.Close()
 
-  period := r.URL.Query().Get("period")
-  if period == "" {
-    period = "1"
+  period, err := strconv.Atoi(r.URL.Query().Get("period"))
+  if err != nil || period == 0 {
+    period = 1
   }
 
   rows, err := stmt.Query(period)
   checkError(err)
-
-  type Datapoint struct {
-    Count int
-    Label string
-  }
 
   results := make([]Datapoint, 0)
   defer rows.Close()
@@ -91,6 +86,8 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
     checkError(err)
     results = append(results, v)
   }
+
+  results = fillDatapoints(period, results)
 
   err = rows.Err();
   checkError(err)

@@ -26,28 +26,41 @@ class Graph extends Component {
   }
 
   refreshChart() {
-     this.chart = new Chart(this.ctx, {
-      type: 'line',
+    if( ! this.canvas ) { return; }
+    if( this.chart ) { this.chart.clear(); }
+
+    // clear canvas
+    var newCanvas = document.createElement('canvas');
+    newCanvas.setAttribute('width', this.canvas.getAttribute('width'));
+    newCanvas.setAttribute('height', this.canvas.getAttribute('height'));
+    this.canvas.parentNode.replaceChild(newCanvas, this.canvas);
+    this.canvas = newCanvas;
+
+    this.chart = new Chart(this.canvas, {
+      type: 'bar',
       data: {
         labels: this.state.visitorData.map((d) => d.Label),
         datasets: [
           {
             label: '# of Visitors',
             data: this.state.visitorData.map((d) => d.Count),
-            backgroundColor: 'rgba(0, 0, 255, .2)'
+            backgroundColor: 'rgba(255, 155, 0, .5)'
           },
           {
             label: '# of Pageviews',
             data: this.state.pageviewData.map((d) => d.Count),
-            backgroundColor: 'rgba(0, 0, 125, .2)'
+            backgroundColor: 'rgba(0, 155, 255, .5)'
           }
       ]
       },
       options: {
-        scale: {
-          ticks: {
-            beginAtZero: true
-          }
+        scales: {
+            xAxes: [{
+                stacked: true
+            }],
+            yAxes: [{
+                stacked: true
+            }]
         }
       }
     });
@@ -59,8 +72,8 @@ class Graph extends Component {
       credentials: 'include'
     }).then((r) => r.json())
       .then((data) => {
-        this.setState({ visitorData: data})
-        this.refreshChart();
+        this.setState({ visitorData: data })
+        window.setTimeout(() => (this.refreshChart()), 20);
     });
 
     // fetch pageview data
@@ -68,15 +81,15 @@ class Graph extends Component {
       credentials: 'include'
     }).then((r) => r.json())
       .then((data) => {
-        this.setState({ pageviewData: data})
-        this.refreshChart();
+        this.setState({ pageviewData: data })
+        window.setTimeout(() => (this.refreshChart()), 20);
     });
   }
 
   render() {
     return (
       <div class="block">
-        <canvas width="600" height="220" ref={(el) => { this.ctx = el; }} />
+        <canvas ref={(el) => { this.canvas = el; }} />
       </div>
     )
   }
