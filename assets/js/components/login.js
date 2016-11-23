@@ -33,20 +33,34 @@ const Login = {
   view(c) {
     return m('div.block', [
       m('h2', 'Login'),
+      m('p', 'Please enter your credentials to login to your Ana dashboard.'),
       m('form', {
         method: "POST",
         onsubmit: c.onSubmit
       }, [
         m('div.form-group', [
           m('label', 'Email address'),
-          m('input', { type: "email", onchange: m.withAttr("value", c.data.email ) }),
+          m('input', {
+            type: "email",
+            name: "email",
+            required: true,
+            onchange: m.withAttr("value", c.data.email )
+          }),
         ]),
         m('div.form-group', [
           m('label', 'Password'),
-          m('input', { type: "password", onchange: m.withAttr("value", c.data.password ) }),
+          m('input', {
+            type: "password",
+            name: "password",
+            required: true,
+            onchange: m.withAttr("value", c.data.password )
+          }),
         ]),
         m('div.form-group', [
-          m('input', { type: "submit", value: "Sign in" }),
+          m('input', {
+            type: "submit",
+            value: "Sign in"
+          }),
         ]),
       ])
     ])

@@ -10,7 +10,7 @@ import LogoutButton from './components/logoutButton.js';
 const App = {
   controller(args) {
     this.state = {
-      authenticated: false
+      authenticated: document.cookie.indexOf('auth') > -1
     };
 
     this.setState = function(nextState) {
@@ -23,11 +23,13 @@ const App = {
   },
   view(c) {
     if( ! c.state.authenticated ) {
-      return m.component(Login, {
+      return m('div.container', [
+        m.component(Login, {
           onAuth: () => {
             c.setState({ authenticated: true })
            }
-        });
+        })
+      ]);
     }
 
     return [
