@@ -35,7 +35,7 @@ class Pageviews extends Component {
   render() {
     const tableRows = this.state.records.map( (p, i) => (
       <tr>
-        <td>{i+1}</td>
+        <td class="muted">{i+1}</td>
         <td><a href={p.Path}>{p.Path}</a></td>
         <td>{p.Count}</td>
         <td>{p.CountUnique}</td>
@@ -43,7 +43,7 @@ class Pageviews extends Component {
     ));
 
     return (
-      <div class="block block-float">
+      <div class="block">
         <h3>Pageviews</h3>
         <table class="table pageviews">
           <thead>

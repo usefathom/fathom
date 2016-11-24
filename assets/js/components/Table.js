@@ -39,7 +39,7 @@ class Table extends Component {
   render() {
     const tableRows = this.state.records.map( (p, i) => (
       <tr>
-        <td>{i+1}</td>
+        <td class="muted">{i+1}</td>
         <td>{p.Label}</td>
         <td>{p.Count}</td>
         <td>{Math.round(p.Percentage)}%</td>
@@ -47,7 +47,7 @@ class Table extends Component {
     ));
 
     return (
-      <div class="block block-float">
+      <div class="block">
         <h3>{this.props.title}</h3>
         <table>
           <thead>
