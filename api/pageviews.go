@@ -16,13 +16,14 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
       COUNT(DISTINCT(ip_address)) AS pageviews_unique
     FROM visits
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
-    GROUP BY path`)
+    GROUP BY path
+    ORDER BY pageviews DESC`)
   checkError(err)
   defer stmt.Close()
 
-  period := r.URL.Query().Get("period")
-  if period == "" {
-    period = "1"
+  period, err := strconv.Atoi(r.URL.Query().Get("period"))
+  if err != nil || period == 0 {
+    period = defaultPeriod
   }
 
   rows, err := stmt.Query(period)

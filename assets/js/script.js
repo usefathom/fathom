@@ -7,6 +7,7 @@ import Pageviews from './components/Pageviews.js';
 import Realtime from './components/Realtime.js';
 import Graph from './components/Graph.js';
 import DatePicker from './components/DatePicker.js';
+import Table from './components/Table.js';
 
 class App extends Component {
   constructor(props) {
@@ -31,9 +32,10 @@ class App extends Component {
               </div>
             </header>
             <Realtime />
-            <DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} />
+            <div class="clear"><DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} /></div>
             <Graph period={this.state.period} />
             <Pageviews period={this.state.period} />
+            <Table period={this.state.period} title="Languages" headers={["#", "Language", "Count", "%"]} />
         </div>
       )
     }

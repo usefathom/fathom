@@ -10,6 +10,8 @@ type Datapoint struct {
   Label string
 }
 
+var defaultPeriod = 7
+
 // log fatal errors
 func checkError(err error) {
   if err != nil {

@@ -2,7 +2,7 @@
 
 import { h, render, Component } from 'preact';
 
-class Pageviews extends Component {
+class Table extends Component {
 
   constructor(props) {
     super(props)
@@ -10,6 +10,8 @@ class Pageviews extends Component {
     this.state = {
       records: []
     }
+
+    this.tableHeaders = props.headers.map(heading => <th>{heading}</th>);
     this.fetchRecords = this.fetchRecords.bind(this);
     this.fetchRecords(props.period);
   }
@@ -21,12 +23,14 @@ class Pageviews extends Component {
   }
 
   fetchRecords(period) {
-    return fetch('/api/pageviews?period=' + period, {
+    return fetch('/api/languages?period=' + period, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
         return r.json();
       }
+
+      // TODO: do something with error
     }).then((data) => {
       this.setState({ records: data })
     });
@@ -36,29 +40,26 @@ class Pageviews extends Component {
     const tableRows = this.state.records.map( (p, i) => (
       <tr>
         <td>{i+1}</td>
-        <td><a href={p.Path}>{p.Path}</a></td>
+        <td>{p.Language}</td>
         <td>{p.Count}</td>
-        <td>{p.CountUnique}</td>
+        <td>{Math.round(p.Percentage)}%</td>
       </tr>
     ));
 
     return (
       <div class="block block-float">
-        <h3>Pageviews</h3>
-        <table class="table pageviews">
+        <h3>{this.props.title}</h3>
+        <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>URL</th>
-              <th>Pageviews</th>
-              <th>Unique</th>
-            </tr>
+            <tr>{this.tableHeaders}</tr>
           </thead>
-          <tbody>{tableRows}</tbody>
+          <tbody>
+            {tableRows}
+          </tbody>
         </table>
       </div>
     )
   }
 }
 
-export default Pageviews
+export default Table
