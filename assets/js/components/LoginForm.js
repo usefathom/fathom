@@ -25,8 +25,7 @@ class LoginForm extends Component {
       credentials: 'include'
     }).then((r) => {
       if( r.status == 200 ) {
-        this.props.onAuth();
-        console.log("Authenticated!");
+        this.props.onSuccess();
       }
 
       // TODO: Handle errors
