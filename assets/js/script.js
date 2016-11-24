@@ -34,9 +34,13 @@ class App extends Component {
             <Realtime />
             <div class="clear"><DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} /></div>
             <Graph period={this.state.period} />
-            <Pageviews period={this.state.period} />
-            <Table period={this.state.period} endpoint="screen-resolutions" title="Languages" headers={["#", "Language", "Count", "%"]} />
-            <Table period={this.state.period} endpoint="countries" title="Countries" headers={["#", "Country", "Count", "%"]} />
+            <div class="masonry-container">
+              <Pageviews period={this.state.period} />
+              <Table period={this.state.period} endpoint="languages" title="Languages" headers={["#", "Language", "Count", "%"]} />
+              <Table period={this.state.period} endpoint="screen-resolutions" title="Screen Resolutions" headers={["#", "Screen Resolution", "Count", "%"]} />
+              <Table period={this.state.period} endpoint="countries" title="Countries" headers={["#", "Country", "Count", "%"]} />
+              <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} />
+            </div>
         </div>
       )
     }

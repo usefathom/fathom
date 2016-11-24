@@ -6,8 +6,8 @@ import (
   "encoding/json"
 )
 
-// URL: /api/countries
-var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// URL: /api/browsers
+var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   period := getRequestedPeriod(r)
 
   // get total
@@ -24,11 +24,11 @@ var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   // get rows
   stmt, err = core.DB.Prepare(`
     SELECT
-    country,
+    browser_name,
     COUNT(DISTINCT(ip_address)) AS count
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY) AND country IS NOT NULL
-    GROUP BY country
+    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY) AND browser_name IS NOT NULL
+    GROUP BY browser_name
     ORDER BY count DESC
     LIMIT 10`)
   checkError(err)

@@ -28,7 +28,7 @@ class Realtime extends Component {
     let visitors = this.state.count == 1 ? 'visitor' : 'visitors';
     return (
       <div class="block block-float">
-        <span class="count">{this.state.count}</span> <span>{visitors} on the site right now</span>
+        <span class="count">{this.state.count}</span> <span>{visitors} on the site right now.</span>
       </div>
     )
   }
