@@ -52,7 +52,7 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
 
 // URL: /api/visits/count/realtime
 var GetVisitsRealtimeCount = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  row := core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE)`)
+  row := core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND timestamp <= CURRENT_TIMESTAMP`)
   var result int
   row.Scan(&result)
 

@@ -5,9 +5,9 @@ import Chart from 'chart.js'
 
 Chart.defaults.global.tooltips.xPadding = 10;
 Chart.defaults.global.tooltips.yPadding = 10;
+Chart.defaults.global.layout = { padding: 10 }
 
 class Graph extends Component {
-
   constructor(props) {
     super(props)
 
@@ -37,31 +37,25 @@ class Graph extends Component {
     this.canvas = newCanvas;
 
     this.chart = new Chart(this.canvas, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: this.state.visitorData.map((d) => d.Label),
         datasets: [
           {
             label: '# of Visitors',
             data: this.state.visitorData.map((d) => d.Count),
-            backgroundColor: 'rgba(255, 155, 0, .5)'
+            backgroundColor: 'rgba(255, 155, 0, .6)',
+            pointStyle: 'rect',
+            pointBorderWidth: 0.1,
           },
           {
             label: '# of Pageviews',
             data: this.state.pageviewData.map((d) => d.Count),
-            backgroundColor: 'rgba(0, 155, 255, .5)'
+            backgroundColor: 'rgba(0, 155, 255, .4)',
+            pointStyle: 'rect',
+            pointBorderWidth: 0.1,
           }
-      ]
-      },
-      options: {
-        scales: {
-            xAxes: [{
-                stacked: true
-            }],
-            yAxes: [{
-                stacked: true
-            }]
-        }
+      ],
       }
     });
   }
