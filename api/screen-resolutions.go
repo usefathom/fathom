@@ -6,10 +6,11 @@ import (
   "encoding/json"
 )
 
-// URL: /api/languages
-var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// URL: /api/screen-resolutions
+var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   period := getRequestedPeriod(r)
 
+  // get total
   stmt, err := core.DB.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
@@ -20,23 +21,22 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   var total float32
   stmt.QueryRow(period).Scan(&total)
 
+  // get rows
   stmt, err = core.DB.Prepare(`
     SELECT
-    browser_language,
+    screen_resolution,
     COUNT(DISTINCT(ip_address)) AS count
     FROM visits
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
-    GROUP BY browser_language
+    GROUP BY screen_resolution
     ORDER BY count DESC`)
   checkError(err)
   defer stmt.Close()
-
   rows, err := stmt.Query(period)
   checkError(err)
   defer rows.Close()
 
   results := make([]Datapoint, 0)
-
   for rows.Next() {
     var d Datapoint
     err = rows.Scan(&d.Label, &d.Count);

@@ -3,11 +3,14 @@ package api
 import (
   "log"
   "time"
+  "strconv"
+  "net/http"
 )
 
 type Datapoint struct {
   Count int
   Label string
+  Percentage float32 `json:",omitempty"`
 }
 
 var defaultPeriod = 7
@@ -41,4 +44,12 @@ func fillDatapoints(days int, points []Datapoint) []Datapoint {
   }
 
   return newPoints
+}
+
+func getRequestedPeriod(r *http.Request) int {
+  period, err := strconv.Atoi(r.URL.Query().Get("period"))
+  if err != nil || period == 0 {
+    period = defaultPeriod
+  }
+  return period
 }

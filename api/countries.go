@@ -6,10 +6,11 @@ import (
   "encoding/json"
 )
 
-// URL: /api/languages
-var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// URL: /api/countries
+var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   period := getRequestedPeriod(r)
 
+  // get total
   stmt, err := core.DB.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
@@ -20,23 +21,22 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   var total float32
   stmt.QueryRow(period).Scan(&total)
 
+  // get rows
   stmt, err = core.DB.Prepare(`
     SELECT
-    browser_language,
+    country,
     COUNT(DISTINCT(ip_address)) AS count
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
-    GROUP BY browser_language
+    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY) AND country IS NOT NULL
+    GROUP BY country
     ORDER BY count DESC`)
   checkError(err)
   defer stmt.Close()
-
   rows, err := stmt.Query(period)
   checkError(err)
   defer rows.Close()
 
   results := make([]Datapoint, 0)
-
   for rows.Next() {
     var d Datapoint
     err = rows.Scan(&d.Label, &d.Count);
