@@ -23,7 +23,7 @@ class Table extends Component {
   }
 
   fetchRecords(period) {
-    return fetch('/api/languages?period=' + period, {
+    return fetch('/api/'+this.props.endpoint+'?period=' + period, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
@@ -40,7 +40,7 @@ class Table extends Component {
     const tableRows = this.state.records.map( (p, i) => (
       <tr>
         <td>{i+1}</td>
-        <td>{p.Language}</td>
+        <td>{p.Label}</td>
         <td>{p.Count}</td>
         <td>{Math.round(p.Percentage)}%</td>
       </tr>
