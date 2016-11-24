@@ -1,7 +1,19 @@
 Ana Roadmap
 ===========
 
-This is a general draft document for thoughts and todo's.
+This is a general draft document for thoughts and todo's. This has no structure.
+
+### What's cooking?
+
+- JS client for consuming API endpoints.
+- Envelope API responses.
+- Error handling.
+- Handle canonical URL's.
+- Show referrals.
+- Country flags.
+- Geolocate unknown IP addresses periodically.
+- Mask last 2 bits of IP address.
+- Geo map?
 
 ### Key metrics
 
@@ -14,13 +26,6 @@ This is a general draft document for thoughts and todo's.
 - Acquisition
   - Referral's
   - Search keywords
-
-## Notes
-
-- Every API response has to be JSON
-- Envelope every response with `data` and `message` props.
-- JS client for consuming API.
-
 
 ### Admin themes
 
