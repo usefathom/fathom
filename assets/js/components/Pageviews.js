@@ -27,8 +27,12 @@ class Pageviews extends Component {
       if( r.ok ) {
         return r.json();
       }
+
+      throw new Error();
     }).then((data) => {
       this.setState({ records: data })
+    }).catch((e) => {
+
     });
   }
 

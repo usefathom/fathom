@@ -3,9 +3,10 @@ package api
 import (
   "net/http"
   "github.com/gorilla/sessions"
+  "os"
 )
 
-var store = sessions.NewFilesystemStore( "./storage/sessions/", []byte("something-very-secret"))
+var store = sessions.NewFilesystemStore( "./storage/sessions/", []byte(os.Getenv("ANA_SECRET_KEY")))
 
 // URL: POST /api/session
 var Login = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,9 +23,10 @@ var Login = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 // URL: DELETE /api/session
 var Logout = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "auth")
-    session.Options.MaxAge = -1
-    err := session.Save(r, w)
-    checkError(err)
+    if ! session.IsNew  {
+      session.Options.MaxAge = -1
+      session.Save(r, w)
+    }
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
@@ -34,8 +36,7 @@ var Logout = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 /* middleware */
 func Authorize(next http.Handler) http.Handler {
  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    session, err := store.Get(r, "auth")
-    checkError(err)
+    session, _ := store.Get(r, "auth")
 
     if _, ok := session.Values["user"]; !ok  {
       w.WriteHeader(http.StatusUnauthorized)

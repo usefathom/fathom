@@ -30,14 +30,22 @@ class Table extends Component {
         return r.json();
       }
 
+      // TODO: Make this pretty.
+      if( r.status == 401 ) {
+        this.props.onAuthError();
+      }
+
       // TODO: do something with error
+      throw new Error();
     }).then((data) => {
       this.setState({ records: data })
+    }).catch((e) => {
+
     });
   }
 
   render() {
-    const tableRows = this.state.records.map( (p, i) => (
+    const tableRows = this.state.records.map((p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
         <td>{p.Label}</td>

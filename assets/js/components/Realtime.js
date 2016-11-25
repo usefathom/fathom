@@ -17,11 +17,12 @@ class Realtime extends Component {
   fetchData() {
     return fetch('/api/visits/count/realtime', {
       credentials: 'include'
-    })
-      .then((r) => r.json())
-      .then((data) => {
+    }).then((r) => {
+        if( r.ok ) { r.json(); }
+        throw new Error();
+     }).then((data) => {
         this.setState({ count: data })
-    });
+    }).catch((e) => {});
   }
 
   render() {

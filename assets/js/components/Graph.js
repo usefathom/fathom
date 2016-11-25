@@ -28,7 +28,6 @@ class Graph extends Component {
   refreshChart() {
     if( ! this.canvas ) { return; }
 
-
     // clear canvas
     var newCanvas = document.createElement('canvas');
     this.canvas.parentNode.style.minHeight = this.canvas.parentNode.clientHeight + "px";
@@ -64,19 +63,28 @@ class Graph extends Component {
     // fetch visitor data
     fetch('/api/visits/count/day?period=' + period, {
       credentials: 'include'
-    }).then((r) => r.json())
-      .then((data) => {
-        this.setState({ visitorData: data })
-        window.setTimeout(() => (this.refreshChart()), 20);
+    }).then((r) => {
+      if( r.ok ) {
+        return r.json();
+      }
+      throw new Error();
+    }).then((data) => {
+      this.setState({ visitorData: data })
+      window.requestAnimationFrame(this.refreshChart.bind(this));
     });
 
     // fetch pageview data
     fetch('/api/pageviews/count/day?period=' + period, {
       credentials: 'include'
-    }).then((r) => r.json())
-      .then((data) => {
+    }).then((r) => {
+      if( r.ok ) {
+        return r.json();
+      }
+
+      throw new Error();
+    }).then((data) => {
         this.setState({ pageviewData: data })
-        window.setTimeout(() => (this.refreshChart()), 20);
+        window.requestAnimationFrame(this.refreshChart.bind(this));
     });
   }
 

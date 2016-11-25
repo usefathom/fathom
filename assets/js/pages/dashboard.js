@@ -43,7 +43,7 @@ class Dashboard extends Component {
             <Table period={this.state.period} endpoint="countries" title="Countries" headers={["#", "Country", "Count", "%"]} />
           </div>
           <div class="col-2">
-            <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} />
+            <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} onAuthError={this.props.onLogout} />
           </div>
         </div>
       </div>
