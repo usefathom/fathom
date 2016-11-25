@@ -12,17 +12,18 @@ class Realtime extends Component {
     }
     this.fetchData = this.fetchData.bind(this);
     this.fetchData();
+    window.setInterval(this.fetchData, 6000);
   }
 
   fetchData() {
     return fetch('/api/visits/count/realtime', {
       credentials: 'include'
     }).then((r) => {
-        if( r.ok ) { r.json(); }
+        if( r.ok ) { return r.json(); }
         throw new Error();
      }).then((data) => {
         this.setState({ count: data })
-    }).catch((e) => {});
+    });
   }
 
   render() {

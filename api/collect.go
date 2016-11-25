@@ -34,11 +34,16 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 
   // TODO: Mask IP Address
   // TODO: Query DB to determine whether visitor is returning
+  ipAddress := r.RemoteAddr
+  headerForwardedFor := r.Header.Get("X-Forwarded-For")
+  if( headerForwardedFor != "" ) {
+    ipAddress = headerForwardedFor
+  }
 
   q := r.URL.Query()
   visit := models.Visit{
     Path: q.Get("p"),
-    IpAddress: r.RemoteAddr,
+    IpAddress: ipAddress,
     ReferrerUrl: q.Get("r"),
     BrowserLanguage: q.Get("l"),
     ScreenResolution: q.Get("sr"),
