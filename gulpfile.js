@@ -11,7 +11,7 @@ const rename = require('gulp-rename');
 const gutil = require('gulp-util');
 const sass = require('gulp-sass');
 
-gulp.task('default', [ 'browserify', 'sass' ] );
+gulp.task('default', [ 'browserify', 'sass', 'tracker' ] );
 
 gulp.task('browserify', function () {
     return browserify({
@@ -29,6 +29,11 @@ gulp.task('browserify', function () {
         .pipe(gulp.dest('./static/js/'))
 });
 
+gulp.task('tracker', function() {
+  return gulp.src('./assets/js/tracker.js')
+    .pipe(gulp.dest('./static/js'))
+});
+
 gulp.task('sass', function () {
 	var files = './assets/sass/[^_]*.scss';
 	return gulp.src(files)
@@ -39,6 +44,6 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/js/**/*.js'], ['browserify'] );
+  gulp.watch(['./assets/js/**/*.js'], ['browserify', 'tracker'] );
   gulp.watch(['./assets/sass/**/*.scss'], ['sass'] );
 });

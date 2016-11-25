@@ -5,7 +5,6 @@ This is a general draft document for thoughts and todo's. This has no structure.
 
 ### What's cooking?
 
-- Async tracking snippet.
 - Add license file.
 - Get DB creds from env.
 - JS client for consuming API endpoints.

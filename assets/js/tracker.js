@@ -1,27 +1,37 @@
 'use strict';
 
-(function() {
-  function jsonToQueryString(json) {
-    var keys = Object.keys(json);
+var queue = window.ana.q || [];
+var trackerUrl = '//ana.dev/collect';
+var commands = {
+  "trackPageview": trackPageview,
+  "setTrackerUrl": setTrackerUrl,
+};
 
-    // omit empty
-    keys = keys.filter(function(k) {
-      return json[k].length > 0;
-    });
+// convert object to query string
+function stringifyObject(json) {
+  var keys = Object.keys(json);
 
-    return '?' +
-        keys.map(function(k) {
-            return encodeURIComponent(k) + '=' +
-                encodeURIComponent(json[k]);
-        }).join('&');
+  // omit empty
+  keys = keys.filter(function(k) {
+    return json[k].length > 0;
+  });
+
+  return '?' +
+      keys.map(function(k) {
+          return encodeURIComponent(k) + '=' +
+              encodeURIComponent(json[k]);
+      }).join('&');
+}
+
+function setTrackerUrl(v) {
+  trackerUrl = v;
+}
+
+function trackPageview() {
+  if( navigator.DonotTrack == 1 ) {
+    return;
   }
 
-  // abort hit if Do Not Track is enabled.
-  // if( navigator.DonotTrack == 1 ) {
-  //   return;
-  // }
-
-  var i = document.createElement('img');
   var d = {
     l: navigator.language,
     p: location.pathname + location.search,
@@ -30,8 +40,17 @@
     r: document.referrer
   };
 
-
-  i.src = 'http://localhost:8080/collect' + jsonToQueryString(d);
-
+  var i = document.createElement('img');
+  i.src = trackerUrl + stringifyObject(d);
   document.body.appendChild(i);
-})();
+}
+
+// override global ana object
+window.ana = function() {
+  var args = [].slice.call(arguments);
+  var c = args.shift();
+  commands[c].apply(this, args);
+};
+
+// process existing queue
+queue.map((i) => ana.apply(this, i));
