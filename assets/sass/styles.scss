@@ -3,7 +3,7 @@
 @import "grid";
 
 body {
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Raleway, HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
   color: #444;
   background: #f5f5f5;
@@ -35,6 +35,12 @@ table {
 
 a {
   color: #09f;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
 }
 
 label {
@@ -64,6 +70,23 @@ input[type="submit"] {
 
 .header {
   margin: 20px 0;
+}
+
+.header-bar {
+  background: black;
+  color: white;
+  margin-bottom: 40px;
+  padding: 12px 0;
+  line-height: 32px;
+  font-weight: bold;
+
+  h1, h2, h3, a { color: white; }
+
+  .subtitle{
+    color: #BBB;
+    margin-left: 10px;
+    font-size: 20px;
+  }
 }
 
 .block {

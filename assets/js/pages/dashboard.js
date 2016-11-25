@@ -18,13 +18,17 @@ class Dashboard extends Component {
   }
 
   render() {
-    return (<div class="container">
-        <header class="header cf">
-          <h1 class="pull-left">Ana <small>&middot; open web analytics</small></h1>
+    return (
+    <div>
+      <header class="header-bar cf">
+        <div class="container">
+          <h1 class="pull-left title">Ana <small class="subtitle">open web analytics</small></h1>
           <div class="pull-right">
             <LogoutButton onSuccess={this.props.onLogout} />
           </div>
-        </header>
+        </div>
+      </header>
+      <div class="container">
         <Realtime />
         <div class="clear">
           <DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} />
@@ -48,10 +52,10 @@ class Dashboard extends Component {
           <div class="col-2">
             <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} />
           </div>
-
         </div>
-    </div>)
-  }
+      </div>
+  </div>
+  )}
 }
 
 export default Dashboard
