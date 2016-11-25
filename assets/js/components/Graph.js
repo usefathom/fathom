@@ -27,15 +27,15 @@ class Graph extends Component {
 
   refreshChart() {
     if( ! this.canvas ) { return; }
-    if( this.chart ) { this.chart.clear(); }
+
 
     // clear canvas
     var newCanvas = document.createElement('canvas');
-    newCanvas.setAttribute('width', this.canvas.getAttribute('width'));
-    newCanvas.setAttribute('height', this.canvas.getAttribute('height'));
+    this.canvas.parentNode.style.minHeight = this.canvas.parentNode.clientHeight + "px";
     this.canvas.parentNode.replaceChild(newCanvas, this.canvas);
     this.canvas = newCanvas;
 
+    if( this.chart ) { this.chart.clear(); }
     this.chart = new Chart(this.canvas, {
       type: 'line',
       data: {
@@ -56,7 +56,7 @@ class Graph extends Component {
             pointBorderWidth: 0.1,
           }
       ],
-      }
+    }
     });
   }
 
@@ -83,7 +83,7 @@ class Graph extends Component {
   render() {
     return (
       <div class="block">
-        <canvas ref={(el) => { this.canvas = el; }} />
+        <canvas height="100" ref={(el) => { this.canvas = el; }} />
       </div>
     )
   }

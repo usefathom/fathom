@@ -4,6 +4,10 @@
 @import "forms";
 @import "tables";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Raleway, HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
@@ -46,7 +50,7 @@ a {
 .header-bar {
   background: black;
   color: white;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 12px 0;
   line-height: 32px;
   font-weight: bold;
