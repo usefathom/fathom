@@ -2,6 +2,7 @@
 @import "util";
 @import "grid";
 @import "forms";
+@import "tables";
 
 body {
   font-family: Raleway, HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -18,19 +19,6 @@ h1, h2, h3 {
     font-weight: normal;
     font-style: italic;
     color: #666;
-  }
-}
-
-table {
-  border-collapse: collapse;
-
-  th {
-    color: #222;
-  }
-
-  th, td {
-    border: 1px solid #eee;
-    padding: 4px 8px;
   }
 }
 

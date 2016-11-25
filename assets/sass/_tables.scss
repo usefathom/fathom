@@ -1,0 +1,32 @@
+table {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: collapse;
+
+  tbody > tr {
+    &:nth-of-type(odd) {
+      background-color: #FAFAFA;
+    }
+
+    &:hover {
+      background-color: #F6F6F6;
+    }
+  }
+
+  thead th {
+    border-top: 0;
+    border-bottom: 2px solid #ddd;
+  }
+
+  th {
+    color: #222;
+  }
+
+  th, td {
+    text-align: left;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+  }
+
+
+}
