@@ -14,6 +14,7 @@ type Datapoint struct {
 }
 
 var defaultPeriod = 7
+var defaultLimit = 10
 
 // log fatal errors
 func checkError(err error) {

@@ -30,10 +30,10 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY) AND browser_name IS NOT NULL
     GROUP BY browser_name
     ORDER BY count DESC
-    LIMIT 10`)
+    LIMIT ?`)
   checkError(err)
   defer stmt.Close()
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(period, defaultLimit)
   checkError(err)
   defer rows.Close()
 

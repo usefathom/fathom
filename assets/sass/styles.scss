@@ -1,6 +1,7 @@
 @import "normalize";
 @import "util";
 @import "grid";
+@import "forms";
 
 body {
   font-family: Raleway, HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -40,24 +41,6 @@ a {
   &:hover,
   &:focus {
     text-decoration: underline;
-  }
-}
-
-label {
-  display: block;
-}
-
-input {
-  padding: 8px;
-}
-
-button,
-input[type="submit"] {
-  padding: 8px;
-  cursor: pointer;
-
-  &.active {
-    border: 2px solid black;
   }
 }
 

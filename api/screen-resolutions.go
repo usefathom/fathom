@@ -29,10 +29,11 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     FROM visits
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
     GROUP BY screen_resolution
-    ORDER BY count DESC`)
+    ORDER BY count DESC
+    LIMIT ?`)
   checkError(err)
   defer stmt.Close()
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(period, defaultLimit)
   checkError(err)
   defer rows.Close()
 

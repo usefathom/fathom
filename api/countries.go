@@ -30,10 +30,10 @@ var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY) AND country IS NOT NULL
     GROUP BY country
     ORDER BY count DESC
-    LIMIT 10`)
+    LIMIT ?`)
   checkError(err)
   defer stmt.Close()
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(period, defaultLimit)
   checkError(err)
   defer rows.Close()
 

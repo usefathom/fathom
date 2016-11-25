@@ -18,11 +18,12 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     FROM visits
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
     GROUP BY path
-    ORDER BY pageviews DESC`)
+    ORDER BY pageviews DESC
+    LIMIT ?`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(period, defaultLimit)
   checkError(err)
   defer rows.Close()
 

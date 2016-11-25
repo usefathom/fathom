@@ -1,0 +1,37 @@
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #999;
+  min-width: 260px;
+
+  &:focus {
+    border: 1px solid #33C3F0;
+    outline: 0;
+  }
+}
+
+button,
+input[type="submit"],
+input[type="button"],
+.button {
+  min-width: auto;
+  padding: 10px 20px;
+  cursor: pointer;
+
+  border: 0;
+  color: white;
+  background: #09F;
+  font-weight: bold;
+
+
+  &.active,
+  &:hover,
+  &:focus {
+    background: darken( #09F, 20%)
+  }
+}

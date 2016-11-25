@@ -27,11 +27,12 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     FROM visits
     WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
     GROUP BY browser_language
-    ORDER BY count DESC`)
+    ORDER BY count DESC
+    LIMIT ?`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(period, defaultLimit)
   checkError(err)
   defer rows.Close()
 

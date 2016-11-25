@@ -1,12 +1,12 @@
 'use strict'
 
 import { h, render, Component } from 'preact';
-import LogoutButton from '../components/LogoutButton.js';
 import Pageviews from '../components/Pageviews.js';
 import Realtime from '../components/Realtime.js';
 import Graph from '../components/Graph.js';
 import DatePicker from '../components/DatePicker.js';
 import Table from '../components/Table.js';
+import HeaderBar from '../components/HeaderBar.js';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -20,14 +20,7 @@ class Dashboard extends Component {
   render() {
     return (
     <div>
-      <header class="header-bar cf">
-        <div class="container">
-          <h1 class="pull-left title">Ana <small class="subtitle">open web analytics</small></h1>
-          <div class="pull-right">
-            <LogoutButton onSuccess={this.props.onLogout} />
-          </div>
-        </div>
-      </header>
+      <HeaderBar showLogout={true} onLogout={this.props.onLogout} />
       <div class="container">
         <Realtime />
         <div class="clear">

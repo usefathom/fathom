@@ -40,11 +40,11 @@ class LoginForm extends Component {
         <form method="POST" onSubmit={this.handleSubmit}>
           <div class="small-margin">
             <label>Email address</label>
-            <input type="email" name="email" onChange={this.linkState('email')} required="required" />
+            <input type="email" name="email" placeholder="Email address" onChange={this.linkState('email')} required="required" />
           </div>
           <div class="small-margin">
             <label>Password</label>
-            <input type="password" name="password" onChange={this.linkState('password')} required="required" />
+            <input type="password" name="password" placeholder="**********" onChange={this.linkState('password')} required="required" />
           </div>
           <div class="small-margin">
             <input type="submit" value="Sign in" />
