@@ -7,6 +7,7 @@ import Graph from '../components/Graph.js';
 import DatePicker from '../components/DatePicker.js';
 import Table from '../components/Table.js';
 import HeaderBar from '../components/HeaderBar.js';
+import CountWidget from '../components/CountWidget.js';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -25,6 +26,14 @@ class Dashboard extends Component {
         <Realtime />
         <div class="clear">
           <DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} />
+        </div>
+        <div class="row">
+          <div class="col-2">
+            <CountWidget title="Visitors" endpoint="visits" period={this.state.period} />
+          </div>
+          <div class="col-2">
+            <CountWidget title="Pageviews" endpoint="pageviews" period={this.state.period} />
+          </div>
         </div>
         <Graph period={this.state.period} />
         <div class="row">

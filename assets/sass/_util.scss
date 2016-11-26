@@ -26,10 +26,22 @@
   margin-bottom: 40px;
 }
 
+.no-margin {
+  margin: 0 !important;
+}
+
 .clear {
   clear: both;
 }
 
+.big {
+  font-size: 32px;
+}
+
 .muted {
   color: #888;
+}
+
+.center-text {
+  text-align: center;
 }

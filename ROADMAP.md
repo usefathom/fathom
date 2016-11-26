@@ -1,21 +1,21 @@
 Ana Roadmap
 ===========
 
-This is a general draft document for thoughts and todo's. This has no structure.
+This is a general draft document for thoughts and todo's, without any structure to it.
 
 ### What's cooking?
 
-- Add license file.
-- Get DB creds from env.
+- Compare period totals to previous period.
+- Allow setting custom limit in table overviews.
+- Allow sorting in table overviews.
+- Choose a OS license & settle on name.
 - JS client for consuming API endpoints.
 - Envelope API responses.
-- Error handling.
-- Handle canonical URL's.
+- Track canonical URL's.
 - Show referrals.
 - Country flags.
 - Geolocate unknown IP addresses periodically.
-- Mask last 2 bits of IP address.
-- Geo map?
+- Mask last part of IP address.
 
 ### Key metrics
 
@@ -28,8 +28,3 @@ This is a general draft document for thoughts and todo's. This has no structure.
 - Acquisition
   - Referral's
   - Search keywords
-
-### Admin themes
-
-- Pages, http://pages.revox.io/dashboard/latest/html/index.html#usa
-- Metronic, http://keenthemes.com/preview/metronic/

@@ -12,7 +12,7 @@ class Realtime extends Component {
     }
     this.fetchData = this.fetchData.bind(this);
     this.fetchData();
-    window.setInterval(this.fetchData, 6000);
+    window.setInterval(this.fetchData, 15000);
   }
 
   fetchData() {

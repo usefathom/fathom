@@ -5,7 +5,6 @@ import (
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/core"
   "encoding/json"
-  "strconv"
 )
 
 // URL: /api/visits
@@ -26,11 +25,7 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
   checkError(err)
   defer stmt.Close()
 
-  limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
-  if limit == 0 {
-    limit = 10
-  }
-
+  limit := getRequestedLimit(r)
   rows, err := stmt.Query(&limit)
   checkError(err)
 
@@ -50,11 +45,25 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
   json.NewEncoder(w).Encode(results)
 })
 
-// URL: /api/visits/count/realtime
-var GetVisitsRealtimeCount = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  row := core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND timestamp <= CURRENT_TIMESTAMP`)
+// URL: /api/visits/count
+var GetVisitsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  period := getRequestedPeriod(r)
+  stmt, err := core.DB.Prepare(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? day) AND timestamp <= CURRENT_TIMESTAMP`)
+
+  checkError(err)
+  defer stmt.Close()
+
   var result int
-  row.Scan(&result)
+  stmt.QueryRow(period).Scan(&result)
+
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(result)
+})
+
+// URL: /api/visits/count/realtime
+var GetVisitsRealtimeCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  var result int
+  core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND timestamp <= CURRENT_TIMESTAMP`).Scan(&result)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
@@ -70,11 +79,7 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   checkError(err)
   defer stmt.Close()
 
-  period, err := strconv.Atoi(r.URL.Query().Get("period"))
-  if err != nil || period == 0 {
-    period = 1
-  }
-
+  period := getRequestedPeriod(r)
   rows, err := stmt.Query(period)
   checkError(err)
 
@@ -88,9 +93,6 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   }
 
   results = fillDatapoints(period, results)
-
-  err = rows.Err();
-  checkError(err)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)

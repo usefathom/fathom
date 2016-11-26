@@ -43,6 +43,21 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 })
 
 
+// URL: /api/pageviews/count
+var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  period := getRequestedPeriod(r)
+  stmt, err := core.DB.Prepare(`SELECT COUNT(*) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? day) AND timestamp <= CURRENT_TIMESTAMP`)
+
+  checkError(err)
+  defer stmt.Close()
+
+  var result int
+  stmt.QueryRow(period).Scan(&result)
+
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(result)
+})
+
 // URL: /api/pageviews/count/day
 var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   period := getRequestedPeriod(r)

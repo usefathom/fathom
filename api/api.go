@@ -47,6 +47,15 @@ func fillDatapoints(days int, points []Datapoint) []Datapoint {
   return newPoints
 }
 
+func getRequestedLimit(r *http.Request) int {
+  limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+  if err != nil || limit == 0 {
+    limit = 10
+  }
+
+  return limit
+}
+
 func getRequestedPeriod(r *http.Request) int {
   period, err := strconv.Atoi(r.URL.Query().Get("period"))
   if err != nil || period == 0 {
