@@ -9,6 +9,21 @@ import Table from '../components/Table.js';
 import HeaderBar from '../components/HeaderBar.js';
 import CountWidget from '../components/CountWidget.js';
 
+function removeImgElement(e) {
+  e.target.parentNode.removeChild(e.target);
+}
+
+function formatCountryLabel(p) {
+  const src = "/static/img/country-flags/"+ p.Label.toLowerCase() +".png"
+
+  return (
+    <td>
+      {p.Label}
+      <img height="12" src={src} class="pull-right" onError={removeImgElement} />
+    </td>
+  )
+}
+
 class Dashboard extends Component {
   constructor(props) {
     super(props)
@@ -49,7 +64,7 @@ class Dashboard extends Component {
             <Table period={this.state.period} endpoint="screen-resolutions" title="Screen Resolutions" headers={["#", "Resolution", "Count", "%"]} />
           </div>
           <div class="col-2">
-            <Table period={this.state.period} endpoint="countries" title="Countries" headers={["#", "Country", "Count", "%"]} />
+            <Table period={this.state.period} endpoint="countries" title="Countries" headers={["#", "Country", "Count", "%"]} labelCell={formatCountryLabel} />
           </div>
           <div class="col-2">
             <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} onAuthError={this.props.onLogout} />

@@ -16,6 +16,16 @@ class Table extends Component {
     this.fetchRecords(props.period);
   }
 
+  labelCell(p) {
+    if( this.props.labelCell ) {
+      return this.props.labelCell(p);
+    }
+
+    return (
+      <td>{p.Label}</td>
+    )
+  }
+
   componentWillReceiveProps(newProps) {
     if(this.props.period != newProps.period) {
       this.fetchRecords(newProps.period)
@@ -48,7 +58,7 @@ class Table extends Component {
     const tableRows = this.state.records.map((p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
-        <td>{p.Label}</td>
+        {this.labelCell(p)}
         <td>{p.Count}</td>
         <td>{Math.round(p.Percentage)}%</td>
       </tr>

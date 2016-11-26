@@ -29,6 +29,12 @@ gulp.task('browserify', function () {
         .pipe(gulp.dest('./static/js/'))
 });
 
+gulp.task('img', function() {
+  return gulp.src('./assets/img/**/*')
+    .pipe(gulp.dest('./static/img'))
+});
+
+
 gulp.task('tracker', function() {
   return gulp.src('./assets/js/tracker.js')
     .pipe(gulp.dest('./static/js'))
