@@ -47,14 +47,14 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
 
 // URL: /api/visits/count
 var GetVisitsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
-  stmt, err := core.DB.Prepare(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? day) AND timestamp <= CURRENT_TIMESTAMP`)
+  before, after := getRequestedPeriods(r)
+  stmt, err := core.DB.Prepare(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
 
   checkError(err)
   defer stmt.Close()
 
   var result int
-  stmt.QueryRow(period).Scan(&result)
+  stmt.QueryRow(before, after).Scan(&result)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
@@ -74,13 +74,13 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   stmt, err := core.DB.Prepare(`SELECT
     COUNT(DISTINCT(ip_address)) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()
 
-  period := getRequestedPeriod(r)
-  rows, err := stmt.Query(period)
+  before, after := getRequestedPeriods(r)
+  rows, err := stmt.Query(before, after)
   checkError(err)
 
   results := make([]Datapoint, 0)
@@ -92,8 +92,7 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
     results = append(results, v)
   }
 
-  results = fillDatapoints(period, results)
-
+  results = fillDatapoints(before, after, results)
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
 })

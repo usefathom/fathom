@@ -8,31 +8,32 @@ import (
 
 // URL: /api/languages
 var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
+  before, after := getRequestedPeriods(r)
 
   stmt, err := core.DB.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)`)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
+    `)
   checkError(err)
   defer stmt.Close()
   var total float32
-  stmt.QueryRow(period).Scan(&total)
+  stmt.QueryRow(before, after).Scan(&total)
 
   stmt, err = core.DB.Prepare(`
     SELECT
     browser_language,
     COUNT(DISTINCT(ip_address)) AS count
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY browser_language
     ORDER BY count DESC
     LIMIT ?`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(period, defaultLimit)
+  rows, err := stmt.Query(before, after, defaultLimit)
   checkError(err)
   defer rows.Close()
 

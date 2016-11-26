@@ -23,25 +23,34 @@ func checkError(err error) {
   }
 }
 
-func fillDatapoints(days int, points []Datapoint) []Datapoint {
+func fillDatapoints(start int64, end int64, points []Datapoint) []Datapoint {
+  // be smart about received timestamps
+  if start > end {
+    tmp := end
+    end = start
+    start = tmp
+  }
 
-  now := time.Now().AddDate(0, 0, 1)
-  start := now.AddDate(0, 0, -days)
-  newPoints := make([]Datapoint, days)
+  startTime := time.Unix(start, 0)
+  endTime := time.Unix(end, 0)
+  newPoints := make([]Datapoint, 0)
 
-  for i := 0; i < days; i++ {
-    newPoints[i] = Datapoint{
+  for startTime.Before(endTime) {
+    point := Datapoint{
       Count: 0,
-      Label: start.AddDate(0, 0, i).Format("2006-01-02"),
+      Label: startTime.Format("2006-01-02"),
     }
 
     for j, p := range points {
-      if p.Label == newPoints[i].Label {
-        newPoints[i].Count = p.Count
+      if p.Label == point.Label {
+        point.Count = p.Count
         points[j] = points[len(points)-1]
         break
       }
     }
+
+    newPoints = append(newPoints, point)
+    startTime = startTime.AddDate(0, 0, 1)
   }
 
   return newPoints
@@ -56,10 +65,19 @@ func getRequestedLimit(r *http.Request) int {
   return limit
 }
 
-func getRequestedPeriod(r *http.Request) int {
-  period, err := strconv.Atoi(r.URL.Query().Get("period"))
-  if err != nil || period == 0 {
-    period = defaultPeriod
+func getRequestedPeriods(r *http.Request) (int64, int64) {
+  var before, after int64
+  var err error
+
+  before, err = strconv.ParseInt(r.URL.Query().Get("before"), 10, 64)
+  if err != nil || before == 0 {
+    before = time.Now().Unix()
   }
-  return period
+
+  after, err = strconv.ParseInt(r.URL.Query().Get("after"), 10, 64)
+  if err != nil || before == 0 {
+    after = time.Now().AddDate(0, 0, -7).Unix()
+  }
+
+  return before, after
 }

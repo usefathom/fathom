@@ -8,18 +8,18 @@ import (
 
 // URL: /api/screen-resolutions
 var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
+  before, after := getRequestedPeriods(r)
 
   // get total
   stmt, err := core.DB.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)`)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
   checkError(err)
   defer stmt.Close()
   var total float32
-  stmt.QueryRow(period).Scan(&total)
+  stmt.QueryRow(before, after).Scan(&total)
 
   // get rows
   stmt, err = core.DB.Prepare(`
@@ -27,13 +27,13 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     screen_resolution,
     COUNT(DISTINCT(ip_address)) AS count
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY screen_resolution
     ORDER BY count DESC
     LIMIT ?`)
   checkError(err)
   defer stmt.Close()
-  rows, err := stmt.Query(period, defaultLimit)
+  rows, err := stmt.Query(before, after, defaultLimit)
   checkError(err)
   defer rows.Close()
 

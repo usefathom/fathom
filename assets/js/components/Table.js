@@ -1,6 +1,7 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+const dayInSeconds = 60 * 60 * 24;
 
 class Table extends Component {
 
@@ -33,7 +34,10 @@ class Table extends Component {
   }
 
   fetchRecords(period) {
-    return fetch('/api/'+this.props.endpoint+'?period=' + period, {
+    const before = Math.round((+new Date() ) / 1000);
+    const after = before - ( period * dayInSeconds );
+
+    return fetch(`/api/${this.props.endpoint}?before=${before}&after=${after}`, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {

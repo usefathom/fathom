@@ -9,21 +9,20 @@ import (
 
 // URL: /api/pageviews
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
-
+  before, after := getRequestedPeriods(r)
   stmt, err := core.DB.Prepare(`SELECT
       path,
       COUNT(ip_address) AS pageviews,
       COUNT(DISTINCT(ip_address)) AS pageviews_unique
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY path
-    ORDER BY pageviews DESC
+    ORDER BY pageviews DESC 
     LIMIT ?`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(period, defaultLimit)
+  rows, err := stmt.Query(before, after, defaultLimit)
   checkError(err)
   defer rows.Close()
 
@@ -45,14 +44,13 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 
 // URL: /api/pageviews/count
 var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
-  stmt, err := core.DB.Prepare(`SELECT COUNT(*) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? day) AND timestamp <= CURRENT_TIMESTAMP`)
-
+  before, after := getRequestedPeriods(r)
+  stmt, err := core.DB.Prepare(`SELECT COUNT(*) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
   checkError(err)
   defer stmt.Close()
 
   var result int
-  stmt.QueryRow(period).Scan(&result)
+  stmt.QueryRow(before, after).Scan(&result)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
@@ -60,17 +58,16 @@ var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
 
 // URL: /api/pageviews/count/day
 var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  period := getRequestedPeriod(r)
-
+  before, after := getRequestedPeriods(r)
   stmt, err := core.DB.Prepare(`SELECT
     COUNT(*) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
     FROM visits
-    WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? DAY)
+    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(period)
+  rows, err := stmt.Query(before, after)
   checkError(err)
   defer rows.Close()
 
@@ -82,7 +79,7 @@ var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     results = append(results, v)
   }
 
-  results = fillDatapoints(period, results)
+  results = fillDatapoints(before, after, results)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)

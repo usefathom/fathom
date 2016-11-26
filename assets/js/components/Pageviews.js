@@ -1,6 +1,7 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+const dayInSeconds = 60 * 60 * 24;
 
 class Pageviews extends Component {
 
@@ -21,7 +22,10 @@ class Pageviews extends Component {
   }
 
   fetchRecords(period) {
-    return fetch('/api/pageviews?period=' + period, {
+    const before = Math.round((+new Date() ) / 1000);
+    const after = before - ( period * dayInSeconds );
+
+    return fetch(`/api/pageviews?before=${before}&after=${after}`, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
@@ -31,8 +35,6 @@ class Pageviews extends Component {
       throw new Error();
     }).then((data) => {
       this.setState({ records: data })
-    }).catch((e) => {
-
     });
   }
 

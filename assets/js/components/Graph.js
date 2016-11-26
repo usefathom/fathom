@@ -2,6 +2,7 @@
 
 import { h, render, Component } from 'preact';
 import Chart from 'chart.js'
+const dayInSeconds = 60 * 60 * 24;
 
 Chart.defaults.global.tooltips.xPadding = 10;
 Chart.defaults.global.tooltips.yPadding = 10;
@@ -60,8 +61,11 @@ class Graph extends Component {
   }
 
   fetchData(period) {
+    const before = Math.round((+new Date() ) / 1000);
+    const after = before - ( period * dayInSeconds );
+
     // fetch visitor data
-    fetch('/api/visits/count/day?period=' + period, {
+    fetch(`/api/visits/count/day?before=${before}&after=${after}`, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
@@ -74,7 +78,7 @@ class Graph extends Component {
     });
 
     // fetch pageview data
-    fetch('/api/pageviews/count/day?period=' + period, {
+    fetch(`/api/pageviews/count/day?before=${before}&after=${after}`, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
