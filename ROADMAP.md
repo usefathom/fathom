@@ -5,7 +5,6 @@ This is a general draft document for thoughts and todo's, without any structure 
 
 ### What's cooking?
 
-- Compare period totals to previous period.
 - Allow setting custom limit in table overviews.
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.

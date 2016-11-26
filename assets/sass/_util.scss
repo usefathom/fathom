@@ -16,6 +16,11 @@
     clear: both;
 }
 
+.tiny-margin{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .small-margin {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -44,4 +49,16 @@
 
 .center-text {
   text-align: center;
+}
+
+.positive {
+  color: limegreen;
+
+  &:before {
+    content: "+";
+  }
+}
+
+.negative {
+  color: orangered;
 }
