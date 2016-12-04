@@ -13,8 +13,8 @@ type Datapoint struct {
   Percentage float32 `json:",omitempty"`
 }
 
-var defaultPeriod = 7
-var defaultLimit = 10
+const defaultPeriod = 7
+const defaultLimit = 10
 
 // log fatal errors
 func checkError(err error) {
