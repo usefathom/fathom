@@ -9,6 +9,7 @@ import (
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
   "github.com/joho/godotenv"
+  //seed "github.com/dannyvankooten/ana/db"
 )
 
 func main() {
@@ -21,6 +22,8 @@ func main() {
 
   db := core.SetupDatabaseConnection()
   defer db.Close()
+
+  //seed.Seed(50000)
 
   r := mux.NewRouter()
 

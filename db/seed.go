@@ -19,6 +19,21 @@ var browserNames = []string {
   "Internet Explorer",
 }
 
+var months = []time.Month {
+  time.January,
+  time.February,
+  time.March,
+  time.April,
+  time.May,
+  time.June,
+  time.July,
+  time.August,
+  time.September,
+  time.October,
+  time.November,
+  time.December,
+}
+
 var paths = []string {
   "/",
   "/", // we need this to weigh more.
@@ -66,12 +81,14 @@ func Seed(n int) {
   // insert X random hits
   for i := 0; i < n; i++ {
 
+    // print a dot as progress indicator
+    fmt.Print(".")
+
     // generate random timestamp
     date := randomDateBeforeNow();
     timestamp := fmt.Sprintf("%s %d:%d:%d", date.Format("2006-01-02"), randInt(10, 24), randInt(10, 60), randInt(10, 60))
 
     visit := models.Visit{
-      Path: randSliceElement(paths),
       IpAddress: randomdata.IpV4Address(),
       DeviceOS: "Linux x86_64",
       BrowserName: randSliceElement(browserNames),
@@ -83,33 +100,41 @@ func Seed(n int) {
       Timestamp: timestamp,
     }
 
-    _, err = stmt.Exec(
-      visit.BrowserLanguage,
-      visit.BrowserName,
-      visit.BrowserVersion,
-      visit.Country,
-      visit.DeviceOS,
-      visit.IpAddress,
-      visit.Path,
-      visit.ReferrerUrl,
-      visit.ScreenResolution,
-      visit.Timestamp,
-    )
-    if err != nil {
-      log.Fatal(err)
+    // insert between 1-4 pageviews for this visitor
+    for j := 0; j < randInt(1, 4); j++ {
+      visit.Path = randSliceElement(paths)
+
+      _, err = stmt.Exec(
+        visit.BrowserLanguage,
+        visit.BrowserName,
+        visit.BrowserVersion,
+        visit.Country,
+        visit.DeviceOS,
+        visit.IpAddress,
+        visit.Path,
+        visit.ReferrerUrl,
+        visit.ScreenResolution,
+        visit.Timestamp,
+      )
+      if err != nil {
+        log.Fatal(err)
+      }
     }
 
   }
 }
 
 func randomDate() time.Time {
-  date, _ := time.Parse("Monday 2 Jan 2006", randomdata.FullDate())
-  return date
+  now := time.Now()
+  month := months[randInt(0, len(months))]
+  t := time.Date(now.Year(), month, randInt(1,31), randInt(0,23), randInt(0,59), randInt(0,59), 0, time.UTC)
+  return t
 }
 
 func randomDateBeforeNow() time.Time {
+  now := time.Now()
   date := randomDate()
-  for( date.After(time.Now()) ) {
+  for( date.After(now) ) {
     date = randomDate()
   }
 
