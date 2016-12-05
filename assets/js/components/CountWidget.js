@@ -1,25 +1,8 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import * as numbers from '../lib/numbers.js';
 const dayInSeconds = 60 * 60 * 24;
-
-function addCommas(nStr)
-{
-	nStr += '';
-
-  if(nStr.length < 4 ) {
-    return nStr;
-  }
-
-  var	x = nStr.split('.');
-	var x1 = x[0];
-	var x2 = x.length > 1 ? '.' + x[1] : '';
-	var rgx = /(\d+)(\d{3})/;
-	while (rgx.test(x1)) {
-		x1 = x1.replace(rgx, '$1' + ',' + '$2');
-	}
-	return x1 + x2;
-}
 
 class CountWidget extends Component {
   constructor(props) {
@@ -81,7 +64,7 @@ class CountWidget extends Component {
     return (
       <div class="block center-text">
         <h4 class="">{this.props.title}</h4>
-        <div class="big tiny-margin">{addCommas(this.state.count)} {this.renderPercentage()}</div>
+        <div class="big tiny-margin">{numbers.formatWithComma(this.state.count)} {this.renderPercentage()}</div>
         <div class="muted">last {this.props.period} days</div>
       </div>
     )

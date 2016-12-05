@@ -1,6 +1,7 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import * as numbers from '../lib/numbers.js';
 const dayInSeconds = 60 * 60 * 24;
 
 class Table extends Component {
@@ -63,7 +64,7 @@ class Table extends Component {
       <tr>
         <td class="muted">{i+1}</td>
         {this.labelCell(p)}
-        <td>{p.Count}</td>
+        <td>{numbers.formatWithComma(p.Count)}</td>
         <td>{Math.round(p.Percentage)}%</td>
       </tr>
     ));

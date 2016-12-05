@@ -1,6 +1,8 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import * as numbers from '../lib/numbers.js';
+
 const dayInSeconds = 60 * 60 * 24;
 
 class Pageviews extends Component {
@@ -43,8 +45,8 @@ class Pageviews extends Component {
       <tr>
         <td class="muted">{i+1}</td>
         <td><a href={p.Path}>{p.Path}</a></td>
-        <td>{p.Count}</td>
-        <td>{p.CountUnique}</td>
+        <td>{numbers.formatWithComma(p.Count)}</td>
+        <td>{numbers.formatWithComma(p.CountUnique)}</td>
       </tr>
     ));
 

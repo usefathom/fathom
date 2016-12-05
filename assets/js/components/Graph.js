@@ -3,6 +3,8 @@
 import { h, render, Component } from 'preact';
 import * as d3 from 'd3';
 import tip from 'd3-tip';
+import * as numbers from '../lib/numbers.js';
+
 d3.tip = tip;
 
 const dayInSeconds = 60 * 60 * 24;
@@ -18,12 +20,12 @@ function Chart(element) {
 
   var pageviewTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + d.Count + '</span>' + ' pageviews')
+      .html((d) => '<span>' + numbers.formatWithComma(d.Count) + '</span>' + ' pageviews')
       .offset([-12, 0]);
 
   var visitorTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + d.Count + '</span>' + ' visitors' )
+      .html((d) => '<span>' + numbers.formatWithComma(d.Count) + '</span>' + ' visitors' )
       .offset([-12, 0]);
 
   var graph = d3.select('#graph');
