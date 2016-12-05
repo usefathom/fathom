@@ -31,13 +31,14 @@ class Graph extends Component {
   }
 
   refreshChart() {
-    var w = 800,
+    var padt = 20, padb = 40, padr = 40, padl = 40,
         h = 300,
-        padt = 20, padr = 20, padb = 60, padl = 30,
-        x  = d3.scaleBand().rangeRound([0, w - padl - padr]).padding(0.1),
+        w = document.getElementById('graph').parentNode.clientWidth - padl - padr,
+        x  = d3.scaleBand().range([0, w]).padding(0.2),
         y  = d3.scaleLinear().range([h, 0]),
         yAxis = d3.axisLeft().scale(y).tickSize(-w + padl + padr),
-        xAxis = d3.axisBottom().scale(x);
+        xAxis = d3.axisBottom().scale(x),
+        xTick = Math.round(this.state.visitorData.length / 7);
 
     var tip = d3.tip()
         .attr('class', 'd3-tip')
@@ -54,7 +55,7 @@ class Graph extends Component {
     vis.call(tip);
 
     var max = d3.max(this.state.visitorData, function(d) { return d.Count });
-    x.domain(d3.range(this.state.visitorData.length))
+    x.domain(this.state.visitorData.map((d) => d.Label))
     y.domain([0, max])
 
     // axes
@@ -66,8 +67,8 @@ class Graph extends Component {
         .attr("class", "x axis")
         .attr('transform', 'translate(0,' + h + ')')
         .call(xAxis)
-        .selectAll('.x.axis g')
-        .style('display', function (d, i) { return i % 3 != 0  ? 'none' : 'block' });
+        .selectAll('g')
+        .style('display', (d, i) => i % xTick != 0 ? 'none' : 'block')
 
     // bars
     var data = this.state.visitorData;
@@ -75,10 +76,10 @@ class Graph extends Component {
       .data(data)
       .enter().append('g')
       .attr('class', 'bar')
-      .attr('transform', function (d, i) { return "translate(" + x(i) + ", 0)" });
+      .attr('transform', function (d, i) { return "translate(" + x(d.Label) + ", 0)" });
 
     bars.append('rect')
-      .attr('width', () => x.bandwidth())
+      .attr('width', () => x.bandwidth() )
       .attr('height', (d) => (h - y(d.Count)) )
       .attr('y', (d) => y(d.Count))
       .on('mouseover', tip.show)
