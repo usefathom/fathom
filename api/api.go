@@ -23,7 +23,7 @@ func checkError(err error) {
   }
 }
 
-func fillDatapoints(start int64, end int64, points []Datapoint) []Datapoint {
+func fillDatapoints(start int64, end int64, step time.Duration, points []Datapoint) []Datapoint {
   // be smart about received timestamps
   if start > end {
     tmp := end
@@ -42,7 +42,7 @@ func fillDatapoints(start int64, end int64, points []Datapoint) []Datapoint {
     }
 
     for j, p := range points {
-      if p.Label == point.Label {
+      if p.Label == point.Label || p.Label == startTime.Format("2006-01") {
         point.Count = p.Count
         points[j] = points[len(points)-1]
         break
@@ -50,7 +50,7 @@ func fillDatapoints(start int64, end int64, points []Datapoint) []Datapoint {
     }
 
     newPoints = append(newPoints, point)
-    startTime = startTime.AddDate(0, 0, 1)
+    startTime = startTime.Add(step)
   }
 
   return newPoints

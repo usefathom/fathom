@@ -5,6 +5,8 @@ import (
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/core"
   "encoding/json"
+  "github.com/gorilla/mux"
+  "time"
 )
 
 // URL: /api/visits
@@ -69,10 +71,17 @@ var GetVisitsRealtimeCountHandler = http.HandlerFunc(func(w http.ResponseWriter,
   json.NewEncoder(w).Encode(result)
 })
 
-// URL: /api/visits/count/day
-var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// URL: /api/visits/count/group/:period
+var GetVisitsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  period := vars["period"]
+  formats := map[string]string {
+    "day": "%Y-%m-%d",
+    "month": "%Y-%m",
+  }
+
   stmt, err := core.DB.Prepare(`SELECT
-    COUNT(DISTINCT(ip_address)) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
+    COUNT(DISTINCT(ip_address)) AS count, DATE_FORMAT(timestamp, ?) AS date_group
     FROM visits
     WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY date_group`)
@@ -80,7 +89,7 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   defer stmt.Close()
 
   before, after := getRequestedPeriods(r)
-  rows, err := stmt.Query(before, after)
+  rows, err := stmt.Query(formats[period], before, after)
   checkError(err)
 
   results := make([]Datapoint, 0)
@@ -92,7 +101,11 @@ var GetVisitsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
     results = append(results, v)
   }
 
-  results = fillDatapoints(before, after, results)
+  d := time.Hour * 24;
+  if period == "month" {
+    d = d * 30
+  }
+  results = fillDatapoints(before, after, d, results)
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
 })

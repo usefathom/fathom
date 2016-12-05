@@ -9,7 +9,7 @@ import (
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
   "github.com/joho/godotenv"
-  //seed "github.com/dannyvankooten/ana/db"
+  seed "github.com/dannyvankooten/ana/db"
 )
 
 func main() {
@@ -23,7 +23,8 @@ func main() {
   db := core.SetupDatabaseConnection()
   defer db.Close()
 
-  //seed.Seed(50000)
+  // seed 1000 records
+  seed.Seed(100)
 
   r := mux.NewRouter()
 
@@ -32,11 +33,11 @@ func main() {
   r.Handle("/api/session", api.Login).Methods("POST")
   r.Handle("/api/session", api.Logout).Methods("DELETE")
   r.Handle("/api/visits/count", api.Authorize(api.GetVisitsCountHandler)).Methods("GET")
-  r.Handle("/api/visits/count/day", api.Authorize(api.GetVisitsDayCountHandler)).Methods("GET")
+  r.Handle("/api/visits/count/group/{period}", api.Authorize(api.GetVisitsPeriodCountHandler)).Methods("GET")
   r.Handle("/api/visits/count/realtime", api.Authorize(api.GetVisitsRealtimeCountHandler)).Methods("GET")
   r.Handle("/api/visits", api.Authorize(api.GetVisitsHandler)).Methods("GET")
   r.Handle("/api/pageviews/count", api.Authorize(api.GetPageviewsCountHandler)).Methods("GET")
-  r.Handle("/api/pageviews/count/day", api.Authorize(api.GetPageviewsDayCountHandler)).Methods("GET")
+  r.Handle("/api/pageviews/count/group/{period}", api.Authorize(api.GetPageviewsPeriodCountHandler)).Methods("GET")
   r.Handle("/api/pageviews", api.Authorize(api.GetPageviewsHandler)).Methods("GET")
   r.Handle("/api/languages", api.Authorize(api.GetLanguagesHandler)).Methods("GET")
   r.Handle("/api/screen-resolutions", api.Authorize(api.GetScreenResolutionsHandler)).Methods("GET")

@@ -5,6 +5,8 @@ import (
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/core"
   "encoding/json"
+  "github.com/gorilla/mux"
+  "time"
 )
 
 // URL: /api/pageviews
@@ -17,7 +19,7 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     FROM visits
     WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY path
-    ORDER BY pageviews DESC 
+    ORDER BY pageviews DESC
     LIMIT ?`)
   checkError(err)
   defer stmt.Close()
@@ -56,18 +58,24 @@ var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   json.NewEncoder(w).Encode(result)
 })
 
-// URL: /api/pageviews/count/day
-var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// URL: /api/pageviews/group/day
+var GetPageviewsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  period := vars["period"]
+  formats := map[string]string {
+    "day": "%Y-%m-%d",
+    "month": "%Y-%m",
+  }
   before, after := getRequestedPeriods(r)
   stmt, err := core.DB.Prepare(`SELECT
-    COUNT(*) AS count, DATE_FORMAT(timestamp, '%Y-%m-%d') AS date_group
+    COUNT(*) AS count, DATE_FORMAT(timestamp, ?) AS date_group
     FROM visits
     WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()
 
-  rows, err := stmt.Query(before, after)
+  rows, err := stmt.Query(formats[period], before, after)
   checkError(err)
   defer rows.Close()
 
@@ -79,7 +87,11 @@ var GetPageviewsDayCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     results = append(results, v)
   }
 
-  results = fillDatapoints(before, after, results)
+  d := time.Hour * 24;
+  if period == "month" {
+    d = d * 30
+  }
+  results = fillDatapoints(before, after, d, results)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)
