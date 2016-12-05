@@ -13,12 +13,17 @@
   fill: #888;
 }
 rect {
-  fill: #339cff;
-  fill-opacity: 0.7;
+  fill: lighten( #339cff, 10%);
+  fill-opacity: 0.5;
 }
 rect:hover {
   fill-opacity: 1;
 }
+
+.sub-bar rect {
+  fill: darken(#339cff, 20%);
+}
+
 .d3-tip {
   line-height: 1;
   font-weight: bold;
