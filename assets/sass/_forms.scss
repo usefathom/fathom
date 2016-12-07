@@ -15,6 +15,11 @@ input {
   }
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+  min-width: auto;
+}
+
 button,
 input[type="submit"],
 input[type="button"],

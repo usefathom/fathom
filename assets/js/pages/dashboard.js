@@ -3,7 +3,7 @@
 import { h, render, Component } from 'preact';
 import Pageviews from '../components/Pageviews.js';
 import Realtime from '../components/Realtime.js';
-import Graph from '../components/Graph.js';
+import GraphWidget from '../components/GraphWidget.js';
 import DatePicker from '../components/DatePicker.js';
 import Table from '../components/Table.js';
 import HeaderBar from '../components/HeaderBar.js';
@@ -50,7 +50,7 @@ class Dashboard extends Component {
             <CountWidget title="Pageviews" endpoint="pageviews" period={this.state.period} />
           </div>
         </div>
-        <Graph period={this.state.period} />
+        <GraphWidget period={this.state.period} />
         <div class="row">
           <div class="col-4">
             <Pageviews period={this.state.period} />
