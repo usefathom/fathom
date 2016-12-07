@@ -18,6 +18,9 @@ input {
 input[type="checkbox"],
 input[type="radio"] {
   min-width: auto;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
 }
 
 button,

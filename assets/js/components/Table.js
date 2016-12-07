@@ -10,17 +10,19 @@ class Table extends Component {
     super(props)
 
     this.state = {
-      records: []
+      records: [],
+      limit: 5
     }
 
-    this.tableHeaders = props.headers.map(heading => <th>{heading}</th>);
-    this.fetchRecords = this.fetchRecords.bind(this);
-    this.fetchRecords(props.period);
+    this.tableHeaders = props.headers.map(heading => <th>{heading}</th>)
+    this.fetchRecords = this.fetchRecords.bind(this)
+    this.handleLimitChoice = this.handleLimitChoice.bind(this)
+    this.fetchRecords(props.period, this.state.limit)
   }
 
   labelCell(p) {
     if( this.props.labelCell ) {
-      return this.props.labelCell(p);
+      return this.props.labelCell(p)
     }
 
     return (
@@ -30,15 +32,20 @@ class Table extends Component {
 
   componentWillReceiveProps(newProps) {
     if(this.props.period != newProps.period) {
-      this.fetchRecords(newProps.period)
+      this.fetchRecords(newProps.period, this.state.limit)
     }
   }
 
-  fetchRecords(period) {
+  handleLimitChoice(e) {
+    this.setState({ limit: parseInt(e.target.value) })
+    this.fetchRecords(this.props.period, this.state.limit)
+  }
+
+  fetchRecords(period, limit) {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
 
-    return fetch(`/api/${this.props.endpoint}?before=${before}&after=${after}`, {
+    return fetch(`/api/${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`, {
       credentials: 'include'
     }).then((r) => {
       if( r.ok ) {
@@ -71,7 +78,16 @@ class Table extends Component {
 
     return (
       <div class="block">
-        <h3>{this.props.title}</h3>
+        <div class="clearfix">
+          <h3 class="pull-left">{this.props.title}</h3>
+          <div class="pull-right">
+            <select onchange={this.handleLimitChoice}>
+              <option>5</option>
+              <option>20</option>
+              <option>100</option>
+            </select>
+          </div>
+          </div>
         <table>
           <thead>
             <tr>{this.tableHeaders}</tr>

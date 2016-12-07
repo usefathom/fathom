@@ -34,7 +34,7 @@ var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     LIMIT ?`)
   checkError(err)
   defer stmt.Close()
-  rows, err := stmt.Query(before, after, defaultLimit)
+  rows, err := stmt.Query(before, after, getRequestedLimit(r))
   checkError(err)
   defer rows.Close()
 
