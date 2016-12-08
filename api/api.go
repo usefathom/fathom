@@ -35,7 +35,7 @@ func fillDatapoints(start int64, end int64, step time.Duration, points []Datapoi
   endTime := time.Unix(end, 0)
   newPoints := make([]Datapoint, 0)
 
-  for startTime.Before(endTime) {
+  for startTime.Before(endTime) || startTime.Equal(endTime) {
     point := Datapoint{
       Count: 0,
       Label: startTime.Format("2006-01-02"),
