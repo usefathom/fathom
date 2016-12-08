@@ -52,7 +52,7 @@ var screenResolutions = []string {
 func seedSite() models.Site {
   // get first site or create one
   var site models.Site
-  Conn.QueryRow("SELECT url FROM sites LIMIT 1").Scan(&site.Url)
+  Conn.QueryRow("SELECT id, url FROM sites LIMIT 1").Scan(&site.ID, &site.Url)
 
   if site.Url == "" {
     site.Url = "http://local.wordpress.dev/"

@@ -13,12 +13,15 @@ import (
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
   stmt, err := db.Conn.Prepare(`SELECT
-      path,
-      COUNT(ip_address) AS pageviews,
-      COUNT(DISTINCT(ip_address)) AS pageviews_unique
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
-    GROUP BY path
+      s.url,
+      p.path,
+      COUNT(v.ip_address) AS pageviews,
+      COUNT(DISTINCT(v.ip_address)) AS pageviews_unique
+    FROM visits v
+    LEFT JOIN pages p ON v.page_id = p.id
+    LEFT JOIN sites s ON p.site_id = s.id
+    WHERE UNIX_TIMESTAMP(v.timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
+    GROUP BY p.path, s.url
     ORDER BY pageviews DESC
     LIMIT ?`)
   checkError(err)
@@ -31,7 +34,7 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   results := make([]models.Pageview, 0)
   for rows.Next() {
     var p models.Pageview
-    err = rows.Scan(&p.Path, &p.Count, &p.CountUnique);
+    err = rows.Scan(&p.Url, &p.Path, &p.Count, &p.CountUnique);
     checkError(err)
     results = append(results, p)
   }
