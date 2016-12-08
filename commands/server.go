@@ -9,7 +9,7 @@ import(
   "log"
 )
 
-func StartServer() {
+func startServer() {
   // register routes
   r := mux.NewRouter()
   r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
