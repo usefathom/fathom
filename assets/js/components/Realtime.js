@@ -1,6 +1,7 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import Client from '../lib/client.js';
 
 class Realtime extends Component {
 
@@ -16,14 +17,8 @@ class Realtime extends Component {
   }
 
   fetchData() {
-    return fetch('/api/visits/count/realtime', {
-      credentials: 'include'
-    }).then((r) => {
-        if( r.ok ) { return r.json(); }
-        throw new Error();
-     }).then((data) => {
-        this.setState({ count: data })
-    });
+    Client.request(`visits/count/realtime`)
+      .then((d) => { this.setState({ count: d })})
   }
 
   render() {

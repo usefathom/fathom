@@ -2,6 +2,7 @@
 
 import { h, render, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
+import Client from '../lib/client.js';
 const dayInSeconds = 60 * 60 * 24;
 
 class CountWidget extends Component {
@@ -27,26 +28,14 @@ class CountWidget extends Component {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
 
-    fetch(`/api/${this.props.endpoint}/count?before=${before}&after=${after}`, {
-      credentials: 'include'
-    }).then((r) => {
-        if( r.ok ) { return r.json(); }
-        throw new Error();
-     }).then((data) => {
-        this.setState({ count: data })
-    });
+    Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
+      .then((d) => { this.setState({ count: d })})
 
     // query previous period
     const previousBefore = after;
     const previousAfter = previousBefore - ( period * dayInSeconds );
-    fetch(`/api/${this.props.endpoint}/count?before=${previousBefore}&after=${previousAfter}`, {
-      credentials: 'include'
-    }).then((r) => {
-        if( r.ok ) { return r.json(); }
-        throw new Error();
-     }).then((data) => {
-        this.setState({ previousCount: data })
-    });
+    Client.request(`${this.props.endpoint}/count?before=${previousBefore}&after=${previousAfter}`)
+      .then((d) => { this.setState({ previousCount: d })})
   }
 
   renderPercentage() {

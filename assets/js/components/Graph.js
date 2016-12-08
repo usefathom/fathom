@@ -1,10 +1,11 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
-import * as d3 from 'd3';
-import tip from 'd3-tip';
+import Client from '../lib/client.js';
 import * as numbers from '../lib/numbers.js';
 
+import * as d3 from 'd3';
+import tip from 'd3-tip';
 d3.tip = tip;
 
 const dayInSeconds = 60 * 60 * 24;
@@ -159,32 +160,19 @@ class Graph extends Component {
     const after = before - ( period * dayInSeconds );
     const group = period > 90 ? 'month' : 'day';
 
-    // fetch visitor data
-    fetch(`/api/visits/count/group/${group}?before=${before}&after=${after}`, {
-      credentials: 'include'
-    }).then((r) => {
-      if( r.ok ) {
-        return r.json();
-      }
-      throw new Error();
-    }).then((data) => {
-      this.data.visitors = data;
-      window.requestAnimationFrame(this.refreshChart);
-    });
-
-    // fetch pageview data
-    fetch(`/api/pageviews/count/group/${group}?before=${before}&after=${after}`, {
-      credentials: 'include'
-    }).then((r) => {
-      if( r.ok ) {
-        return r.json();
-      }
-
-      throw new Error();
-    }).then((data) => {
-        this.data.pageviews = data;
+    Client
+      .request(`pageviews/count/group/${group}?before=${before}&after=${after}`)
+      .then((d) => {
+        this.data.pageviews = d;
         window.requestAnimationFrame(this.refreshChart);
-    });
+      })
+
+    Client
+      .request(`visits/count/group/${group}?before=${before}&after=${after}`)
+      .then((d) => {
+        this.data.visitors = d;
+        window.requestAnimationFrame(this.refreshChart);
+      })
   }
 
   render() {

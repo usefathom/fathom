@@ -2,6 +2,7 @@
 
 import { h, render, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
+import Client from '../lib/client.js';
 const dayInSeconds = 60 * 60 * 24;
 
 class Table extends Component {
@@ -17,7 +18,10 @@ class Table extends Component {
     this.tableHeaders = props.headers.map(heading => <th>{heading}</th>)
     this.fetchRecords = this.fetchRecords.bind(this)
     this.handleLimitChoice = this.handleLimitChoice.bind(this)
-    this.fetchRecords(props.period, this.state.limit)
+  }
+
+  componentDidMount() {
+      this.fetchRecords(props.period, this.state.limit)
   }
 
   labelCell(p) {
@@ -45,25 +49,9 @@ class Table extends Component {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
 
-    return fetch(`/api/${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`, {
-      credentials: 'include'
-    }).then((r) => {
-      if( r.ok ) {
-        return r.json();
-      }
-
-      // TODO: Make this pretty.
-      if( r.status == 401 ) {
-        this.props.onAuthError();
-      }
-
-      // TODO: do something with error
-      throw new Error();
-    }).then((data) => {
-      this.setState({ records: data })
-    }).catch((e) => {
-
-    });
+    Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`)
+      .then((d) => { this.setState({ records: d })})
+      .catch((e) => { console.log(e) })
   }
 
   render() {

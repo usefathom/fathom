@@ -1,35 +1,29 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import Client from '../lib/client.js';
 
 class LoginForm extends Component {
 
   constructor(props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.setState({
+    this.state = {
       email: '',
       password: '',
-    })
+    }
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
-    fetch('/api/session', {
+    Client.request('session', {
       method: "POST",
       data: {
         email: this.state.email,
         password: this.state.password,
-      },
-      credentials: 'include'
-    }).then((r) => {
-      if( r.status == 200 ) {
-        this.props.onSuccess();
       }
-
-      // TODO: Handle errors
-    });
+    }).then((r) => { this.props.onSuccess() })
   }
 
   render() {

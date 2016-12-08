@@ -1,6 +1,7 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import Client from '../lib/client.js';
 
 class LogoutButton extends Component {
 
@@ -12,15 +13,9 @@ class LogoutButton extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    fetch('/api/session', {
+    Client.request('session', {
       method: "DELETE",
-      credentials: 'include',
-    }).then((r) => {
-      if( r.status == 200 ) {
-        this.props.onSuccess();
-        console.log("No longer authenticated!");
-      }
-    });
+    }).then((r) => { this.props.onSuccess() })
   }
 
   render() {
