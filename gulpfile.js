@@ -30,6 +30,8 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('minify', function(cb) {
+  process.env.NODE_ENV = 'production';
+  
   pump([
     gulp.src('./static/js/*.js'),
     uglify().on('error', gutil.log),

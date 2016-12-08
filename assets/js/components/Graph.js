@@ -5,8 +5,7 @@ import Client from '../lib/client.js';
 import * as numbers from '../lib/numbers.js';
 
 import * as d3 from 'd3';
-import tip from 'd3-tip';
-d3.tip = tip;
+d3.tip = require('d3-tip');
 
 const dayInSeconds = 60 * 60 * 24;
 

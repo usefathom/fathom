@@ -12,7 +12,6 @@ This is a general draft document for thoughts and todo's, without any structure 
 - Bulk process tracking requests (Redis or in-memory?)
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.
-- JS client for consuming API endpoints.
 - Envelope API responses & perhaps return total in table overview?
 - Track canonical URL's.
 - Show referrals.

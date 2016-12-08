@@ -28,13 +28,23 @@ function setTrackerUrl(v) {
 }
 
 function trackPageview() {
+  // Respect "Do Not Track" requests
   if( navigator.DonotTrack == 1 ) {
     return;
   }
 
+  // get the path or canonical
+  var path = location.pathname + location.search;
+  var canonical = document.querySelector('link[rel="canonical"]');
+  if(canonical && canonical.href) {
+    path = canonical.href.substring(canonical.href.indexOf('/', 7)) || '/';
+  }
+
   var d = {
+    h: location.hostname,
+    t: document.title,
     l: navigator.language,
-    p: location.pathname + location.search,
+    p: path,
     sr: screen.width + "x" + screen.height,
     t: document.title,
     r: document.referrer
@@ -53,4 +63,6 @@ window.ana = function() {
 };
 
 // process existing queue
-queue.map((i) => ana.apply(this, i));
+queue.forEach(function(i) {
+  ana.apply(this, i);
+});
