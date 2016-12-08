@@ -33,14 +33,6 @@ var months = []time.Month {
   time.December,
 }
 
-var paths = []string {
-  "/",
-  "/", // we need this to weigh more.
-  "/contact",
-  "/about",
-  "/checkout",
-}
-
 var browserLanguages = []string {
   "en-US",
   "en-US",
@@ -57,27 +49,82 @@ var screenResolutions = []string {
   "360x640",
 }
 
+func seedSite() models.Site {
+  // get first site or create one
+  var site models.Site
+  Conn.QueryRow("SELECT url FROM sites LIMIT 1").Scan(&site.Url)
+
+  if site.Url == "" {
+    site.Url = "http://local.wordpress.dev/"
+    site.Save(Conn)
+  }
+
+  return site
+}
+
+func seedPages(site models.Site) []models.Page {
+  var pages = make([]models.Page, 0)
+
+  homepage := models.Page{
+    SiteID: site.ID,
+    Path: "/",
+    Title: "Homepage",
+  }
+  homepage.Save(Conn)
+
+  contactPage := models.Page{
+    SiteID: site.ID,
+    Path: "/contact/",
+    Title: "Contact",
+  }
+  contactPage.Save(Conn)
+
+  aboutPage := models.Page{
+    SiteID: site.ID,
+    Path: "/about/",
+    Title: "About Me",
+  }
+  aboutPage.Save(Conn)
+
+  portfolioPage := models.Page{
+    SiteID: site.ID,
+    Path: "/portfolio/",
+    Title: "Portfolio",
+  }
+  portfolioPage.Save(Conn)
+
+  pages = append(pages, homepage)
+  pages = append(pages, homepage)
+  pages = append(pages, contactPage)
+  pages = append(pages, aboutPage)
+  pages = append(pages, portfolioPage)
+  return pages
+}
+
 func Seed(n int) {
+
+  site := seedSite()
+  pages := seedPages(site)
 
   // prepare statement for inserting data
   stmt, err := Conn.Prepare(`INSERT INTO visits(
+    page_id,
     browser_language,
     browser_name,
     browser_version,
     country,
-    device_os,
     ip_address,
-    path,
     referrer_url,
     screen_resolution,
     timestamp
-    ) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`)
+    ) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ? )`)
   if err != nil {
       log.Fatal(err)
   }
   defer stmt.Close()
 
   // insert X random hits
+  log.Printf("Inserting %d visits", n)
   for i := 0; i < n; i++ {
 
     // print a dot as progress indicator
@@ -89,7 +136,6 @@ func Seed(n int) {
 
     visit := models.Visit{
       IpAddress: randomdata.IpV4Address(),
-      DeviceOS: "Linux x86_64",
       BrowserName: randSliceElement(browserNames),
       BrowserVersion: "54.0.2840.100",
       BrowserLanguage: randSliceElement(browserLanguages),
@@ -101,16 +147,16 @@ func Seed(n int) {
 
     // insert between 1-4 pageviews for this visitor
     for j := 0; j < randInt(1, 4); j++ {
-      visit.Path = randSliceElement(paths)
+      page := pages[randInt(0, len(pages))]
+      visit.PageID = page.ID
 
       _, err = stmt.Exec(
+        visit.PageID,
         visit.BrowserLanguage,
         visit.BrowserName,
         visit.BrowserVersion,
         visit.Country,
-        visit.DeviceOS,
         visit.IpAddress,
-        visit.Path,
         visit.ReferrerUrl,
         visit.ScreenResolution,
         visit.Timestamp,

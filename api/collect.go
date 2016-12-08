@@ -20,12 +20,11 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
   // prepare statement for inserting data
   stmt, err := db.Conn.Prepare(`INSERT INTO visits(
     ip_address,
-    path,
+    page_id,
     referrer_url,
     browser_language,
     browser_name,
     browser_version,
-    device_os,
     screen_resolution
     ) VALUES( ?, ?, ?, ?, ?, ?, ?, ? )`)
   if err != nil {
@@ -41,9 +40,10 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
     ipAddress = headerForwardedFor
   }
 
+  // TODO: Query Path
+
   q := r.URL.Query()
   visit := models.Visit{
-    Path: q.Get("p"),
     IpAddress: ipAddress,
     ReferrerUrl: q.Get("r"),
     BrowserLanguage: q.Get("l"),
@@ -53,17 +53,12 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
   // add browser details
   visit.BrowserName, visit.BrowserVersion = ua.Browser()
 
-  // add device details
-  visit.DeviceOS = ua.OS()
-
   _, err = stmt.Exec(
     visit.IpAddress,
-    visit.Path,
     visit.ReferrerUrl,
     visit.BrowserLanguage,
     visit.BrowserName,
     visit.BrowserVersion,
-    visit.DeviceOS,
     visit.ScreenResolution,
   )
   if err != nil {

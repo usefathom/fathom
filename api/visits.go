@@ -15,9 +15,7 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
     id,
     COALESCE(browser_name, '') AS browser_name,
     COALESCE(browser_language, '') AS browser_language,
-    COALESCE(device_os, '') AS device_os,
     ip_address,
-    path,
     COALESCE(screen_resolution, '') AS screen_resolution,
     timestamp
     FROM visits
@@ -35,7 +33,7 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
   defer rows.Close()
   for rows.Next() {
     var v models.Visit
-    err = rows.Scan(&v.ID, &v.BrowserName, &v.BrowserLanguage, &v.DeviceOS, &v.IpAddress, &v.Path, &v.ScreenResolution, &v.Timestamp);
+    err = rows.Scan(&v.ID, &v.BrowserName, &v.BrowserLanguage, &v.IpAddress, &v.ScreenResolution, &v.Timestamp);
     checkError(err)
     results = append(results, v)
   }

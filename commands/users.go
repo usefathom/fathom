@@ -2,6 +2,7 @@ package commands
 
 import(
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/models"
   "golang.org/x/crypto/bcrypt"
   "log"
 )
@@ -11,11 +12,14 @@ func createUser() {
     log.Fatal("Please supply -email and -password values")
   }
 
-  stmt2, _ := db.Conn.Prepare("INSERT INTO users(email, password) VALUES(?, ?)")
   hash, _ := bcrypt.GenerateFromPassword([]byte(passwordArg), 10)
-  stmt2.Exec(emailArg, hash)
+  user := models.User{
+    Email: emailArg,
+    Password: string(hash),
+  }
+  user.Save(db.Conn)
 
-    log.Printf("User %s created", emailArg)
+  log.Printf("User %s #%d created", emailArg, user.ID)
 }
 
 func deleteUser() {
