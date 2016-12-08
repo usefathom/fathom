@@ -21,7 +21,7 @@ class Table extends Component {
   }
 
   componentDidMount() {
-      this.fetchRecords(props.period, this.state.limit)
+      this.fetchRecords(this.props.period, this.state.limit)
   }
 
   labelCell(p) {

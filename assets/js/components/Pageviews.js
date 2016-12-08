@@ -18,7 +18,7 @@ class Pageviews extends Component {
   }
 
   componentDidMount() {
-    this.fetchRecords(props.period);
+    this.fetchRecords(this.props.period);
   }
 
   componentWillReceiveProps(newProps) {

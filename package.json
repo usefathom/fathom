@@ -14,6 +14,8 @@
   "dependencies": {
     "d3": "^4.4.0",
     "d3-tip": "^0.7.1",
-    "preact": "^6.4.0"
+    "gulp-uglify": "^2.0.0",
+    "preact": "^6.4.0",
+    "pump": "^1.0.1"
   }
 }

@@ -1,22 +1,22 @@
 'use strict';
 
-// TODO: Minify JS
-
-const babelify = require("babelify");
-const browserify = require('browserify');
-const gulp = require('gulp');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-const rename = require('gulp-rename');
-const gutil = require('gulp-util');
-const sass = require('gulp-sass');
+const babelify = require("babelify")
+const browserify = require('browserify')
+const gulp = require('gulp')
+const source = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const rename = require('gulp-rename')
+const gutil = require('gulp-util')
+const sass = require('gulp-sass')
+const uglify = require('gulp-uglify')
+const pump = require('pump')
 
 gulp.task('default', [ 'browserify', 'sass', 'tracker' ] );
 
 gulp.task('browserify', function () {
     return browserify({
             entries: './assets/js/script.js',
-            debug: true
+            debug: false
         })
         .transform("babelify", {presets: ["es2015"]})
         .bundle()
@@ -27,6 +27,14 @@ gulp.task('browserify', function () {
         .pipe(source('script.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./static/js/'))
+});
+
+gulp.task('minify', function(cb) {
+  pump([
+    gulp.src('./static/js/*.js'),
+    uglify().on('error', gutil.log),
+    gulp.dest('./static/js/')
+  ], cb)
 });
 
 gulp.task('img', function() {
