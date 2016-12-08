@@ -16,8 +16,7 @@ This is nowhere near being usable, let alone stable. Treat as a proof of concept
 	};
 	a=d.createElement('script'),
 	m=d.getElementsByTagName('script')[0];
-	a.async=1;
-	a.src=u;
+	a.async=1; a.src=u;
 	m.parentNode.insertBefore(a,m)
 })(document, window, '//ana.dev/tracker.js', 'ana');
 ana('setTrackerUrl', '//ana.dev/collect');

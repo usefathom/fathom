@@ -4,31 +4,25 @@ import (
   "net/http"
   "os"
   "log"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "github.com/dannyvankooten/ana/api"
   "github.com/gorilla/mux"
   "github.com/gorilla/handlers"
   "github.com/joho/godotenv"
-  seed "github.com/dannyvankooten/ana/db"
 )
 
 func main() {
-
   // load .env file
   err := godotenv.Load()
   if err != nil {
     log.Fatal("Error loading .env file")
   }
 
-  db := core.SetupDatabaseConnection()
-  defer db.Close()
-
-  // seed 1000 records
-  seed.Seed(100)
-
-  r := mux.NewRouter()
+  conn := db.SetupDatabaseConnection()
+  defer conn.Close()
 
   // register routes
+  r := mux.NewRouter()
   r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
   r.Handle("/api/session", api.Login).Methods("POST")
   r.Handle("/api/session", api.Logout).Methods("DELETE")

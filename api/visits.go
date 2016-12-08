@@ -3,7 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/models"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "encoding/json"
   "github.com/gorilla/mux"
   "time"
@@ -11,7 +11,7 @@ import (
 
 // URL: /api/visits
 var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  stmt, err := core.DB.Prepare(`SELECT
+  stmt, err := db.Conn.Prepare(`SELECT
     id,
     COALESCE(browser_name, '') AS browser_name,
     COALESCE(browser_language, '') AS browser_language,
@@ -50,7 +50,7 @@ var GetVisitsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
 // URL: /api/visits/count
 var GetVisitsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := core.DB.Prepare(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
+  stmt, err := db.Conn.Prepare(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
 
   checkError(err)
   defer stmt.Close()
@@ -65,7 +65,7 @@ var GetVisitsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http
 // URL: /api/visits/count/realtime
 var GetVisitsRealtimeCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   var result int
-  core.DB.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND timestamp <= CURRENT_TIMESTAMP`).Scan(&result)
+  db.Conn.QueryRow(`SELECT COUNT(DISTINCT(ip_address)) FROM visits WHERE timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND timestamp <= CURRENT_TIMESTAMP`).Scan(&result)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
@@ -80,7 +80,7 @@ var GetVisitsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     "month": "%Y-%m",
   }
 
-  stmt, err := core.DB.Prepare(`SELECT
+  stmt, err := db.Conn.Prepare(`SELECT
     COUNT(DISTINCT(ip_address)) AS count, DATE_FORMAT(timestamp, ?) AS date_group
     FROM visits
     WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?

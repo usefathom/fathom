@@ -1,3 +1,3 @@
 .PHONY: bin
-bin: ana.go models/visit.go
+bin: ana.go 
 	go install

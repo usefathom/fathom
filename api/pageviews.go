@@ -3,7 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/models"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "encoding/json"
   "github.com/gorilla/mux"
   "time"
@@ -12,7 +12,7 @@ import (
 // URL: /api/pageviews
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := core.DB.Prepare(`SELECT
+  stmt, err := db.Conn.Prepare(`SELECT
       path,
       COUNT(ip_address) AS pageviews,
       COUNT(DISTINCT(ip_address)) AS pageviews_unique
@@ -47,7 +47,7 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 // URL: /api/pageviews/count
 var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := core.DB.Prepare(`SELECT COUNT(*) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
+  stmt, err := db.Conn.Prepare(`SELECT COUNT(*) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
   checkError(err)
   defer stmt.Close()
 
@@ -67,7 +67,7 @@ var GetPageviewsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter
     "month": "%Y-%m",
   }
   before, after := getRequestedPeriods(r)
-  stmt, err := core.DB.Prepare(`SELECT
+  stmt, err := db.Conn.Prepare(`SELECT
     COUNT(*) AS count, DATE_FORMAT(timestamp, ?) AS date_group
     FROM visits
     WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?

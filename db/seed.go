@@ -1,7 +1,6 @@
 package db
 
 import (
-  "github.com/dannyvankooten/ana/core"
   "github.com/dannyvankooten/ana/models"
   "log"
   "time"
@@ -61,7 +60,7 @@ var screenResolutions = []string {
 func Seed(n int) {
 
   // prepare statement for inserting data
-  stmt, err := core.DB.Prepare(`INSERT INTO visits(
+  stmt, err := Conn.Prepare(`INSERT INTO visits(
     browser_language,
     browser_name,
     browser_version,

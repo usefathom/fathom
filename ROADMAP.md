@@ -5,15 +5,18 @@ This is a general draft document for thoughts and todo's, without any structure 
 
 ### What's cooking?
 
-- Replace chart with custom D3 chart.
-- Allow setting custom limit in table overviews.
+- Return 0px GIF in /collect endpoint
+- Hand out unique ID to each visitor
+- Reference site URL when tracking.
+- Reference path & title when tracking (indexed by path, update title when changes)
+- Track referrals, use tables from aforementioned points.
+- Bulk process tracking requests (Redis or in-memory?)
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.
 - JS client for consuming API endpoints.
-- Envelope API responses.
+- Envelope API responses & perhaps return total in table overview?
 - Track canonical URL's.
 - Show referrals.
-- Country flags.
 - Geolocate unknown IP addresses periodically.
 - Mask last part of IP address.
 

@@ -5,7 +5,7 @@ import (
   "log"
   "github.com/mssola/user_agent"
   "github.com/dannyvankooten/ana/models"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
 )
 
 func CollectHandler(w http.ResponseWriter, r *http.Request) {
@@ -17,7 +17,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   // prepare statement for inserting data
-  stmt, err := core.DB.Prepare(`INSERT INTO visits(
+  stmt, err := db.Conn.Prepare(`INSERT INTO visits(
     ip_address,
     path,
     referrer_url,

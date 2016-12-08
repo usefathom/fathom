@@ -2,7 +2,7 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "encoding/json"
 )
 
@@ -10,7 +10,7 @@ import (
 var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
 
-  stmt, err := core.DB.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
     FROM visits
@@ -21,7 +21,7 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   var total float32
   stmt.QueryRow(before, after).Scan(&total)
 
-  stmt, err = core.DB.Prepare(`
+  stmt, err = db.Conn.Prepare(`
     SELECT
     browser_language,
     COUNT(DISTINCT(ip_address)) AS count

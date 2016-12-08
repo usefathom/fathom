@@ -2,7 +2,7 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "encoding/json"
 )
 
@@ -11,7 +11,7 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
   before, after := getRequestedPeriods(r)
 
   // get total
-  stmt, err := core.DB.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
     FROM visits
@@ -22,7 +22,7 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
   stmt.QueryRow(before, after).Scan(&total)
 
   // get rows
-  stmt, err = core.DB.Prepare(`
+  stmt, err = db.Conn.Prepare(`
     SELECT
     screen_resolution,
     COUNT(DISTINCT(ip_address)) AS count

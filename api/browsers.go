@@ -2,7 +2,7 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/core"
+  "github.com/dannyvankooten/ana/db"
   "encoding/json"
 )
 
@@ -11,7 +11,7 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
   before, after := getRequestedPeriods(r)
 
   // get total
-  stmt, err := core.DB.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     COUNT(DISTINCT(ip_address))
     FROM visits
@@ -23,7 +23,7 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
   stmt.QueryRow(before, after).Scan(&total)
 
   // get rows
-  stmt, err = core.DB.Prepare(`
+  stmt, err = db.Conn.Prepare(`
     SELECT
     browser_name,
     COUNT(DISTINCT(ip_address)) AS count
