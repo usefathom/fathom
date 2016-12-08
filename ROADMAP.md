@@ -5,7 +5,6 @@ This is a general draft document for thoughts and todo's, without any structure 
 
 ### What's cooking?
 
-- Return 0px GIF in /collect endpoint
 - Hand out unique ID to each visitor
 - Reference site URL when tracking.
 - Reference path & title when tracking (indexed by path, update title when changes)

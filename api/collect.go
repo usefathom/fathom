@@ -6,6 +6,7 @@ import (
   "github.com/mssola/user_agent"
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/db"
+  "encoding/base64"
 )
 
 func CollectHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,5 +75,9 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Expires", "Mon, 01 Jan 1990 00:00:00 GMT")
   w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
   w.Header().Set("Pragma", "no-cache")
-  w.Header().Set("Status", "200")
+  w.WriteHeader(http.StatusOK)
+
+  // 1x1 px transparent GIF
+  b, _ := base64.StdEncoding.DecodeString("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+  w.Write(b)
 }
