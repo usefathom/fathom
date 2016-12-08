@@ -9,6 +9,7 @@ This is a general draft document for thoughts and todo's, without any structure 
 - Reference site URL when tracking.
 - Reference path & title when tracking (indexed by path, update title when changes)
 - Track referrals, use tables from aforementioned points.
+- CLI commands for CRUD user.
 - Bulk process tracking requests (Redis or in-memory?)
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.
@@ -29,3 +30,9 @@ This is a general draft document for thoughts and todo's, without any structure 
 - Acquisition
   - Referral's
   - Search keywords
+
+```
+  // stmt2, _ := db.Conn.Prepare("INSERT INTO users(email, password) VALUES(?, ?)")
+  // hash, _ := bcrypt.GenerateFromPassword([]byte(l.Password), 10)
+  // stmt2.Exec(l.Email, hash)
+```

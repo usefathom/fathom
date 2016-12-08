@@ -21,11 +21,13 @@ func main() {
   conn := db.SetupDatabaseConnection()
   defer conn.Close()
 
+  db.Seed(1000)
+
   // register routes
   r := mux.NewRouter()
   r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
-  r.Handle("/api/session", api.Login).Methods("POST")
-  r.Handle("/api/session", api.Logout).Methods("DELETE")
+  r.Handle("/api/session", api.LoginHandler).Methods("POST")
+  r.Handle("/api/session", api.LogoutHandler).Methods("DELETE")
   r.Handle("/api/visits/count", api.Authorize(api.GetVisitsCountHandler)).Methods("GET")
   r.Handle("/api/visits/count/group/{period}", api.Authorize(api.GetVisitsPeriodCountHandler)).Methods("GET")
   r.Handle("/api/visits/count/realtime", api.Authorize(api.GetVisitsRealtimeCountHandler)).Methods("GET")
