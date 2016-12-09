@@ -5,10 +5,11 @@ This is a general draft document for thoughts and todo's, without any structure 
 
 ### What's cooking?
 
+- Fix /collect route
 - Hand out unique ID to each visitor
 - Reference site URL when tracking.
-- Reference path & title when tracking (indexed by path, update title when changes)
-- Track referrals, use tables from aforementioned points.
+- Update page title when it changes.
+- Track referrals, use same tables as aforementioned points?
 - Bulk process tracking requests (Redis or in-memory?)
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.
