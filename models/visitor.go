@@ -2,6 +2,8 @@ package models
 
 import (
   "database/sql"
+  "crypto/md5"
+  "encoding/hex"
 )
 
 type Visitor struct {
@@ -49,4 +51,11 @@ func (v *Visitor) Save(conn *sql.DB) error {
 
     v.ID, err = result.LastInsertId()
     return err
+  }
+
+  // GenerateKey generates the "unique" visitor key
+  func( v *Visitor) GenerateKey() string {
+    byteKey := md5.Sum([]byte(v.IpAddress + v.DeviceOS + v.BrowserName + v.ScreenResolution))
+    v.Key = hex.EncodeToString(byteKey[:])
+    return v.Key
   }

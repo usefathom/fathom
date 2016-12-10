@@ -10,13 +10,19 @@ const gutil = require('gulp-util')
 const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
 const pump = require('pump')
+const debug = process.env.NODE_ENV !== 'production';
 
-gulp.task('default', [ 'browserify', 'sass', 'tracker' ] );
+let defaultTasks = [ 'browserify', 'sass', 'tracker' ] ;
+if( ! debug ) {
+  defaultTasks.push( 'minify' );
+}
+
+gulp.task('default', defaultTasks);
 
 gulp.task('browserify', function () {
     return browserify({
             entries: './assets/js/script.js',
-            debug: false
+            debug: debug
         })
         .transform("babelify", {presets: ["es2015"]})
         .bundle()
@@ -31,7 +37,7 @@ gulp.task('browserify', function () {
 
 gulp.task('minify', function(cb) {
   process.env.NODE_ENV = 'production';
-  
+
   pump([
     gulp.src('./static/js/*.js'),
     uglify().on('error', gutil.log),

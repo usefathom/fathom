@@ -2,14 +2,11 @@ package api
 
 import (
   "net/http"
-  "log"
   "strings"
   "github.com/mssola/user_agent"
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/db"
   "encoding/base64"
-  "crypto/md5"
-  "encoding/hex"
 )
 
 func getRequestIp(r *http.Request) string {
@@ -46,7 +43,8 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
     page.Save(db.Conn)
   }
 
-  // find or insert visitor
+  // find or insert visitor.
+  // TODO: Mask IP Address
   visitor := models.Visitor{
     IpAddress: getRequestIp(r),
     BrowserLanguage: q.Get("l"),
@@ -62,8 +60,8 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
       visitor.BrowserVersion = versionParts[0] + "." + versionParts[1]
   }
 
-  byteKey := md5.Sum([]byte(visitor.IpAddress + visitor.DeviceOS + visitor.BrowserName + visitor.ScreenResolution))
-  visitor.Key = hex.EncodeToString(byteKey[:])
+  // query by unique visitor key
+  visitor.GenerateKey()
   stmt, _ = db.Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
   defer stmt.Close()
   err = stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
@@ -71,20 +69,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
     visitor.Save(db.Conn)
   }
 
-  // prepare statement for inserting data
-  stmt, err = db.Conn.Prepare(`INSERT INTO pageviews(
-    page_id,
-    visitor_id,
-    referrer_url,
-    referrer_keyword
-    ) VALUES( ?, ?, ?, ? )`)
-  if err != nil {
-      log.Fatal(err.Error())
-  }
-  defer stmt.Close()
-
-  // TODO: Mask IP Address
-  visit := models.Pageview{
+  pageview := models.Pageview{
     PageID: page.ID,
     VisitorID: visitor.ID,
     ReferrerUrl: q.Get("ru"),
@@ -92,19 +77,11 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   // only store referrer URL if not coming from own site
-  if strings.Contains(visit.ReferrerUrl, page.Hostname)  {
-    visit.ReferrerUrl = ""
+  if strings.Contains(pageview.ReferrerUrl, page.Hostname)  {
+    pageview.ReferrerUrl = ""
   }
 
-  _, err = stmt.Exec(
-    visit.PageID,
-    visit.VisitorID,
-    visit.ReferrerUrl,
-    visit.ReferrerKeyword,
-  )
-  if err != nil {
-    log.Fatal(err)
-  }
+  pageview.Save(db.Conn)
 
   // don't you cache this
   w.Header().Set("Content-Type", "image/gif")
