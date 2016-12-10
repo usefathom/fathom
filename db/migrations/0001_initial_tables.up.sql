@@ -19,6 +19,8 @@ CREATE TABLE visitors(
   `country` CHAR(3) NULL
 );
 
+ALTER TABLE visitors ADD UNIQUE(`visitor_key`);
+
 CREATE TABLE pages(
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
   `hostname` VARCHAR(63) NOT NULL,

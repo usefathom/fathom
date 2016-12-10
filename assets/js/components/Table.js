@@ -30,7 +30,7 @@ class Table extends Component {
     }
 
     return (
-      <td>{p.Label}</td>
+      <td>{p.Label.substring(0, 15)}</td>
     )
   }
 
