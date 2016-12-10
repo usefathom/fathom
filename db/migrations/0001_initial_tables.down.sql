@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS visits;
+DROP TABLE IF EXISTS pageviews;
+DROP TABLE if exists visitors;
 DROP TABLE IF EXISTS pages;
 DROP TABLE IF EXISTS sites;
 DROP TABLE IF EXISTS users;

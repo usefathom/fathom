@@ -6,7 +6,7 @@ import(
 
 type Page struct {
   ID int64
-  SiteID int64
+  Hostname string
   Path string
   Title string
 }
@@ -14,7 +14,7 @@ type Page struct {
 func (p *Page) Save(conn *sql.DB) error {
     // prepare statement for inserting data
     stmt, err := conn.Prepare(`INSERT INTO pages(
-      site_id,
+      hostname,
       path,
       title
       ) VALUES( ?, ?, ? )`)
@@ -23,7 +23,7 @@ func (p *Page) Save(conn *sql.DB) error {
     }
     defer stmt.Close()
 
-    result, err := stmt.Exec(p.SiteID, p.Path, p.Title)
+    result, err := stmt.Exec(p.Hostname, p.Path, p.Title)
     p.ID, _ = result.LastInsertId()
 
     return err

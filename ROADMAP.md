@@ -5,11 +5,7 @@ This is a general draft document for thoughts and todo's, without any structure 
 
 ### What's cooking?
 
-- Fix /collect route
-- Hand out unique ID to each visitor
-- Reference site URL when tracking.
 - Update page title when it changes.
-- Track referrals, use same tables as aforementioned points?
 - Bulk process tracking requests (Redis or in-memory?)
 - Allow sorting in table overviews.
 - Choose a OS license & settle on name.
@@ -17,21 +13,3 @@ This is a general draft document for thoughts and todo's, without any structure 
 - Show referrals.
 - Geolocate unknown IP addresses periodically.
 - Mask last part of IP address.
-
-### Key metrics
-
-- Unique visits per day (in period)
-- Pageviews per day (in period)
-- Demographic
-  - Country
-  - Browser + version
-  - Screen resolutions
-- Acquisition
-  - Referral's
-  - Search keywords
-
-```
-  // stmt2, _ := db.Conn.Prepare("INSERT INTO users(email, password) VALUES(?, ?)")
-  // hash, _ := bcrypt.GenerateFromPassword([]byte(l.Password), 10)
-  // stmt2.Exec(l.Email, hash)
-```

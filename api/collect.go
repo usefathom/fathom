@@ -3,11 +3,25 @@ package api
 import (
   "net/http"
   "log"
+  "strings"
   "github.com/mssola/user_agent"
   "github.com/dannyvankooten/ana/models"
   "github.com/dannyvankooten/ana/db"
   "encoding/base64"
+  "crypto/md5"
+  "encoding/hex"
 )
+
+func getRequestIp(r *http.Request) string {
+  ipAddress := r.RemoteAddr
+
+  headerForwardedFor := r.Header.Get("X-Forwarded-For")
+  if( headerForwardedFor != "" ) {
+    ipAddress = headerForwardedFor
+  }
+
+  return ipAddress
+}
 
 func CollectHandler(w http.ResponseWriter, r *http.Request) {
   ua := user_agent.New(r.UserAgent())
@@ -17,49 +31,76 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  q := r.URL.Query()
+
+  // find or insert page
+  page := models.Page{
+    Path: q.Get("p"),
+    Title: q.Get("t"),
+    Hostname: q.Get("h"),
+  }
+  stmt, _ := db.Conn.Prepare("SELECT p.id FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
+  defer stmt.Close()
+  err := stmt.QueryRow(page.Hostname, page.Path).Scan(&page.ID)
+  if err != nil {
+    page.Save(db.Conn)
+  }
+
+  // find or insert visitor
+  visitor := models.Visitor{
+    IpAddress: getRequestIp(r),
+    BrowserLanguage: q.Get("l"),
+    ScreenResolution: q.Get("sr"),
+    DeviceOS: ua.OS(),
+    Country: "",
+  }
+
+  // add browser details
+  visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
+  versionParts := strings.SplitN(visitor.BrowserVersion, ".", 3)
+  if len(versionParts) > 1 {
+      visitor.BrowserVersion = versionParts[0] + "." + versionParts[1]
+  }
+
+  byteKey := md5.Sum([]byte(visitor.IpAddress + visitor.DeviceOS + visitor.BrowserName + visitor.ScreenResolution))
+  visitor.Key = hex.EncodeToString(byteKey[:])
+  stmt, _ = db.Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+  defer stmt.Close()
+  err = stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
+  if err != nil {
+    visitor.Save(db.Conn)
+  }
+
   // prepare statement for inserting data
-  stmt, err := db.Conn.Prepare(`INSERT INTO visits(
-    ip_address,
+  stmt, err = db.Conn.Prepare(`INSERT INTO pageviews(
     page_id,
+    visitor_id,
     referrer_url,
-    browser_language,
-    browser_name,
-    browser_version,
-    screen_resolution
-    ) VALUES( ?, ?, ?, ?, ?, ?, ?, ? )`)
+    referrer_keyword
+    ) VALUES( ?, ?, ?, ? )`)
   if err != nil {
       log.Fatal(err.Error())
   }
   defer stmt.Close()
 
   // TODO: Mask IP Address
-  // TODO: Query DB to determine whether visitor is returning
-  ipAddress := r.RemoteAddr
-  headerForwardedFor := r.Header.Get("X-Forwarded-For")
-  if( headerForwardedFor != "" ) {
-    ipAddress = headerForwardedFor
+  visit := models.Pageview{
+    PageID: page.ID,
+    VisitorID: visitor.ID,
+    ReferrerUrl: q.Get("ru"),
+    ReferrerKeyword: q.Get("rk"),
   }
 
-  // TODO: Query Path
-
-  q := r.URL.Query()
-  visit := models.Visit{
-    IpAddress: ipAddress,
-    ReferrerUrl: q.Get("r"),
-    BrowserLanguage: q.Get("l"),
-    ScreenResolution: q.Get("sr"),
+  // only store referrer URL if not coming from own site
+  if strings.Contains(visit.ReferrerUrl, page.Hostname)  {
+    visit.ReferrerUrl = ""
   }
-
-  // add browser details
-  visit.BrowserName, visit.BrowserVersion = ua.Browser()
 
   _, err = stmt.Exec(
-    visit.IpAddress,
+    visit.PageID,
+    visit.VisitorID,
     visit.ReferrerUrl,
-    visit.BrowserLanguage,
-    visit.BrowserName,
-    visit.BrowserVersion,
-    visit.ScreenResolution,
+    visit.ReferrerKeyword,
   )
   if err != nil {
     log.Fatal(err)

@@ -167,7 +167,7 @@ class Graph extends Component {
       })
 
     Client
-      .request(`visits/count/group/${group}?before=${before}&after=${after}`)
+      .request(`visitors/count/group/${group}?before=${before}&after=${after}`)
       .then((d) => {
         this.data.visitors = d;
         window.requestAnimationFrame(this.refreshChart);

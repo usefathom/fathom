@@ -13,15 +13,15 @@ import (
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
   stmt, err := db.Conn.Prepare(`SELECT
-      s.url,
+      p.hostname,
       p.path,
-      COUNT(v.ip_address) AS pageviews,
-      COUNT(DISTINCT(v.ip_address)) AS pageviews_unique
-    FROM visits v
-    LEFT JOIN pages p ON v.page_id = p.id
-    LEFT JOIN sites s ON p.site_id = s.id
-    WHERE UNIX_TIMESTAMP(v.timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
-    GROUP BY p.path, s.url
+      COUNT(*) AS pageviews,
+      COUNT(DISTINCT(v.id)) AS pageviews_unique
+    FROM pageviews pv
+    LEFT JOIN visitors v ON v.id = pv.visitor_id
+    LEFT JOIN pages p ON pv.page_id = p.id
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
+    GROUP BY p.path, p.hostname
     ORDER BY pageviews DESC
     LIMIT ?`)
   checkError(err)
@@ -31,10 +31,10 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   checkError(err)
   defer rows.Close()
 
-  results := make([]models.Pageview, 0)
+  results := make([]models.Pageviews, 0)
   for rows.Next() {
-    var p models.Pageview
-    err = rows.Scan(&p.Url, &p.Path, &p.Count, &p.CountUnique);
+    var p models.Pageviews
+    err = rows.Scan(&p.Hostname, &p.Path, &p.Count, &p.CountUnique);
     checkError(err)
     results = append(results, p)
   }
@@ -50,7 +50,7 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 // URL: /api/pageviews/count
 var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := db.Conn.Prepare(`SELECT COUNT(*) FROM visits WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
+  stmt, err := db.Conn.Prepare(`SELECT COUNT(*) FROM pageviews pv WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?`)
   checkError(err)
   defer stmt.Close()
 
@@ -72,8 +72,8 @@ var GetPageviewsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter
   before, after := getRequestedPeriods(r)
   stmt, err := db.Conn.Prepare(`SELECT
     COUNT(*) AS count, DATE_FORMAT(timestamp, ?) AS date_group
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
+    FROM pageviews pv
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()

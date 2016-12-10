@@ -47,7 +47,8 @@ function trackPageview() {
     p: path,
     sr: screen.width + "x" + screen.height,
     t: document.title,
-    r: document.referrer
+    ru: document.referrer,
+    rk: ""
   };
 
   var i = document.createElement('img');

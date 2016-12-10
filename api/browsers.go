@@ -13,9 +13,9 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
   // get total
   stmt, err := db.Conn.Prepare(`
     SELECT
-    COUNT(DISTINCT(ip_address))
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
+    COUNT(DISTINCT(pv.visitor_id))
+    FROM pageviews pv
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
   `)
   checkError(err)
   defer stmt.Close()
@@ -25,11 +25,12 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
   // get rows
   stmt, err = db.Conn.Prepare(`
     SELECT
-    browser_name,
-    COUNT(DISTINCT(ip_address)) AS count
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ? AND browser_name IS NOT NULL
-    GROUP BY browser_name
+    v.browser_name,
+    COUNT(DISTINCT(pv.visitor_id)) AS count
+    FROM pageviews pv
+    LEFT JOIN visitors v ON v.id = pv.visitor_id
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ? AND v.browser_name IS NOT NULL
+    GROUP BY v.browser_name
     ORDER BY count DESC
     LIMIT ?`)
   checkError(err)

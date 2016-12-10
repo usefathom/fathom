@@ -12,9 +12,10 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 
   stmt, err := db.Conn.Prepare(`
     SELECT
-    COUNT(DISTINCT(ip_address))
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
+    COUNT(DISTINCT(pv.visitor_id))
+    FROM pageviews pv
+    LEFT JOIN visitors v ON v.id = pv.visitor_id
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
     `)
   checkError(err)
   defer stmt.Close()
@@ -23,11 +24,12 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 
   stmt, err = db.Conn.Prepare(`
     SELECT
-    browser_language,
-    COUNT(DISTINCT(ip_address)) AS count
-    FROM visits
-    WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?
-    GROUP BY browser_language
+    v.browser_language,
+    COUNT(v.id) AS count
+    FROM pageviews pv
+    LEFT JOIN visitors v ON v.id = pv.visitor_id
+    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
+    GROUP BY v.browser_language
     ORDER BY count DESC
     LIMIT ?`)
   checkError(err)

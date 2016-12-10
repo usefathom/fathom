@@ -5,8 +5,8 @@ import (
   "log"
   "time"
   "math/rand"
-  "fmt"
-  "github.com/Pallinder/go-randomdata"
+//  "fmt"
+//  "github.com/Pallinder/go-randomdata"
 )
 
 var browserNames = []string {
@@ -49,45 +49,33 @@ var screenResolutions = []string {
   "360x640",
 }
 
-func seedSite() models.Site {
-  // get first site or create one
-  var site models.Site
-  Conn.QueryRow("SELECT id, url FROM sites LIMIT 1").Scan(&site.ID, &site.Url)
 
-  if site.Url == "" {
-    site.Url = "http://local.wordpress.dev/"
-    site.Save(Conn)
-  }
-
-  return site
-}
-
-func seedPages(site models.Site) []models.Page {
+func seedPages() []models.Page {
   var pages = make([]models.Page, 0)
 
   homepage := models.Page{
-    SiteID: site.ID,
+    Hostname: "wordpress.dev",
     Path: "/",
     Title: "Homepage",
   }
   homepage.Save(Conn)
 
   contactPage := models.Page{
-    SiteID: site.ID,
+    Hostname: "wordpress.dev",
     Path: "/contact/",
     Title: "Contact",
   }
   contactPage.Save(Conn)
 
   aboutPage := models.Page{
-    SiteID: site.ID,
+    Hostname: "wordpress.dev",
     Path: "/about/",
     Title: "About Me",
   }
   aboutPage.Save(Conn)
 
   portfolioPage := models.Page{
-    SiteID: site.ID,
+    Hostname: "wordpress.dev",
     Path: "/portfolio/",
     Title: "Portfolio",
   }
@@ -103,70 +91,64 @@ func seedPages(site models.Site) []models.Page {
 
 func Seed(n int) {
 
-  site := seedSite()
-  pages := seedPages(site)
+//  pages := seedPages()
 
   // prepare statement for inserting data
-  stmt, err := Conn.Prepare(`INSERT INTO visits(
+  stmt, err := Conn.Prepare(`INSERT INTO pageviews(
     page_id,
-    browser_language,
-    browser_name,
-    browser_version,
-    country,
-    ip_address,
+    visitor_id,
+    referrer_keyword,
     referrer_url,
-    screen_resolution,
     timestamp
-    ) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ? )`)
+    ) VALUES( ?, ?, ? ?, ? )`)
   if err != nil {
       log.Fatal(err)
   }
   defer stmt.Close()
 
-  // insert X random hits
-  log.Printf("Inserting %d visits", n)
-  for i := 0; i < n; i++ {
-
-    // print a dot as progress indicator
-    fmt.Print(".")
-
-    // generate random timestamp
-    date := randomDateBeforeNow();
-    timestamp := fmt.Sprintf("%s %d:%d:%d", date.Format("2006-01-02"), randInt(10, 24), randInt(10, 60), randInt(10, 60))
-
-    visit := models.Visit{
-      IpAddress: randomdata.IpV4Address(),
-      BrowserName: randSliceElement(browserNames),
-      BrowserVersion: "54.0.2840.100",
-      BrowserLanguage: randSliceElement(browserLanguages),
-      ScreenResolution: randSliceElement(screenResolutions),
-      Country: randomdata.Country(randomdata.TwoCharCountry),
-      ReferrerUrl: "",
-      Timestamp: timestamp,
-    }
-
-    // insert between 1-4 pageviews for this visitor
-    for j := 0; j < randInt(1, 4); j++ {
-      page := pages[randInt(0, len(pages))]
-      visit.PageID = page.ID
-
-      _, err = stmt.Exec(
-        visit.PageID,
-        visit.BrowserLanguage,
-        visit.BrowserName,
-        visit.BrowserVersion,
-        visit.Country,
-        visit.IpAddress,
-        visit.ReferrerUrl,
-        visit.ScreenResolution,
-        visit.Timestamp,
-      )
-      if err != nil {
-        log.Fatal(err)
-      }
-    }
-
-  }
+  // // insert X random hits
+  // log.Printf("Inserting %d visits", n)
+  // for i := 0; i < n; i++ {
+  //
+  //   // print a dot as progress indicator
+  //   fmt.Print(".")
+  //
+  //   // generate random timestamp
+  //   date := randomDateBeforeNow();
+  //   timestamp := fmt.Sprintf("%s %d:%d:%d", date.Format("2006-01-02"), randInt(10, 24), randInt(10, 60), randInt(10, 60))
+  //
+  //   visit := models.Visit{
+  //     IpAddress: randomdata.IpV4Address(),
+  //     BrowserName: randSliceElement(browserNames),
+  //     BrowserVersion: "54.0.2840.100",
+  //     BrowserLanguage: randSliceElement(browserLanguages),
+  //     ScreenResolution: randSliceElement(screenResolutions),
+  //     Country: randomdata.Country(randomdata.TwoCharCountry),
+  //     ReferrerUrl: "",
+  //     Timestamp: timestamp,
+  //   }
+  //
+  //   // insert between 1-4 pageviews for this visitor
+  //   for j := 0; j < randInt(1, 4); j++ {
+  //     page := pages[randInt(0, len(pages))]
+  //     visit.PageID = page.ID
+  //
+  //     _, err = stmt.Exec(
+  //       visit.PageID,
+  //       visit.BrowserLanguage,
+  //       visit.BrowserName,
+  //       visit.BrowserVersion,
+  //       visit.Country,
+  //       visit.IpAddress,
+  //       visit.ReferrerUrl,
+  //       visit.ScreenResolution,
+  //       visit.Timestamp,
+  //     )
+  //     if err != nil {
+  //       log.Fatal(err)
+  //     }
+  //   }
+  //}
 }
 
 func randomDate() time.Time {

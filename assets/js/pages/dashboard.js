@@ -44,7 +44,7 @@ class Dashboard extends Component {
         </div>
         <div class="row">
           <div class="col-2">
-            <CountWidget title="Visitors" endpoint="visits" period={this.state.period} />
+            <CountWidget title="Visitors" endpoint="visitors" period={this.state.period} />
           </div>
           <div class="col-2">
             <CountWidget title="Pageviews" endpoint="pageviews" period={this.state.period} />
