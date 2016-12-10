@@ -11,7 +11,8 @@ class CountWidget extends Component {
 
     this.state = {
       count: 0,
-      previousCount: 0
+      previousCount: 0,
+      loading: false
     }
 
     this.fetchData = this.fetchData.bind(this);
@@ -27,9 +28,10 @@ class CountWidget extends Component {
   fetchData(period) {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
+    this.setState({ loading: true })
 
     Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
-      .then((d) => { this.setState({ count: d })})
+      .then((d) => { this.setState({ loading: false, count: d })})
 
     // query previous period
     const previousBefore = after;
@@ -50,8 +52,10 @@ class CountWidget extends Component {
   }
 
   render() {
+    const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
     return (
       <div class="block center-text">
+        {loadingOverlay}
         <h4 class="">{this.props.title}</h4>
         <div class="big tiny-margin">{numbers.formatWithComma(this.state.count)} {this.renderPercentage()}</div>
         <div class="muted">last {this.props.period} days</div>

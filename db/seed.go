@@ -91,6 +91,9 @@ func seedPages() []models.Page {
 func Seed(n int) {
   pages := seedPages()
 
+  stmtVisitor, _ := Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+  defer stmtVisitor.Close()
+
   // insert X random hits
   for i := 0; i < n; i++ {
 
@@ -107,11 +110,9 @@ func Seed(n int) {
       ScreenResolution: randSliceElement(screenResolutions),
       Country: randomdata.Country(randomdata.TwoCharCountry),
     }
-    visitor.GenerateKey()
+    visitor.Key = visitor.GenerateKey()
 
-    stmt, _ := Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
-    defer stmt.Close()
-    err := stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
+    err := stmtVisitor.QueryRow(visitor.Key).Scan(&visitor.ID)
     if err != nil {
       visitor.Save(Conn)
     }
@@ -127,12 +128,16 @@ func Seed(n int) {
       Timestamp: timestamp,
     }
 
+    Conn.Exec("START TRANSACTION")
+
     // insert between 1-4 pageviews for this visitor
-    for j := 0; j < randInt(1, 4); j++ {
+    for j := 0; j <= randInt(1, 4); j++ {
       page := pages[randInt(0, len(pages))]
       pv.PageID = page.ID
       pv.Save(Conn)
     }
+
+    Conn.Exec("COMMIT")
   }
 }
 

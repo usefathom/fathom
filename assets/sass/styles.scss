@@ -69,6 +69,7 @@ a {
   background: white;
   padding: 20px;
   margin-bottom: 20px;
+  position: relative;
 
   h1, h2, h3 {
     margin-bottom: 20px;
@@ -78,6 +79,37 @@ a {
 .block-float {
   margin-right: 20px;
   float: left;
+}
+
+
+.loading-overlay {
+    position: absolute;
+    background: rgba( 255, 255, 255, 0.9 );
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    font-weight: bold;
+    margin: -20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    div {
+      margin: 50px;
+      height: 28px;
+      width: 28px;
+      animation: rotate 0.8s infinite linear;
+      border: 8px solid #AAA;
+      border-right-color: transparent;
+      border-radius: 50%;
+    }
+
+}
+
+
+@keyframes rotate {
+  0%    { transform: rotate(0deg); }
+  100%  { transform: rotate(360deg); }
 }
 
 .count {

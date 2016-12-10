@@ -29,8 +29,6 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     FROM pageviews pv
     LEFT JOIN visitors v ON v.id = pv.visitor_id
     WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-     AND v.screen_resolution IS NOT NULL
-     AND v.screen_resolution != ""
     GROUP BY v.screen_resolution
     ORDER BY count DESC
     LIMIT ?`)

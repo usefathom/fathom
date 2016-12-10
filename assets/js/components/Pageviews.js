@@ -12,13 +12,14 @@ class Pageviews extends Component {
     super(props)
 
     this.state = {
-      records: []
+      records: [],
+      loading: false
     }
     this.fetchRecords = this.fetchRecords.bind(this);
   }
 
   componentDidMount() {
-    this.fetchRecords(this.props.period);
+    this.fetchRecords(this.props.period)
   }
 
   componentWillReceiveProps(newProps) {
@@ -30,13 +31,15 @@ class Pageviews extends Component {
   fetchRecords(period) {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
+    this.setState({ loading: true })
 
     Client.request(`/pageviews?before=${before}&after=${after}`)
-    .then((d) => { this.setState({ records: d })})
+    .then((d) => { this.setState({ loading: false, records: d })})
     .catch((e) => { console.log(e) })
   }
 
   render() {
+    const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
     const tableRows = this.state.records.map( (p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
@@ -48,6 +51,7 @@ class Pageviews extends Component {
 
     return (
       <div class="block">
+        {loadingOverlay}
         <h3>Pageviews</h3>
         <table class="table pageviews">
           <thead>

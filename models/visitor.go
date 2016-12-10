@@ -56,6 +56,5 @@ func (v *Visitor) Save(conn *sql.DB) error {
   // GenerateKey generates the "unique" visitor key
   func( v *Visitor) GenerateKey() string {
     byteKey := md5.Sum([]byte(v.IpAddress + v.DeviceOS + v.BrowserName + v.ScreenResolution))
-    v.Key = hex.EncodeToString(byteKey[:])
-    return v.Key
+    return hex.EncodeToString(byteKey[:])
   }

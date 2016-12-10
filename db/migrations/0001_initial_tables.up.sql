@@ -1,11 +1,3 @@
-CREATE TABLE pageviews(
-  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `page_id` INTEGER UNSIGNED NOT NULL,
-  `visitor_id` INTEGER UNSIGNED NOT NULL,
-  `referrer_keyword` TEXT NULL,
-  `referrer_url` TEXT NULL,
-  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE visitors(
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -20,6 +12,18 @@ CREATE TABLE visitors(
 );
 
 ALTER TABLE visitors ADD UNIQUE(`visitor_key`);
+
+CREATE TABLE pageviews(
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `page_id` INTEGER UNSIGNED NOT NULL,
+  `visitor_id` INTEGER UNSIGNED NOT NULL,
+  `referrer_keyword` TEXT NULL,
+  `referrer_url` TEXT NULL,
+  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE pageviews ADD FOREIGN KEY(`visitor_id`) REFERENCES visitors(`id`);
+CREATE INDEX pageview_timestamp ON pageviews(timestamp(11));
 
 CREATE TABLE pages(
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,

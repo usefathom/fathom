@@ -12,7 +12,8 @@ class Table extends Component {
 
     this.state = {
       records: [],
-      limit: 5
+      limit: 5,
+      loading: true
     }
 
     this.tableHeaders = props.headers.map(heading => <th>{heading}</th>)
@@ -46,11 +47,12 @@ class Table extends Component {
   }
 
   fetchRecords(period, limit) {
+    this.setState({ loading: true });
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
 
     Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`)
-      .then((d) => { this.setState({ records: d })})
+      .then((d) => { this.setState({ loading: false, records: d })})
       .catch((e) => { console.log(e) })
   }
 
@@ -64,8 +66,11 @@ class Table extends Component {
       </tr>
     ));
 
+    const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
+
     return (
       <div class="block">
+        {loadingOverlay}
         <div class="clearfix">
           <h3 class="pull-left">{this.props.title}</h3>
           <div class="pull-right">

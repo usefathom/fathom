@@ -16,9 +16,8 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
       p.hostname,
       p.path,
       COUNT(*) AS pageviews,
-      COUNT(DISTINCT(v.id)) AS pageviews_unique
+      COUNT(DISTINCT(pv.visitor_id)) AS pageviews_unique
     FROM pageviews pv
-    LEFT JOIN visitors v ON v.id = pv.visitor_id
     LEFT JOIN pages p ON pv.page_id = p.id
     WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
     GROUP BY p.path, p.hostname
