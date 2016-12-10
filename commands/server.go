@@ -22,6 +22,7 @@ func startServer() {
   r.Handle("/api/pageviews/count/group/{period}", api.Authorize(api.GetPageviewsPeriodCountHandler)).Methods("GET")
   r.Handle("/api/pageviews", api.Authorize(api.GetPageviewsHandler)).Methods("GET")
   r.Handle("/api/languages", api.Authorize(api.GetLanguagesHandler)).Methods("GET")
+  r.Handle("/api/referrers", api.Authorize(api.GetReferrersHandler)).Methods("GET")
   r.Handle("/api/screen-resolutions", api.Authorize(api.GetScreenResolutionsHandler)).Methods("GET")
   r.Handle("/api/countries", api.Authorize(api.GetCountriesHandler)).Methods("GET")
   r.Handle("/api/browsers", api.Authorize(api.GetBrowsersHandler)).Methods("GET")
