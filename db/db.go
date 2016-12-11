@@ -4,26 +4,26 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
 	"os"
 )
 
 var Conn *sql.DB
 
-func SetupDatabaseConnection() *sql.DB {
+// SetupDatabaseConnection opens up & returns a SQL connection
+func SetupDatabaseConnection() (*sql.DB, error) {
 	var err error
 	var dataSourceName = fmt.Sprintf("%s:%s@%s/%s", os.Getenv("ANA_DATABASE_USER"), os.Getenv("ANA_DATABASE_PASSWORD"), os.Getenv("ANA_DATABASE_HOST"), os.Getenv("ANA_DATABASE_NAME"))
 
 	Conn, err = sql.Open("mysql", dataSourceName)
 	if err != nil {
-		log.Fatal(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
+		return nil, err
 	}
 
-	// Open doesn't open a connection. Validate DSN data:
+	// Open doesn't open a connection right away. Validate DSN by calling Ping().
 	err = Conn.Ping()
 	if err != nil {
-		log.Fatal(err.Error()) // proper error handling instead of panic in your app
+		return nil, err
 	}
 
-	return Conn
+	return Conn, nil
 }

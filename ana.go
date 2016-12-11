@@ -16,7 +16,10 @@ func main() {
 	}
 
 	// setup database connection
-	conn := db.SetupDatabaseConnection()
+	conn, err := db.SetupDatabaseConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer conn.Close()
 
 	// parse & run cli commands
