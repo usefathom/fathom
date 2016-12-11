@@ -2,6 +2,7 @@ package commands
 
 import(
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/count"
 )
 
 func seedData() {
@@ -9,5 +10,5 @@ func seedData() {
 }
 
 func archiveData() {
-  db.CreateArchives()
+  count.CreateArchives()
 }

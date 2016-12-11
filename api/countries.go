@@ -3,6 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/count"
   "encoding/json"
 )
 
@@ -11,19 +12,10 @@ var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   before, after := getRequestedPeriods(r)
 
   // get total
-  stmt, err := db.Conn.Prepare(`
-    SELECT
-    COUNT(DISTINCT(pv.visitor_id))
-    FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-    `)
-  checkError(err)
-  defer stmt.Close()
-  var total float32
-  stmt.QueryRow(before, after).Scan(&total)
+  total := count.TotalVisitors(before, after)
 
   // get rows
-  stmt, err = db.Conn.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     v.country,
     COUNT(DISTINCT(pv.visitor_id)) AS count
@@ -45,7 +37,7 @@ var GetCountriesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     err = rows.Scan(&d.Label, &d.Count);
     checkError(err)
 
-    d.Percentage = float32(d.Count) / total * 100
+    d.Percentage = float64(d.Count) / total * 100
     results = append(results, d)
   }
 

@@ -1,10 +1,10 @@
-package db
+package count
 
 import(
   "database/sql"
   "log"
+  "github.com/dannyvankooten/ana/db"
 )
-
 
 type Archive struct {
   ID int64
@@ -14,8 +14,8 @@ type Archive struct {
   Date string
 }
 
-func (a *Archive) Save(conn *sql.DB) error {
-  stmt, err := conn.Prepare(`INSERT INTO archive(
+func (a *Archive) Save(Conn *sql.DB) error {
+  stmt, err := db.Conn.Prepare(`INSERT INTO archive(
     metric,
     value,
     count,
@@ -44,7 +44,7 @@ func CreateArchives() {
 }
 
 func CreatePageviewArchives() {
-  stmt, err := Conn.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
       COUNT(*) AS count,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
@@ -62,7 +62,7 @@ func CreatePageviewArchives() {
   checkError(err)
   defer rows.Close()
 
-  Conn.Exec("START TRANSACTION")
+  db.Conn.Exec("START TRANSACTION")
   for rows.Next() {
     a := Archive{
       Metric: "pageviews",
@@ -70,21 +70,14 @@ func CreatePageviewArchives() {
     }
     err = rows.Scan(&a.Count, &a.Date);
     checkError(err)
-    a.Save(Conn)
+    a.Save(db.Conn)
   }
-  Conn.Exec("COMMIT")
+  db.Conn.Exec("COMMIT")
 }
 
 func CreateVisitorArchives() {
 
-  /*
-  SELECT
-    COUNT(DISTINCT(visitor_id)) AS count, DATE_FORMAT(timestamp, ?) AS date_group
-    FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-    GROUP BY date_group
-    */
-  stmt, err := Conn.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
       COUNT(DISTINCT(pv.visitor_id)) AS count,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
@@ -102,7 +95,7 @@ func CreateVisitorArchives() {
   checkError(err)
   defer rows.Close()
 
-  Conn.Exec("START TRANSACTION")
+  db.Conn.Exec("START TRANSACTION")
   for rows.Next() {
     a := Archive{
       Metric: "visitors",
@@ -110,9 +103,9 @@ func CreateVisitorArchives() {
     }
     err = rows.Scan(&a.Count, &a.Date);
     checkError(err)
-    a.Save(Conn)
+    a.Save(db.Conn)
   }
-  Conn.Exec("COMMIT")
+  db.Conn.Exec("COMMIT")
 }
 
 func checkError(err error) {

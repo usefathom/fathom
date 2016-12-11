@@ -51,7 +51,7 @@ var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *h
   before, after := getRequestedPeriods(r)
   stmt, err := db.Conn.Prepare(`
     SELECT
-      SUM(a.count) AS count 
+      SUM(a.count) AS count
     FROM archive a
     WHERE a.metric = 'pageviews' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?`)
   checkError(err)

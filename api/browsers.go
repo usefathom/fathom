@@ -3,6 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/count"
   "encoding/json"
 )
 
@@ -11,19 +12,10 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
   before, after := getRequestedPeriods(r)
 
   // get total
-  stmt, err := db.Conn.Prepare(`
-    SELECT
-    COUNT(DISTINCT(pv.visitor_id))
-    FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-  `)
-  checkError(err)
-  defer stmt.Close()
-  var total float32
-  stmt.QueryRow(before, after).Scan(&total)
+  total := count.TotalVisitors(before, after)
 
   // get rows
-  stmt, err = db.Conn.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     v.browser_name,
     COUNT(DISTINCT(pv.visitor_id)) AS count
@@ -45,7 +37,7 @@ var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
     err = rows.Scan(&d.Label, &d.Count);
     checkError(err)
 
-    d.Percentage = float32(d.Count) / total * 100
+    d.Percentage = float64(d.Count) / total * 100
     results = append(results, d)
   }
 

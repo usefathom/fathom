@@ -15,9 +15,7 @@ var GetVisitorsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *ht
   SELECT
     SUM(a.count)
   FROM archive a
-  WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
-  `)
-
+  WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?`)
   checkError(err)
   defer stmt.Close()
 

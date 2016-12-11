@@ -8,6 +8,7 @@ install_dependencies() {
 	go get "github.com/Pallinder/go-randomdata"
 	go get "github.com/gorilla/handlers"
 	go get "github.com/go-sql-driver/mysql"
+	go get -u "github.com/mattes/migrate"
 }
 
 bin() {

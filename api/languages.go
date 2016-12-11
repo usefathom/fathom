@@ -3,6 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/count"
   "encoding/json"
 )
 
@@ -10,19 +11,10 @@ import (
 var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
 
-  stmt, err := db.Conn.Prepare(`
-    SELECT
-    COUNT(DISTINCT(pv.visitor_id))
-    FROM pageviews pv
-    LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-    `)
-  checkError(err)
-  defer stmt.Close()
-  var total float32
-  stmt.QueryRow(before, after).Scan(&total)
+  // get total
+  total := count.TotalVisitors(before, after)
 
-  stmt, err = db.Conn.Prepare(`
+  stmt, err := db.Conn.Prepare(`
     SELECT
     v.browser_language,
     COUNT(v.id) AS count
@@ -46,7 +38,7 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     err = rows.Scan(&d.Label, &d.Count);
     checkError(err)
 
-    d.Percentage = float32(d.Count) / total * 100
+    d.Percentage = float64(d.Count) / total * 100
     results = append(results, d)
   }
 

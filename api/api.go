@@ -10,7 +10,7 @@ import (
 type Datapoint struct {
   Count int
   Label string
-  Percentage float32 `json:",omitempty"`
+  Percentage float64 `json:",omitempty"`
 }
 
 const defaultPeriod = 7
