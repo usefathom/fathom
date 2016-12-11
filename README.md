@@ -1,6 +1,10 @@
 Ana. Open Source Web Analytics.
 ==============================
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/dannyvankooten/ana)](https://goreportcard.com/report/github.com/dannyvankooten/ana)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/dannyvankooten/ana/master/LICENSE)
+
+
 This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state.
 
 ![Screenshot of the Ana dashboard](https://github.com/dannyvankooten/ana/raw/master/assets/img/screenshot.png?v=6)
