@@ -4,7 +4,7 @@ import(
   "github.com/dannyvankooten/ana/db"
 )
 
-func TotalVisitors(before int64, after int64) float64 {
+func Visitors(before int64, after int64) float64 {
   // get total
   stmt, err := db.Conn.Prepare(`
     SELECT

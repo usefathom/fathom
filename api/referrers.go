@@ -13,7 +13,7 @@ var GetReferrersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   before, after := getRequestedPeriods(r)
 
   // get total
-  total := count.TotalVisitors(before, after)
+  total := count.Visitors(before, after)
 
   // get rows
   stmt, err := db.Conn.Prepare(`

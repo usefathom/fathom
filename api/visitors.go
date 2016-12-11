@@ -3,6 +3,7 @@ package api
 import (
   "net/http"
   "github.com/dannyvankooten/ana/db"
+  "github.com/dannyvankooten/ana/count"
   "encoding/json"
   "github.com/gorilla/mux"
   "time"
@@ -11,16 +12,7 @@ import (
 // URL: /api/visitors/count
 var GetVisitorsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := db.Conn.Prepare(`
-  SELECT
-    SUM(a.count)
-  FROM archive a
-  WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?`)
-  checkError(err)
-  defer stmt.Close()
-
-  var result int
-  stmt.QueryRow(before, after).Scan(&result)
+  result := count.Visitors(before, after)
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(result)
 })
