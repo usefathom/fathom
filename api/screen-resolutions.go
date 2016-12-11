@@ -2,7 +2,6 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/db"
   "github.com/dannyvankooten/ana/count"
   "encoding/json"
 )
@@ -15,7 +14,7 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
   total := count.Visitors(before, after)
 
   // get rows
-  stmt, err := db.Conn.Prepare(`
+  results := count.Custom(`
     SELECT
     v.screen_resolution,
     COUNT(DISTINCT(pv.visitor_id)) AS count
@@ -24,22 +23,7 @@ var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r
     WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
     GROUP BY v.screen_resolution
     ORDER BY count DESC
-    LIMIT ?`)
-  checkError(err)
-  defer stmt.Close()
-  rows, err := stmt.Query(before, after, getRequestedLimit(r))
-  checkError(err)
-  defer rows.Close()
-
-  results := make([]Datapoint, 0)
-  for rows.Next() {
-    var d Datapoint
-    err = rows.Scan(&d.Label, &d.Count);
-    checkError(err)
-
-    d.Percentage = float64(d.Count) / total * 100
-    results = append(results, d)
-  }
+    LIMIT ?`, before, after, getRequestedLimit(r), total)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)

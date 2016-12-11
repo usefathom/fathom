@@ -2,10 +2,8 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/db"
   "github.com/dannyvankooten/ana/count"
   "encoding/json"
-  "strings"
 )
 
 // URL: /api/referrers
@@ -16,7 +14,7 @@ var GetReferrersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   total := count.Visitors(before, after)
 
   // get rows
-  stmt, err := db.Conn.Prepare(`
+  results := count.Custom(`
     SELECT
     pv.referrer_url,
     COUNT(DISTINCT(pv.visitor_id)) AS count
@@ -26,25 +24,7 @@ var GetReferrersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     AND pv.referrer_url != ""
     GROUP BY pv.referrer_url
     ORDER BY count DESC
-    LIMIT ?`)
-  checkError(err)
-  defer stmt.Close()
-  rows, err := stmt.Query(before, after, getRequestedLimit(r))
-  checkError(err)
-  defer rows.Close()
-
-  results := make([]Datapoint, 0)
-  for rows.Next() {
-    var d Datapoint
-    err = rows.Scan(&d.Label, &d.Count);
-    d.Label = strings.Replace(d.Label, "http://", "", 1)
-    d.Label = strings.Replace(d.Label, "https://", "", 1)
-    d.Label = strings.TrimRight(d.Label, "/")
-    checkError(err)
-
-    d.Percentage = float64(d.Count) / total * 100
-    results = append(results, d)
-  }
+    LIMIT ?`, before, after, getRequestedLimit(r), total)
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)

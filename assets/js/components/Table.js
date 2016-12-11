@@ -52,8 +52,9 @@ class Table extends Component {
     const after = before - ( period * dayInSeconds );
 
     Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`)
-      .then((d) => { this.setState({ loading: false, records: d })})
-      .catch((e) => { console.log(e) })
+      .then((d) => {
+        this.setState({ loading: false, records: d }
+      )}).catch((e) => { console.log(e) })
   }
 
   render() {
@@ -61,8 +62,8 @@ class Table extends Component {
       <tr>
         <td class="muted">{i+1}</td>
         {this.labelCell(p)}
-        <td>{numbers.formatWithComma(p.Count)}</td>
-        <td>{Math.round(p.Percentage)}%</td>
+        <td>{numbers.formatWithComma(p.Value)}</td>
+        <td>{Math.round(p.PercentageValue)}%</td>
       </tr>
     ));
 

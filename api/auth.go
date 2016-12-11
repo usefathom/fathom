@@ -15,7 +15,7 @@ type Login struct {
   Password string `json:"password"`
 }
 
-var store = sessions.NewFilesystemStore( "./storage/sessions/", []byte(os.Getenv("ANA_SECRET_KEY")))
+var store = sessions.NewFilesystemStore("./storage/sessions/", []byte(os.Getenv("ANA_SECRET_KEY")))
 
 // URL: POST /api/session
 var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

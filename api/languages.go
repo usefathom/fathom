@@ -2,7 +2,6 @@ package api
 
 import (
   "net/http"
-  "github.com/dannyvankooten/ana/db"
   "github.com/dannyvankooten/ana/count"
   "encoding/json"
 )
@@ -14,7 +13,7 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
   // get total
   total := count.Visitors(before, after)
 
-  stmt, err := db.Conn.Prepare(`
+  results := count.Custom(`
     SELECT
     v.browser_language,
     COUNT(v.id) AS count
@@ -23,24 +22,8 @@ var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
     GROUP BY v.browser_language
     ORDER BY count DESC
-    LIMIT ?`)
-  checkError(err)
-  defer stmt.Close()
-
-  rows, err := stmt.Query(before, after, defaultLimit)
-  checkError(err)
-  defer rows.Close()
-
-  results := make([]Datapoint, 0)
-
-  for rows.Next() {
-    var d Datapoint
-    err = rows.Scan(&d.Label, &d.Count);
-    checkError(err)
-
-    d.Percentage = float64(d.Count) / total * 100
-    results = append(results, d)
-  }
+    LIMIT ?`, before, after, getRequestedLimit(r), total,
+  )
 
   w.Header().Set("Content-Type", "application/json")
   json.NewEncoder(w).Encode(results)

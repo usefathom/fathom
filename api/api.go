@@ -7,12 +7,6 @@ import (
   "net/http"
 )
 
-type Datapoint struct {
-  Count int
-  Label string
-  Percentage float64 `json:",omitempty"`
-}
-
 const defaultPeriod = 7
 const defaultLimit = 10
 
@@ -21,39 +15,6 @@ func checkError(err error) {
   if err != nil {
     log.Fatal(err)
   }
-}
-
-func fillDatapoints(start int64, end int64, step time.Duration, points []Datapoint) []Datapoint {
-  // be smart about received timestamps
-  if start > end {
-    tmp := end
-    end = start
-    start = tmp
-  }
-
-  startTime := time.Unix(start, 0)
-  endTime := time.Unix(end, 0)
-  newPoints := make([]Datapoint, 0)
-
-  for startTime.Before(endTime) || startTime.Equal(endTime) {
-    point := Datapoint{
-      Count: 0,
-      Label: startTime.Format("2006-01-02"),
-    }
-
-    for j, p := range points {
-      if p.Label == point.Label || p.Label == startTime.Format("2006-01") {
-        point.Count = p.Count
-        points[j] = points[len(points)-1]
-        break
-      }
-    }
-
-    newPoints = append(newPoints, point)
-    startTime = startTime.Add(step)
-  }
-
-  return newPoints
 }
 
 func getRequestedLimit(r *http.Request) int {

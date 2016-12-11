@@ -22,12 +22,12 @@ function Chart(element, showPrimary, showSecondary) {
 
   var pageviewTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + numbers.formatWithComma(d.Count) + '</span>' + ' pageviews')
+      .html((d) => '<span>' + numbers.formatWithComma(d.Value) + '</span>' + ' pageviews')
       .offset([-12, 0]);
 
   var visitorTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + numbers.formatWithComma(d.Count) + '</span>' + ' visitors' )
+      .html((d) => '<span>' + numbers.formatWithComma(d.Value) + '</span>' + ' visitors' )
       .offset([-12, 0]);
 
   var graph = d3.select('#graph');
@@ -52,7 +52,7 @@ function Chart(element, showPrimary, showSecondary) {
   }
 
   function draw() {
-    var max = d3.max(showPrimary ? primaryData : secondaryData, (d) => d.Count);
+    var max = d3.max(showPrimary ? primaryData : secondaryData, (d) => d.Value);
     var ticks = primaryData.length;
     var xTick = Math.round(ticks / 7);
 
@@ -86,8 +86,8 @@ function Chart(element, showPrimary, showSecondary) {
 
       bars.append('rect')
         .attr('width', x.bandwidth())
-        .attr('height', (d) => (h - y(d.Count)) )
-        .attr('y', (d) => y(d.Count))
+        .attr('height', (d) => (h - y(d.Value)) )
+        .attr('y', (d) => y(d.Value))
         .on('mouseover', pageviewTip.show)
         .on('mouseout', pageviewTip.hide);
     }
@@ -102,8 +102,8 @@ function Chart(element, showPrimary, showSecondary) {
 
       visitorBars.append('rect')
         .attr('width', x.bandwidth() * 0.66 )
-        .attr('height', (d) => (h - y(d.Count)) )
-        .attr('y', (d) => y(d.Count))
+        .attr('height', (d) => (h - y(d.Value)) )
+        .attr('y', (d) => y(d.Value))
         .on('mouseover', visitorTip.show)
         .on('mouseout', visitorTip.hide);
     }

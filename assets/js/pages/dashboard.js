@@ -64,7 +64,7 @@ class Dashboard extends Component {
             <Table period={this.state.period} endpoint="screen-resolutions" title="Screen Resolutions" headers={["#", "Resolution", "Count", "%"]} />
           </div>
           <div class="col-2">
-            <Table period={this.state.period} endpoint="referrers" title="Referrers" headers={["#", "URL", "Count", "%"]} labelCell={(p) => ( <td><a href={"//" + p.Label}>{p.Label.substring(0, 15)}</a></td>)} />
+            <Table period={this.state.period} endpoint="referrers" title="Referrers" headers={["#", "URL", "Count", "%"]} labelCell={(p) => ( <td><a href={"//" + p.Label}>{p.Label.substring(0, 15).replace('https://', '').replace('http://', '')}</a></td>)} />
           </div>
           <div class="col-2">
             <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} onAuthError={this.props.onLogout} />
