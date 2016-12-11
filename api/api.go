@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -41,4 +42,12 @@ func getRequestedPeriods(r *http.Request) (int64, int64) {
 	}
 
 	return before, after
+}
+
+func parseMajorMinor(v string) string {
+	parts := strings.SplitN(v, ".", 3)
+	if len(parts) > 1 {
+		v = parts[0] + "." + parts[1]
+	}
+	return v
 }

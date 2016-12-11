@@ -55,10 +55,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 
 	// add browser details
 	visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
-	versionParts := strings.SplitN(visitor.BrowserVersion, ".", 3)
-	if len(versionParts) > 1 {
-		visitor.BrowserVersion = versionParts[0] + "." + versionParts[1]
-	}
+	visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
 
 	// query by unique visitor key
 	visitor.GenerateKey()
