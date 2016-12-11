@@ -1,14 +1,14 @@
 package commands
 
-import(
-  "github.com/dannyvankooten/ana/db"
-  "github.com/dannyvankooten/ana/count"
+import (
+	"github.com/dannyvankooten/ana/count"
+	"github.com/dannyvankooten/ana/db"
 )
 
 func seedData() {
-  db.Seed(nArg)
+	db.Seed(nArg)
 }
 
 func archiveData() {
-  count.CreateArchives()
+	count.CreateArchives()
 }
