@@ -45,7 +45,6 @@ class Pageviews extends Component {
         <td class="muted">{i+1}</td>
         <td><a href={"//" + p.Hostname + p.Path}>{p.Path.substring(0, 50)}{p.Path.length > 50 ? '..' : ''}</a></td>
         <td>{numbers.formatWithComma(p.Count)}</td>
-        <td>{numbers.formatWithComma(p.CountUnique)}</td>
       </tr>
     ));
 
@@ -59,7 +58,6 @@ class Pageviews extends Component {
               <th>#</th>
               <th>URL</th>
               <th>Pageviews</th>
-              <th>Unique</th>
             </tr>
           </thead>
           <tbody>{tableRows}</tbody>

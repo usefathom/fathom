@@ -11,17 +11,31 @@ import (
 // URL: /api/pageviews
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	before, after := getRequestedPeriods(r)
-	stmt, err := db.Conn.Prepare(`SELECT
-      p.hostname,
-      p.path,
-      COUNT(*) AS pageviews,
-      COUNT(DISTINCT(pv.visitor_id)) AS pageviews_unique
-    FROM pageviews pv
-    LEFT JOIN pages p ON pv.page_id = p.id
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-    GROUP BY p.path, p.hostname
-    ORDER BY pageviews DESC
-    LIMIT ?`)
+
+	stmt, err := db.Conn.Prepare(`
+		SELECT
+			p.hostname,
+			p.path,
+			SUM(a.count) AS count,
+			"0" AS count_unique
+		FROM archive a
+		LEFT JOIN pages p ON p.id = a.value
+		WHERE metric = 'pageviews.page' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
+		GROUP BY p.path, p.hostname
+		ORDER BY count DESC
+		LIMIT ?`)
+
+	// stmt, err := db.Conn.Prepare(`SELECT
+	//     p.hostname,
+	//     p.path,
+	//     COUNT(*) AS pageviews,
+	//     COUNT(DISTINCT(pv.visitor_id)) AS pageviews_unique
+	//   FROM pageviews pv
+	//   LEFT JOIN pages p ON pv.page_id = p.id
+	//   WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
+	//   GROUP BY p.path, p.hostname
+	//   ORDER BY pageviews DESC
+	//   LIMIT ?`)
 	checkError(err)
 	defer stmt.Close()
 
