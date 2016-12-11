@@ -83,7 +83,6 @@ func CreatePageviewArchives() {
 }
 
 func CreateVisitorArchives() {
-
   stmt, err := db.Conn.Prepare(`
     SELECT
       COUNT(DISTINCT(pv.visitor_id)) AS count,
