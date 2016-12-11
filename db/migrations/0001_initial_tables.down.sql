@@ -3,3 +3,4 @@ DROP TABLE if exists visitors;
 DROP TABLE IF EXISTS pages;
 DROP TABLE IF EXISTS sites;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS archive;

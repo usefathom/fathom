@@ -11,7 +11,12 @@ import (
 // URL: /api/visitors/count
 var GetVisitorsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
   before, after := getRequestedPeriods(r)
-  stmt, err := db.Conn.Prepare(`SELECT COUNT(DISTINCT(visitor_id)) FROM pageviews WHERE UNIX_TIMESTAMP(timestamp) <= ? AND UNIX_TIMESTAMP(timestamp) >= ?`)
+  stmt, err := db.Conn.Prepare(`
+  SELECT
+    SUM(a.count)
+  FROM archive a
+  WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
+  `)
 
   checkError(err)
   defer stmt.Close()
@@ -43,9 +48,10 @@ var GetVisitorsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter,
   }
 
   stmt, err := db.Conn.Prepare(`SELECT
-    COUNT(DISTINCT(visitor_id)) AS count, DATE_FORMAT(timestamp, ?) AS date_group
-    FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
+      SUM(a.count) AS count,
+      DATE_FORMAT(a.date, ?) AS date_group
+    FROM archive a
+    WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
     GROUP BY date_group`)
   checkError(err)
   defer stmt.Close()

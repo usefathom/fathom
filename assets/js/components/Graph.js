@@ -148,7 +148,9 @@ class Graph extends Component {
   }
 
   refreshChart() {
+
     if(this.data.visitors && this.data.pageviews) {
+      this.loadingIndicator.style.display = 'none';
       this.chart.setData(this.data.pageviews, this.data.visitors)
       this.chart.draw()
     }
@@ -158,6 +160,7 @@ class Graph extends Component {
     const before = Math.round((+new Date() ) / 1000);
     const after = before - ( period * dayInSeconds );
     const group = period > 90 ? 'month' : 'day';
+    this.loadingIndicator.style.display = '';
 
     Client
       .request(`pageviews/count/group/${group}?before=${before}&after=${after}`)
@@ -176,7 +179,10 @@ class Graph extends Component {
 
   render() {
     return (
+      <div>
+        <div class="loading-overlay" ref={(el) => { this.loadingIndicator = el }}><div></div></div>
         <div id="graph"></div>
+      </div>
     )
   }
 }

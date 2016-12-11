@@ -4,6 +4,10 @@ import(
   "github.com/dannyvankooten/ana/db"
 )
 
-func seedDatabase() {
+func seedData() {
   db.Seed(nArg)
+}
+
+func archiveData() {
+  db.CreateArchives()
 }
