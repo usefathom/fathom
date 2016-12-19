@@ -14,8 +14,8 @@ This is nowhere near being usable, let alone stable. Please treat as a proof of 
 For getting a development version of Ana up & running, please go through the following steps.
 
 1. Rename `.env.example` to `.env` and set your database credentials.
-2. Run the database migrations: `./do database_migrate up`
-3. Install Go dependencies: `./do install_dependencies`
+2. Install Go dependencies: `./do install_dependencies`
+3. Run the database migrations: `./do database_migrate up`
 3. Compile into binary: `./do bin`
 4. Create your user account: `./ana -create_user -email="johndoe@email.com" -password="...."`
 5. Run default Gulp task to build static assets: `gulp`
