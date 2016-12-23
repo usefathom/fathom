@@ -55,6 +55,7 @@ func CreateArchives() {
 	CreatePageviewArchivesPerPage()
 	CreateScreenArchives()
 	CreateLanguageArchives()
+	CreateBrowserArchives()
 }
 
 func checkError(err error) {
@@ -78,7 +79,8 @@ func Custom(sql string, before int64, after int64, limit int, total float64) []P
 }
 
 func newPointSlice(rows *sql.Rows, total float64) []Point {
-	var results []Point
+	results := make([]Point, 0)
+
 	for rows.Next() {
 		var d Point
 		err := rows.Scan(&d.Label, &d.Value)
