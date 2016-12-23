@@ -54,6 +54,7 @@ func CreateArchives() {
 	CreateVisitorArchives()
 	CreatePageviewArchivesPerPage()
 	CreateScreenArchives()
+	CreateLanguageArchives()
 }
 
 func checkError(err error) {
