@@ -21,7 +21,7 @@ For getting a development version of Ana up & running, please go through the fol
 5. Run default Gulp task to build static assets: `gulp`
 6. Start the webserver: `./ana` & visit **localhost:8080** to access your analytics dashboard.
 
-To start tracking, include the following JavaScript on your site and replace `ana.dev` with the URL to your Ana instance.
+To start tracking, include the following JavaScript on your site and replace `ana.dev` with the URL to your Ana instance. You should also set-up a cronjob to run the `./ana -archive_data` command periodically (eg every day).
 
 ```html
 <!-- Ana tracker -->
