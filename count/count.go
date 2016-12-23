@@ -2,11 +2,13 @@ package count
 
 import (
 	"database/sql"
-	"github.com/dannyvankooten/ana/db"
 	"log"
 	"time"
+
+	"github.com/dannyvankooten/ana/db"
 )
 
+// The Archive model contains data for a daily metric total
 type Archive struct {
 	ID     int64
 	Metric string
@@ -15,12 +17,14 @@ type Archive struct {
 	Date   string
 }
 
+// Point represents a data point, will always have a Label and Value
 type Point struct {
 	Label           string
 	Value           int
 	PercentageValue float64
 }
 
+// Save the Archive in the given database connection
 func (a *Archive) Save(Conn *sql.DB) error {
 	stmt, err := db.Conn.Prepare(`INSERT INTO archive(
     metric,
@@ -44,6 +48,7 @@ func (a *Archive) Save(Conn *sql.DB) error {
 	return err
 }
 
+// CreateArchives calls all archive creation func's consecutively
 func CreateArchives() {
 	CreatePageviewArchives()
 	CreateVisitorArchives()
@@ -56,6 +61,7 @@ func checkError(err error) {
 	}
 }
 
+// Custom perofmrs a custom count query, returning a slice of data points
 func Custom(sql string, before int64, after int64, limit int, total float64) []Point {
 	stmt, err := db.Conn.Prepare(sql)
 	checkError(err)
@@ -70,7 +76,7 @@ func Custom(sql string, before int64, after int64, limit int, total float64) []P
 }
 
 func newPointSlice(rows *sql.Rows, total float64) []Point {
-	results := make([]Point, 0)
+	var results []Point
 	for rows.Next() {
 		var d Point
 		err := rows.Scan(&d.Label, &d.Value)
@@ -93,7 +99,7 @@ func fill(start int64, end int64, points []Point) []Point {
 
 	startTime := time.Unix(start, 0)
 	endTime := time.Unix(end, 0)
-	newPoints := make([]Point, 0)
+	var newPoints []Point
 	step := time.Hour * 24
 
 	for startTime.Before(endTime) || startTime.Equal(endTime) {

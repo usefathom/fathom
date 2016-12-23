@@ -4,6 +4,7 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// Pageviews returns the total number of pageviews between the given timestamps
 func Pageviews(before int64, after int64) float64 {
 	// get total
 	stmt, err := db.Conn.Prepare(`
@@ -18,6 +19,7 @@ func Pageviews(before int64, after int64) float64 {
 	return total
 }
 
+// PageviewsPerDay returns a slice of data points representing the number of pageviews per day
 func PageviewsPerDay(before int64, after int64) []Point {
 	stmt, err := db.Conn.Prepare(`SELECT
       SUM(a.count) AS count,
@@ -32,7 +34,7 @@ func PageviewsPerDay(before int64, after int64) []Point {
 	checkError(err)
 	defer rows.Close()
 
-	results := make([]Point, 0)
+	var results []Point
 	defer rows.Close()
 	for rows.Next() {
 		p := Point{}
@@ -45,6 +47,7 @@ func PageviewsPerDay(before int64, after int64) []Point {
 	return results
 }
 
+// CreatePageviewArchives aggregates pageview data into daily totals
 func CreatePageviewArchives() {
 	stmt, err := db.Conn.Prepare(`
     SELECT
@@ -77,6 +80,7 @@ func CreatePageviewArchives() {
 	db.Conn.Exec("COMMIT")
 }
 
+// CreatePageviewArchivesPerPage aggregates pageview data for each page into daily totals
 func CreatePageviewArchivesPerPage() {
 	stmt, err := db.Conn.Prepare(`SELECT
       pv.page_id,

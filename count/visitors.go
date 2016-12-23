@@ -4,6 +4,7 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// Visitors returns the number of total visitors between the given timestamps
 func Visitors(before int64, after int64) float64 {
 	// get total
 	stmt, err := db.Conn.Prepare(`
@@ -18,6 +19,7 @@ func Visitors(before int64, after int64) float64 {
 	return total
 }
 
+// VisitorsPerDay returns a point slice containing visitor data per day
 func VisitorsPerDay(before int64, after int64) []Point {
 	stmt, err := db.Conn.Prepare(`SELECT
       SUM(a.count) AS count,
@@ -31,7 +33,7 @@ func VisitorsPerDay(before int64, after int64) []Point {
 	rows, err := stmt.Query(before, after)
 	checkError(err)
 
-	results := make([]Point, 0)
+	var results []Point
 	defer rows.Close()
 	for rows.Next() {
 		p := Point{}
@@ -45,6 +47,7 @@ func VisitorsPerDay(before int64, after int64) []Point {
 	return results
 }
 
+// CreateVisitorArchives aggregates visitor data into daily totals
 func CreateVisitorArchives() {
 	stmt, err := db.Conn.Prepare(`
     SELECT
