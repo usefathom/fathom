@@ -53,6 +53,7 @@ func CreateArchives() {
 	CreatePageviewArchives()
 	CreateVisitorArchives()
 	CreatePageviewArchivesPerPage()
+	CreateScreenArchives()
 }
 
 func checkError(err error) {
