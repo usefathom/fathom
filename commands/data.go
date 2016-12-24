@@ -10,9 +10,8 @@ func seedData() {
 }
 
 func archiveData() {
-	count.CreatePageviewArchives()
 	count.CreateVisitorArchives()
-	count.CreatePageviewArchivesPerPage()
+	count.CreatePageviewArchives()
 	count.CreateScreenArchives()
 	count.CreateLanguageArchives()
 	count.CreateBrowserArchives()

@@ -2,10 +2,11 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/dannyvankooten/ana/count"
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/models"
-	"net/http"
 )
 
 // URL: /api/pageviews
@@ -16,26 +17,15 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 		SELECT
 			p.hostname,
 			p.path,
-			SUM(a.count) AS count,
-			"0" AS count_unique
-		FROM archive a
-		LEFT JOIN pages p ON p.id = a.value
-		WHERE metric = 'pageviews.page' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
+			SUM(t.count) AS count,
+			SUM(t.count_unique) AS count_unique
+		FROM total_pageviews t
+		LEFT JOIN pages p ON p.id = t.page_id
+		WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
 		GROUP BY p.path, p.hostname
 		ORDER BY count DESC
 		LIMIT ?`)
 
-	// stmt, err := db.Conn.Prepare(`SELECT
-	//     p.hostname,
-	//     p.path,
-	//     COUNT(*) AS pageviews,
-	//     COUNT(DISTINCT(pv.visitor_id)) AS pageviews_unique
-	//   FROM pageviews pv
-	//   LEFT JOIN pages p ON pv.page_id = p.id
-	//   WHERE UNIX_TIMESTAMP(pv.timestamp) <= ? AND UNIX_TIMESTAMP(pv.timestamp) >= ?
-	//   GROUP BY p.path, p.hostname
-	//   ORDER BY pageviews DESC
-	//   LIMIT ?`)
 	checkError(err)
 	defer stmt.Close()
 

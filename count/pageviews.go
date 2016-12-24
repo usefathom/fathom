@@ -9,9 +9,9 @@ func Pageviews(before int64, after int64) float64 {
 	// get total
 	stmt, err := db.Conn.Prepare(`
     SELECT
-    SUM(a.count)
-    FROM archive a
-    WHERE a.metric = 'pageviews' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?`)
+    SUM(t.count)
+    FROM total_pageviews t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)
 	defer stmt.Close()
 	var total float64
@@ -22,10 +22,10 @@ func Pageviews(before int64, after int64) float64 {
 // PageviewsPerDay returns a slice of data points representing the number of pageviews per day
 func PageviewsPerDay(before int64, after int64) []Point {
 	stmt, err := db.Conn.Prepare(`SELECT
-      SUM(a.count) AS count,
-      DATE_FORMAT(a.date, '%Y-%m-%d') AS date_group
-    FROM archive a
-    WHERE a.metric = 'pageviews' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
+      SUM(t.count) AS count,
+      DATE_FORMAT(t.date, '%Y-%m-%d') AS date_group
+    FROM total_pageviews t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
     GROUP BY date_group`)
 	checkError(err)
 	defer stmt.Close()
@@ -47,50 +47,18 @@ func PageviewsPerDay(before int64, after int64) []Point {
 	return results
 }
 
-// CreatePageviewArchives aggregates pageview data into daily totals
+// CreatePageviewArchives aggregates pageview data for each page into daily totals
 func CreatePageviewArchives() {
-	stmt, err := db.Conn.Prepare(`
-    SELECT
-      COUNT(*) AS count,
-      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
-    FROM pageviews pv
-    WHERE NOT EXISTS(
-      SELECT a.id
-      FROM archive a
-      WHERE a.metric = 'pageviews' AND a.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
-    )
-    GROUP BY date_group`)
-	checkError(err)
-	defer stmt.Close()
-
-	rows, err := stmt.Query()
-	checkError(err)
-	defer rows.Close()
-
-	db.Conn.Exec("START TRANSACTION")
-	for rows.Next() {
-		a := Archive{
-			Metric: "pageviews",
-			Value:  "",
-		}
-		err = rows.Scan(&a.Count, &a.Date)
-		checkError(err)
-		a.Save(db.Conn)
-	}
-	db.Conn.Exec("COMMIT")
-}
-
-// CreatePageviewArchivesPerPage aggregates pageview data for each page into daily totals
-func CreatePageviewArchivesPerPage() {
 	stmt, err := db.Conn.Prepare(`SELECT
       pv.page_id,
       COUNT(*) AS count,
+			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
 			DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     WHERE NOT EXISTS (
-			SELECT a.id
-			FROM archive a
-			WHERE a.metric = 'pageviews.page' AND a.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AND a.value = pv.page_id
+			SELECT t.id
+			FROM total_pageviews t
+			WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AND t.page_id = pv.page_id
 		)
     GROUP BY pv.page_id, date_group`)
 	checkError(err)
@@ -100,12 +68,28 @@ func CreatePageviewArchivesPerPage() {
 	checkError(err)
 	defer rows.Close()
 
+	db.Conn.Exec("START TRANSACTION")
 	for rows.Next() {
-		a := Archive{
-			Metric: "pageviews.page",
-		}
-		err = rows.Scan(&a.Value, &a.Count, &a.Date)
+		var t Total
+		err = rows.Scan(&t.PageID, &t.Count, &t.CountUnique, &t.Date)
 		checkError(err)
-		a.Save(db.Conn)
+
+		stmt, err := db.Conn.Prepare(`INSERT INTO total_pageviews(
+	    page_id,
+	    count,
+			count_unique,
+	    date
+	    ) VALUES( ?, ?, ?, ? )`)
+		checkError(err)
+		defer stmt.Close()
+
+		_, err = stmt.Exec(
+			t.PageID,
+			t.Count,
+			t.CountUnique,
+			t.Date,
+		)
+		checkError(err)
 	}
+	db.Conn.Exec("COMMIT")
 }

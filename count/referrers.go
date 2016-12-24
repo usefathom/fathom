@@ -9,11 +9,11 @@ func Referrers(before int64, after int64, limit int, total float64) []Point {
 	// TODO: Calculate total instead of requiring it as a parameter.
 	stmt, err := db.Conn.Prepare(`
     SELECT
-      a.value,
-      SUM(a.count) AS count
-    FROM archive a
-    WHERE a.metric = 'referrers' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
-    GROUP BY a.value
+      t.value,
+      SUM(t.count_unique) AS count
+    FROM total_referrers t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
+    GROUP BY t.value
     ORDER BY count DESC
     LIMIT ?`)
 	checkError(err)
@@ -27,35 +27,21 @@ func Referrers(before int64, after int64, limit int, total float64) []Point {
 
 // CreateReferrerArchives aggregates screen data into daily totals
 func CreateReferrerArchives() {
-	stmt, err := db.Conn.Prepare(`
+	rows := queryTotalRows(`
     SELECT
       pv.referrer_url,
-      COUNT(DISTINCT(pv.visitor_id)) AS count,
+			COUNT(*) AS count,
+      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     WHERE pv.referrer_url IS NOT NULL
-    AND pv.referrer_url != '' 
+    AND pv.referrer_url != ''
     AND NOT EXISTS(
-      SELECT a.id
-      FROM archive a
-      WHERE a.metric = 'referrers' AND a.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
+      SELECT t.id
+      FROM total_referrers t
+      WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
     )
     GROUP BY date_group, pv.referrer_url`)
-	checkError(err)
-	defer stmt.Close()
 
-	rows, err := stmt.Query()
-	checkError(err)
-	defer rows.Close()
-
-	db.Conn.Exec("START TRANSACTION")
-	for rows.Next() {
-		a := Archive{
-			Metric: "referrers",
-		}
-		err = rows.Scan(&a.Value, &a.Count, &a.Date)
-		checkError(err)
-		a.Save(db.Conn)
-	}
-	db.Conn.Exec("COMMIT")
+	processTotalRows(rows, "total_referrers")
 }

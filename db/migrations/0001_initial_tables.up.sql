@@ -36,14 +36,55 @@ CREATE TABLE users (
   `password` VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE `archive` (
+CREATE TABLE `total_pageviews` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  `metric` VARCHAR(31) NOT NULL,
-  `value` VARCHAR(31) NULL,
-  `count` INTEGER UNSIGNED NOT NULL,
+  `page_id` INTEGER UNSIGNED NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
 
-CREATE INDEX archive_metric ON archive(`metric`);
-CREATE INDEX archive_metric_count ON archive(`metric`, `count`);
-CREATE INDEX archive_metric_date ON archive(`metric`, `date`);
+CREATE TABLE `total_visitors` (
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATE NOT NULL
+);
+
+CREATE TABLE `total_screens` (
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `value` VARCHAR(12) NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATE NOT NULL
+);
+
+CREATE TABLE `total_browser_names` (
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `value` VARCHAR(50) NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATE NOT NULL
+);
+
+CREATE TABLE `total_browser_languages` (
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `value` VARCHAR(12) NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATE NOT NULL
+);
+
+CREATE TABLE `total_referrers` (
+  `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `value` TEXT NOT NULL,
+  `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATE NOT NULL
+);
+
+CREATE INDEX total_referrers_date ON total_referrers(`date`);
+CREATE INDEX total_pageviews_date ON total_pageviews(`date`);
+CREATE INDEX total_screens_date ON total_screens(`date`);
+CREATE INDEX total_browser_names_date ON total_browser_names(`date`);
+CREATE INDEX total_browser_languages_date ON total_browser_languages(`date`);
+CREATE INDEX total_visitors_date ON total_visitors(`date`);

@@ -8,13 +8,14 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
-// The Archive model contains data for a daily metric total
-type Archive struct {
-	ID     int64
-	Metric string
-	Value  string
-	Count  int64
-	Date   string
+// Total represents a daily aggregated total for a metric
+type Total struct {
+	ID          int64
+	PageID      int64
+	Value       string
+	Count       int64
+	CountUnique int64
+	Date        string
 }
 
 // Point represents a data point, will always have a Label and Value
@@ -24,12 +25,12 @@ type Point struct {
 	PercentageValue float64
 }
 
-// Save the Archive in the given database connection
-func (a *Archive) Save(Conn *sql.DB) error {
-	stmt, err := db.Conn.Prepare(`INSERT INTO archive(
-    metric,
+// Save the Total in the given database connection + table
+func (t *Total) Save(Conn *sql.DB, table string) error {
+	stmt, err := db.Conn.Prepare(`INSERT INTO ` + table + `(
     value,
     count,
+		count_unique,
     date
     ) VALUES( ?, ?, ?, ? )`)
 	if err != nil {
@@ -38,12 +39,12 @@ func (a *Archive) Save(Conn *sql.DB) error {
 	defer stmt.Close()
 
 	result, err := stmt.Exec(
-		a.Metric,
-		a.Value,
-		a.Count,
-		a.Date,
+		t.Value,
+		t.Count,
+		t.CountUnique,
+		t.Date,
 	)
-	a.ID, _ = result.LastInsertId()
+	t.ID, _ = result.LastInsertId()
 
 	return err
 }
@@ -115,4 +116,27 @@ func fill(start int64, end int64, points []Point) []Point {
 	}
 
 	return newPoints
+}
+
+func queryTotalRows(sql string) *sql.Rows {
+	stmt, err := db.Conn.Prepare(sql)
+	checkError(err)
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	checkError(err)
+	return rows
+}
+
+func processTotalRows(rows *sql.Rows, table string) {
+	db.Conn.Exec("START TRANSACTION")
+	for rows.Next() {
+		var t Total
+		err := rows.Scan(&t.Value, &t.Count, &t.CountUnique, &t.Date)
+		checkError(err)
+		t.Save(db.Conn, table)
+	}
+	db.Conn.Exec("COMMIT")
+
+	rows.Close()
 }

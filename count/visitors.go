@@ -4,14 +4,16 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// TODO: Convert to total_visitors table.
+
 // Visitors returns the number of total visitors between the given timestamps
 func Visitors(before int64, after int64) float64 {
 	// get total
 	stmt, err := db.Conn.Prepare(`
     SELECT
-    SUM(a.count)
-    FROM archive a
-    WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?`)
+    SUM(t.count)
+    FROM total_visitors t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)
 	defer stmt.Close()
 	var total float64
@@ -22,10 +24,10 @@ func Visitors(before int64, after int64) float64 {
 // VisitorsPerDay returns a point slice containing visitor data per day
 func VisitorsPerDay(before int64, after int64) []Point {
 	stmt, err := db.Conn.Prepare(`SELECT
-      SUM(a.count) AS count,
-      DATE_FORMAT(a.date, '%Y-%m-%d') AS date_group
-    FROM archive a
-    WHERE a.metric = 'visitors' AND UNIX_TIMESTAMP(a.date) <= ? AND UNIX_TIMESTAMP(a.date) >= ?
+      SUM(t.count) AS count,
+      DATE_FORMAT(t.date, '%Y-%m-%d') AS date_group
+    FROM total_visitors t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
     GROUP BY date_group`)
 	checkError(err)
 	defer stmt.Close()
@@ -55,9 +57,9 @@ func CreateVisitorArchives() {
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     WHERE NOT EXISTS(
-      SELECT a.id
-      FROM archive a
-      WHERE a.metric = 'visitors' AND a.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
+      SELECT t.id
+      FROM total_visitors t
+      WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
     )
     GROUP BY date_group`)
 	checkError(err)
@@ -69,13 +71,22 @@ func CreateVisitorArchives() {
 
 	db.Conn.Exec("START TRANSACTION")
 	for rows.Next() {
-		a := Archive{
-			Metric: "visitors",
-			Value:  "",
-		}
-		err = rows.Scan(&a.Count, &a.Date)
+		var t Total
+		err = rows.Scan(&t.Count, &t.Date)
 		checkError(err)
-		a.Save(db.Conn)
+
+		stmt, err := db.Conn.Prepare(`INSERT INTO total_visitors(
+	    count,
+	    date
+	    ) VALUES( ?, ? )`)
+		checkError(err)
+		defer stmt.Close()
+
+		_, err = stmt.Exec(
+			t.Count,
+			t.Date,
+		)
+		checkError(err)
 	}
 	db.Conn.Exec("COMMIT")
 }
