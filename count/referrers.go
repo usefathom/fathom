@@ -5,8 +5,7 @@ import (
 )
 
 // Referrers returns a point slice containing browser data per browser name
-func Referrers(before int64, after int64, limit int, total float64) []Point {
-	// TODO: Calculate total instead of requiring it as a parameter.
+func Referrers(before int64, after int64, limit int) []Point {
 	stmt, err := db.Conn.Prepare(`
     SELECT
       t.value,
@@ -27,8 +26,8 @@ func Referrers(before int64, after int64, limit int, total float64) []Point {
 	return newPointSlice(rows, total)
 }
 
-// CreateReferrerArchives aggregates screen data into daily totals
-func CreateReferrerArchives() {
+// CreateReferrerTotals aggregates screen data into daily totals
+func CreateReferrerTotals(since int64) {
 	rows := queryTotalRows(`
     SELECT
       pv.referrer_url,
@@ -38,12 +37,8 @@ func CreateReferrerArchives() {
     FROM pageviews pv
     WHERE pv.referrer_url IS NOT NULL
     AND pv.referrer_url != ''
-    AND NOT EXISTS(
-      SELECT t.id
-      FROM total_referrers t
-      WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
-    )
-    GROUP BY date_group, pv.referrer_url`)
+    AND UNIX_TIMESTAMP(pv.timestamp) > ?
+    GROUP BY date_group, pv.referrer_url`, since)
 
 	processTotalRows(rows, "total_referrers")
 }

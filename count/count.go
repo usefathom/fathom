@@ -3,9 +3,12 @@ package count
 import (
 	"database/sql"
 	"log"
+	"strconv"
 	"time"
+	"fmt"
 
 	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/options"
 )
 
 // Total represents a daily aggregated total for a metric
@@ -23,6 +26,27 @@ type Point struct {
 	Label           string
 	Value           int
 	PercentageValue float64
+}
+
+func getLastArchivedTime() int64 {
+	value := options.Get("last_archived")
+	intVal, _ := strconv.ParseInt(value, 10, 64)
+	return intVal
+}
+
+// Archive aggregates data into daily totals
+func Archive() {
+	lastArchived := getLastArchivedTime()
+
+	CreateVisitorTotals(lastArchived)
+	CreatePageviewTotals(lastArchived)
+	CreateScreenTotals(lastArchived)
+	CreateLanguageTotals(lastArchived)
+	CreateBrowserTotals(lastArchived)
+	CreateReferrerTotals(lastArchived)
+
+	err := options.Set("last_archived", fmt.Sprintf("%d", time.Now().Unix()))
+	checkError(err)
 }
 
 // Save the Total in the given database connection + table
@@ -118,12 +142,12 @@ func fill(start int64, end int64, points []Point) []Point {
 	return newPoints
 }
 
-func queryTotalRows(sql string) *sql.Rows {
+func queryTotalRows(sql string, lastArchived int64) *sql.Rows {
 	stmt, err := db.Conn.Prepare(sql)
 	checkError(err)
 	defer stmt.Close()
 
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(lastArchived)
 	checkError(err)
 	return rows
 }

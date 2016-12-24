@@ -57,23 +57,19 @@ func VisitorsPerDay(before int64, after int64) []Point {
 	return results
 }
 
-// CreateVisitorArchives aggregates visitor data into daily totals
-func CreateVisitorArchives() {
+// CreateVisitorTotals aggregates visitor data into daily totals
+func CreateVisitorTotals(since int64) {
 	stmt, err := db.Conn.Prepare(`
     SELECT
       COUNT(DISTINCT(pv.visitor_id)) AS count,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
-    WHERE NOT EXISTS(
-      SELECT t.id
-      FROM total_visitors t
-      WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d")
-    )
+    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
     GROUP BY date_group`)
 	checkError(err)
 	defer stmt.Close()
 
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(since)
 	checkError(err)
 	defer rows.Close()
 

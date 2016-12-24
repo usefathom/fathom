@@ -1,8 +1,6 @@
 package count
 
-import (
-	"github.com/dannyvankooten/ana/db"
-)
+import "github.com/dannyvankooten/ana/db"
 
 // Pageviews returns the total number of pageviews between the given timestamps
 func Pageviews(before int64, after int64) float64 {
@@ -47,24 +45,20 @@ func PageviewsPerDay(before int64, after int64) []Point {
 	return results
 }
 
-// CreatePageviewArchives aggregates pageview data for each page into daily totals
-func CreatePageviewArchives() {
+// CreatePageviewTotals aggregates pageview data for each page into daily totals
+func CreatePageviewTotals(since int64) {
 	stmt, err := db.Conn.Prepare(`SELECT
       pv.page_id,
       COUNT(*) AS count,
 			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
 			DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
-    WHERE NOT EXISTS (
-			SELECT t.id
-			FROM total_pageviews t
-			WHERE t.date = DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AND t.page_id = pv.page_id
-		)
+    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
     GROUP BY pv.page_id, date_group`)
 	checkError(err)
 	defer stmt.Close()
 
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(since)
 	checkError(err)
 	defer rows.Close()
 
