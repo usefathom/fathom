@@ -22,9 +22,7 @@ func Languages(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	total := Visitors(before, after)
-
-	return newPointSlice(rows, total)
+	return newPointSlice(rows)
 }
 
 // CreateLanguageTotals aggregates screen data into daily totals

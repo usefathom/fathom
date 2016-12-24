@@ -9,7 +9,7 @@ func Referrers(before int64, after int64, limit int) []Point {
 	stmt, err := db.Conn.Prepare(`
     SELECT
       t.value,
-      SUM(t.count_unique) AS count
+      SUM(t.count) AS count
     FROM total_referrers t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
     GROUP BY t.value
@@ -21,9 +21,7 @@ func Referrers(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	total := Visitors(before, after)
-
-	return newPointSlice(rows, total)
+	return newPointSlice(rows)
 }
 
 // CreateReferrerTotals aggregates screen data into daily totals

@@ -79,30 +79,24 @@ func checkError(err error) {
 	}
 }
 
-// Custom perofmrs a custom count query, returning a slice of data points
-func Custom(sql string, before int64, after int64, limit int, total float64) []Point {
-	stmt, err := db.Conn.Prepare(sql)
-	checkError(err)
-	defer stmt.Close()
-
-	rows, err := stmt.Query(before, after, limit)
-	checkError(err)
-	defer rows.Close()
-
-	results := newPointSlice(rows, total)
-	return results
-}
-
-func newPointSlice(rows *sql.Rows, total float64) []Point {
+func newPointSlice(rows *sql.Rows) []Point {
 	results := make([]Point, 0)
+	total := 0
 
+	// append point slices
 	for rows.Next() {
 		var d Point
 		err := rows.Scan(&d.Label, &d.Value)
 		checkError(err)
-
-		d.PercentageValue = float64(d.Value) / total * 100
 		results = append(results, d)
+
+		// sum total
+		total += d.Value
+	}
+
+	// calculate percentage values for each point
+	for i, d := range results {
+		results[i].PercentageValue = float64(d.Value) / float64(total) * 100
 	}
 
 	return results
