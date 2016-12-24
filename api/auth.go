@@ -2,15 +2,16 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+	"os"
+
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/models"
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"os"
 )
 
-type Login struct {
+type login struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -19,7 +20,7 @@ var store = sessions.NewFilesystemStore("./storage/sessions/", []byte(os.Getenv(
 
 // URL: POST /api/session
 var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	var l Login
+	var l login
 	json.NewDecoder(r.Body).Decode(&l)
 
 	// check login creds
