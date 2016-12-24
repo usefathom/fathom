@@ -19,7 +19,7 @@ For getting a development version of Ana up & running, please go through the fol
 3. Compile into binary: `./do bin`
 4. Create your user account: `./ana -create_user -email="johndoe@email.com" -password="...."`
 5. Run default Gulp task to build static assets: `gulp`
-6. Start the webserver: `./ana` & visit **localhost:8080** to access your analytics dashboard.
+6. Start the webserver: `./ana -start_server -port=8080` & visit **localhost:8080** to access your analytics dashboard.
 
 To start tracking, include the following JavaScript on your site and replace `ana.dev` with the URL to your Ana instance. You should also set-up a cronjob to run the `./ana -archive_data` command periodically (eg every day).
 
