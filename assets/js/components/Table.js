@@ -58,14 +58,14 @@ class Table extends Component {
   }
 
   render() {
-    const tableRows = this.state.records.map((p, i) => (
+    const tableRows = this.state.records.length > 0 ? this.state.records.map((p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
         {this.labelCell(p)}
         <td>{numbers.formatWithComma(p.Value)}</td>
         <td>{Math.round(p.PercentageValue)}%</td>
       </tr>
-    ));
+    )) :<tr><td colspan="4" class="italic">Nothing here..</td></tr>;
 
     const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
 
