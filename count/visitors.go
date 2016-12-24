@@ -4,7 +4,15 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
-// TODO: Convert to total_visitors table.
+// RealtimeVisitors returns the total number of visitors in the last 3 minutes
+func RealtimeVisitors() int {
+	var result int
+	db.Conn.QueryRow(`
+		SELECT COUNT(DISTINCT(pv.visitor_id))
+		FROM pageviews pv
+		WHERE pv.timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND pv.timestamp <= CURRENT_TIMESTAMP`).Scan(&result)
+	return result
+}
 
 // Visitors returns the number of total visitors between the given timestamps
 func Visitors(before int64, after int64) float64 {
