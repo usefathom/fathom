@@ -6,8 +6,8 @@ This is a general draft document for thoughts and todo's, without any structure 
 ### What's cooking?
 
 - Never query `pageviews` table directly.
-- Create archive on-the-fly if it does not exist yet?
-- Bulk process tracking requests (Redis or in-memory)
+- Process tracking requests in bulk (Redis or in-memory)
+- Split up `archive` table into specialised tables
 - Allow for multiple sites in same Ana instance
 - Custom date range picker
 - Settle on a better name than "Ana"
