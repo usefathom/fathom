@@ -7,6 +7,7 @@ import (
 	"github.com/mssola/user_agent"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func getRequestIp(r *http.Request) string {
@@ -66,11 +67,13 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		visitor.Save(db.Conn)
 	}
 
+	now := time.Now().Format("2006-01-02 15:04:05")
 	pageview := models.Pageview{
 		PageID:          page.ID,
 		VisitorID:       visitor.ID,
 		ReferrerUrl:     q.Get("ru"),
 		ReferrerKeyword: q.Get("rk"),
+		Timestamp: now,
 	}
 
 	// only store referrer URL if not coming from own site
@@ -78,7 +81,8 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		pageview.ReferrerUrl = ""
 	}
 
-	pageview.Save(db.Conn)
+	err = pageview.Save(db.Conn)
+	checkError(err)
 
 	// don't you cache this
 	w.Header().Set("Content-Type", "image/gif")
