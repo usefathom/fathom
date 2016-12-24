@@ -5,7 +5,7 @@ import (
 )
 
 // Languages returns a point slice containing language data per language
-func Languages(before int64, after int64, limit int, total float64) []Point {
+func Languages(before int64, after int64, limit int) []Point {
 	// TODO: Calculate total instead of requiring it as a parameter.
 	stmt, err := db.Conn.Prepare(`
     SELECT
@@ -21,6 +21,8 @@ func Languages(before int64, after int64, limit int, total float64) []Point {
 
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
+
+	total := Visitors(before, after)
 
 	return newPointSlice(rows, total)
 }

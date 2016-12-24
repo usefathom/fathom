@@ -22,6 +22,8 @@ func Referrers(before int64, after int64, limit int, total float64) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
+	total := Visitors(before, after)
+
 	return newPointSlice(rows, total)
 }
 

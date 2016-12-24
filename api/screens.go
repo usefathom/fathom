@@ -10,13 +10,7 @@ import (
 // URL: /api/screen-resolutions
 var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	before, after := getRequestedPeriods(r)
-
-	// get total
-	total := count.Visitors(before, after)
-
-	// get rows
-	results := count.Screens(before, after, getRequestedLimit(r), total)
-
+	results := count.Screens(before, after, getRequestedLimit(r))
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results)
 })

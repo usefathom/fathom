@@ -5,7 +5,7 @@ import (
 )
 
 // Screens returns a point slice containing screen data per size
-func Screens(before int64, after int64, limit int, total float64) []Point {
+func Screens(before int64, after int64, limit int) []Point {
 	// TODO: Calculate total instead of requiring it as a parameter.
 	stmt, err := db.Conn.Prepare(`
     SELECT
@@ -21,6 +21,8 @@ func Screens(before int64, after int64, limit int, total float64) []Point {
 
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
+
+	total := Visitors(before, after)
 
 	return newPointSlice(rows, total)
 }
