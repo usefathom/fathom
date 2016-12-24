@@ -22,12 +22,12 @@ function Chart(element, showPrimary, showSecondary) {
 
   var pageviewTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + numbers.formatWithComma(d.Value) + '</span>' + ' pageviews')
+      .html((d) => '<h5>'+ d.Label +'</h5><span>' + numbers.formatWithComma(d.Value) + '</span>' + ' pageviews')
       .offset([-12, 0]);
 
   var visitorTip = d3.tip()
       .attr('class', 'd3-tip')
-      .html((d) => '<span>' + numbers.formatWithComma(d.Value) + '</span>' + ' visitors' )
+      .html((d) => '<h5>'+ d.Label +'</h5><span>' + numbers.formatWithComma(d.Value) + '</span>' + ' visitors' )
       .offset([-12, 0]);
 
   var graph = d3.select('#graph');
