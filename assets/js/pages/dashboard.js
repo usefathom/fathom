@@ -29,8 +29,15 @@ class Dashboard extends Component {
     super(props)
 
     this.state = {
-      period: 7
+      period: parseInt(window.location.hash.substring(2)) || 7
     }
+
+    this.onPeriodChoose = this.onPeriodChoose.bind(this)
+  }
+
+  onPeriodChoose(p) {
+    this.setState({ period: p })
+    window.history.replaceState(this.state, null, `#!${p}`)
   }
 
   render() {
@@ -40,7 +47,7 @@ class Dashboard extends Component {
       <div class="container">
         <Realtime />
         <div class="clear">
-          <DatePicker period={this.state.period} onChoose={(p) => { this.setState({ period: p })}} />
+          <DatePicker period={this.state.period} onChoose={this.onPeriodChoose} />
         </div>
         <div class="row">
           <div class="col-2">

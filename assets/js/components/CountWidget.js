@@ -41,6 +41,7 @@ class CountWidget extends Component {
   }
 
   renderPercentage() {
+    // wait for request to finish
     if( ! this.state.previousCount ) {
       return '';
     }
@@ -58,7 +59,6 @@ class CountWidget extends Component {
         {loadingOverlay}
         <h4 class="">{this.props.title}</h4>
         <div class="big tiny-margin">{numbers.formatWithComma(this.state.count)} {this.renderPercentage()}</div>
-        <div class="muted">last {this.props.period} days</div>
       </div>
     )
   }

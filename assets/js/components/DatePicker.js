@@ -2,7 +2,7 @@
 
 import { h, render, Component } from 'preact';
 
-var availablePeriods = [
+const availablePeriods = [
   {
     id: 7,
     label: 'Last 7 days'
