@@ -48,16 +48,6 @@ func (a *Archive) Save(Conn *sql.DB) error {
 	return err
 }
 
-// CreateArchives calls all archive creation func's consecutively
-func CreateArchives() {
-	CreatePageviewArchives()
-	CreateVisitorArchives()
-	CreatePageviewArchivesPerPage()
-	CreateScreenArchives()
-	CreateLanguageArchives()
-	CreateBrowserArchives()
-}
-
 func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
