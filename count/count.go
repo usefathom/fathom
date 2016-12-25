@@ -80,7 +80,6 @@ func checkError(err error) {
 
 func newPointSlice(rows *sql.Rows) []Point {
 	results := make([]Point, 0)
-	total := 0
 
 	// append point slices
 	for rows.Next() {
@@ -88,18 +87,18 @@ func newPointSlice(rows *sql.Rows) []Point {
 		err := rows.Scan(&d.Label, &d.Value)
 		checkError(err)
 		results = append(results, d)
-
-		// sum total
-		total += d.Value
-	}
-
-	// calculate percentage values for each point
-	// TODO: This doesn't work when a limit on the # of points is given
-	for i, d := range results {
-		results[i].PercentageValue = float64(d.Value) / float64(total) * 100
 	}
 
 	return results
+}
+
+func calculatePointPercentages(points []Point, total int) []Point {
+	// calculate percentage values for each point
+	for i, d := range points {
+		points[i].PercentageValue = float64(d.Value) / float64(total) * 100
+	}
+	
+	return points
 }
 
 func fill(start int64, end int64, points []Point) []Point {

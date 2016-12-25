@@ -4,9 +4,26 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// TotalUniqueScreens returns the total # of screens between two given timestamps
+func TotalUniqueScreens(before int64, after int64) int {
+	var total int
+
+	stmt, err := db.Conn.Prepare(`
+    SELECT
+      SUM(t.count_unique)
+    FROM total_screens t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+	checkError(err)
+	defer stmt.Close()
+
+	err = stmt.QueryRow(before, after).Scan(&total)
+	checkError(err)
+
+	return total
+}
+
 // Screens returns a point slice containing screen data per size
 func Screens(before int64, after int64, limit int) []Point {
-	// TODO: Calculate total instead of requiring it as a parameter.
 	stmt, err := db.Conn.Prepare(`
     SELECT
       t.value,
@@ -22,7 +39,11 @@ func Screens(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	return newPointSlice(rows)
+	points := newPointSlice(rows)
+	total := TotalUniqueScreens(before, after)
+	points = calculatePointPercentages(points, total)
+
+	return points
 }
 
 // CreateScreenTotals aggregates screen data into daily totals

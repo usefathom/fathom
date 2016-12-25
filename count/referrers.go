@@ -4,6 +4,24 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// TotalReferrers returns the total # of referrers between two given timestamps
+func TotalReferrers(before int64, after int64) int {
+	var total int
+
+	stmt, err := db.Conn.Prepare(`
+    SELECT
+      SUM(t.count)
+    FROM total_referrers t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+	checkError(err)
+	defer stmt.Close()
+
+	err = stmt.QueryRow(before, after).Scan(&total)
+	checkError(err)
+
+	return total
+}
+
 // Referrers returns a point slice containing browser data per browser name
 func Referrers(before int64, after int64, limit int) []Point {
 	stmt, err := db.Conn.Prepare(`
@@ -21,7 +39,11 @@ func Referrers(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	return newPointSlice(rows)
+	points := newPointSlice(rows)
+	total := TotalReferrers(before, after)
+	points = calculatePointPercentages(points, total)
+
+	return points
 }
 
 // CreateReferrerTotals aggregates screen data into daily totals

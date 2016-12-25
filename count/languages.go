@@ -4,6 +4,24 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// TotalUniqueLanguages returns the total # of unique browser languages between two given timestamps
+func TotalUniqueLanguages(before int64, after int64) int {
+	var total int
+
+	stmt, err := db.Conn.Prepare(`
+    SELECT
+      SUM(t.count_unique)
+    FROM total_browser_languages t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+	checkError(err)
+	defer stmt.Close()
+
+	err = stmt.QueryRow(before, after).Scan(&total)
+	checkError(err)
+
+	return total
+}
+
 // Languages returns a point slice containing language data per language
 func Languages(before int64, after int64, limit int) []Point {
 	// TODO: Calculate total instead of requiring it as a parameter.
@@ -22,7 +40,11 @@ func Languages(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	return newPointSlice(rows)
+	points := newPointSlice(rows)
+	total := TotalUniqueLanguages(before, after)
+	points = calculatePointPercentages(points, total)
+
+	return points
 }
 
 // CreateLanguageTotals aggregates screen data into daily totals

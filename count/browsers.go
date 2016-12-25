@@ -4,6 +4,24 @@ import (
 	"github.com/dannyvankooten/ana/db"
 )
 
+// TotalUniqueBrowsers returns the total # of unique browsers between two given timestamps
+func TotalUniqueBrowsers(before int64, after int64) int {
+	var total int
+
+	stmt, err := db.Conn.Prepare(`
+    SELECT
+      SUM(t.count_unique)
+    FROM total_browser_names t
+    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+	checkError(err)
+	defer stmt.Close()
+
+	err = stmt.QueryRow(before, after).Scan(&total)
+	checkError(err)
+
+	return total
+}
+
 // Browsers returns a point slice containing browser data per browser name
 func Browsers(before int64, after int64, limit int) []Point {
 	stmt, err := db.Conn.Prepare(`
@@ -21,7 +39,11 @@ func Browsers(before int64, after int64, limit int) []Point {
 	rows, err := stmt.Query(before, after, limit)
 	checkError(err)
 
-	return newPointSlice(rows)
+	points := newPointSlice(rows)
+	total := TotalUniqueBrowsers(before, after)
+	points = calculatePointPercentages(points, total)
+
+	return points
 }
 
 // CreateBrowserTotals aggregates screen data into daily totals
