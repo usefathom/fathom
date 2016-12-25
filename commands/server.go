@@ -1,12 +1,13 @@
 package commands
 
 import (
-	"github.com/dannyvankooten/ana/api"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/dannyvankooten/ana/api"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 func startServer() {

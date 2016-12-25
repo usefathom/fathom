@@ -2,9 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/dannyvankooten/ana/count"
 	"github.com/dannyvankooten/ana/db"
-	"net/http"
 )
 
 // URL: /api/visitors/count

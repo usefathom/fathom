@@ -2,11 +2,12 @@ package api
 
 import (
 	"encoding/base64"
+	"net/http"
+	"strings"
+
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/models"
 	"github.com/mssola/user_agent"
-	"net/http"
-	"strings"
 )
 
 func getRequestIp(r *http.Request) string {

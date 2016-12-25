@@ -2,8 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/dannyvankooten/ana/count"
 	"net/http"
+
+	"github.com/dannyvankooten/ana/count"
 )
 
 // URL: /api/countries

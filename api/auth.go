@@ -2,12 +2,13 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+	"os"
+
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/models"
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"os"
 )
 
 type Login struct {

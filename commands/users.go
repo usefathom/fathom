@@ -1,10 +1,11 @@
 package commands
 
 import (
+	"log"
+
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/models"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 func createUser() {
