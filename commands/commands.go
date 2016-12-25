@@ -4,15 +4,17 @@ import (
 	"flag"
 )
 
-var runCreateUserCommand bool
-var runDeleteUserCommand bool
-var runStartServerCommand bool
-var runSeedDataCommand bool
-var runArchiveDataCommand bool
-var idArg int
-var emailArg string
-var passwordArg string
-var nArg int
+var (
+	runCreateUserCommand  bool
+	runDeleteUserCommand  bool
+	runStartServerCommand bool
+	runSeedDataCommand    bool
+	runArchiveDataCommand bool
+	idArg                 int
+	emailArg              string
+	passwordArg           string
+	nArg                  int
+)
 
 func Parse() {
 	// parse commands
