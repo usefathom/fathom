@@ -1,0 +1,73 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "mwB+SBEBf06n2hoReZ8C3qg5+cc=",
+			"path": "github.com/Pallinder/go-randomdata",
+			"revision": "6fc9e945968728bdf662e5a9f2d4b97f5a24dd03",
+			"revisionTime": "2016-10-21T13:40:32Z"
+		},
+		{
+			"checksumSHA1": "QD6LqgLz2JMxXqns8TaxtK9AuHs=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "2e00b5cd70399450106cec6431c2e2ce3cae5034",
+			"revisionTime": "2016-12-24T12:10:19Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "I+GdpjQMP4tAYwF4CAklylRWeYI=",
+			"path": "github.com/gorilla/handlers",
+			"revision": "3a5767ca75ece5f7f1440b1d16975247f8d8b221",
+			"revisionTime": "2016-12-06T05:51:44Z"
+		},
+		{
+			"checksumSHA1": "urMd7A9QPAJYY0GZJL9qBhlUmD8=",
+			"path": "github.com/gorilla/mux",
+			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
+			"revisionTime": "2016-09-20T23:08:13Z"
+		},
+		{
+			"checksumSHA1": "veX5bpYOBjZZWMyWxXxys8EH9d8=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "fa5329f913702981df43dcb2a380bac429c810b5",
+			"revisionTime": "2016-10-03T05:16:01Z"
+		},
+		{
+			"checksumSHA1": "vYfmVqC/UFKA66ZZdUJsnIcXR4E=",
+			"path": "github.com/gorilla/sessions",
+			"revision": "83c8db3bdc9be789e57e3756ffbcffd2d7d40176",
+			"revisionTime": "2016-12-22T01:33:42Z"
+		},
+		{
+			"checksumSHA1": "h9EtLdks5ODcJVIA+j4qmrW2/mw=",
+			"path": "github.com/joho/godotenv",
+			"revision": "726cc8b906e3d31c70a9671c90a13716a8d3f50d",
+			"revisionTime": "2016-12-16T23:05:37Z"
+		},
+		{
+			"checksumSHA1": "nP2A51J4e45E5HuXMdfQT2hBMfc=",
+			"path": "github.com/mssola/user_agent",
+			"revision": "6ef8cd49fcd9eb0ca7c76a581419c966ed2cb26e",
+			"revisionTime": "2016-12-08T17:59:04Z"
+		},
+		{
+			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
+			"revisionTime": "2016-12-21T04:54:10Z"
+		},
+		{
+			"checksumSHA1": "JsJdKXhz87gWenMwBeejTOeNE7k=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
+			"revisionTime": "2016-12-21T04:54:10Z"
+		}
+	],
+	"rootPath": "github.com/dannyvankooten/ana"
+}
