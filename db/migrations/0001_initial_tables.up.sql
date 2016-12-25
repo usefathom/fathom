@@ -51,12 +51,16 @@ CREATE TABLE `total_pageviews` (
   `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
+CREATE INDEX total_pageviews_date ON total_pageviews(`date`);
+ALTER TABLE total_pageviews ADD UNIQUE(`page_id`, `date`);
 
 CREATE TABLE `total_visitors` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
   `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
+CREATE INDEX total_visitors_date ON total_visitors(`date`);
+ALTER TABLE total_visitors ADD UNIQUE(`date`);
 
 CREATE TABLE `total_screens` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -65,6 +69,8 @@ CREATE TABLE `total_screens` (
   `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
+CREATE INDEX total_screens_date ON total_screens(`date`);
+ALTER TABLE total_screens ADD UNIQUE(`value`, `date`);
 
 CREATE TABLE `total_browser_names` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -73,6 +79,8 @@ CREATE TABLE `total_browser_names` (
   `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
+CREATE INDEX total_browser_names_date ON total_browser_names(`date`);
+ALTER TABLE total_browser_names ADD UNIQUE(`value`, `date`);
 
 CREATE TABLE `total_browser_languages` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -81,18 +89,15 @@ CREATE TABLE `total_browser_languages` (
   `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
+CREATE INDEX total_browser_languages_date ON total_browser_languages(`date`);
+ALTER TABLE total_browser_languages ADD UNIQUE(`value`, `date`);
 
 CREATE TABLE `total_referrers` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  `value` TEXT NOT NULL,
+  `value` VARCHAR(510) NOT NULL,
   `count` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `count_unique` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `date` DATE NOT NULL
 );
-
 CREATE INDEX total_referrers_date ON total_referrers(`date`);
-CREATE INDEX total_pageviews_date ON total_pageviews(`date`);
-CREATE INDEX total_screens_date ON total_screens(`date`);
-CREATE INDEX total_browser_names_date ON total_browser_names(`date`);
-CREATE INDEX total_browser_languages_date ON total_browser_languages(`date`);
-CREATE INDEX total_visitors_date ON total_visitors(`date`);
+ALTER TABLE total_referrers ADD UNIQUE(`value`, `date`);

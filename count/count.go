@@ -3,9 +3,7 @@ package count
 import (
 	"database/sql"
 	"log"
-	"strconv"
 	"time"
-	"fmt"
 
 	"github.com/dannyvankooten/ana/db"
 	"github.com/dannyvankooten/ana/options"
@@ -28,15 +26,14 @@ type Point struct {
 	PercentageValue float64
 }
 
-func getLastArchivedTime() int64 {
+func getLastArchivedDate() string {
 	value := options.Get("last_archived")
-	intVal, _ := strconv.ParseInt(value, 10, 64)
-	return intVal
+	return value
 }
 
 // Archive aggregates data into daily totals
 func Archive() {
-	lastArchived := getLastArchivedTime()
+	lastArchived := getLastArchivedDate()
 
 	CreateVisitorTotals(lastArchived)
 	CreatePageviewTotals(lastArchived)
@@ -45,7 +42,7 @@ func Archive() {
 	CreateBrowserTotals(lastArchived)
 	CreateReferrerTotals(lastArchived)
 
-	err := options.Set("last_archived", fmt.Sprintf("%d", time.Now().Unix()))
+	err := options.Set("last_archived", time.Now().Format("2006-01-02"))
 	checkError(err)
 }
 
@@ -56,7 +53,7 @@ func (t *Total) Save(Conn *sql.DB, table string) error {
     count,
 		count_unique,
     date
-    ) VALUES( ?, ?, ?, ? )`)
+    ) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`)
 	if err != nil {
 		return err
 	}
@@ -67,6 +64,8 @@ func (t *Total) Save(Conn *sql.DB, table string) error {
 		t.Count,
 		t.CountUnique,
 		t.Date,
+		t.Count,
+		t.CountUnique,
 	)
 	t.ID, _ = result.LastInsertId()
 
@@ -95,6 +94,7 @@ func newPointSlice(rows *sql.Rows) []Point {
 	}
 
 	// calculate percentage values for each point
+	// TODO: This doesn't work when a limit on the # of points is given
 	for i, d := range results {
 		results[i].PercentageValue = float64(d.Value) / float64(total) * 100
 	}
@@ -136,7 +136,7 @@ func fill(start int64, end int64, points []Point) []Point {
 	return newPoints
 }
 
-func queryTotalRows(sql string, lastArchived int64) *sql.Rows {
+func queryTotalRows(sql string, lastArchived string) *sql.Rows {
 	stmt, err := db.Conn.Prepare(sql)
 	checkError(err)
 	defer stmt.Close()

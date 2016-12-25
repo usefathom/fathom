@@ -25,7 +25,7 @@ func Referrers(before int64, after int64, limit int) []Point {
 }
 
 // CreateReferrerTotals aggregates screen data into daily totals
-func CreateReferrerTotals(since int64) {
+func CreateReferrerTotals(since string) {
 	rows := queryTotalRows(`
     SELECT
       pv.referrer_url,
@@ -35,7 +35,7 @@ func CreateReferrerTotals(since int64) {
     FROM pageviews pv
     WHERE pv.referrer_url IS NOT NULL
     AND pv.referrer_url != ''
-    AND UNIX_TIMESTAMP(pv.timestamp) > ?
+    AND pv.timestamp > ?
     GROUP BY date_group, pv.referrer_url`, since)
 
 	processTotalRows(rows, "total_referrers")

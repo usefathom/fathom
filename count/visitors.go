@@ -58,13 +58,13 @@ func VisitorsPerDay(before int64, after int64) []Point {
 }
 
 // CreateVisitorTotals aggregates visitor data into daily totals
-func CreateVisitorTotals(since int64) {
+func CreateVisitorTotals(since string) {
 	stmt, err := db.Conn.Prepare(`
     SELECT
       COUNT(DISTINCT(pv.visitor_id)) AS count,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
+    WHERE pv.timestamp > ?
     GROUP BY date_group`)
 	checkError(err)
 	defer stmt.Close()
@@ -82,13 +82,14 @@ func CreateVisitorTotals(since int64) {
 		stmt, err := db.Conn.Prepare(`INSERT INTO total_visitors(
 	    count,
 	    date
-	    ) VALUES( ?, ? )`)
+	    ) VALUES( ?, ? ) ON DUPLICATE KEY UPDATE count = ?`)
 		checkError(err)
 		defer stmt.Close()
 
 		_, err = stmt.Exec(
 			t.Count,
 			t.Date,
+			t.Count,
 		)
 		checkError(err)
 	}

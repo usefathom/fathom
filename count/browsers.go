@@ -25,7 +25,7 @@ func Browsers(before int64, after int64, limit int) []Point {
 }
 
 // CreateBrowserTotals aggregates screen data into daily totals
-func CreateBrowserTotals(since int64) {
+func CreateBrowserTotals(since string) {
 	rows := queryTotalRows(`
     SELECT
       v.browser_name,
@@ -34,7 +34,7 @@ func CreateBrowserTotals(since int64) {
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
+    WHERE pv.timestamp > ?
     GROUP BY date_group, v.browser_name`, since)
 
 	processTotalRows(rows, "total_browser_names")

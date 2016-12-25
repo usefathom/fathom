@@ -26,7 +26,7 @@ func Languages(before int64, after int64, limit int) []Point {
 }
 
 // CreateLanguageTotals aggregates screen data into daily totals
-func CreateLanguageTotals(since int64) {
+func CreateLanguageTotals(since string) {
 	rows := queryTotalRows(`
     SELECT
       v.browser_language,
@@ -35,7 +35,7 @@ func CreateLanguageTotals(since int64) {
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
+    WHERE pv.timestamp > ?
     GROUP BY date_group, v.browser_language`, since)
 
 	processTotalRows(rows, "total_browser_languages")

@@ -26,7 +26,7 @@ func Screens(before int64, after int64, limit int) []Point {
 }
 
 // CreateScreenTotals aggregates screen data into daily totals
-func CreateScreenTotals(since int64) {
+func CreateScreenTotals(since string) {
 	rows := queryTotalRows(`
     SELECT
       v.screen_resolution,
@@ -35,7 +35,7 @@ func CreateScreenTotals(since int64) {
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
     LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
+    WHERE pv.timestamp > ?
     GROUP BY date_group, v.screen_resolution`, since)
 
 	processTotalRows(rows, "total_screens")

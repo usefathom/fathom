@@ -46,14 +46,14 @@ func PageviewsPerDay(before int64, after int64) []Point {
 }
 
 // CreatePageviewTotals aggregates pageview data for each page into daily totals
-func CreatePageviewTotals(since int64) {
+func CreatePageviewTotals(since string) {
 	stmt, err := db.Conn.Prepare(`SELECT
       pv.page_id,
       COUNT(*) AS count,
 			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
 			DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
     FROM pageviews pv
-    WHERE UNIX_TIMESTAMP(pv.timestamp) > ?
+    WHERE pv.timestamp > ?
     GROUP BY pv.page_id, date_group`)
 	checkError(err)
 	defer stmt.Close()
@@ -61,6 +61,8 @@ func CreatePageviewTotals(since int64) {
 	rows, err := stmt.Query(since)
 	checkError(err)
 	defer rows.Close()
+
+	db.Conn.Begin()
 
 	db.Conn.Exec("START TRANSACTION")
 	for rows.Next() {
@@ -73,7 +75,7 @@ func CreatePageviewTotals(since int64) {
 	    count,
 			count_unique,
 	    date
-	    ) VALUES( ?, ?, ?, ? )`)
+	    ) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`)
 		checkError(err)
 		defer stmt.Close()
 
@@ -82,6 +84,8 @@ func CreatePageviewTotals(since int64) {
 			t.Count,
 			t.CountUnique,
 			t.Date,
+			t.Count,
+			t.CountUnique,
 		)
 		checkError(err)
 	}
