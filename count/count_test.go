@@ -24,5 +24,19 @@ func TestFill(t *testing.T) {
 	if len(filled) != 5 {
 		t.Error("Length of filled points slice does not match expected length")
 	}
+}
 
+func TestCalculatePointPercentages(t *testing.T) {
+	points := []Point{
+		Point{
+			Label: "Foo",
+			Value: 5,
+		},
+	}
+
+	points = calculatePointPercentages(points, 100)
+
+	if points[0].PercentageValue != 5.00 {
+		t.Errorf("Percentage value should be 5.00, is %.2f", points[0].PercentageValue)
+	}
 }
