@@ -11,11 +11,11 @@ func TestFill(t *testing.T) {
 
 	points := []Point{
 		Point{
-			Label: start.Format("2006-01-01"),
+			Label: start.Format("2006-01-02"),
 			Value: 1,
 		},
 		Point{
-			Label: end.Format("2006-01-01"),
+			Label: end.Format("2006-01-02"),
 			Value: 1,
 		},
 	}
