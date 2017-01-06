@@ -1,8 +1,8 @@
 'use strict';
 
-import { h, render, Component } from 'preact';
-import Login from './pages/login.js';
-import Dashboard from './pages/dashboard.js';
+import { h, render, Component } from 'preact'
+import Login from './pages/login.js'
+import Dashboard from './pages/dashboard.js'
 
 class App extends Component {
   constructor(props) {

@@ -1,10 +1,9 @@
 'use strict';
 
 var Client = {};
-
 Client.request = function(resource, args) {
   args = args || {};
-  args.credentials = 'include'
+  args.credentials = 'same-origin'
   args.headers = args.headers || {};
   args.headers['Accept'] = 'application/json';
 
