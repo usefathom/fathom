@@ -33,7 +33,7 @@ class Pageviews extends Component {
     const after = before - ( period * dayInSeconds );
     this.setState({ loading: true })
 
-    Client.request(`/pageviews?before=${before}&after=${after}`)
+    Client.request(`pageviews?before=${before}&after=${after}`)
     .then((d) => { this.setState({ loading: false, records: d })})
     .catch((e) => { console.log(e) })
   }
