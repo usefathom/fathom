@@ -3,16 +3,18 @@ package count
 import "github.com/dannyvankooten/ana/db"
 
 // Pageviews returns the total number of pageviews between the given timestamps
-func Pageviews(before int64, after int64) float64 {
+func Pageviews(before int64, after int64) int {
+	var total int
+
 	// get total
 	stmt, err := db.Conn.Prepare(`
     SELECT
-    SUM(t.count)
+    	IFNULL( SUM(t.count), 0 )
     FROM total_pageviews t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)
 	defer stmt.Close()
-	var total float64
+
 	stmt.QueryRow(before, after).Scan(&total)
 	return total
 }

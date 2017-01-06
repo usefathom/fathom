@@ -10,7 +10,7 @@ func TotalReferrers(before int64, after int64) int {
 
 	stmt, err := db.Conn.Prepare(`
     SELECT
-      SUM(t.count)
+      IFNULL( SUM(t.count), 0 )
     FROM total_referrers t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)

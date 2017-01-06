@@ -10,7 +10,7 @@ func TotalUniqueBrowsers(before int64, after int64) int {
 
 	stmt, err := db.Conn.Prepare(`
     SELECT
-      SUM(t.count_unique)
+      IFNULL( SUM(t.count_unique), 0 )
     FROM total_browser_names t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)

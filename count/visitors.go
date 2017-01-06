@@ -15,7 +15,7 @@ func RealtimeVisitors() int {
 }
 
 // Visitors returns the number of total visitors between the given timestamps
-func Visitors(before int64, after int64) float64 {
+func Visitors(before int64, after int64) int {
 	// get total
 	stmt, err := db.Conn.Prepare(`
     SELECT
@@ -24,7 +24,7 @@ func Visitors(before int64, after int64) float64 {
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	checkError(err)
 	defer stmt.Close()
-	var total float64
+	var total int
 	stmt.QueryRow(before, after).Scan(&total)
 	return total
 }
