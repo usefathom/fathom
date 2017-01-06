@@ -10,6 +10,7 @@ install_dependencies() {
 	go get "github.com/go-sql-driver/mysql"
 	go get -u "github.com/mattes/migrate"
 	go get "github.com/joho/godotenv"
+	go get "github.com/robfig/cron"
 }
 
 bin() {
