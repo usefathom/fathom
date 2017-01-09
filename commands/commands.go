@@ -17,6 +17,7 @@ var (
 	emailArg              string
 	passwordArg           string
 	nArg                  int
+	portArg               int
 )
 
 // Parse CLI arguments
