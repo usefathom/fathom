@@ -26,7 +26,7 @@ func Parse() {
 	flag.BoolVar(&runCreateUserCommand, "create_user", false, "Create a new user")
 	flag.BoolVar(&runDeleteUserCommand, "delete_user", false, "Deletes a user")
 	flag.BoolVar(&runStartServerCommand, "start_server", true, "Start the API web server, listen on -port")
-	flag.BoolVar(&runSeedDataCommand, "seed_data", false, "Seed the database -n times")
+	flag.BoolVar(&runSeedDataCommand, "db_seed", false, "Seed the database -n times")
 	flag.BoolVar(&runArchiveDataCommand, "archive_data", false, "Aggregates data into daily totals")
 	flag.StringVar(&emailArg, "email", "", "Email address")
 	flag.StringVar(&passwordArg, "password", "", "Password")

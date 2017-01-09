@@ -97,7 +97,7 @@ func calculatePointPercentages(points []Point, total int) []Point {
 	for i, d := range points {
 		points[i].PercentageValue = float64(d.Value) / float64(total) * 100
 	}
-	
+
 	return points
 }
 

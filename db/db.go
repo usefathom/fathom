@@ -10,9 +10,7 @@ import (
 
 var Conn *sql.DB
 
-// SetupDatabaseConnection opens up & returns a SQL connection
-func SetupDatabaseConnection() (*sql.DB, error) {
-	var err error
+func getDSN() string {
 	var dsn = fmt.Sprintf(
 		"%s:%s@%s/%s",
 		os.Getenv("ANA_DATABASE_USER"),
@@ -20,8 +18,14 @@ func SetupDatabaseConnection() (*sql.DB, error) {
 		os.Getenv("ANA_DATABASE_HOST"),
 		os.Getenv("ANA_DATABASE_NAME"),
 	)
+	return dsn
+}
 
-	Conn, err = sql.Open("mysql", dsn)
+// SetupDatabaseConnection opens up & returns a SQL connection
+func SetupDatabaseConnection() (*sql.DB, error) {
+	var err error
+
+	Conn, err = sql.Open("mysql", getDSN())
 	if err != nil {
 		return nil, err
 	}
