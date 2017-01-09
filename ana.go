@@ -11,12 +11,10 @@ import (
 )
 
 func main() {
-	log.Println("starting...")
-
 	// load .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("no .env file found")
+		log.Println("No .env file found")
 	}
 
 	// setup database connection
