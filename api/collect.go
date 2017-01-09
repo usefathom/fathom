@@ -2,12 +2,13 @@ package api
 
 import (
 	"encoding/base64"
-	"github.com/dannyvankooten/ana/db"
-	"github.com/dannyvankooten/ana/models"
-	"github.com/mssola/user_agent"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/models"
+	"github.com/mssola/user_agent"
 )
 
 func getRequestIp(r *http.Request) string {
@@ -73,7 +74,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		VisitorID:       visitor.ID,
 		ReferrerUrl:     q.Get("ru"),
 		ReferrerKeyword: q.Get("rk"),
-		Timestamp: now,
+		Timestamp:       now,
 	}
 
 	// only store referrer URL if not coming from own site

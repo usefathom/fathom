@@ -2,10 +2,11 @@ package db
 
 import (
 	"fmt"
-	"github.com/Pallinder/go-randomdata"
-	"github.com/dannyvankooten/ana/models"
 	"math/rand"
 	"time"
+
+	randomdata "github.com/Pallinder/go-randomdata"
+	"github.com/dannyvankooten/ana/models"
 )
 
 var browserNames = []string{

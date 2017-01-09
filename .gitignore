@@ -3,3 +3,5 @@ static
 .env
 storage
 ana
+coverage.out
+vendor/*/
