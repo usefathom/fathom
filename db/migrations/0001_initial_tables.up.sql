@@ -41,8 +41,7 @@ CREATE TABLE options (
   `name` VARCHAR(255) NOT NULL,
   `value` VARCHAR(255) DEFAULT ''
 );
-
-CREATE INDEX options_name ON options(`name`);
+ALTER TABLE options ADD UNIQUE(`name`);
 
 CREATE TABLE `total_pageviews` (
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,

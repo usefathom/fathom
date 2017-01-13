@@ -8,7 +8,7 @@ import (
 func Get(name string) string {
 	var value string
 
-	stmt, _ := db.Conn.Prepare(`SELECT o.value FROM options o WHERE o.name = ?`)
+	stmt, _ := db.Conn.Prepare(`SELECT o.value FROM options o WHERE o.name = ? LIMIT 1`)
 	defer stmt.Close()
 	stmt.QueryRow(name).Scan(&value)
 
