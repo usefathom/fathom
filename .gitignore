@@ -4,5 +4,3 @@ static
 storage
 ana
 coverage.out
-vendor/*
-!vendor/vendor.json
