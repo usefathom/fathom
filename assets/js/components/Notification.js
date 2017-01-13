@@ -10,6 +10,7 @@ class Notification extends Component {
       message: props.message,
       kind: props.kind || 'error'
     }
+    this.timeout = 0
   }
 
   clearMessage() {
@@ -19,7 +20,8 @@ class Notification extends Component {
   componentWillReceiveProps(newProps) {
     if(newProps.message != this.state.message) {
       this.setState({ message: newProps.message, kind: newProps.kind || 'error' })
-      window.setTimeout(this.clearMessage.bind(this), 5000)
+      window.clearTimeout(this.timeout)
+      this.timeout = window.setTimeout(this.clearMessage.bind(this), 5000)
     }
   }
 
