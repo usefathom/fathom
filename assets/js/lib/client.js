@@ -19,13 +19,21 @@ Client.request = function(resource, args) {
     }
   }
 
-  return fetch(`/api/${resource}`, args).then((r) => {
-    if( r.ok ) {
-      return r.json();
-    }
+  return fetch(`/api/${resource}`, args)
+    .then(parseJSON)
+    .then(checkData)
+}
 
-    throw new Error(r);
-  })
+function parseJSON(r) {
+  return r.json()
+}
+
+function checkData(d) {
+  if(d.Error) {
+    throw new Error(d.Error)
+  }
+
+  return d.Data
 }
 
 export default Client

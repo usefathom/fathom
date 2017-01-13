@@ -10,7 +10,7 @@ class Login extends Component {
       <div>
         <HeaderBar showLogout={false} />
         <div class="container">
-          <LoginForm onSuccess={this.props.onLogin} />
+          <LoginForm onSuccess={this.props.onLogin}/>
         </div>
       </div>
     )

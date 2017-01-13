@@ -2,6 +2,7 @@
 
 import { h, render, Component } from 'preact';
 import Client from '../lib/client.js';
+import Notification from '../components/Notification.js';
 
 class LoginForm extends Component {
 
@@ -11,6 +12,7 @@ class LoginForm extends Component {
     this.state = {
       email: '',
       password: '',
+      message: ''
     }
   }
 
@@ -23,7 +25,15 @@ class LoginForm extends Component {
         email: this.state.email,
         password: this.state.password,
       }
-    }).then((r) => { this.props.onSuccess() })
+    }).then((r) => {
+        this.props.onSuccess()
+    }).catch((e) => {
+      this.setState({
+        message: e.message,
+        password: ''
+      })
+
+    })
   }
 
   render() {
@@ -34,17 +44,19 @@ class LoginForm extends Component {
         <form method="POST" onSubmit={this.handleSubmit}>
           <div class="small-margin">
             <label>Email address</label>
-            <input type="email" name="email" placeholder="Email address" onChange={this.linkState('email')} required="required" />
+            <input type="email" name="email" placeholder="Email address" value={this.state.email} onChange={this.linkState('email')} required="required" />
           </div>
           <div class="small-margin">
             <label>Password</label>
-            <input type="password" name="password" placeholder="**********" onChange={this.linkState('password')} required="required" />
+            <input type="password" name="password" placeholder="**********" value={this.state.password} onChange={this.linkState('password')} required="required" />
           </div>
           <div class="small-margin">
             <input type="submit" value="Sign in" />
           </div>
         </form>
+        <Notification message={this.state.message} kind="" />
       </div>
+
     )
   }
 }

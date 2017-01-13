@@ -110,7 +110,6 @@ a {
 
 }
 
-
 @keyframes rotate {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
@@ -121,6 +120,25 @@ a {
   font-size: 120%;
 }
 
+.notification {
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  position: fixed;
+  color: white;
+
+  div {
+    color: white;
+    display: inline-block;
+    padding: 6px 12px;
+    background: green;
+  }
+
+  .notification-error {
+    background: red;
+  }
+}
 
 h1 {
   font-size: 28px;
