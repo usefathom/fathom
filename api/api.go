@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,6 +11,17 @@ import (
 
 const defaultPeriod = 7
 const defaultLimit = 10
+
+type envelope struct {
+	Data  interface{}
+	Error interface{}
+}
+
+func respond(w http.ResponseWriter, d interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	enc.Encode(d)
+}
 
 // log fatal errors
 func checkError(err error) {

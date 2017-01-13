@@ -20,17 +20,19 @@ var store = sessions.NewFilesystemStore("./storage/sessions/", []byte(os.Getenv(
 
 // URL: POST /api/session
 var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	var l login
-	json.NewDecoder(r.Body).Decode(&l)
 
 	// check login creds
+	var l login
+	json.NewDecoder(r.Body).Decode(&l)
 	var hashedPassword string
 	var u models.User
 	stmt, _ := db.Conn.Prepare("SELECT id, email, password FROM users WHERE email = ? LIMIT 1")
 	err := stmt.QueryRow(l.Email).Scan(&u.ID, &u.Email, &hashedPassword)
 
+	// compare pwd
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(l.Password)) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		respond(w, envelope{Error: "invalid_credentials"})
 		return
 	}
 
@@ -40,8 +42,7 @@ var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request)
 	err = session.Save(r, w)
 	checkError(err)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("true"))
+	respond(w, envelope{Data: true})
 })
 
 // URL: DELETE /api/session
@@ -52,8 +53,7 @@ var LogoutHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request
 		session.Save(r, w)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte("true"))
+	respond(w, envelope{Data: true})
 })
 
 /* middleware */

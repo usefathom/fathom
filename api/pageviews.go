@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/dannyvankooten/ana/count"
@@ -44,22 +43,19 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 	err = rows.Err()
 	checkError(err)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	respond(w, envelope{Data: results})
 })
 
 // URL: /api/pageviews/count
 var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	before, after := getRequestedPeriods(r)
 	result := count.Pageviews(before, after)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	respond(w, envelope{Data: result})
 })
 
 // URL: /api/pageviews/group/day
 var GetPageviewsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	before, after := getRequestedPeriods(r)
 	results := count.PageviewsPerDay(before, after)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	respond(w, envelope{Data: results})
 })
