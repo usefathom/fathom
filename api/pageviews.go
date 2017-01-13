@@ -5,8 +5,14 @@ import (
 
 	"github.com/dannyvankooten/ana/count"
 	"github.com/dannyvankooten/ana/db"
-	"github.com/dannyvankooten/ana/models"
 )
+
+type pageviews struct {
+	Hostname    string
+	Path        string
+	Count       int
+	CountUnique int
+}
 
 // URL: /api/pageviews
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -32,9 +38,9 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 	checkError(err)
 	defer rows.Close()
 
-	results := make([]models.Pageviews, 0)
+	results := make([]pageviews, 0)
 	for rows.Next() {
-		var p models.Pageviews
+		var p pageviews
 		err = rows.Scan(&p.Hostname, &p.Path, &p.Count, &p.CountUnique)
 		checkError(err)
 		results = append(results, p)

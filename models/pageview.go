@@ -13,13 +13,6 @@ type Pageview struct {
 	Timestamp       string
 }
 
-type Pageviews struct {
-	Hostname    string
-	Path        string
-	Count       int
-	CountUnique int
-}
-
 func (pv *Pageview) Save(conn *sql.DB) error {
 	// prepare statement for inserting data
 	stmt, err := conn.Prepare(`INSERT INTO pageviews (
