@@ -99,6 +99,7 @@ func Seed(n int) {
 
 		// print a dot as progress indicator
 		fmt.Print(".")
+		date := randomDateBeforeNow()
 
 		// create or find visitor
 		visitor := models.Visitor{
@@ -110,7 +111,8 @@ func Seed(n int) {
 			ScreenResolution: randSliceElement(screenResolutions),
 			Country:          randomdata.Country(randomdata.TwoCharCountry),
 		}
-		visitor.Key = visitor.GenerateKey()
+		dummyUserAgent := visitor.BrowserName + visitor.BrowserVersion + visitor.DeviceOS
+		visitor.Key = visitor.GenerateKey(date.Format("2006-01-02"), visitor.IpAddress, dummyUserAgent)
 
 		err := stmtVisitor.QueryRow(visitor.Key).Scan(&visitor.ID)
 		if err != nil {
@@ -118,7 +120,6 @@ func Seed(n int) {
 		}
 
 		// generate random timestamp
-		date := randomDateBeforeNow()
 		timestamp := fmt.Sprintf("%s %d:%d:%d", date.Format("2006-01-02"), randInt(10, 24), randInt(10, 60), randInt(10, 60))
 
 		pv := models.Pageview{
@@ -144,7 +145,7 @@ func Seed(n int) {
 func randomDate() time.Time {
 	now := time.Now()
 	month := months[randInt(0, len(months))]
-	t := time.Date(now.Year(), month, randInt(1, 31), randInt(0, 23), randInt(0, 59), randInt(0, 59), 0, time.UTC)
+	t := time.Date(randInt(now.Year()-1, now.Year()), month, randInt(1, 31), randInt(0, 23), randInt(0, 59), randInt(0, 59), 0, time.UTC)
 	return t
 }
 

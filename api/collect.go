@@ -1,7 +1,9 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/base64"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -42,13 +44,18 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 	err := stmt.QueryRow(page.Hostname, page.Path).Scan(&page.ID)
 	if err != nil {
-		page.Save(db.Conn)
+		if err == sql.ErrNoRows {
+			page.Save(db.Conn)
+		} else {
+			log.Fatal(err)
+		}
 	}
 
 	// find or insert visitor.
-	// TODO: Mask IP Address
+	now := time.Now()
+	ip := getRequestIp(r)
 	visitor := models.Visitor{
-		IpAddress:        getRequestIp(r),
+		IpAddress:        ip,
 		BrowserLanguage:  q.Get("l"),
 		ScreenResolution: q.Get("sr"),
 		DeviceOS:         ua.OS(),
@@ -60,21 +67,26 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 	visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
 
 	// query by unique visitor key
-	visitor.GenerateKey()
+	visitor.Key = visitor.GenerateKey(now.Format("2006-01-02"), visitor.IpAddress, r.UserAgent())
+
 	stmt, _ = db.Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
 	defer stmt.Close()
 	err = stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
 	if err != nil {
-		visitor.Save(db.Conn)
+		if err == sql.ErrNoRows {
+			err = visitor.Save(db.Conn)
+			checkError(err)
+		} else {
+			log.Fatal(err)
+		}
 	}
 
-	now := time.Now().Format("2006-01-02 15:04:05")
 	pageview := models.Pageview{
 		PageID:          page.ID,
 		VisitorID:       visitor.ID,
 		ReferrerUrl:     q.Get("ru"),
 		ReferrerKeyword: q.Get("rk"),
-		Timestamp:       now,
+		Timestamp:       now.Format("2006-01-02 15:04:05"),
 	}
 
 	// only store referrer URL if not coming from own site

@@ -34,7 +34,6 @@ func (v *Visitor) Save(conn *sql.DB) error {
 		return err
 	}
 	defer stmt.Close()
-
 	result, err := stmt.Exec(
 		v.Key,
 		v.IpAddress,
@@ -53,8 +52,8 @@ func (v *Visitor) Save(conn *sql.DB) error {
 	return err
 }
 
-// GenerateKey generates the "unique" visitor key
-func (v *Visitor) GenerateKey() string {
-	byteKey := md5.Sum([]byte(v.IpAddress + v.DeviceOS + v.BrowserName + v.ScreenResolution))
+// GenerateKey generates the "unique" visitor key from date, user agent + screen resolution
+func (v *Visitor) GenerateKey(date string, ipAddress string, userAgent string) string {
+	byteKey := md5.Sum([]byte(date + ipAddress + userAgent))
 	return hex.EncodeToString(byteKey[:])
 }
