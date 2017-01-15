@@ -20,7 +20,8 @@ type envelope struct {
 func respond(w http.ResponseWriter, d interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
-	enc.Encode(d)
+	err := enc.Encode(d)
+	checkError(err)
 }
 
 // log fatal errors
