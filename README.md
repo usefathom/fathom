@@ -5,7 +5,7 @@ Ana. Open Source Web Analytics.
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/dannyvankooten/ana/master/LICENSE)
 
 
-This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state.
+This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state. **Do not run Ana in production yet unless you like spending time on it.** Things will keep changing for the next few months.
 
 ![Screenshot of the Ana dashboard](https://github.com/dannyvankooten/ana/raw/master/assets/img/screenshot.png?v=6)
 
