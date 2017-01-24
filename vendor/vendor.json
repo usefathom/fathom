@@ -67,6 +67,12 @@
 			"path": "golang.org/x/crypto/blowfish",
 			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
 			"revisionTime": "2016-12-21T04:54:10Z"
+		},
+		{
+			"checksumSHA1": "SeYI7DRWrd0Ku+CLavuwIz3EEmQ=",
+			"path": "gopkg.in/alecthomas/kingpin.v2",
+			"revision": "e9044be3ab2a8e11d4e1f418d12f0790d57e8d70",
+			"revisionTime": "2016-08-29T10:30:05Z"
 		}
 	],
 	"rootPath": "github.com/dannyvankooten/ana"
