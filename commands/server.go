@@ -2,16 +2,16 @@ package commands
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-
 	"github.com/dannyvankooten/ana/api"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"net/http"
+	"os"
 )
 
-func startServer(port int) {
+// Server starts the HTTP server, listening on the given port
+func Server(port int) {
+
 	// register routes
 	r := mux.NewRouter()
 	r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
@@ -33,6 +33,7 @@ func startServer(port int) {
 	r.Path("/tracker.js").Handler(http.FileServer(http.Dir("./static/js/")))
 	r.Handle("/", http.FileServer(http.Dir("./views/")))
 
-	log.Printf("API server is now listening on :%d", port)
-	http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.LoggingHandler(os.Stdout, r))
+	fmt.Printf("HTTP server will now start listening on :%d\n", port)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.LoggingHandler(os.Stdout, r))
+	fmt.Println(err)
 }
