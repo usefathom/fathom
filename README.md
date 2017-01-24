@@ -16,9 +16,9 @@ For getting a development version of Ana up & running, please go through the fol
 1. Rename `.env.example` to `.env` and set your database credentials.
 1. Create or migrate the database: `export $(cat .env | xargs) && $GOPATH/bin/migrate -url mysql://$ANA_DATABASE_USER:$ANA_DATABASE_PASSWORD@$ANA_DATABSE_HOST/$ANA_DATABASE_NAME -path ./db/migrations up`
 3. Compile into binary: `make`
-4. Create your user account: `./ana -create_user -email="johndoe@email.com" -password="...."`
+4. Create your user account: `ana register <email> <password>`
 5. Run default Gulp task to build static assets: `gulp`
-6. Start the webserver: `./ana -start_server -port=8080` & visit **localhost:8080** to access your analytics dashboard.
+6. Start the webserver: `ana server --port=8080` & visit **localhost:8080** to access your analytics dashboard.
 
 To start tracking, include the following JavaScript on your site and replace `ana.dev` with the URL to your Ana instance.
 
