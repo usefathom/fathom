@@ -69,10 +69,28 @@
 			"revisionTime": "2016-12-08T17:59:04Z"
 		},
 		{
-			"checksumSHA1": "8T6S2BULujaIanLkxD1iw5rklBY=",
-			"path": "github.com/russross/meddler",
-			"revision": "f742b0f9424f3bfaffe189e921d734608929e84f",
-			"revisionTime": "2015-05-13T15:34:18Z"
+			"checksumSHA1": "Qgwcmaxcms96cseiKeTu73RiKJw=",
+			"path": "github.com/rubenv/sql-migrate",
+			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
+			"revisionTime": "2017-01-04T09:54:22Z"
+		},
+		{
+			"checksumSHA1": "IQ6NtaJ+F1rtAMIaCetzKb5nrxQ=",
+			"path": "github.com/rubenv/sql-migrate/sqlparse",
+			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
+			"revisionTime": "2017-01-04T09:54:22Z"
+		},
+		{
+			"checksumSHA1": "Ak1mii27DHhEIjLnNqhK2HNibxg=",
+			"path": "github.com/ziutek/mymysql/godrv",
+			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
+			"revisionTime": "2016-11-23T14:17:03Z"
+		},
+		{
+			"checksumSHA1": "x5wFYF5U9/AMBxJ5LQZayskPW7o=",
+			"path": "github.com/ziutek/mymysql/native",
+			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
+			"revisionTime": "2016-11-23T14:17:03Z"
 		},
 		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
@@ -91,6 +109,12 @@
 			"path": "gopkg.in/alecthomas/kingpin.v2",
 			"revision": "e9044be3ab2a8e11d4e1f418d12f0790d57e8d70",
 			"revisionTime": "2016-08-29T10:30:05Z"
+		},
+		{
+			"checksumSHA1": "xunNOgG8P6Xh4SM+LPQ1zMDXa8Q=",
+			"path": "gopkg.in/gorp.v1",
+			"revision": "c87af80f3cc5036b55b83d77171e156791085e2e",
+			"revisionTime": "2015-02-04T08:55:30Z"
 		}
 	],
 	"rootPath": "github.com/dannyvankooten/ana"

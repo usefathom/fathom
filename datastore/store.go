@@ -3,11 +3,11 @@ package datastore
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"os"
-
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	_ "github.com/lib/pq"              // postgresql driver
+	"github.com/rubenv/sql-migrate"
+	"log"
+	"os"
 )
 
 // DB ...
@@ -21,6 +21,10 @@ func Init() *sql.DB {
 	}
 
 	DB = New(driver, getDSN(driver))
+
+	// run migrations
+	runMigrations(driver)
+
 	return DB
 }
 
@@ -47,9 +51,26 @@ func getDSN(driver string) string {
 		os.Getenv("ANA_DATABASE_NAME"),
 	)
 
-	if driver == "postgres" {
+	switch driver {
+	case "postgres":
 		dsn = "postgres://" + dsn
+	case "mysql":
+		dsn = dsn + "?parseTime=true"
 	}
 
 	return dsn
+}
+
+func runMigrations(driver string) {
+	migrations := migrate.FileMigrationSource{
+		Dir: "datastore/migrations",
+	}
+
+	migrate.SetTable("migrations")
+	n, err := migrate.Exec(DB, driver, migrations, migrate.Up)
+	if err != nil {
+		log.Fatal("Database migrations failed: ", err)
+	}
+
+	log.Printf("Applied %d database migrations!\n", n)
 }

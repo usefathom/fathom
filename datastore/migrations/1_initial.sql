@@ -1,3 +1,4 @@
+-- +migrate Up
 
 CREATE TABLE visitors(
   `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -100,3 +101,17 @@ CREATE TABLE `total_referrers` (
 );
 CREATE INDEX total_referrers_date ON total_referrers(`date`);
 ALTER TABLE total_referrers ADD UNIQUE(`value`, `date`);
+
+-- +migrate Down
+DROP TABLE IF EXISTS pageviews;
+DROP TABLE if exists visitors;
+DROP TABLE IF EXISTS pages;
+DROP TABLE IF EXISTS sites;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS total_pageviews;
+DROP TABLE IF EXISTS total_visitors;
+DROP TABLE IF EXISTS total_browser_languages;
+DROP TABLE IF EXISTS total_screens;
+DROP TABLE IF EXISTS total_browser_names;
+DROP TABLE IF EXISTS total_referrers;
+DROP TABLE IF EXISTS options;

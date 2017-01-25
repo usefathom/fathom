@@ -5,6 +5,7 @@ import (
 	"github.com/dannyvankooten/ana/api"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"os"
 )
@@ -33,7 +34,7 @@ func Server(port int) {
 	r.Path("/tracker.js").Handler(http.FileServer(http.Dir("./static/js/")))
 	r.Handle("/", http.FileServer(http.Dir("./views/")))
 
-	fmt.Printf("HTTP server will now start listening on :%d\n", port)
+	log.Printf("HTTP server will now start listening on :%d\n", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.LoggingHandler(os.Stdout, r))
-	fmt.Println(err)
+	log.Println(err)
 }
