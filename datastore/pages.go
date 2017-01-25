@@ -8,12 +8,16 @@ var p models.Page
 
 // GetPage ...
 func GetPage(id int64) (*models.Page, error) {
-	return &p, err
+	return &p, nil
 }
 
 // GetPageByHostnameAndPath ...
 func GetPageByHostnameAndPath(hostname, path string) (*models.Page, error) {
-	stmt, err = DB.Prepare("SELECT p.id, p.hostname, p.path FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
+	stmt, err := DB.Prepare("SELECT p.id, p.hostname, p.path FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
+	if err != nil {
+		return nil, err
+	}
+
 	defer stmt.Close()
 	err = stmt.QueryRow(hostname, path).Scan(&p.ID, &p.Hostname, &p.Path)
 	return &p, err
@@ -22,7 +26,7 @@ func GetPageByHostnameAndPath(hostname, path string) (*models.Page, error) {
 // SavePage ...
 func SavePage(p *models.Page) error {
 	// prepare statement for inserting data
-	stmt, err = DB.Prepare(`INSERT INTO pages(
+	stmt, err := DB.Prepare(`INSERT INTO pages(
 			hostname,
 			path,
 			title
@@ -32,7 +36,7 @@ func SavePage(p *models.Page) error {
 		return err
 	}
 
-	result, err = stmt.Exec(p.Hostname, p.Path, p.Title)
+	result, err := stmt.Exec(p.Hostname, p.Path, p.Title)
 	if err != nil {
 		return err
 	}

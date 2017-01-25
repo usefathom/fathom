@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -12,6 +13,10 @@ import (
 	"github.com/dannyvankooten/ana/models"
 	"github.com/mssola/user_agent"
 )
+
+var buffer []*models.Pageview
+var bufferSize = 250
+var timeout = 100 * time.Millisecond
 
 func getRequestIp(r *http.Request) string {
 	ipAddress := r.RemoteAddr
@@ -24,77 +29,109 @@ func getRequestIp(r *http.Request) string {
 	return ipAddress
 }
 
-func CollectHandler(w http.ResponseWriter, r *http.Request) {
-	ua := user_agent.New(r.UserAgent())
-
-	// abort if this is a bot.
-	if ua.Bot() {
-		return
+func persistPageviews() {
+	if len(buffer) > 0 {
+		log.Printf("Persisting %d pageviews\n", len(buffer))
+		err := datastore.SavePageviews(buffer)
+		buffer = buffer[:0]
+		checkError(err)
 	}
+}
 
-	q := r.URL.Query()
-
-	// find or insert page
-	page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
-	if page.ID == 0 {
-		page = &models.Page{
-			Hostname: q.Get("h"),
-			Path:     q.Get("p"),
-			Title:    q.Get("t"),
+func processBuffer(pv chan *models.Pageview) {
+	for {
+		select {
+		case pageview := <-pv:
+			buffer = append(buffer, pageview)
+			if len(buffer) >= bufferSize {
+				persistPageviews()
+			}
+		case <-time.After(timeout):
+			persistPageviews()
 		}
-		err = datastore.SavePage(page)
 	}
-	checkError(err)
+}
 
-	// find or insert visitor.
-	now := time.Now()
-	ipAddress := getRequestIp(r)
-	visitorKey := generateVisitorKey(now.Format("2006-01-02"), ipAddress, r.UserAgent())
+/* middleware */
+func NewCollectHandler() http.Handler {
+	pageviews := make(chan *models.Pageview, 100)
+	go processBuffer(pageviews)
 
-	visitor, err := datastore.GetVisitorByKey(visitorKey)
-	if visitor.ID == 0 {
-		visitor = &models.Visitor{
-			IpAddress:        ipAddress,
-			BrowserLanguage:  q.Get("l"),
-			ScreenResolution: q.Get("sr"),
-			DeviceOS:         ua.OS(),
-			Country:          "",
-			Key:              visitorKey,
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ua := user_agent.New(r.UserAgent())
+
+		// abort if this is a bot.
+		if ua.Bot() {
+			return
 		}
 
-		// add browser details
-		visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
-		visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
-		err = datastore.SaveVisitor(visitor)
-	}
-	checkError(err)
+		q := r.URL.Query()
 
-	pageview := &models.Pageview{
-		PageID:          page.ID,
-		VisitorID:       visitor.ID,
-		ReferrerUrl:     q.Get("ru"),
-		ReferrerKeyword: q.Get("rk"),
-		Timestamp:       now.Format("2006-01-02 15:04:05"),
-	}
+		// find or insert page
+		page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
 
-	// only store referrer URL if not coming from own site
-	if strings.Contains(pageview.ReferrerUrl, page.Hostname) {
-		pageview.ReferrerUrl = ""
-	}
+		if err != nil {
+			page = &models.Page{
+				Hostname: q.Get("h"),
+				Path:     q.Get("p"),
+				Title:    q.Get("t"),
+			}
 
-	err = datastore.SavePageview(pageview)
-	checkError(err)
+			err = datastore.SavePage(page)
+			checkError(err)
+		}
 
-	// don't you cache this
-	w.Header().Set("Content-Type", "image/gif")
-	w.Header().Set("Expires", "Mon, 01 Jan 1990 00:00:00 GMT")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.WriteHeader(http.StatusOK)
+		// find or insert visitor.
+		now := time.Now()
+		ipAddress := getRequestIp(r)
+		visitorKey := generateVisitorKey(now.Format("2006-01-02"), ipAddress, r.UserAgent())
 
-	// 1x1 px transparent GIF
-	b, _ := base64.StdEncoding.DecodeString("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
-	w.Write(b)
+		visitor, err := datastore.GetVisitorByKey(visitorKey)
+		if err != nil {
+			log.Println(err)
+			visitor = &models.Visitor{
+				IpAddress:        ipAddress,
+				BrowserLanguage:  q.Get("l"),
+				ScreenResolution: q.Get("sr"),
+				DeviceOS:         ua.OS(),
+				Country:          "",
+				Key:              visitorKey,
+			}
+
+			// add browser details
+			visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
+			visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
+			err = datastore.SaveVisitor(visitor)
+			checkError(err)
+		}
+
+		pageview := &models.Pageview{
+			PageID:          page.ID,
+			VisitorID:       visitor.ID,
+			ReferrerUrl:     q.Get("ru"),
+			ReferrerKeyword: q.Get("rk"),
+			Timestamp:       now.Format("2006-01-02 15:04:05"),
+		}
+
+		// only store referrer URL if not coming from own site
+		if strings.Contains(pageview.ReferrerUrl, page.Hostname) {
+			pageview.ReferrerUrl = ""
+		}
+
+		// push onto channel
+		pageviews <- pageview
+
+		// don't you cache this
+		w.Header().Set("Content-Type", "image/gif")
+		w.Header().Set("Expires", "Mon, 01 Jan 1990 00:00:00 GMT")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.WriteHeader(http.StatusOK)
+
+		// 1x1 px transparent GIF
+		b, _ := base64.StdEncoding.DecodeString("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+		w.Write(b)
+	})
 }
 
 // generateVisitorKey generates the "unique" visitor key from date, user agent + screen resolution

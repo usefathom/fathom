@@ -59,28 +59,28 @@ func seedPages() []models.Page {
 		Path:     "/",
 		Title:    "Homepage",
 	}
-	homepage.Save(DB)
+	SavePage(&homepage)
 
 	contactPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/contact/",
 		Title:    "Contact",
 	}
-	contactPage.Save(DB)
+	SavePage(&contactPage)
 
 	aboutPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/about/",
 		Title:    "About Me",
 	}
-	aboutPage.Save(DB)
+	SavePage(&aboutPage)
 
 	portfolioPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/portfolio/",
 		Title:    "Portfolio",
 	}
-	portfolioPage.Save(DB)
+	SavePage(&portfolioPage)
 
 	pages = append(pages, homepage)
 	pages = append(pages, homepage)
@@ -93,9 +93,6 @@ func seedPages() []models.Page {
 // Seed inserts n random pageviews in the database.
 func Seed(n int) {
 	pages := seedPages()
-
-	stmtVisitor, _ := DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
-	defer stmtVisitor.Close()
 
 	// insert X random hits
 	for i := 0; i < n; i++ {
@@ -110,10 +107,9 @@ func Seed(n int) {
 
 		dummyUserAgent := browserName + browserVersion + deviceOS
 		visitorKey := generateVisitorKey(date.Format("2006-01-02"), ipAddress, dummyUserAgent)
+		visitor, err := GetVisitorByKey(visitorKey)
 
-		var visitor *models.Visitor
-		visitor, err = GetVisitorByKey(visitorKey)
-		if visitor == nil {
+		if err != nil {
 			// create or find visitor
 			visitor := models.Visitor{
 				IpAddress:        ipAddress,

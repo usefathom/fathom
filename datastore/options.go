@@ -1,14 +1,18 @@
 package datastore
 
 // GetOption returns an option value by its name
-func GetOption(name string) string {
+func GetOption(name string) (string, error) {
 	var value string
 
-	stmt, _ := DB.Prepare(`SELECT o.value FROM options o WHERE o.name = ? LIMIT 1`)
+	stmt, err := DB.Prepare(`SELECT o.value FROM options o WHERE o.name = ? LIMIT 1`)
+	if err != nil {
+		return "", err
+	}
+
 	defer stmt.Close()
 	stmt.QueryRow(name).Scan(&value)
 
-	return value
+	return value, nil
 }
 
 // SetOption updates an option by its name

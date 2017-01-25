@@ -26,7 +26,7 @@ type Point struct {
 }
 
 func getLastArchivedDate() string {
-	value := datastore.GetOption("last_archived")
+	value, _ := datastore.GetOption("last_archived")
 	return value
 }
 

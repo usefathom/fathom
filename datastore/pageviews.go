@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"github.com/dannyvankooten/ana/models"
+	"log"
 )
 
 //var pv models.Pageview
@@ -9,7 +10,7 @@ import (
 // SavePageview ...
 func SavePageview(pv *models.Pageview) error {
 	// prepare statement for inserting data
-	stmt, err = DB.Prepare(`INSERT INTO pageviews (
+	stmt, err := DB.Prepare(`INSERT INTO pageviews (
      page_id,
      visitor_id,
      referrer_url,
@@ -21,7 +22,7 @@ func SavePageview(pv *models.Pageview) error {
 		return err
 	}
 
-	result, err = stmt.Exec(
+	result, err := stmt.Exec(
 		pv.PageID,
 		pv.VisitorID,
 		pv.ReferrerUrl,
@@ -34,5 +35,42 @@ func SavePageview(pv *models.Pageview) error {
 	}
 
 	pv.ID, err = result.LastInsertId()
+	return err
+}
+
+// SavePageviews ...
+func SavePageviews(pvs []*models.Pageview) error {
+	tx, err := DB.Begin()
+	stmt, err := tx.Prepare(`INSERT INTO pageviews(
+     page_id,
+     visitor_id,
+     referrer_url,
+     referrer_keyword,
+     timestamp
+   ) VALUES( ?, ?, ?, ?, ? )`)
+	defer stmt.Close()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	for _, pv := range pvs {
+		result, err := stmt.Exec(
+			pv.PageID,
+			pv.VisitorID,
+			pv.ReferrerUrl,
+			pv.ReferrerKeyword,
+			pv.Timestamp,
+		)
+
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		pv.ID, err = result.LastInsertId()
+	}
+
+	err = tx.Commit()
 	return err
 }

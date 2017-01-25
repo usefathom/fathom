@@ -15,7 +15,7 @@ func Server(port int) {
 
 	// register routes
 	r := mux.NewRouter()
-	r.HandleFunc("/collect", api.CollectHandler).Methods("GET")
+	r.Handle("/collect", api.NewCollectHandler()).Methods("GET")
 	r.Handle("/api/session", api.LoginHandler).Methods("POST")
 	r.Handle("/api/session", api.LogoutHandler).Methods("DELETE")
 	r.Handle("/api/visitors/count", api.Authorize(api.GetVisitorsCountHandler)).Methods("GET")

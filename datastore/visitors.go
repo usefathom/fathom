@@ -9,7 +9,11 @@ var v models.Visitor
 // GetVisitorByKey ...
 func GetVisitorByKey(key string) (*models.Visitor, error) {
 	// query by unique visitor key
-	stmt, err = DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+	stmt, err := DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+	if err != nil {
+		return nil, err
+	}
+
 	defer stmt.Close()
 	err = stmt.QueryRow(key).Scan(&v.ID)
 	return &v, err
@@ -18,7 +22,7 @@ func GetVisitorByKey(key string) (*models.Visitor, error) {
 // SaveVisitor ...
 func SaveVisitor(v *models.Visitor) error {
 	// prepare statement for inserting data
-	stmt, err = DB.Prepare(`INSERT INTO visitors (
+	stmt, err := DB.Prepare(`INSERT INTO visitors (
       visitor_key,
       ip_address,
       device_os,
@@ -33,7 +37,7 @@ func SaveVisitor(v *models.Visitor) error {
 		return err
 	}
 
-	result, err = stmt.Exec(
+	result, err := stmt.Exec(
 		v.Key,
 		v.IpAddress,
 		v.DeviceOS,
