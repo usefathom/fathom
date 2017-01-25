@@ -5,9 +5,10 @@ import (
 )
 
 type User struct {
-	ID       int64
-	Email    string
-	Password string `json:"-"`
+	ID             int64
+	Email          string
+	Password       string `json:"-"`
+	HashedPassword string `json:"-"`
 }
 
 func (u *User) Save(conn *sql.DB) error {
