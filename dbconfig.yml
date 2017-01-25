@@ -1,4 +1,0 @@
-development:
-  dialect: mysql
-  datasource: root:root@/ana
-  dir: datastore/migrations

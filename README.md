@@ -14,7 +14,6 @@ This is nowhere near being usable, let alone stable. Please treat as a proof of 
 For getting a development version of Ana up & running, please go through the following steps.
 
 1. Rename `.env.example` to `.env` and set your database credentials.
-1. Create or migrate the database: `export $(cat .env | xargs) && $GOPATH/bin/migrate -url mysql://$ANA_DATABASE_USER:$ANA_DATABASE_PASSWORD@$ANA_DATABSE_HOST/$ANA_DATABASE_NAME -path ./db/migrations up`
 3. Compile into binary: `make`
 4. Create your user account: `ana register <email> <password>`
 5. Run default Gulp task to build static assets: `gulp`
