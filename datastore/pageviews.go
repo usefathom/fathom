@@ -2,7 +2,6 @@ package datastore
 
 import (
 	"github.com/dannyvankooten/ana/models"
-	"log"
 )
 
 //var pv models.Pageview
@@ -50,7 +49,6 @@ func SavePageviews(pvs []*models.Pageview) error {
    ) VALUES( ?, ?, ?, ?, ? )`)
 	defer stmt.Close()
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -64,7 +62,6 @@ func SavePageviews(pvs []*models.Pageview) error {
 		)
 
 		if err != nil {
-			log.Println(err)
 			return err
 		}
 

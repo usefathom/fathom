@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -31,7 +30,6 @@ func getRequestIp(r *http.Request) string {
 
 func persistPageviews() {
 	if len(buffer) > 0 {
-		log.Printf("Persisting %d pageviews\n", len(buffer))
 		err := datastore.SavePageviews(buffer)
 		buffer = buffer[:0]
 		checkError(err)
@@ -69,7 +67,6 @@ func NewCollectHandler() http.Handler {
 
 		// find or insert page
 		page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
-
 		if err != nil {
 			page = &models.Page{
 				Hostname: q.Get("h"),
@@ -88,7 +85,6 @@ func NewCollectHandler() http.Handler {
 
 		visitor, err := datastore.GetVisitorByKey(visitorKey)
 		if err != nil {
-			log.Println(err)
 			visitor = &models.Visitor{
 				IpAddress:        ipAddress,
 				BrowserLanguage:  q.Get("l"),
