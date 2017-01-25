@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"math/rand"
 	"time"
@@ -101,23 +103,28 @@ func Seed(n int) {
 		// print a dot as progress indicator
 		fmt.Print(".")
 		date := randomDateBeforeNow()
+		ipAddress := randomdata.IpV4Address()
+		browserName := randSliceElement(browserNames)
+		browserVersion := "54.0"
+		deviceOS := "Linux"
 
-		// create or find visitor
-		visitor := models.Visitor{
-			IpAddress:        randomdata.IpV4Address(),
-			DeviceOS:         "Linux",
-			BrowserName:      randSliceElement(browserNames),
-			BrowserVersion:   "54.0",
-			BrowserLanguage:  randSliceElement(browserLanguages),
-			ScreenResolution: randSliceElement(screenResolutions),
-			Country:          randomdata.Country(randomdata.TwoCharCountry),
-		}
-		dummyUserAgent := visitor.BrowserName + visitor.BrowserVersion + visitor.DeviceOS
-		visitor.Key = visitor.GenerateKey(date.Format("2006-01-02"), visitor.IpAddress, dummyUserAgent)
+		dummyUserAgent := browserName + browserVersion + deviceOS
+		visitorKey := generateVisitorKey(date.Format("2006-01-02"), ipAddress, dummyUserAgent)
 
-		err := stmtVisitor.QueryRow(visitor.Key).Scan(&visitor.ID)
-		if err != nil {
-			visitor.Save(DB)
+		var visitor *models.Visitor
+		visitor, err = GetVisitorByKey(visitorKey)
+		if visitor == nil {
+			// create or find visitor
+			visitor := models.Visitor{
+				IpAddress:        ipAddress,
+				DeviceOS:         deviceOS,
+				BrowserName:      browserName,
+				BrowserVersion:   browserVersion,
+				BrowserLanguage:  randSliceElement(browserLanguages),
+				ScreenResolution: randSliceElement(screenResolutions),
+				Country:          randomdata.Country(randomdata.TwoCharCountry),
+			}
+			err = SaveVisitor(&visitor)
 		}
 
 		// generate random timestamp
@@ -132,11 +139,11 @@ func Seed(n int) {
 
 		DB.Exec("START TRANSACTION")
 
-		// insert between 1-4 pageviews for this visitor
-		for j := 0; j <= randInt(1, 4); j++ {
+		// insert between 1-6 pageviews for this visitor
+		for j := 0; j <= randInt(1, 6); j++ {
 			page := pages[randInt(0, len(pages))]
 			pv.PageID = page.ID
-			pv.Save(DB)
+			SavePageview(&pv)
 		}
 
 		DB.Exec("COMMIT")
@@ -166,4 +173,10 @@ func randSliceElement(slice []string) string {
 
 func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+// generateVisitorKey generates the "unique" visitor key from date, user agent + screen resolution
+func generateVisitorKey(date string, ipAddress string, userAgent string) string {
+	byteKey := md5.Sum([]byte(date + ipAddress + userAgent))
+	return hex.EncodeToString(byteKey[:])
 }

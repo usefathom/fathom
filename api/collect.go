@@ -1,9 +1,9 @@
 package api
 
 import (
-	"database/sql"
+	"crypto/md5"
 	"encoding/base64"
-	"log"
+	"encoding/hex"
 	"net/http"
 	"strings"
 	"time"
@@ -35,53 +35,41 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 
 	// find or insert page
-	page := models.Page{
-		Path:     q.Get("p"),
-		Title:    q.Get("t"),
-		Hostname: q.Get("h"),
-	}
-	stmt, _ := datastore.DB.Prepare("SELECT p.id FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
-	defer stmt.Close()
-	err := stmt.QueryRow(page.Hostname, page.Path).Scan(&page.ID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			page.Save(datastore.DB)
-		} else {
-			log.Fatal(err)
+	page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
+	if page.ID == 0 {
+		page = &models.Page{
+			Hostname: q.Get("h"),
+			Path:     q.Get("p"),
+			Title:    q.Get("t"),
 		}
+		err = datastore.SavePage(page)
 	}
+	checkError(err)
 
 	// find or insert visitor.
 	now := time.Now()
-	ip := getRequestIp(r)
-	visitor := models.Visitor{
-		IpAddress:        ip,
-		BrowserLanguage:  q.Get("l"),
-		ScreenResolution: q.Get("sr"),
-		DeviceOS:         ua.OS(),
-		Country:          "",
-	}
+	ipAddress := getRequestIp(r)
+	visitorKey := generateVisitorKey(now.Format("2006-01-02"), ipAddress, r.UserAgent())
 
-	// add browser details
-	visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
-	visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
-
-	// query by unique visitor key
-	visitor.Key = visitor.GenerateKey(now.Format("2006-01-02"), visitor.IpAddress, r.UserAgent())
-
-	stmt, _ = datastore.DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
-	defer stmt.Close()
-	err = stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			err = visitor.Save(datastore.DB)
-			checkError(err)
-		} else {
-			log.Fatal(err)
+	visitor, err := datastore.GetVisitorByKey(visitorKey)
+	if visitor.ID == 0 {
+		visitor = &models.Visitor{
+			IpAddress:        ipAddress,
+			BrowserLanguage:  q.Get("l"),
+			ScreenResolution: q.Get("sr"),
+			DeviceOS:         ua.OS(),
+			Country:          "",
+			Key:              visitorKey,
 		}
-	}
 
-	pageview := models.Pageview{
+		// add browser details
+		visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
+		visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
+		err = datastore.SaveVisitor(visitor)
+	}
+	checkError(err)
+
+	pageview := &models.Pageview{
 		PageID:          page.ID,
 		VisitorID:       visitor.ID,
 		ReferrerUrl:     q.Get("ru"),
@@ -94,7 +82,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		pageview.ReferrerUrl = ""
 	}
 
-	err = pageview.Save(datastore.DB)
+	err = datastore.SavePageview(pageview)
 	checkError(err)
 
 	// don't you cache this
@@ -107,4 +95,10 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 	// 1x1 px transparent GIF
 	b, _ := base64.StdEncoding.DecodeString("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
 	w.Write(b)
+}
+
+// generateVisitorKey generates the "unique" visitor key from date, user agent + screen resolution
+func generateVisitorKey(date string, ipAddress string, userAgent string) string {
+	byteKey := md5.Sum([]byte(date + ipAddress + userAgent))
+	return hex.EncodeToString(byteKey[:])
 }

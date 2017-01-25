@@ -12,6 +12,9 @@ import (
 
 // DB ...
 var DB *sql.DB
+var err error
+var stmt *sql.Stmt
+var result sql.Result
 
 // Init creates a database connection pool
 func Init() *sql.DB {
@@ -30,12 +33,13 @@ func Init() *sql.DB {
 
 // New creates a new database pool
 func New(driver string, config string) *sql.DB {
-	db, err := sql.Open(driver, config)
+	var db *sql.DB
+	db, err = sql.Open(driver, config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := db.Ping(); err != nil {
+	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -67,7 +71,9 @@ func runMigrations(driver string) {
 	}
 
 	migrate.SetTable("migrations")
-	n, err := migrate.Exec(DB, driver, migrations, migrate.Up)
+
+	var n int
+	n, err = migrate.Exec(DB, driver, migrations, migrate.Up)
 
 	if err != nil {
 		log.Fatal("Database migrations failed: ", err)
