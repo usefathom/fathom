@@ -1,13 +1,13 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // RealtimeVisitors returns the total number of visitors in the last 3 minutes
 func RealtimeVisitors() int {
 	var result int
-	db.Conn.QueryRow(`
+	datastore.DB.QueryRow(`
 		SELECT COUNT(DISTINCT(pv.visitor_id))
 		FROM pageviews pv
 		WHERE pv.timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND pv.timestamp <= CURRENT_TIMESTAMP`).Scan(&result)
@@ -17,7 +17,7 @@ func RealtimeVisitors() int {
 // Visitors returns the number of total visitors between the given timestamps
 func Visitors(before int64, after int64) int {
 	// get total
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
     SUM(t.count)
     FROM total_visitors t
@@ -31,7 +31,7 @@ func Visitors(before int64, after int64) int {
 
 // VisitorsPerDay returns a point slice containing visitor data per day
 func VisitorsPerDay(before int64, after int64) []Point {
-	stmt, err := db.Conn.Prepare(`SELECT
+	stmt, err := datastore.DB.Prepare(`SELECT
       SUM(t.count) AS count,
       DATE_FORMAT(t.date, '%Y-%m-%d') AS date_group
     FROM total_visitors t
@@ -59,7 +59,7 @@ func VisitorsPerDay(before int64, after int64) []Point {
 
 // CreateVisitorTotals aggregates visitor data into daily totals
 func CreateVisitorTotals(since string) {
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       COUNT(DISTINCT(pv.visitor_id)) AS count,
       DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
@@ -73,13 +73,13 @@ func CreateVisitorTotals(since string) {
 	checkError(err)
 	defer rows.Close()
 
-	db.Conn.Exec("START TRANSACTION")
+	datastore.DB.Exec("START TRANSACTION")
 	for rows.Next() {
 		var t Total
 		err = rows.Scan(&t.Count, &t.Date)
 		checkError(err)
 
-		stmt, err := db.Conn.Prepare(`INSERT INTO total_visitors(
+		stmt, err := datastore.DB.Prepare(`INSERT INTO total_visitors(
 	    count,
 	    date
 	    ) VALUES( ?, ? ) ON DUPLICATE KEY UPDATE count = ?`)
@@ -93,5 +93,5 @@ func CreateVisitorTotals(since string) {
 		)
 		checkError(err)
 	}
-	db.Conn.Exec("COMMIT")
+	datastore.DB.Exec("COMMIT")
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/dannyvankooten/ana/count"
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 type pageviews struct {
@@ -18,7 +18,7 @@ type pageviews struct {
 var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	before, after := getRequestedPeriods(r)
 
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
 		SELECT
 			p.hostname,
 			p.path,

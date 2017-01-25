@@ -1,14 +1,14 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // TotalUniqueLanguages returns the total # of unique browser languages between two given timestamps
 func TotalUniqueLanguages(before int64, after int64) int {
 	var total int
 
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       IFNULL( SUM(t.count_unique), 0 )
     FROM total_browser_languages t
@@ -25,7 +25,7 @@ func TotalUniqueLanguages(before int64, after int64) int {
 // Languages returns a point slice containing language data per language
 func Languages(before int64, after int64, limit int) []Point {
 	// TODO: Calculate total instead of requiring it as a parameter.
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       t.value,
       SUM(t.count_unique) AS count

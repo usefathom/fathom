@@ -5,8 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/dannyvankooten/ana/db"
-	"github.com/dannyvankooten/ana/options"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // Total represents a daily aggregated total for a metric
@@ -27,7 +26,7 @@ type Point struct {
 }
 
 func getLastArchivedDate() string {
-	value := options.Get("last_archived")
+	value := datastore.GetOption("last_archived")
 	return value
 }
 
@@ -42,13 +41,13 @@ func Archive() {
 	CreateBrowserTotals(lastArchived)
 	CreateReferrerTotals(lastArchived)
 
-	err := options.Set("last_archived", time.Now().Format("2006-01-02"))
+	err := datastore.SetOption("last_archived", time.Now().Format("2006-01-02"))
 	checkError(err)
 }
 
 // Save the Total in the given database connection + table
 func (t *Total) Save(Conn *sql.DB, table string) error {
-	stmt, err := db.Conn.Prepare(`INSERT INTO ` + table + `(
+	stmt, err := datastore.DB.Prepare(`INSERT INTO ` + table + `(
     value,
     count,
 		count_unique,
@@ -136,7 +135,7 @@ func fill(start int64, end int64, points []Point) []Point {
 }
 
 func queryTotalRows(sql string, lastArchived string) *sql.Rows {
-	stmt, err := db.Conn.Prepare(sql)
+	stmt, err := datastore.DB.Prepare(sql)
 	checkError(err)
 	defer stmt.Close()
 
@@ -146,14 +145,14 @@ func queryTotalRows(sql string, lastArchived string) *sql.Rows {
 }
 
 func processTotalRows(rows *sql.Rows, table string) {
-	db.Conn.Exec("START TRANSACTION")
+	datastore.DB.Exec("START TRANSACTION")
 	for rows.Next() {
 		var t Total
 		err := rows.Scan(&t.Value, &t.Count, &t.CountUnique, &t.Date)
 		checkError(err)
-		t.Save(db.Conn, table)
+		t.Save(datastore.DB, table)
 	}
-	db.Conn.Exec("COMMIT")
+	datastore.DB.Exec("COMMIT")
 
 	rows.Close()
 }

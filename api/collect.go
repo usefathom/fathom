@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 	"github.com/dannyvankooten/ana/models"
 	"github.com/mssola/user_agent"
 )
@@ -40,12 +40,12 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		Title:    q.Get("t"),
 		Hostname: q.Get("h"),
 	}
-	stmt, _ := db.Conn.Prepare("SELECT p.id FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
+	stmt, _ := datastore.DB.Prepare("SELECT p.id FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
 	defer stmt.Close()
 	err := stmt.QueryRow(page.Hostname, page.Path).Scan(&page.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			page.Save(db.Conn)
+			page.Save(datastore.DB)
 		} else {
 			log.Fatal(err)
 		}
@@ -69,12 +69,12 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 	// query by unique visitor key
 	visitor.Key = visitor.GenerateKey(now.Format("2006-01-02"), visitor.IpAddress, r.UserAgent())
 
-	stmt, _ = db.Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+	stmt, _ = datastore.DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
 	defer stmt.Close()
 	err = stmt.QueryRow(visitor.Key).Scan(&visitor.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			err = visitor.Save(db.Conn)
+			err = visitor.Save(datastore.DB)
 			checkError(err)
 		} else {
 			log.Fatal(err)
@@ -94,7 +94,7 @@ func CollectHandler(w http.ResponseWriter, r *http.Request) {
 		pageview.ReferrerUrl = ""
 	}
 
-	err = pageview.Save(db.Conn)
+	err = pageview.Save(datastore.DB)
 	checkError(err)
 
 	// don't you cache this

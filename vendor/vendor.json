@@ -51,10 +51,28 @@
 			"revisionTime": "2016-12-16T23:05:37Z"
 		},
 		{
+			"checksumSHA1": "tvimR1R9mxvCDSUxlnKgIXjJBus=",
+			"path": "github.com/lib/pq",
+			"revision": "67c3f2a8884c9b1aac5503c8d42ae4f73a93511c",
+			"revisionTime": "2017-01-17T20:56:33Z"
+		},
+		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "67c3f2a8884c9b1aac5503c8d42ae4f73a93511c",
+			"revisionTime": "2017-01-17T20:56:33Z"
+		},
+		{
 			"checksumSHA1": "nP2A51J4e45E5HuXMdfQT2hBMfc=",
 			"path": "github.com/mssola/user_agent",
 			"revision": "6ef8cd49fcd9eb0ca7c76a581419c966ed2cb26e",
 			"revisionTime": "2016-12-08T17:59:04Z"
+		},
+		{
+			"checksumSHA1": "8T6S2BULujaIanLkxD1iw5rklBY=",
+			"path": "github.com/russross/meddler",
+			"revision": "f742b0f9424f3bfaffe189e921d734608929e84f",
+			"revisionTime": "2015-05-13T15:34:18Z"
 		},
 		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",

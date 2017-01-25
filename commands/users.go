@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 	"github.com/dannyvankooten/ana/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,7 +14,7 @@ func Register(email string, password string) {
 		Email:    email,
 		Password: string(hash),
 	}
-	user.Save(db.Conn)
+	user.Save(datastore.DB)
 
 	fmt.Printf("User %s #%d created.\n", email, user.ID)
 }

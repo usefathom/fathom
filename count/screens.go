@@ -1,14 +1,14 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // TotalUniqueScreens returns the total # of screens between two given timestamps
 func TotalUniqueScreens(before int64, after int64) int {
 	var total int
 
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
     	IFNULL( SUM(t.count_unique), 0 )
     FROM total_screens t
@@ -24,7 +24,7 @@ func TotalUniqueScreens(before int64, after int64) int {
 
 // Screens returns a point slice containing screen data per size
 func Screens(before int64, after int64, limit int) []Point {
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       t.value,
       SUM(t.count_unique) AS count

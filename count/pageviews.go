@@ -1,13 +1,13 @@
 package count
 
-import "github.com/dannyvankooten/ana/db"
+import "github.com/dannyvankooten/ana/datastore"
 
 // Pageviews returns the total number of pageviews between the given timestamps
 func Pageviews(before int64, after int64) int {
 	var total int
 
 	// get total
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
     	IFNULL( SUM(t.count), 0 )
     FROM total_pageviews t
@@ -21,7 +21,7 @@ func Pageviews(before int64, after int64) int {
 
 // PageviewsPerDay returns a slice of data points representing the number of pageviews per day
 func PageviewsPerDay(before int64, after int64) []Point {
-	stmt, err := db.Conn.Prepare(`SELECT
+	stmt, err := datastore.DB.Prepare(`SELECT
       SUM(t.count) AS count,
       DATE_FORMAT(t.date, '%Y-%m-%d') AS date_group
     FROM total_pageviews t
@@ -49,7 +49,7 @@ func PageviewsPerDay(before int64, after int64) []Point {
 
 // CreatePageviewTotals aggregates pageview data for each page into daily totals
 func CreatePageviewTotals(since string) {
-	stmt, err := db.Conn.Prepare(`SELECT
+	stmt, err := datastore.DB.Prepare(`SELECT
       pv.page_id,
       COUNT(*) AS count,
 			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
@@ -64,15 +64,15 @@ func CreatePageviewTotals(since string) {
 	checkError(err)
 	defer rows.Close()
 
-	db.Conn.Begin()
+	datastore.DB.Begin()
 
-	db.Conn.Exec("START TRANSACTION")
+	datastore.DB.Exec("START TRANSACTION")
 	for rows.Next() {
 		var t Total
 		err = rows.Scan(&t.PageID, &t.Count, &t.CountUnique, &t.Date)
 		checkError(err)
 
-		stmt, err := db.Conn.Prepare(`INSERT INTO total_pageviews(
+		stmt, err := datastore.DB.Prepare(`INSERT INTO total_pageviews(
 	    page_id,
 	    count,
 			count_unique,
@@ -91,5 +91,5 @@ func CreatePageviewTotals(since string) {
 		)
 		checkError(err)
 	}
-	db.Conn.Exec("COMMIT")
+	datastore.DB.Exec("COMMIT")
 }

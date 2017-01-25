@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/dannyvankooten/ana/commands"
 	"github.com/dannyvankooten/ana/count"
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -32,11 +32,8 @@ func main() {
 	}
 
 	// setup database connection
-	conn, err := db.SetupDatabaseConnection()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
+	db := datastore.Init()
+	defer db.Close()
 
 	// setup cron to run count.Archive every hour
 	c := cron.New()

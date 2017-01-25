@@ -2,12 +2,12 @@ package commands
 
 import (
 	"github.com/dannyvankooten/ana/count"
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // Seed creates n database records with dummy data
 func Seed(n int) {
-	db.Seed(n)
+	datastore.Seed(n)
 }
 
 // Archive processes unarchived data (pageviews to aggeegated count tables)

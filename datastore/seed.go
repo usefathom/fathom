@@ -1,4 +1,4 @@
-package db
+package datastore
 
 import (
 	"fmt"
@@ -57,28 +57,28 @@ func seedPages() []models.Page {
 		Path:     "/",
 		Title:    "Homepage",
 	}
-	homepage.Save(Conn)
+	homepage.Save(DB)
 
 	contactPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/contact/",
 		Title:    "Contact",
 	}
-	contactPage.Save(Conn)
+	contactPage.Save(DB)
 
 	aboutPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/about/",
 		Title:    "About Me",
 	}
-	aboutPage.Save(Conn)
+	aboutPage.Save(DB)
 
 	portfolioPage := models.Page{
 		Hostname: "wordpress.dev",
 		Path:     "/portfolio/",
 		Title:    "Portfolio",
 	}
-	portfolioPage.Save(Conn)
+	portfolioPage.Save(DB)
 
 	pages = append(pages, homepage)
 	pages = append(pages, homepage)
@@ -88,10 +88,11 @@ func seedPages() []models.Page {
 	return pages
 }
 
+// Seed inserts n random pageviews in the database.
 func Seed(n int) {
 	pages := seedPages()
 
-	stmtVisitor, _ := Conn.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
+	stmtVisitor, _ := DB.Prepare("SELECT v.id FROM visitors v WHERE v.visitor_key = ? LIMIT 1")
 	defer stmtVisitor.Close()
 
 	// insert X random hits
@@ -116,7 +117,7 @@ func Seed(n int) {
 
 		err := stmtVisitor.QueryRow(visitor.Key).Scan(&visitor.ID)
 		if err != nil {
-			visitor.Save(Conn)
+			visitor.Save(DB)
 		}
 
 		// generate random timestamp
@@ -129,16 +130,16 @@ func Seed(n int) {
 			Timestamp:       timestamp,
 		}
 
-		Conn.Exec("START TRANSACTION")
+		DB.Exec("START TRANSACTION")
 
 		// insert between 1-4 pageviews for this visitor
 		for j := 0; j <= randInt(1, 4); j++ {
 			page := pages[randInt(0, len(pages))]
 			pv.PageID = page.ID
-			pv.Save(Conn)
+			pv.Save(DB)
 		}
 
-		Conn.Exec("COMMIT")
+		DB.Exec("COMMIT")
 	}
 }
 

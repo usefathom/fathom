@@ -1,14 +1,14 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // TotalUniqueBrowsers returns the total # of unique browsers between two given timestamps
 func TotalUniqueBrowsers(before int64, after int64) int {
 	var total int
 
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       IFNULL( SUM(t.count_unique), 0 )
     FROM total_browser_names t
@@ -24,7 +24,7 @@ func TotalUniqueBrowsers(before int64, after int64) int {
 
 // Browsers returns a point slice containing browser data per browser name
 func Browsers(before int64, after int64, limit int) []Point {
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       t.value,
       SUM(t.count_unique) AS count

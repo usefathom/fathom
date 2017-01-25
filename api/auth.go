@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 	"github.com/dannyvankooten/ana/models"
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
@@ -26,7 +26,7 @@ var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request)
 	json.NewDecoder(r.Body).Decode(&l)
 	var hashedPassword string
 	var u models.User
-	stmt, _ := db.Conn.Prepare("SELECT id, email, password FROM users WHERE email = ? LIMIT 1")
+	stmt, _ := datastore.DB.Prepare("SELECT id, email, password FROM users WHERE email = ? LIMIT 1")
 	err := stmt.QueryRow(l.Email).Scan(&u.ID, &u.Email, &hashedPassword)
 
 	// compare pwd
@@ -69,7 +69,7 @@ func Authorize(next http.Handler) http.Handler {
 
 		// find user
 		var u models.User
-		stmt, _ := db.Conn.Prepare("SELECT id, email FROM users WHERE id = ? LIMIT 1")
+		stmt, _ := datastore.DB.Prepare("SELECT id, email FROM users WHERE id = ? LIMIT 1")
 		err := stmt.QueryRow(userID).Scan(&u.ID, &u.Email)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)

@@ -1,14 +1,14 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/db"
+	"github.com/dannyvankooten/ana/datastore"
 )
 
 // TotalReferrers returns the total # of referrers between two given timestamps
 func TotalReferrers(before int64, after int64) int {
 	var total int
 
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       IFNULL( SUM(t.count), 0 )
     FROM total_referrers t
@@ -24,7 +24,7 @@ func TotalReferrers(before int64, after int64) int {
 
 // Referrers returns a point slice containing browser data per browser name
 func Referrers(before int64, after int64, limit int) []Point {
-	stmt, err := db.Conn.Prepare(`
+	stmt, err := datastore.DB.Prepare(`
     SELECT
       t.value,
       SUM(t.count) AS count
