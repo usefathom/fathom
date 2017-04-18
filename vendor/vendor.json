@@ -69,6 +69,12 @@
 			"revisionTime": "2016-12-08T17:59:04Z"
 		},
 		{
+			"checksumSHA1": "7aVQHxIZZYAb+Tq0pbGLL8j+4cM=",
+			"path": "github.com/robfig/cron",
+			"revision": "df38d32658d8788cd446ba74db4bb5375c4b0cb3",
+			"revisionTime": "2017-03-09T13:24:18Z"
+		},
+		{
 			"checksumSHA1": "Qgwcmaxcms96cseiKeTu73RiKJw=",
 			"path": "github.com/rubenv/sql-migrate",
 			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
