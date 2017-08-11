@@ -13,11 +13,13 @@ This is nowhere near being usable, let alone stable. Please treat as a proof of 
 
 For getting a development version of Ana up & running, please go through the following steps.
 
+1. get code: `go get -u github.com/dannyvankooten/ana` (or `git clone` repo into your `$GOPATH` )
+1. run `npm install` (in code directory) to install all required dependencies
 1. Rename `.env.example` to `.env` and set your database credentials.
-3. Compile into binary: `make`
-4. Create your user account: `ana register <email> <password>`
-5. Run default Gulp task to build static assets: `gulp`
-6. Start the webserver: `ana server --port=8080` & visit **localhost:8080** to access your analytics dashboard.
+1. Compile into binary: `make`
+1. Create your user account: `ana register <email> <password>`
+1. Run default Gulp task to build static assets: `gulp`
+1. Start the webserver: `ana server --port=8080` & visit **localhost:8080** to access your analytics dashboard.
 
 To start tracking, include the following JavaScript on your site and replace `ana.dev` with the URL to your Ana instance.
 
