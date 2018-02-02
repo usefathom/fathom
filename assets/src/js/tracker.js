@@ -111,7 +111,7 @@ function trackPageview() {
   i.src = trackerUrl + util.stringifyObject(d);
   i.addEventListener('load', function() {
     let now = new Date();
-    let midnight = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0));
+    let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0);
     let expires = Math.round((midnight - now) / 1000);
 
     // update data in cookie
