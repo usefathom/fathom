@@ -20,7 +20,7 @@ const availablePeriods = {
   'last-7-days': { 
     label: 'Last 7 days',
     start: function() {
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-7);
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-6);
     },
     end: function() {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -29,7 +29,7 @@ const availablePeriods = {
   'last-30-days': { 
     label: 'Last 30 days',
     start: function() {
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-30);
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-29);
     },
     end: function() {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
