@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/dannyvankooten/ana/commands"
-	"github.com/dannyvankooten/ana/count"
-	"github.com/dannyvankooten/ana/datastore"
+	"github.com/dannyvankooten/ana/pkg/commands"
+	"github.com/dannyvankooten/ana/pkg/count"
+	"github.com/dannyvankooten/ana/pkg/datastore"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron"
 	"gopkg.in/alecthomas/kingpin.v2"

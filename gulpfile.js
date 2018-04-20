@@ -12,7 +12,7 @@ const uglify = require('gulp-uglify')
 const pump = require('pump')
 const debug = process.env.NODE_ENV !== 'production';
 
-let defaultTasks = [ 'browserify', 'sass', 'tracker' ] ;
+let defaultTasks = [ 'browserify', 'sass', 'tracker', 'html', 'img' ] ;
 if( ! debug ) {
   defaultTasks.push( 'minify' );
 }
@@ -21,7 +21,7 @@ gulp.task('default', defaultTasks);
 
 gulp.task('browserify', function () {
     return browserify({
-            entries: './assets/js/script.js',
+            entries: './assets/src/js/script.js',
             debug: debug
         })
         .transform("babelify", {presets: ["es2015"]})
@@ -32,40 +32,44 @@ gulp.task('browserify', function () {
         })
         .pipe(source('script.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./static/js/'))
+        .pipe(gulp.dest('./assets/dist/js/'))
 });
 
 gulp.task('minify', function(cb) {
   process.env.NODE_ENV = 'production';
 
   pump([
-    gulp.src('./static/js/*.js'),
+    gulp.src('./assets/dist/js/*.js'),
     uglify().on('error', gutil.log),
-    gulp.dest('./static/js/')
+    gulp.dest('./assets/dist/js/')
   ], cb)
 });
 
 gulp.task('img', function() {
-  return gulp.src('./assets/img/**/*')
-    .pipe(gulp.dest('./static/img'))
+  return gulp.src('./assets/src/img/**/*')
+    .pipe(gulp.dest('./assets/dist/img'))
 });
 
+gulp.task('html', function() {
+  return gulp.src('./assets/src/**/*.html')
+    .pipe(gulp.dest('./assets/dist'))
+});
 
 gulp.task('tracker', function() {
-  return gulp.src('./assets/js/tracker.js')
-    .pipe(gulp.dest('./static/js'))
+  return gulp.src('./assets/src/js/tracker.js')
+    .pipe(gulp.dest('./assets/dist/js'))
 });
 
 gulp.task('sass', function () {
-	var files = './assets/sass/[^_]*.scss';
+	var files = './assets/src/sass/[^_]*.scss';
 	return gulp.src(files)
 		.pipe(sass())
     .on('error', gutil.log)
 		.pipe(rename({ extname: '.css' }))
-		.pipe(gulp.dest('./static/css'))
+		.pipe(gulp.dest('./assets/dist/css'))
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/js/**/*.js'], ['browserify', 'tracker'] );
-  gulp.watch(['./assets/sass/**/**/*.scss'], ['sass'] );
+  gulp.watch(['./assets/src/js/**/*.js'], ['browserify', 'tracker'] );
+  gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
 });

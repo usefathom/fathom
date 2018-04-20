@@ -45,13 +45,13 @@ test:
 
 .PHONY: install
 install: $(wildcard *.go)
-	CGO_ENABLED=0 go install -v -ldflags '-w $(LDFLAGS)'
+	go install -v -ldflags '-w $(LDFLAGS)'
 
 .PHONY: build
 build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES)
-	CGO_ENABLED=0 go build -v -ldflags '-w $(LDFLAGS)' -o $@
+	go build -v -ldflags '-w $(LDFLAGS)' -o $@
 
 .PHONY: docker
 docker:
