@@ -24,7 +24,10 @@ gulp.task('browserify', function () {
             entries: './assets/src/js/script.js',
             debug: debug
         })
-        .transform("babelify", {presets: ["es2015"]})
+        .transform("babelify", {
+          presets: ["es2015"],
+          plugins: [ ["transform-react-jsx", { "pragma":"h" } ] ]
+        })
         .bundle()
         .on('error', function(err){
           console.log(err.message);
