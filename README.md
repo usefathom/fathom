@@ -7,7 +7,7 @@ Ana. Open Source Web Analytics.
 
 This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state. **Do not run Ana in production yet unless you like spending time on it.** Things will keep changing for the next few months.
 
-![Screenshot of the Ana dashboard](https://github.com/dannyvankooten/ana/raw/master/assets/img/screenshot.png?v=6)
+![Screenshot of the Ana dashboard](https://github.com/dannyvankooten/ana/raw/master/assets/dist/img/screenshot.png?v=6)
 
 ## Installation
 
