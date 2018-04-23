@@ -29,7 +29,7 @@ function setTrackerUrl(v) {
 
 function trackPageview() {
   // Respect "Do Not Track" requests
-  if( navigator.DonotTrack == 1 ) {
+  if( navigator.DoNotTrack === "1" ) {
     return;
   }
 
