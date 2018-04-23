@@ -3,6 +3,7 @@
 import { h, render, Component } from 'preact';
 import Client from '../lib/client.js';
 import Notification from '../components/Notification.js';
+import { bind, memoize, debounce } from 'decko';
 
 class LoginForm extends Component {
 
@@ -16,6 +17,7 @@ class LoginForm extends Component {
     }
   }
 
+  @bind
   handleSubmit(e) {
     e.preventDefault();
 
@@ -36,19 +38,29 @@ class LoginForm extends Component {
     })
   }
 
+  @bind
+  updatePassword(e) {
+    this.setState({ password: e.target.value });
+  }
+
+  @bind
+  updateEmail(e) {
+    this.setState({ email: e.target.value });
+  }
+
   render() {
     return (
       <div class="block">
         <h2>Login</h2>
-        <p>Please enter your credentials to access your Ana dashboard.</p>
+        <p>Please enter your login credentials to access your Ana dashboard.</p>
         <form method="POST" onSubmit={this.handleSubmit}>
           <div class="small-margin">
             <label>Email address</label>
-            <input type="email" name="email" placeholder="Email address" value={this.state.email} onChange={this.linkState('email')} required="required" />
+            <input type="email" name="email" placeholder="Email address" value={this.state.email} onInput={this.updateEmail} required="required" />
           </div>
           <div class="small-margin">
             <label>Password</label>
-            <input type="password" name="password" placeholder="**********" value={this.state.password} onChange={this.linkState('password')} required="required" />
+            <input type="password" name="password" placeholder="**********" value={this.state.password} onInput={this.updatePassword} required="required" />
           </div>
           <div class="small-margin">
             <input type="submit" value="Sign in" />

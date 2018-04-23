@@ -26,7 +26,10 @@ gulp.task('browserify', function () {
         })
         .transform("babelify", {
           presets: ["es2015"],
-          plugins: [ ["transform-react-jsx", { "pragma":"h" } ] ]
+          plugins: [ 
+            "transform-decorators-legacy", 
+            ["transform-react-jsx", { "pragma":"h" } ] 
+          ]
         })
         .bundle()
         .on('error', function(err){
