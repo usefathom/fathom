@@ -10,7 +10,7 @@ func Seed(n int) {
 	datastore.Seed(n)
 }
 
-// Archive processes unarchived data (pageviews to aggeegated count tables)
+// Archive processes unarchived data (pageviews to aggregated count tables)
 func Archive() {
 	count.Archive()
 }

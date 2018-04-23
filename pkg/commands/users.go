@@ -14,7 +14,11 @@ func Register(email string, password string) {
 		Email:    email,
 		Password: string(hash),
 	}
-	user.Save(datastore.DB)
+	err := user.Save(datastore.DB)
+	if err != nil {
+		log.Printf("Error creating user: %s", err)
+	} else {
+		log.Printf("User %s #%d created.\n", email, user.ID)
+	}
 
-	log.Printf("User %s #%d created.\n", email, user.ID)
 }
