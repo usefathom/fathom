@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/dannyvankooten/ana/pkg/count"
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/count"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 type pageviews struct {

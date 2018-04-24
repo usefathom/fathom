@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/dannyvankooten/ana/pkg/count"
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/count"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // Seed creates n database records with dummy data

@@ -1,7 +1,7 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // TotalUniqueLanguages returns the total # of unique browser languages between two given timestamps

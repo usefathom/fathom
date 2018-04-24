@@ -8,7 +8,7 @@ import (
 	"time"
 
 	randomdata "github.com/Pallinder/go-randomdata"
-	"github.com/dannyvankooten/ana/pkg/models"
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 var browserNames = []string{

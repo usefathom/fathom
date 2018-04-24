@@ -1,7 +1,7 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // RealtimeVisitors returns the total number of visitors in the last 3 minutes

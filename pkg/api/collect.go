@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dannyvankooten/ana/pkg/datastore"
-	"github.com/dannyvankooten/ana/pkg/models"
 	"github.com/mssola/user_agent"
+	"github.com/usefathom/fathom/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 var buffer []*models.Pageview

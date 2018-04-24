@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/dannyvankooten/ana/pkg/commands"
-	"github.com/dannyvankooten/ana/pkg/count"
-	"github.com/dannyvankooten/ana/pkg/datastore"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron"
+	"github.com/usefathom/fathom/pkg/commands"
+	"github.com/usefathom/fathom/pkg/count"
+	"github.com/usefathom/fathom/pkg/datastore"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"os"
 )
 
 var (
-	app              = kingpin.New("ana", "Open-source web analytics.")
+	app              = kingpin.New("fathom", "Simple website analytics.")
 	register         = app.Command("register", "Register a new user.")
 	registerEmail    = register.Arg("email", "Email for user.").Required().String()
 	registerPassword = register.Arg("password", "Password for user.").Required().String()

@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"github.com/dannyvankooten/ana/pkg/models"
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 var p models.Page

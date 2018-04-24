@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
-	"github.com/dannyvankooten/ana/pkg/models"
+	"github.com/usefathom/fathom/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/models"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )

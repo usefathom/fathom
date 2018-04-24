@@ -1,7 +1,7 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // TotalUniqueScreens returns the total # of screens between two given timestamps

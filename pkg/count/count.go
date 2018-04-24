@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // Total represents a daily aggregated total for a metric

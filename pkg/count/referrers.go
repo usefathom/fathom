@@ -1,7 +1,7 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // TotalReferrers returns the total # of referrers between two given timestamps

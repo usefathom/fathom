@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/dannyvankooten/ana/pkg/count"
+	"github.com/usefathom/fathom/pkg/count"
 )
 
 // URL: /api/screen-resolutions

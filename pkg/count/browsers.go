@@ -1,7 +1,7 @@
 package count
 
 import (
-	"github.com/dannyvankooten/ana/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // TotalUniqueBrowsers returns the total # of unique browsers between two given timestamps

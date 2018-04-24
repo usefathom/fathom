@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/dannyvankooten/ana/pkg/count"
+	"github.com/usefathom/fathom/pkg/count"
 	"net/http"
 )
 

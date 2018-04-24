@@ -1,6 +1,6 @@
 package count
 
-import "github.com/dannyvankooten/ana/pkg/datastore"
+import "github.com/usefathom/fathom/pkg/datastore"
 
 // Pageviews returns the total number of pageviews between the given timestamps
 func Pageviews(before int64, after int64) int {
