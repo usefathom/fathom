@@ -1,6 +1,6 @@
 'use strict';
 
-var queue = window.ana.q || [];
+var queue = window.fathom.q || [];
 var trackerUrl = '';
 var commands = {
   "trackPageview": trackPageview,
@@ -61,8 +61,8 @@ function trackPageview() {
   document.body.appendChild(i);
 }
 
-// override global ana object
-window.ana = function() {
+// override global fathom object
+window.fathom = function() {
   var args = [].slice.call(arguments);
   var c = args.shift();
   commands[c].apply(this, args);
@@ -70,5 +70,5 @@ window.ana = function() {
 
 // process existing queue
 queue.forEach(function(i) {
-  ana.apply(this, i);
+  fathom.apply(this, i);
 });

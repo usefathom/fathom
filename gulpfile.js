@@ -78,4 +78,6 @@ gulp.task('sass', function () {
 gulp.task('watch', ['default'], function() {
   gulp.watch(['./assets/src/js/**/*.js'], ['browserify', 'tracker'] );
   gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
+  gulp.watch(['./assets/src/**/*.html'], ['html'] );
+   gulp.watch(['./assets/src/img/**/*'], ['img'] );
 });

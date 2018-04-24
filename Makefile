@@ -1,6 +1,5 @@
 DIST := dist
-EXECUTABLE := ana
-IMPORT := github.com/dannyvankooten/ana
+EXECUTABLE := fathom
 
 LDFLAGS += -extldflags "-static" -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')"
 
