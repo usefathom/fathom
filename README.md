@@ -7,7 +7,7 @@ Fathom - simple website analytics
 
 This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state. **Do not run Fathom in production yet unless you like spending time on it.** Things will keep changing for the next few months.
 
-![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/dist/img/screenshot.png?v=6)
+![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/blob/master/assets/dist/img/fathom.jpg?v=6)
 
 ## Installation
 
