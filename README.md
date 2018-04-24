@@ -41,6 +41,6 @@ fathom('trackPageview');
 <!-- / Fathom -->
 ```
 
-## License
+## Copyright and license
 
-MIT licensed.
+MIT licensed. Fathom and Fathom logo are trademarks of Fathom Analytics.
