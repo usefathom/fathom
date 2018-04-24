@@ -1,7 +1,7 @@
 'use strict';
 
 var queue = window.ana.q || [];
-var trackerUrl = '//ana.dev/collect';
+var trackerUrl = '';
 var commands = {
   "trackPageview": trackPageview,
   "setTrackerUrl": setTrackerUrl,
@@ -28,8 +28,13 @@ function setTrackerUrl(v) {
 }
 
 function trackPageview() {
+  if(trackerUrl === '') {
+    console.error('Fathom: invalid tracker URL');
+    return;
+  }
+
   // Respect "Do Not Track" requests
-  if( navigator.DoNotTrack === "1" ) {
+  if(navigator.DoNotTrack === "1") {
     return;
   }
 

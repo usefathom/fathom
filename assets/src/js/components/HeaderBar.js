@@ -10,7 +10,7 @@ class HeaderBar extends Component {
     return (
       <header class="header-bar cf">
         <div class="container">
-          <h1 class="pull-left title">Ana <small class="subtitle">open web analytics</small></h1>
+          <h1 class="pull-left title">Fathom <small class="subtitle">simple website analytics</small></h1>
           <div class="pull-right">
               {rightContent}
           </div>

@@ -52,7 +52,7 @@ class LoginForm extends Component {
     return (
       <div class="block">
         <h2>Login</h2>
-        <p>Please enter your login credentials to access your Ana dashboard.</p>
+        <p>Please enter your login credentials to access your Fathom dashboard.</p>
         <form method="POST" onSubmit={this.handleSubmit}>
           <div class="small-margin">
             <label>Email address</label>
