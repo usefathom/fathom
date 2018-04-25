@@ -22,7 +22,7 @@ type login struct {
 	Password string `json:"password"`
 }
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("ANA_SECRET_KEY")))
+var store = sessions.NewCookieStore([]byte(os.Getenv("FATHOM_SECRET")))
 
 // URL: POST /api/session
 var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {

@@ -4,52 +4,38 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" // mysql driver
-	_ "github.com/lib/pq"              // postgresql driver
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq" // postgresql driver
 	"github.com/rubenv/sql-migrate"
 	"log"
-	"os"
 )
 
-// DB ...
+// DB holds the deprecated SQL connection pool. Try to use exported methods in this package instead.
 var DB *sql.DB
 
-// Init creates a database connection pool
-func Init() *sql.DB {
-	driver := os.Getenv("ANA_DATABASE_DRIVER")
-	if driver == "" {
-		driver = "mysql"
-	}
+var dbx *sqlx.DB
 
-	DB = New(driver, getDSN(driver))
+// Init creates a database connection pool (using sqlx)
+func Init(driver string, host string, name string, user string, password string) *sqlx.DB {
+	dbx = New(driver, getDSN(driver, host, name, user, password))
+
+	// store old sql.DB in exported var for backwards compat
+	DB = dbx.DB
 
 	// run migrations
 	runMigrations(driver)
 
-	return DB
+	return dbx
 }
 
 // New creates a new database pool
-func New(driver string, config string) *sql.DB {
-	db, err := sql.Open(driver, config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err = db.Ping(); err != nil {
-		log.Fatal(err)
-	}
-
-	return db
+func New(driver string, dsn string) *sqlx.DB {
+	dbx := sqlx.MustConnect(driver, dsn)
+	return dbx
 }
 
-func getDSN(driver string) string {
-	var dsn = fmt.Sprintf(
-		"%s:%s@%s/%s",
-		os.Getenv("ANA_DATABASE_USER"),
-		os.Getenv("ANA_DATABASE_PASSWORD"),
-		os.Getenv("ANA_DATABASE_HOST"),
-		os.Getenv("ANA_DATABASE_NAME"),
-	)
+func getDSN(driver string, host string, name string, user string, password string) string {
+	var dsn = fmt.Sprintf("%s:%s@%s/%s", user, password, host, name)
 
 	switch driver {
 	case "postgres":
@@ -63,12 +49,12 @@ func getDSN(driver string) string {
 
 func runMigrations(driver string) {
 	migrations := migrate.FileMigrationSource{
-		Dir: "pkg/datastore/migrations",
+		Dir: "pkg/datastore/migrations", // TODO: Move to bindata
 	}
 
 	migrate.SetTable("migrations")
 
-	n, err := migrate.Exec(DB, driver, migrations, migrate.Up)
+	n, err := migrate.Exec(dbx.DB, driver, migrations, migrate.Up)
 
 	if err != nil {
 		log.Fatal("Database migrations failed: ", err)

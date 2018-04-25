@@ -7,9 +7,23 @@ import (
 	"github.com/usefathom/fathom/pkg/count"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"log"
 	"os"
+
+	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 )
+
+type Config struct {
+	Database struct {
+		Driver   string `default:"mysql"`
+		Host     string `default:"localhost"`
+		User     string `required:"true"`
+		Password string `required:"true"`
+		Name     string `default:"fathom"`
+	}
+
+	Secret string `required:"true"`
+}
 
 var (
 	app              = kingpin.New("fathom", "Simple website analytics.")
@@ -25,15 +39,17 @@ var (
 )
 
 func main() {
-
 	// load .env file
-	err := godotenv.Load()
+	var cfg Config
+	godotenv.Load()
+	err := envconfig.Process("Fathom", &cfg)
 	if err != nil {
-		log.Println("No .env file found")
+		log.Fatalf("Error parsing Fathom config from environment: %s", err)
 	}
 
 	// setup database connection
-	db := datastore.Init()
+	dbcfg := cfg.Database
+	db := datastore.Init(dbcfg.Driver, dbcfg.Host, dbcfg.Name, dbcfg.User, dbcfg.Password)
 	defer db.Close()
 
 	// setup cron to run count.Archive every hour

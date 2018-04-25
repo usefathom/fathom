@@ -63,10 +63,28 @@
 			"revisionTime": "2016-12-22T01:33:42Z"
 		},
 		{
+			"checksumSHA1": "F45m6rdNc9pgzu5vWN1n1Rwbk4A=",
+			"path": "github.com/jmoiron/sqlx",
+			"revision": "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41",
+			"revisionTime": "2018-04-06T16:44:12Z"
+		},
+		{
+			"checksumSHA1": "bXFrevmVL5Q2EwYlRHlPihxvAJA=",
+			"path": "github.com/jmoiron/sqlx/reflectx",
+			"revision": "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41",
+			"revisionTime": "2018-04-06T16:44:12Z"
+		},
+		{
 			"checksumSHA1": "h9EtLdks5ODcJVIA+j4qmrW2/mw=",
 			"path": "github.com/joho/godotenv",
 			"revision": "726cc8b906e3d31c70a9671c90a13716a8d3f50d",
 			"revisionTime": "2016-12-16T23:05:37Z"
+		},
+		{
+			"checksumSHA1": "MMeRLzVlQa2QyxxpLTWu0FIB/M0=",
+			"path": "github.com/kelseyhightower/envconfig",
+			"revision": "b2c5c876e2659d9060d82e9b8494150d53854cc4",
+			"revisionTime": "2018-03-08T19:05:16Z"
 		},
 		{
 			"checksumSHA1": "tvimR1R9mxvCDSUxlnKgIXjJBus=",
@@ -105,6 +123,12 @@
 			"revisionTime": "2017-01-04T09:54:22Z"
 		},
 		{
+			"checksumSHA1": "9ZSqjmvF/JE6Qj/5xOoCAmUgXz8=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "778f2e774c725116edbc3d039dc0dfc1cc62aae8",
+			"revisionTime": "2018-03-29T22:59:52Z"
+		},
+		{
 			"checksumSHA1": "Ak1mii27DHhEIjLnNqhK2HNibxg=",
 			"path": "github.com/ziutek/mymysql/godrv",
 			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
@@ -127,6 +151,24 @@
 			"path": "golang.org/x/crypto/blowfish",
 			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
 			"revisionTime": "2016-12-21T04:54:10Z"
+		},
+		{
+			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "b0697eccbea9adec5b7ba8008f4c33d98d733388",
+			"revisionTime": "2018-04-23T13:30:03Z"
+		},
+		{
+			"checksumSHA1": "RSCMWnn21rwYF//Yt89AC1f1wXY=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
+			"revisionTime": "2018-04-18T21:20:05Z"
+		},
+		{
+			"checksumSHA1": "Dfz4tGItokMvHZENCsBmPPB8FGQ=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
+			"revisionTime": "2018-04-18T21:20:05Z"
 		},
 		{
 			"checksumSHA1": "SeYI7DRWrd0Ku+CLavuwIz3EEmQ=",
