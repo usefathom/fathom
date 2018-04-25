@@ -34,14 +34,14 @@ function trackPageview() {
   }
 
   // Respect "Do Not Track" requests
-  if(navigator.DoNotTrack === "1") {
+  if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
     return;
   }
 
   // get the path or canonical
   var path = location.pathname + location.search;
-  var canonical = document.querySelector('link[rel="canonical"]');
-  if(canonical && canonical.href) {
+  var canonical = document.querySelector('link[rel="canonical"][href]');
+  if(canonical) {
     path = canonical.href.substring(canonical.href.indexOf('/', 7)) || '/';
   }
 
