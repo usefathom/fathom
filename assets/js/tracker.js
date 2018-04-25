@@ -40,8 +40,8 @@ function trackPageview() {
 
   // get the path or canonical
   var path = location.pathname + location.search;
-  var canonical = document.querySelector('link[rel="canonical"]');
-  if(canonical && canonical.href) {
+  var canonical = document.querySelector('link[rel="canonical"][href]');
+  if(canonical) {
     path = canonical.href.substring(canonical.href.indexOf('/', 7)) || '/';
   }
 
