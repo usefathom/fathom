@@ -24,6 +24,18 @@ func GetUserByEmail(email string) (*models.User, error) {
 		return nil, err
 	}
 
-	err = stmt.QueryRow(email).Scan(&u.ID, &u.Email, &u.HashedPassword)
+	err = stmt.QueryRow(email).Scan(&u.ID, &u.Email, &u.Password)
 	return &u, err
+}
+
+// SaveUser inserts the user model in the connected database
+func SaveUser(u *models.User) error {
+	var sql = dbx.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
+	result, err := dbx.Exec(sql, u.Email, u.Password)
+	if err != nil {
+		return err
+	}
+
+	u.ID, _ = result.LastInsertId()
+	return nil
 }

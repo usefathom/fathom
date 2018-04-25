@@ -34,7 +34,7 @@ var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) erro
 	u, err := datastore.GetUserByEmail(l.Email)
 
 	// compare pwd
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(u.HashedPassword), []byte(l.Password)) != nil {
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(l.Password)) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return respond(w, envelope{Error: "invalid_credentials"})
 	}

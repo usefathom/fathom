@@ -10,11 +10,12 @@ import (
 // Register creates a new user with the given email & password
 func Register(email string, password string) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
-	user := models.User{
+	user := &models.User{
 		Email:    email,
 		Password: string(hash),
 	}
-	err := user.Save(datastore.DB)
+	err := datastore.SaveUser(user)
+
 	if err != nil {
 		log.Printf("Error creating user: %s", err)
 	} else {
