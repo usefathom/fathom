@@ -1,31 +1,39 @@
 package datastore
 
 import (
+	"database/sql"
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-var u models.User
-
 // GetUser retrieves user from datastore by its ID
-func GetUser(id int64) (*models.User, error) {
-	stmt, err := DB.Prepare("SELECT id, email FROM users WHERE id = ? LIMIT 1")
+func GetUser(ID int64) (*models.User, error) {
+	u := &models.User{}
+	err := dbx.Get(u, dbx.Rebind("SELECT * FROM users WHERE id = ? LIMIT 1"), ID)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNoResults
+		}
+
 		return nil, err
 	}
 
-	err = stmt.QueryRow(id).Scan(&u.ID, &u.Email)
-	return &u, err
+	return u, err
 }
 
 // GetUserByEmail retrieves user from datastore by its email
 func GetUserByEmail(email string) (*models.User, error) {
-	stmt, err := DB.Prepare("SELECT id, email, password FROM users WHERE email = ? LIMIT 1")
+	u := &models.User{}
+	err := dbx.Get(u, dbx.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1"), email)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNoResults
+		}
+
 		return nil, err
 	}
 
-	err = stmt.QueryRow(email).Scan(&u.ID, &u.Email, &u.Password)
-	return &u, err
+	return u, err
 }
 
 // SaveUser inserts the user model in the connected database

@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/jmoiron/sqlx"
@@ -14,6 +15,9 @@ import (
 var DB *sql.DB
 
 var dbx *sqlx.DB
+
+// ErrNoResults is returned when a query yielded 0 results
+var ErrNoResults = errors.New("query returned 0 results")
 
 // Init creates a database connection pool (using sqlx)
 func Init(driver string, host string, name string, user string, password string) *sqlx.DB {

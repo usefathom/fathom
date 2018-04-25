@@ -31,10 +31,14 @@ var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) erro
 	var l login
 	json.NewDecoder(r.Body).Decode(&l)
 
+	// find user with given email
 	u, err := datastore.GetUserByEmail(l.Email)
+	if err != nil && err != datastore.ErrNoResults {
+		return err
+	}
 
 	// compare pwd
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(l.Password)) != nil {
+	if err == datastore.ErrNoResults || bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(l.Password)) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return respond(w, envelope{Error: "invalid_credentials"})
 	}
@@ -69,7 +73,7 @@ func Authorize(next http.Handler) http.Handler {
 		session, _ := store.Get(r, "auth")
 		userID, ok := session.Values["user_id"]
 
-		if !ok {
+		if session.IsNew || !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

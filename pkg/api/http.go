@@ -32,8 +32,8 @@ func HandleError(w http.ResponseWriter, r *http.Request, err error) {
 }
 
 type envelope struct {
-	Data  interface{}
-	Error interface{} `json:"omitempty"`
+	Data  interface{} `json:",omitempty"`
+	Error interface{} `json:",omitempty"`
 }
 
 func respond(w http.ResponseWriter, d interface{}) error {
