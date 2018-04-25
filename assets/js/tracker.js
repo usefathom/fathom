@@ -34,7 +34,7 @@ function trackPageview() {
   }
 
   // Respect "Do Not Track" requests
-  if(navigator.DoNotTrack === "1") {
+  if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
     return;
   }
 
