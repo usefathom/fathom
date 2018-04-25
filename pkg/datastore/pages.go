@@ -4,43 +4,27 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-var p models.Page
-
-// GetPage ...
-func GetPage(id int64) (*models.Page, error) {
-	return &p, nil
-}
-
-// GetPageByHostnameAndPath ...
+// GetPageByHostnameAndPath retrieves a page from the connected database
 func GetPageByHostnameAndPath(hostname, path string) (*models.Page, error) {
-	stmt, err := DB.Prepare("SELECT p.id, p.hostname, p.path FROM pages p WHERE p.hostname = ? AND p.path = ? LIMIT 1")
+	p := &models.Page{}
+
+	sql := dbx.Rebind(`SELECT * FROM pages WHERE hostname = ? AND path = ? LIMIT 1`)
+	err := dbx.Get(p, sql, hostname, path)
 	if err != nil {
 		return nil, err
 	}
 
-	defer stmt.Close()
-	err = stmt.QueryRow(hostname, path).Scan(&p.ID, &p.Hostname, &p.Path)
-	return &p, err
+	return p, nil
 }
 
-// SavePage ...
+// SavePage inserts the page model in the connected database
 func SavePage(p *models.Page) error {
-	// prepare statement for inserting data
-	stmt, err := DB.Prepare(`INSERT INTO pages(
-			hostname,
-			path,
-			title
-			) VALUES( ?, ?, ? )`)
-	defer stmt.Close()
+	sql := dbx.Rebind(`INSERT INTO pages(hostname, path, title) VALUES(?, ?, ?)`)
+	result, err := dbx.Exec(sql, p.Hostname, p.Path, p.Title)
 	if err != nil {
 		return err
 	}
 
-	result, err := stmt.Exec(p.Hostname, p.Path, p.Title)
-	if err != nil {
-		return err
-	}
-
-	p.ID, err = result.LastInsertId()
-	return err
+	p.ID, _ = result.LastInsertId()
+	return nil
 }
