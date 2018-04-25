@@ -21,7 +21,7 @@ gulp.task('default', defaultTasks);
 
 gulp.task('browserify', function () {
     return browserify({
-            entries: './assets/src/js/script.js',
+            entries: './assets/js/script.js',
             debug: debug
         })
         .transform("babelify", {
@@ -38,46 +38,46 @@ gulp.task('browserify', function () {
         })
         .pipe(source('script.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./assets/dist/js/'))
+        .pipe(gulp.dest('./build/js/'))
 });
 
 gulp.task('minify', function(cb) {
   process.env.NODE_ENV = 'production';
 
   pump([
-    gulp.src('./assets/dist/js/*.js'),
+    gulp.src('./build/js/*.js'),
     uglify().on('error', gutil.log),
-    gulp.dest('./assets/dist/js/')
+    gulp.dest('./build/js/')
   ], cb)
 });
 
 gulp.task('img', function() {
-  return gulp.src('./assets/src/img/**/*')
-    .pipe(gulp.dest('./assets/dist/img'))
+  return gulp.src('./assets/img/**/*')
+    .pipe(gulp.dest('./build/img'))
 });
 
 gulp.task('html', function() {
-  return gulp.src('./assets/src/**/*.html')
-    .pipe(gulp.dest('./assets/dist'))
+  return gulp.src('./assets/**/*.html')
+    .pipe(gulp.dest('./build'))
 });
 
 gulp.task('tracker', function() {
-  return gulp.src('./assets/src/js/tracker.js')
-    .pipe(gulp.dest('./assets/dist/js'))
+  return gulp.src('./assets/js/tracker.js')
+    .pipe(gulp.dest('./build/js'))
 });
 
 gulp.task('sass', function () {
-	var files = './assets/src/sass/[^_]*.scss';
+	var files = './assets/sass/[^_]*.scss';
 	return gulp.src(files)
 		.pipe(sass())
     .on('error', gutil.log)
 		.pipe(rename({ extname: '.css' }))
-		.pipe(gulp.dest('./assets/dist/css'))
+		.pipe(gulp.dest('./build/css'))
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/src/js/**/*.js'], ['browserify', 'tracker'] );
-  gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
-  gulp.watch(['./assets/src/**/*.html'], ['html'] );
-   gulp.watch(['./assets/src/img/**/*'], ['img'] );
+  gulp.watch(['./assets/js/**/*.js'], ['browserify', 'tracker'] );
+  gulp.watch(['./assets/sass/**/**/*.scss'], ['sass'] );
+  gulp.watch(['./assets/**/*.html'], ['html'] );
+   gulp.watch(['./assets/img/**/*'], ['img'] );
 });

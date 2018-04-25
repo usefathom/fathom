@@ -9,7 +9,7 @@ SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 
 .PHONY: all
-all: build
+all: build assets
 
 .PHONY: clean
 clean:
@@ -55,3 +55,8 @@ $(EXECUTABLE): $(SOURCES)
 .PHONY: docker
 docker:
 	docker build -t metalmatze/ana:latest .
+
+.PHONY: assets
+assets: 
+	if [ ! -d "node_modules" ]; then npm install; fi
+	gulp

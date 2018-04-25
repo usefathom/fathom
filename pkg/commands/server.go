@@ -11,7 +11,7 @@ import (
 )
 
 // Server starts the HTTP server, listening on the given port
-func Server(port int) {
+func Server(port int, webroot string) {
 
 	// register routes
 	r := mux.NewRouter()
@@ -30,11 +30,10 @@ func Server(port int) {
 	//r.Handle("/api/countries", api.Authorize(api.GetCountriesHandler)).Methods("GET")
 	r.Handle("/api/browsers", api.Authorize(api.GetBrowsersHandler)).Methods("GET")
 
-	r.Path("/tracker.js").Handler(http.FileServer(http.Dir("./assets/dist/js/")))
+	r.Path("/tracker.js").Handler(http.FileServer(http.Dir(webroot + "js/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir(webroot)))
 
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./assets/dist/"))))
-
-	log.Printf("HTTP server will now start listening on http://127.0.01:%d/\n", port)
+	log.Printf("Now serving %s on port %d/\n", webroot, port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.LoggingHandler(os.Stdout, r))
 	log.Println(err)
 }

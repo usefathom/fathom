@@ -1,7 +1,5 @@
 node_modules
-static
 .env
-storage
-ana
 fathom
 coverage.out
+build

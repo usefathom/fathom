@@ -18,6 +18,7 @@ var (
 	registerPassword = register.Arg("password", "Password for user.").Required().String()
 	server           = app.Command("server", "Start webserver.").Default()
 	serverPort       = server.Flag("port", "Port to listen on.").Default("8080").Int()
+	serverWebRoot    = server.Flag("webroot", "Root directory of static assets").Default("./").String()
 	archive          = app.Command("archive", "Process unarchived data.")
 	seed             = app.Command("seed", "Seed the database.")
 	seedN            = seed.Flag("n", "Number of records to seed.").Int()
@@ -48,7 +49,7 @@ func main() {
 		commands.Register(*registerEmail, *registerPassword)
 
 	case "server":
-		commands.Server(*serverPort)
+		commands.Server(*serverPort, *serverWebRoot)
 
 	case "archive":
 		commands.Archive()
