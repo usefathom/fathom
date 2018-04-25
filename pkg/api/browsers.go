@@ -6,8 +6,8 @@ import (
 )
 
 // URL: /api/browsers
-var GetBrowsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetBrowsersHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	results := count.Browsers(before, after, getRequestedLimit(r))
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })

@@ -7,8 +7,8 @@ import (
 )
 
 // URL: /api/screen-resolutions
-var GetScreenResolutionsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetScreenResolutionsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	results := count.Screens(before, after, getRequestedLimit(r))
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })

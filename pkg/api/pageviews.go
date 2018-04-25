@@ -15,7 +15,7 @@ type pageviews struct {
 }
 
 // URL: /api/pageviews
-var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 
 	stmt, err := datastore.DB.Prepare(`
@@ -30,38 +30,46 @@ var GetPageviewsHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
 		GROUP BY p.path, p.hostname
 		ORDER BY count DESC
 		LIMIT ?`)
-
-	checkError(err)
+	if err != nil {
+		return err
+	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(before, after, defaultLimit)
-	checkError(err)
+	if err != nil {
+		return err
+	}
 	defer rows.Close()
 
 	results := make([]pageviews, 0)
 	for rows.Next() {
 		var p pageviews
 		err = rows.Scan(&p.Hostname, &p.Path, &p.Count, &p.CountUnique)
-		checkError(err)
+		if err != nil {
+			return err
+		}
+
 		results = append(results, p)
 	}
 
 	err = rows.Err()
-	checkError(err)
+	if err != nil {
+		return err
+	}
 
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })
 
 // URL: /api/pageviews/count
-var GetPageviewsCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetPageviewsCountHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	result := count.Pageviews(before, after)
-	respond(w, envelope{Data: result})
+	return respond(w, envelope{Data: result})
 })
 
 // URL: /api/pageviews/group/day
-var GetPageviewsPeriodCountHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetPageviewsPeriodCountHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	results := count.PageviewsPerDay(before, after)
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })

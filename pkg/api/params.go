@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,25 +9,6 @@ import (
 
 const defaultPeriod = 7
 const defaultLimit = 10
-
-type envelope struct {
-	Data  interface{}
-	Error interface{}
-}
-
-func respond(w http.ResponseWriter, d interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	enc := json.NewEncoder(w)
-	err := enc.Encode(d)
-	checkError(err)
-}
-
-// log fatal errors
-func checkError(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func getRequestedLimit(r *http.Request) int {
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
@@ -63,4 +42,15 @@ func parseMajorMinor(v string) string {
 		v = parts[0] + "." + parts[1]
 	}
 	return v
+}
+
+func getRequestIp(r *http.Request) string {
+	ipAddress := r.RemoteAddr
+
+	headerForwardedFor := r.Header.Get("X-Forwarded-For")
+	if headerForwardedFor != "" {
+		ipAddress = headerForwardedFor
+	}
+
+	return ipAddress
 }

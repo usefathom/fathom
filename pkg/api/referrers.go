@@ -7,8 +7,8 @@ import (
 )
 
 // URL: /api/referrers
-var GetReferrersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetReferrersHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	results := count.Referrers(before, after, getRequestedLimit(r))
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })

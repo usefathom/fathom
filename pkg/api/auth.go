@@ -25,7 +25,7 @@ type login struct {
 var store = sessions.NewCookieStore([]byte(os.Getenv("ANA_SECRET_KEY")))
 
 // URL: POST /api/session
-var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 
 	// check login creds
 	var l login
@@ -36,27 +36,31 @@ var LoginHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request)
 	// compare pwd
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(u.HashedPassword), []byte(l.Password)) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		respond(w, envelope{Error: "invalid_credentials"})
-		return
+		return respond(w, envelope{Error: "invalid_credentials"})
 	}
 
 	session, _ := store.Get(r, "auth")
 	session.Values["user_id"] = u.ID
 	err = session.Save(r, w)
-	checkError(err)
+	if err != nil {
+		return err
+	}
 
-	respond(w, envelope{Data: true})
+	return respond(w, envelope{Data: true})
 })
 
 // URL: DELETE /api/session
-var LogoutHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var LogoutHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	session, _ := store.Get(r, "auth")
 	if !session.IsNew {
 		session.Options.MaxAge = -1
-		session.Save(r, w)
+		err := session.Save(r, w)
+		if err != nil {
+			return err
+		}
 	}
 
-	respond(w, envelope{Data: true})
+	return respond(w, envelope{Data: true})
 })
 
 /* middleware */

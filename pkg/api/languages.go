@@ -7,8 +7,8 @@ import (
 )
 
 // URL: /api/languages
-var GetLanguagesHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+var GetLanguagesHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
 	results := count.Languages(before, after, getRequestedLimit(r))
-	respond(w, envelope{Data: results})
+	return respond(w, envelope{Data: results})
 })

@@ -11,28 +11,23 @@ import (
 	"github.com/mssola/user_agent"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var buffer []*models.Pageview
 var bufferSize = 250
 var timeout = 100 * time.Millisecond
 
-func getRequestIp(r *http.Request) string {
-	ipAddress := r.RemoteAddr
-
-	headerForwardedFor := r.Header.Get("X-Forwarded-For")
-	if headerForwardedFor != "" {
-		ipAddress = headerForwardedFor
-	}
-
-	return ipAddress
-}
-
 func persistPageviews() {
 	if len(buffer) > 0 {
 		err := datastore.SavePageviews(buffer)
+		if err != nil {
+			log.Errorf("error saving pageviews: %s", err)
+		}
+
+		// clear buffer regardless of error... this means data loss, but better than filling the buffer for now
 		buffer = buffer[:0]
-		checkError(err)
 	}
 }
 
@@ -55,12 +50,12 @@ func NewCollectHandler() http.Handler {
 	pageviews := make(chan *models.Pageview, 100)
 	go processBuffer(pageviews)
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ua := user_agent.New(r.UserAgent())
+	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 
 		// abort if this is a bot.
+		ua := user_agent.New(r.UserAgent())
 		if ua.Bot() {
-			return
+			return nil
 		}
 
 		q := r.URL.Query()
@@ -75,7 +70,9 @@ func NewCollectHandler() http.Handler {
 			}
 
 			err = datastore.SavePage(page)
-			checkError(err)
+			if err != nil {
+				return err
+			}
 		}
 
 		// find or insert visitor.
@@ -98,7 +95,9 @@ func NewCollectHandler() http.Handler {
 			visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
 			visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
 			err = datastore.SaveVisitor(visitor)
-			checkError(err)
+			if err != nil {
+				return err
+			}
 		}
 
 		pageview := &models.Pageview{
@@ -127,6 +126,7 @@ func NewCollectHandler() http.Handler {
 		// 1x1 px transparent GIF
 		b, _ := base64.StdEncoding.DecodeString("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
 		w.Write(b)
+		return nil
 	})
 }
 
