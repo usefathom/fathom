@@ -8,7 +8,8 @@ import (
 // GetUser retrieves user from datastore by its ID
 func GetUser(ID int64) (*models.User, error) {
 	u := &models.User{}
-	err := dbx.Get(u, dbx.Rebind("SELECT * FROM users WHERE id = ? LIMIT 1"), ID)
+	query := dbx.Rebind("SELECT * FROM users WHERE id = ? LIMIT 1")
+	err := dbx.Get(u, query, ID)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -24,7 +25,8 @@ func GetUser(ID int64) (*models.User, error) {
 // GetUserByEmail retrieves user from datastore by its email
 func GetUserByEmail(email string) (*models.User, error) {
 	u := &models.User{}
-	err := dbx.Get(u, dbx.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1"), email)
+	query := dbx.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1")
+	err := dbx.Get(u, query, email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, ErrNoResults
@@ -38,8 +40,8 @@ func GetUserByEmail(email string) (*models.User, error) {
 
 // SaveUser inserts the user model in the connected database
 func SaveUser(u *models.User) error {
-	var sql = dbx.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
-	result, err := dbx.Exec(sql, u.Email, u.Password)
+	var query = dbx.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
+	result, err := dbx.Exec(query, u.Email, u.Password)
 	if err != nil {
 		return err
 	}
