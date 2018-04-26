@@ -8,3 +8,10 @@ type Pageview struct {
 	ReferrerUrl     string
 	Timestamp       string
 }
+
+type PageviewCount struct {
+	Hostname    string
+	Path        string
+	Count       int
+	CountUnique int
+}

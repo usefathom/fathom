@@ -27,6 +27,7 @@ func HandleError(w http.ResponseWriter, r *http.Request, err error) {
 		"error":   err,
 	}).Error("error handling request")
 
+	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("false"))
 }

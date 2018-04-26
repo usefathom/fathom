@@ -52,8 +52,6 @@ func VisitorsPerDay(before int64, after int64) []Point {
 		results = append(results, p)
 	}
 
-	results = fill(after, before, results)
-
 	return results
 }
 

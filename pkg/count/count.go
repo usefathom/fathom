@@ -41,8 +41,7 @@ func Archive() {
 	CreateBrowserTotals(lastArchived)
 	CreateReferrerTotals(lastArchived)
 
-	err := datastore.SetOption("last_archived", time.Now().Format("2006-01-02"))
-	checkError(err)
+	datastore.SetOption("last_archived", time.Now().Format("2006-01-02"))
 }
 
 // Save the Total in the given database connection + table
@@ -98,40 +97,6 @@ func calculatePointPercentages(points []Point, total int) []Point {
 	}
 
 	return points
-}
-
-func fill(start int64, end int64, points []Point) []Point {
-	// be smart about received timestamps
-	if start > end {
-		tmp := end
-		end = start
-		start = tmp
-	}
-
-	startTime := time.Unix(start, 0)
-	endTime := time.Unix(end, 0)
-	var newPoints []Point
-	step := time.Hour * 24
-
-	for startTime.Before(endTime) || startTime.Equal(endTime) {
-		point := Point{
-			Value: 0,
-			Label: startTime.Format("2006-01-02"),
-		}
-
-		for j, p := range points {
-			if p.Label == point.Label || p.Label == startTime.Format("2006-01") {
-				point.Value = p.Value
-				points[j] = points[len(points)-1]
-				break
-			}
-		}
-
-		newPoints = append(newPoints, point)
-		startTime = startTime.Add(step)
-	}
-
-	return newPoints
 }
 
 func queryTotalRows(sql string, lastArchived string) *sql.Rows {
