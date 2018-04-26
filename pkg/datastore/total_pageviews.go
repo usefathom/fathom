@@ -59,3 +59,30 @@ func TotalPageviewsPerPage(before int64, after int64, limit int64) ([]*models.Pa
 
 	return results, nil
 }
+
+func SavePageviewTotals(totals []*models.Total) error {
+	tx, err := dbx.Begin()
+	if err != nil {
+		return nil
+	}
+
+	query := dbx.Rebind(`INSERT INTO total_pageviews( page_id, count, count_unique, date ) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`)
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	for _, t := range totals {
+		_, err = stmt.Exec(
+			t.PageID,
+			t.Count,
+			t.CountUnique,
+			t.Date,
+			t.Count,
+			t.CountUnique,
+		)
+	}
+
+	err = tx.Commit()
+	return err
+}

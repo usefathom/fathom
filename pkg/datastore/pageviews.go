@@ -42,3 +42,17 @@ func SavePageviews(pvs []*models.Pageview) error {
 	err = tx.Commit()
 	return err
 }
+
+func PageviewCountPerPageAndDay(before string, after string) ([]*models.Total, error) {
+	query := dbx.Rebind(`SELECT
+	    	pv.page_id,
+	    	COUNT(*) AS count,
+			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
+			DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+	    FROM pageviews pv
+	    WHERE pv.timestamp < ? AND pv.timestamp > ?
+	    GROUP BY pv.page_id, date_group`)
+	var results []*models.Total
+	err := dbx.Select(&results, query, before, after)
+	return results, err
+}

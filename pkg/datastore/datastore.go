@@ -38,6 +38,11 @@ func New(driver string, dsn string) *sqlx.DB {
 	return dbx
 }
 
+// Get returns the underlying sqlx.DB instance. Use at your own risk.
+func Get() *sqlx.DB {
+	return dbx
+}
+
 func getDSN(driver string, host string, name string, user string, password string) string {
 	var dsn = fmt.Sprintf("%s:%s@%s/%s", user, password, host, name)
 

@@ -2,7 +2,7 @@ package count
 
 import (
 	"database/sql"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/usefathom/fathom/pkg/datastore"
@@ -32,16 +32,19 @@ func getLastArchivedDate() string {
 
 // Archive aggregates data into daily totals
 func Archive() {
-	lastArchived := getLastArchivedDate()
+	start := time.Now()
 
-	CreateVisitorTotals(lastArchived)
+	lastArchived := getLastArchivedDate()
 	CreatePageviewTotals(lastArchived)
+	CreateVisitorTotals(lastArchived)
 	CreateScreenTotals(lastArchived)
 	CreateLanguageTotals(lastArchived)
 	CreateBrowserTotals(lastArchived)
 	CreateReferrerTotals(lastArchived)
-
 	datastore.SetOption("last_archived", time.Now().Format("2006-01-02"))
+
+	end := time.Now()
+	log.Infof("finished aggregating metrics. ran for %dms.", (end.UnixNano()-start.UnixNano())/1000000)
 }
 
 // Save the Total in the given database connection + table
