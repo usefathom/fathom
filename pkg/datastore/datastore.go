@@ -1,7 +1,6 @@
 package datastore
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" // mysql driver
@@ -11,20 +10,14 @@ import (
 	"log"
 )
 
-// DB holds the deprecated SQL connection pool. Try to use exported methods in this package instead.
-var DB *sql.DB
-
 var dbx *sqlx.DB
 
 // ErrNoResults is returned when a query yielded 0 results
-var ErrNoResults = errors.New("query returned 0 results")
+var ErrNoResults = errors.New("datastore: query returned 0 results")
 
 // Init creates a database connection pool (using sqlx)
 func Init(driver string, host string, name string, user string, password string) *sqlx.DB {
 	dbx = New(driver, getDSN(driver, host, name, user, password))
-
-	// store old sql.DB in exported var for backwards compat
-	DB = dbx.DB
 
 	// run migrations
 	runMigrations(driver)
@@ -35,11 +28,6 @@ func Init(driver string, host string, name string, user string, password string)
 // New creates a new database pool
 func New(driver string, dsn string) *sqlx.DB {
 	dbx := sqlx.MustConnect(driver, dsn)
-	return dbx
-}
-
-// Get returns the underlying sqlx.DB instance. Use at your own risk.
-func Get() *sqlx.DB {
 	return dbx
 }
 
