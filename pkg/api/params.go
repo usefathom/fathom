@@ -10,8 +10,8 @@ import (
 const defaultPeriod = 7
 const defaultLimit = 10
 
-func getRequestedLimit(r *http.Request) int {
-	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+func getRequestedLimit(r *http.Request) int64 {
+	limit, err := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 64)
 	if err != nil || limit == 0 {
 		limit = 10
 	}

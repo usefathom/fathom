@@ -5,32 +5,23 @@ import (
 	"time"
 
 	"github.com/usefathom/fathom/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 // Screens returns a point slice containing screen data per size
-func Screens(before int64, after int64, limit int) []Point {
-	stmt, err := datastore.DB.Prepare(`
-    SELECT
-      t.value,
-      SUM(t.count_unique) AS count
-    FROM total_screens t
-    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
-    GROUP BY t.value
-    ORDER BY count DESC
-    LIMIT ?`)
-	checkError(err)
-	defer stmt.Close()
+func Screens(before int64, after int64, limit int64) ([]*models.Point, error) {
+	points, err := datastore.TotalsPerScreen(before, after, limit)
+	if err != nil {
+		return nil, err
+	}
 
-	rows, err := stmt.Query(before, after, limit)
-	checkError(err)
-
-	points := newPointSlice(rows)
 	total, err := datastore.TotalUniqueScreens(before, after)
-	checkError(err)
+	if err != nil {
+		return nil, err
+	}
 
 	points = calculatePointPercentages(points, total)
-
-	return points
+	return points, nil
 }
 
 // CreateScreenTotals aggregates screen data into daily totals

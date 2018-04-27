@@ -8,7 +8,9 @@ import (
 func TotalPageviews(before int64, after int64) (int, error) {
 	var total int
 
-	query := dbx.Rebind(`SELECT IFNULL( SUM(t.count), 0 ) FROM total_pageviews t WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+	query := dbx.Rebind(`
+		SELECT IFNULL( SUM(t.count), 0 ) 
+		FROM total_pageviews t WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	err := dbx.Get(&total, query, before, after)
 	if err != nil {
 		return 0, err
@@ -73,14 +75,7 @@ func SavePageviewTotals(totals []*models.Total) error {
 	}
 
 	for _, t := range totals {
-		_, err = stmt.Exec(
-			t.PageID,
-			t.Count,
-			t.CountUnique,
-			t.Date,
-			t.Count,
-			t.CountUnique,
-		)
+		_, err = stmt.Exec(t.PageID, t.Count, t.CountUnique, t.Date, t.Count, t.CountUnique)
 	}
 
 	err = tx.Commit()
