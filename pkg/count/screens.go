@@ -1,26 +1,11 @@
 package count
 
 import (
+	"log"
+	"time"
+
 	"github.com/usefathom/fathom/pkg/datastore"
 )
-
-// TotalUniqueScreens returns the total # of screens between two given timestamps
-func TotalUniqueScreens(before int64, after int64) int {
-	var total int
-
-	stmt, err := datastore.DB.Prepare(`
-    SELECT
-    	IFNULL( SUM(t.count_unique), 0 )
-    FROM total_screens t
-    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
-	checkError(err)
-	defer stmt.Close()
-
-	err = stmt.QueryRow(before, after).Scan(&total)
-	checkError(err)
-
-	return total
-}
 
 // Screens returns a point slice containing screen data per size
 func Screens(before int64, after int64, limit int) []Point {
@@ -40,7 +25,9 @@ func Screens(before int64, after int64, limit int) []Point {
 	checkError(err)
 
 	points := newPointSlice(rows)
-	total := TotalUniqueScreens(before, after)
+	total, err := datastore.TotalUniqueScreens(before, after)
+	checkError(err)
+
 	points = calculatePointPercentages(points, total)
 
 	return points
@@ -48,16 +35,14 @@ func Screens(before int64, after int64, limit int) []Point {
 
 // CreateScreenTotals aggregates screen data into daily totals
 func CreateScreenTotals(since string) {
-	rows := queryTotalRows(`
-    SELECT
-      v.screen_resolution,
-			COUNT(*) AS count,
-      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
-    FROM pageviews pv
-    LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE pv.timestamp > ?
-    GROUP BY date_group, v.screen_resolution`, since)
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	totals, err := datastore.ScreenCountPerDay(tomorrow, since)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	processTotalRows(rows, "total_screens")
+	err = datastore.SaveTotals("screens", totals)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

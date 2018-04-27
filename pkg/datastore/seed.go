@@ -133,16 +133,12 @@ func Seed(n int) {
 			Timestamp:       timestamp,
 		}
 
-		DB.Exec("START TRANSACTION")
-
 		// insert between 1-6 pageviews for this visitor
 		for j := 0; j <= randInt(1, 6); j++ {
 			page := pages[randInt(0, len(pages))]
 			pv.PageID = page.ID
 			SavePageview(&pv)
 		}
-
-		DB.Exec("COMMIT")
 	}
 }
 

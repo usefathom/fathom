@@ -1,30 +1,14 @@
 package count
 
 import (
+	"log"
+	"time"
+
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
-// TotalUniqueLanguages returns the total # of unique browser languages between two given timestamps
-func TotalUniqueLanguages(before int64, after int64) int {
-	var total int
-
-	stmt, err := datastore.DB.Prepare(`
-    SELECT
-      IFNULL( SUM(t.count_unique), 0 )
-    FROM total_browser_languages t
-    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
-	checkError(err)
-	defer stmt.Close()
-
-	err = stmt.QueryRow(before, after).Scan(&total)
-	checkError(err)
-
-	return total
-}
-
 // Languages returns a point slice containing language data per language
 func Languages(before int64, after int64, limit int) []Point {
-	// TODO: Calculate total instead of requiring it as a parameter.
 	stmt, err := datastore.DB.Prepare(`
     SELECT
       t.value,
@@ -41,7 +25,9 @@ func Languages(before int64, after int64, limit int) []Point {
 	checkError(err)
 
 	points := newPointSlice(rows)
-	total := TotalUniqueLanguages(before, after)
+	total, err := datastore.TotalUniqueLanguages(before, after)
+	checkError(err)
+
 	points = calculatePointPercentages(points, total)
 
 	return points
@@ -49,16 +35,14 @@ func Languages(before int64, after int64, limit int) []Point {
 
 // CreateLanguageTotals aggregates screen data into daily totals
 func CreateLanguageTotals(since string) {
-	rows := queryTotalRows(`
-    SELECT
-      v.browser_language,
-			COUNT(*) AS count,
-      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
-    FROM pageviews pv
-    LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE pv.timestamp > ?
-    GROUP BY date_group, v.browser_language`, since)
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	totals, err := datastore.LanguageCountPerDay(tomorrow, since)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	processTotalRows(rows, "total_browser_languages")
+	err = datastore.SaveTotals("browser_languages", totals)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

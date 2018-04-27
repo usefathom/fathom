@@ -34,3 +34,30 @@ func SaveVisitor(v *models.Visitor) error {
 	v.ID, _ = result.LastInsertId()
 	return nil
 }
+
+// RealtimeVisitors returns the total number of visitors in the last 3 minutes
+// TODO: Query visitors table instead, using a last_seen column.
+func RealtimeVisitors() (int, error) {
+	var result int
+	query := dbx.Rebind(`
+		SELECT COUNT(DISTINCT(pv.visitor_id))
+		FROM pageviews pv
+		WHERE pv.timestamp >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 3 HOUR_MINUTE) AND pv.timestamp <= CURRENT_TIMESTAMP`)
+	err := dbx.Get(&result, query)
+	return result, err
+}
+
+func VisitorCountPerDay(before string, after string) ([]*models.Total, error) {
+	var results []*models.Total
+
+	query := dbx.Rebind(`
+		SELECT
+		  COUNT(DISTINCT(pv.visitor_id)) AS count,
+		  DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+		FROM pageviews pv
+		WHERE pv.timestamp < ? AND pv.timestamp > ?
+		GROUP BY date_group`)
+
+	err := dbx.Select(&results, query, before, after)
+	return results, err
+}

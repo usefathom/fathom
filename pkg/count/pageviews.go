@@ -1,14 +1,15 @@
 package count
 
 import (
-	"github.com/usefathom/fathom/pkg/datastore"
 	"log"
 	"time"
+
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // CreatePageviewTotals aggregates pageview data for each page into daily totals
 func CreatePageviewTotals(since string) {
-	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-02-01")
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
 	totals, err := datastore.PageviewCountPerPageAndDay(tomorrow, since)
 	if err != nil {
 		log.Fatal(err)

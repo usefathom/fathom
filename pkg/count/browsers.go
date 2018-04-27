@@ -1,26 +1,11 @@
 package count
 
 import (
+	"log"
+	"time"
+
 	"github.com/usefathom/fathom/pkg/datastore"
 )
-
-// TotalUniqueBrowsers returns the total # of unique browsers between two given timestamps
-func TotalUniqueBrowsers(before int64, after int64) int {
-	var total int
-
-	stmt, err := datastore.DB.Prepare(`
-    SELECT
-      IFNULL( SUM(t.count_unique), 0 )
-    FROM total_browser_names t
-    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
-	checkError(err)
-	defer stmt.Close()
-
-	err = stmt.QueryRow(before, after).Scan(&total)
-	checkError(err)
-
-	return total
-}
 
 // Browsers returns a point slice containing browser data per browser name
 func Browsers(before int64, after int64, limit int) []Point {
@@ -40,7 +25,9 @@ func Browsers(before int64, after int64, limit int) []Point {
 	checkError(err)
 
 	points := newPointSlice(rows)
-	total := TotalUniqueBrowsers(before, after)
+	total, err := datastore.TotalUniqueBrowsers(before, after)
+	checkError(err)
+
 	points = calculatePointPercentages(points, total)
 
 	return points
@@ -48,16 +35,14 @@ func Browsers(before int64, after int64, limit int) []Point {
 
 // CreateBrowserTotals aggregates screen data into daily totals
 func CreateBrowserTotals(since string) {
-	rows := queryTotalRows(`
-    SELECT
-      v.browser_name,
-			COUNT(*) AS count,
-      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
-    FROM pageviews pv
-    LEFT JOIN visitors v ON v.id = pv.visitor_id
-    WHERE pv.timestamp > ?
-    GROUP BY date_group, v.browser_name`, since)
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	totals, err := datastore.BrowserCountPerDay(tomorrow, since)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	processTotalRows(rows, "total_browser_names")
+	err = datastore.SaveTotals("browser_names", totals)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

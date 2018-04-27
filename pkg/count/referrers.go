@@ -1,26 +1,11 @@
 package count
 
 import (
+	"log"
+	"time"
+
 	"github.com/usefathom/fathom/pkg/datastore"
 )
-
-// TotalReferrers returns the total # of referrers between two given timestamps
-func TotalReferrers(before int64, after int64) int {
-	var total int
-
-	stmt, err := datastore.DB.Prepare(`
-    SELECT
-      IFNULL( SUM(t.count), 0 )
-    FROM total_referrers t
-    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
-	checkError(err)
-	defer stmt.Close()
-
-	err = stmt.QueryRow(before, after).Scan(&total)
-	checkError(err)
-
-	return total
-}
 
 // Referrers returns a point slice containing browser data per browser name
 func Referrers(before int64, after int64, limit int) []Point {
@@ -40,7 +25,9 @@ func Referrers(before int64, after int64, limit int) []Point {
 	checkError(err)
 
 	points := newPointSlice(rows)
-	total := TotalReferrers(before, after)
+	total, err := datastore.TotalReferrers(before, after)
+	checkError(err)
+
 	points = calculatePointPercentages(points, total)
 
 	return points
@@ -48,17 +35,14 @@ func Referrers(before int64, after int64, limit int) []Point {
 
 // CreateReferrerTotals aggregates screen data into daily totals
 func CreateReferrerTotals(since string) {
-	rows := queryTotalRows(`
-    SELECT
-      pv.referrer_url,
-			COUNT(*) AS count,
-      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
-    FROM pageviews pv
-    WHERE pv.referrer_url IS NOT NULL
-    AND pv.referrer_url != ''
-    AND pv.timestamp > ?
-    GROUP BY date_group, pv.referrer_url`, since)
+	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	totals, err := datastore.ReferrerCountPerDay(tomorrow, since)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	processTotalRows(rows, "total_referrers")
+	err = datastore.SaveTotals("referrers", totals)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
