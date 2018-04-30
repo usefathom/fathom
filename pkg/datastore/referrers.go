@@ -10,7 +10,7 @@ func ReferrerCountPerDay(before string, after string) ([]*models.Total, error) {
 	      pv.referrer_url AS value,
 		  COUNT(*) AS count,
 	      COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-	      DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+	      DATE_FORMAT(pv.timestamp, '%Y-%m-%d') AS date_group
 	    FROM pageviews pv
 	    WHERE pv.referrer_url IS NOT NULL
 	    AND pv.referrer_url != ''

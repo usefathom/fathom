@@ -9,8 +9,9 @@ func TotalPageviews(before int64, after int64) (int, error) {
 	var total int
 
 	query := dbx.Rebind(`
-		SELECT IFNULL( SUM(t.count), 0 ) 
-		FROM total_pageviews t WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
+		SELECT COALESCE(SUM(t.count), 0)
+		FROM total_pageviews t 
+		WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	err := dbx.Get(&total, query, before, after)
 	if err != nil {
 		return 0, err
@@ -25,7 +26,7 @@ func TotalPageviewsPerDay(before int64, after int64) ([]*models.Point, error) {
 
 	query := dbx.Rebind(`
 		SELECT
-	      SUM(t.count) AS value,
+	      COALESCE(SUM(t.count), 0) AS value,
 	      DATE_FORMAT(t.date, '%Y-%m-%d') AS label
 	    FROM total_pageviews t
 	    WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
@@ -46,8 +47,8 @@ func TotalPageviewsPerPage(before int64, after int64, limit int64) ([]*models.Pa
 		SELECT
 			p.hostname,
 			p.path,
-			SUM(t.count) AS count,
-			SUM(t.count_unique) AS countunique
+			COALESCE(SUM(t.count), 0) AS count,
+			COALESCE(SUM(t.count_unique), 0) AS countunique
 		FROM total_pageviews t
 		LEFT JOIN pages p ON p.id = t.page_id
 		WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?

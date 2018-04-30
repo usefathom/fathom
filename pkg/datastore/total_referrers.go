@@ -8,7 +8,7 @@ func TotalReferrers(before int64, after int64) (int, error) {
 
 	query := dbx.Rebind(`
        SELECT
-         IFNULL( SUM(t.count), 0 )
+         COALESCE(SUM(t.count), 0)
        FROM total_referrers t
        WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 
@@ -22,7 +22,7 @@ func TotalsPerReferrer(before int64, after int64, limit int64) ([]*models.Point,
 	query := dbx.Rebind(`
       SELECT
          t.value AS label,
-         SUM(t.count) AS value
+         COALESCE(SUM(t.count), 0) AS value
       FROM total_referrers t
       WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
       GROUP BY label

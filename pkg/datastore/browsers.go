@@ -10,7 +10,7 @@ func BrowserCountPerDay(before string, after string) ([]*models.Total, error) {
 		  v.browser_name AS value,
 		  COUNT(*) AS count,
 		  COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-		  DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+		  DATE_FORMAT(pv.timestamp, '%Y-%m-%d') AS date_group
 		FROM pageviews pv
 		LEFT JOIN visitors v ON v.id = pv.visitor_id
 		WHERE pv.timestamp < ? AND pv.timestamp > ?

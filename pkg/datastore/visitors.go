@@ -2,10 +2,9 @@ package datastore
 
 import (
 	"database/sql"
+
 	"github.com/usefathom/fathom/pkg/models"
 )
-
-var v models.Visitor
 
 // GetVisitorByKey ...
 func GetVisitorByKey(key string) (*models.Visitor, error) {
@@ -53,7 +52,7 @@ func VisitorCountPerDay(before string, after string) ([]*models.Total, error) {
 	query := dbx.Rebind(`
 		SELECT
 		  COUNT(DISTINCT(pv.visitor_id)) AS count,
-		  DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+		  DATE_FORMAT(pv.timestamp, '%Y-%m-%d') AS date_group
 		FROM pageviews pv
 		WHERE pv.timestamp < ? AND pv.timestamp > ?
 		GROUP BY date_group`)

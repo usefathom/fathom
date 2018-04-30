@@ -8,7 +8,7 @@ func TotalUniqueScreens(before int64, after int64) (int, error) {
 
 	query := dbx.Rebind(`
        SELECT
-         IFNULL( SUM(t.count_unique), 0 )
+         COALESCE(SUM(t.count_unique), 0)
        FROM total_screens t
        WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	err := dbx.Get(&total, query, before, after)
@@ -21,7 +21,7 @@ func TotalsPerScreen(before int64, after int64, limit int64) ([]*models.Point, e
 	query := dbx.Rebind(`
       SELECT
         t.value AS label,
-        SUM(t.count_unique) AS value
+        COALESCE(SUM(t.count_unique), 0) AS value
       FROM total_screens t
       WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
       GROUP BY t.value

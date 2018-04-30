@@ -7,7 +7,7 @@ func TotalVisitors(before int64, after int64) (int, error) {
 	var total int
 
 	query := dbx.Rebind(`
-    SELECT IFNULL(SUM(t.count), 0)
+    SELECT COALESCE(SUM(t.count), 0)
     FROM total_visitors t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?`)
 	err := dbx.Get(&total, query, before, after)
@@ -19,7 +19,7 @@ func TotalVisitorsPerDay(before int64, after int64) ([]*models.Point, error) {
 	var results []*models.Point
 
 	query := dbx.Rebind(`SELECT
-      SUM(IFNULL(t.count, 0)) AS value,
+      COALESCE(SUM(t.count), 0) AS value,
       DATE_FORMAT(t.date, '%Y-%m-%d') AS label
     FROM total_visitors t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?

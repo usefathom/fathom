@@ -32,13 +32,13 @@ func New(driver string, dsn string) *sqlx.DB {
 }
 
 func getDSN(driver string, host string, name string, user string, password string) string {
-	var dsn = fmt.Sprintf("%s:%s@%s/%s", user, password, host, name)
+	var dsn string
 
 	switch driver {
 	case "postgres":
-		dsn = "postgres://" + dsn
+		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, name)
 	case "mysql":
-		dsn = dsn + "?parseTime=true"
+		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true", user, password, host, name)
 	}
 
 	return dsn

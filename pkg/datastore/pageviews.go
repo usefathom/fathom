@@ -48,7 +48,7 @@ func PageviewCountPerPageAndDay(before string, after string) ([]*models.Total, e
 	    	pv.page_id,
 	    	COUNT(*) AS count,
 			COUNT(DISTINCT(pv.visitor_id)) AS count_unique,
-			DATE_FORMAT(pv.timestamp, "%Y-%m-%d") AS date_group
+			DATE_FORMAT(pv.timestamp, '%Y-%m-%d') AS date_group
 	    FROM pageviews pv
 	    WHERE pv.timestamp < ? AND pv.timestamp > ?
 	    GROUP BY pv.page_id, date_group`)
