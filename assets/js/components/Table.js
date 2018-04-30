@@ -58,7 +58,7 @@ class Table extends Component {
   }
 
   render() {
-    const tableRows = this.state.records.length > 0 ? this.state.records.map((p, i) => (
+    const tableRows = this.state.records !== null ? this.state.records.map((p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
         {this.labelCell(p)}

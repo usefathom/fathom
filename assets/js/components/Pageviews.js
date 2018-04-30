@@ -40,14 +40,14 @@ class Pageviews extends Component {
 
   render() {
     const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
-    const tableRows = this.state.records.map( (p, i) => (
+    const tableRows = this.state.records !== null ? this.state.records.map( (p, i) => (
       <tr>
         <td class="muted">{i+1}</td>
         <td><a href={"//" + p.Hostname + p.Path}>{p.Path.substring(0, 50)}{p.Path.length > 50 ? '..' : ''}</a></td>
         <td>{numbers.formatWithComma(p.Count)}</td>
         <td>{numbers.formatWithComma(p.CountUnique)}</td>
       </tr>
-    ));
+    )) : <tr><td colspan="4" class="italic">Nothing here, yet..</td></tr>;;
 
     return (
       <div class="block">
