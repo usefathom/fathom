@@ -27,21 +27,54 @@ class DatePicker extends Component {
     super(props)
 
     this.state = {
-      period: this.props.value
+      period: this.props.value,
+      before: 0,
+      after: 0,
     }
+  }
+
+  componentDidMount() {
+    this.setTimeRange(this.state.period)
+  }
+
+  @bind
+  setTimeRange(period) {
+    let beforeDate = new Date();
+    let afterDate = new Date();
+    afterDate.setHours(0, 0, 0, 0);
+    switch(period) {
+      case "week":
+        afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
+      break;
+      case "month":
+        afterDate.setDate(1);
+      break;
+      case "year":
+        afterDate.setDate(1);
+        afterDate.setMonth(0);
+      break;
+    }
+
+    let before, after;
+    before = Math.round((+beforeDate ) / 1000);
+    after = Math.round((+afterDate) / 1000);
+    this.setState({
+      before: before, 
+      after: after,
+    });
+    this.props.onChange(this.state);
   }
 
   @bind
   setPeriod(e) {
     e.preventDefault();
 
-    var nextState = { 
-      period: e.target.dataset.value 
-    }
-
-    if(this.state.period != nextState.period) {
-      this.setState(nextState)
-      this.props.onChange(nextState.period);
+    let period = e.target.dataset.value;
+    if( period !== this.state.period) {
+      this.setState({ 
+        period: period, 
+      });
+      this.setTimeRange(this.state.period);
     }
   }
 

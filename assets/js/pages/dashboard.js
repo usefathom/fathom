@@ -15,13 +15,16 @@ class Dashboard extends Component {
 
     this.state = {
       period: (window.location.hash.substring(2) || 'week'),
+      before: 0,
+      after: 0,
     }
   }
 
   @bind
-  changePeriod(p) {
-    this.setState({ period: p })
-    window.history.replaceState(this.state, null, `#!${p}`)
+  changePeriod(s) {
+    console.log(s)
+    this.setState({ period: s.period, before: s.before, after: s.after })
+    window.history.replaceState(this.state, null, `#!${s.period}`)
   }
 
   render(props, state) {
@@ -46,14 +49,14 @@ class Dashboard extends Component {
 
         <div class="boxes">
           <div class="box box-totals animated fadeInUp delayed_03s">
-            <CountWidget title="Unique visitors" endpoint="visitors" period={state.period} />
-            <CountWidget title="Page views" endpoint="pageviews" period={state.period} />
+            <CountWidget title="Unique visitors" endpoint="visitors" before={state.before} after={state.after} />
+            <CountWidget title="Page views" endpoint="pageviews" before={state.before} after={state.after} />
             <CountWidget title="Avg time on site" endpoint="time-on-site" format="time" period={state.period} />
             <CountWidget title="Bounce rate" endpoint="bounce-rate" format="percentage" period={state.period} />
           </div>
   
-          <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} period={state.period} />
-          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} period={state.period} />
+          <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} before={state.before} after={state.after} />
+          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} before={state.before} after={state.after} />
 
         </div>
       </section>

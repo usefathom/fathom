@@ -15,30 +15,38 @@ class Table extends Component {
     this.state = {
       records: [],
       limit: 100,
-      loading: true
+      loading: true,
+      before: props.before,
+      after: props.after,
     }
   }
 
   componentDidMount() {
-      this.fetchRecords(this.props.period, this.state.limit)
+      this.fetchRecords()
   }
 
-  componentWillReceiveProps(newProps) {
-    if(this.props.period != newProps.period) {
-      this.fetchRecords(newProps.period, this.state.limit)
-    }
+  componentWillReceiveProps(newProps, prevState) {
+      this.setState({
+        before: newProps.before,
+        after: newProps.after,
+      });
+
+      if(newProps.before != prevState.before || newProps.after != prevState.after) {
+        this.fetchRecords();
+      }
   }
 
   @bind
-  fetchRecords(period, limit) {
+  fetchRecords() {
     this.setState({ loading: true });
-    const before = Math.round((+new Date() ) / 1000);
-    const after = before - ( period * dayInSeconds );
-
-    Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`)
+  
+    Client.request(`${this.props.endpoint}?before=${this.state.before}&after=${this.state.after}&limit=${this.state.limit}`)
       .then((d) => {
-        this.setState({ loading: false, records: d }
-      )})
+        this.setState({ 
+          loading: false,
+          records: d 
+        });
+      });
   }
 
   render(props, state) {

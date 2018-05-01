@@ -1,6 +1,7 @@
 'use strict'
 
 import { h, render, Component } from 'preact';
+import { bind } from 'decko';
 
 class Notification extends Component {
   constructor(props) {
@@ -13,27 +14,28 @@ class Notification extends Component {
     this.timeout = 0
   }
 
-  clearMessage() {
-    this.setState({ message: '' })
-  }
-
   componentWillReceiveProps(newProps) {
     if(newProps.message != this.state.message) {
       this.setState({ message: newProps.message, kind: newProps.kind || 'error' })
       window.clearTimeout(this.timeout)
-      this.timeout = window.setTimeout(this.clearMessage.bind(this), 5000)
+      this.timeout = window.setTimeout(this.clearMessage, 5000)
     }
   }
 
-  render() {
-    if(this.state.message === '') {
+  @bind
+  clearMessage() {
+    this.setState({ message: '' })
+  }
+
+  render(props, state) {
+    if(state.message === '') {
       return ''
     }
 
     return (
       <div class={`notification`}>
-        <div class={`notification-${this.state.kind}`}>
-          {this.state.message}
+        <div class={`notification-${state.kind}`}>
+          {state.message}
         </div>
       </div>
   )}

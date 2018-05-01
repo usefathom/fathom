@@ -2,14 +2,11 @@
 
 import { h, render, Component } from 'preact';
 import Client from '../lib/client.js';
+import { bind } from 'decko';
 
 class LogoutButton extends Component {
 
-  constructor(props) {
-    super(props)
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
+  @bind
   handleSubmit(e) {
     e.preventDefault();
 

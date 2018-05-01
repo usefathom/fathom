@@ -19,41 +19,33 @@ class CountWidget extends Component {
 
     this.state = {
       value: '-',
-      loading: false
+      loading: false,
+      before: props.before,
+      after: props.after,
     }
-    this.fetchData(props.period);
   }
 
-  componentWillReceiveProps(newProps) {
-    if(this.props.period != newProps.period) {
-      this.fetchData(newProps.period)
-    }
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  componentWillReceiveProps(newProps, prevState) {
+      this.setState({
+        before: newProps.before,
+        after: newProps.after,
+      });
+
+      if(newProps.before != prevState.before || newProps.after != prevState.after) {
+        this.fetchData();
+      }
   }
 
   @bind
-  fetchData(period) {
-    let before, after;
-    let afterDate = new Date();
-    afterDate.setHours(0, 0, 0, 0);
-    
-    switch(period) {
-      case "week":
-        afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
-      break;
-      case "month":
-        afterDate.setDate(1);
-      break;
-      case "year":
-        afterDate.setDate(1);
-        afterDate.setMonth(0);
-      break;
-    }
-
-    before = Math.round((+new Date() ) / 1000);
-    after = Math.round((+afterDate) / 1000);
+  fetchData() {
+    console.log(this.state);
     this.setState({ loading: true })
 
-    Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
+    Client.request(`${this.props.endpoint}/count?before=${this.state.before}&after=${this.state.after}`)
       .then((d) => { 
         this.setState({ 
           loading: false, 

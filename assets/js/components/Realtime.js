@@ -12,8 +12,11 @@ class Realtime extends Component {
     this.state = {
       count: 0
     }
-    this.fetchData();
-    window.setInterval(this.fetchData, 15000);
+  }
+
+  componentDidMount() {
+      this.fetchData();
+      window.setInterval(this.fetchData, 15000);
   }
 
   @bind
