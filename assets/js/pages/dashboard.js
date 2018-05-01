@@ -52,8 +52,8 @@ class Dashboard extends Component {
             <CountWidget title="Bounce rate" endpoint="bounce-rate" format="percentage" period={state.period} />
           </div>
   
-          <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} />
-          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} />
+          <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} period={state.period} />
+          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} period={state.period} />
 
         </div>
       </section>

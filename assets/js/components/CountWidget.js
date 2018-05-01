@@ -25,7 +25,6 @@ class CountWidget extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(newProps);
     if(this.props.period != newProps.period) {
       this.fetchData(newProps.period)
     }
@@ -36,6 +35,7 @@ class CountWidget extends Component {
     let before, after;
     let afterDate = new Date();
     afterDate.setHours(0, 0, 0, 0);
+    
     switch(period) {
       case "week":
         afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
