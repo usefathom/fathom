@@ -1,23 +1,24 @@
 'use strict';
 
 import { h, render, Component } from 'preact';
+import { bind } from 'decko';
 
 const availablePeriods = [
   {
-    id: 7,
-    label: 'Last 7 days'
+    id: 'day',
+    label: 'Today'
   },
   {
-    id: 30,
-    label: 'Last 30 days'
+    id: 'week',
+    label: 'This week'
   },
   {
-    id: 90,
-    label: 'Last quarter'
+    id: 'month',
+    label: 'This month'
   },
   {
-    id: 360,
-    label: 'Last year'
+    id: 'year',
+    label: 'This year'
   }
 ]
 
@@ -26,31 +27,35 @@ class DatePicker extends Component {
     super(props)
 
     this.state = {
-      period: this.props.period
+      period: this.props.value
     }
-
-    this.setPeriod = this.setPeriod.bind(this)
   }
 
+  @bind
   setPeriod(e) {
-    var nextState = { period: parseInt(e.target.value) }
+    e.preventDefault();
+
+    var nextState = { 
+      period: e.target.dataset.value 
+    }
+
     if(this.state.period != nextState.period) {
       this.setState(nextState)
-      this.props.onChoose(this.state.period);
+      this.props.onChange(nextState.period);
     }
   }
 
-  render() {
-    const buttons = availablePeriods.map((p) => {
-      let className = ( p.id == this.state.period ) ? 'active' : '';
-      return <button value={p.id} class={className} onClick={this.setPeriod}>{p.label}</button>
+  render(props, state) {
+    const links = availablePeriods.map((p) => {
+      let className = ( p.id == state.period ) ? 'active' : '';
+      return <li class={className} ><a href="#" data-value={p.id} onClick={this.setPeriod}>{p.label}</a></li>
     });
 
     return (
 
-      <div class="small-margin">
-        {buttons}
-      </div>
+      <ul>
+        {links}
+      </ul>
     )
   }
 }

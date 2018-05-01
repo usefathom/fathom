@@ -1,84 +1,65 @@
 'use strict'
 
 import { h, render, Component } from 'preact';
-import Pageviews from '../components/Pageviews.js';
+import LogoutButton from '../components/LogoutButton.js';
 import Realtime from '../components/Realtime.js';
-import GraphWidget from '../components/GraphWidget.js';
 import DatePicker from '../components/DatePicker.js';
-import Table from '../components/Table.js';
-import HeaderBar from '../components/HeaderBar.js';
 import CountWidget from '../components/CountWidget.js';
+import Table from '../components/Table.js';
 
-function removeImgElement(e) {
-  e.target.parentNode.removeChild(e.target);
-}
-
-function formatCountryLabel(p) {
-  const src = "/static/img/country-flags/"+ p.Label.toLowerCase() +".png"
-
-  return (
-    <td>
-      {p.Label}
-      <img height="12" src={src} class="pull-right" onError={removeImgElement} />
-    </td>
-  )
-}
+import { bind } from 'decko';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      period: parseInt(window.location.hash.substring(2)) || 7
+      period: (window.location.hash.substring(2) || 'week'),
     }
-
-    this.onPeriodChoose = this.onPeriodChoose.bind(this)
   }
 
-  onPeriodChoose(p) {
+  @bind
+  changePeriod(p) {
     this.setState({ period: p })
     window.history.replaceState(this.state, null, `#!${p}`)
   }
 
-  render() {
+  render(props, state) {
     return (
-    <div>
-      <HeaderBar showLogout={true} onLogout={this.props.onLogout} />
-      <div class="container">
-        <Realtime />
-        <div class="clear">
-          <DatePicker period={this.state.period} onChoose={this.onPeriodChoose} />
+    <div class="rapper">
+
+      <header class="section">
+        <nav class="main-nav animated fadeInDown">
+            <ul>
+              <li class="logo"><a href="/">Fathom</a></li>
+              <li class="visitors"><Realtime /></li>
+              <li class="spacer">&middot;</li>
+              <li class="signout"><LogoutButton onSuccess={this.props.onLogout} /></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section class="section animated fadeInUp delayed_02s">
+        <nav class="date-nav">
+          <DatePicker onChange={this.changePeriod} value={state.period} />
+        </nav>
+
+        <div class="boxes">
+          <div class="box box-totals animated fadeInUp delayed_03s">
+            <CountWidget title="Unique visitors" endpoint="visitors" period={state.period} />
+            <CountWidget title="Page views" endpoint="pageviews" period={state.period} />
+            <CountWidget title="Avg time on site" endpoint="time-on-site" format="time" period={state.period} />
+            <CountWidget title="Bounce rate" endpoint="bounce-rate" format="percentage" period={state.period} />
+          </div>
+  
+          <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} />
+          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} />
+
         </div>
-        <div class="row">
-          <div class="col-2">
-            <CountWidget title="Visitors" endpoint="visitors" period={this.state.period} />
-          </div>
-          <div class="col-2">
-            <CountWidget title="Pageviews" endpoint="pageviews" period={this.state.period} />
-          </div>
-        </div>
-        <GraphWidget period={this.state.period} />
-        <div class="row">
-          <div class="col-4">
-            <Pageviews period={this.state.period} />
-          </div>
-          <div class="col-2">
-            <Table period={this.state.period} endpoint="languages" title="Languages" headers={["#", "Language", "Count", "%"]} />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">
-            <Table period={this.state.period} endpoint="screen-resolutions" title="Screen Resolutions" headers={["#", "Resolution", "Count", "%"]} />
-          </div>
-          <div class="col-2">
-            <Table period={this.state.period} endpoint="referrers" title="Referrers" headers={["#", "URL", "Count", "%"]} labelCell={(p) => ( <td><a href={p.Label}>{p.Label.substring(0, 15).replace('https://', '').replace('http://', '')}</a></td>)} />
-          </div>
-          <div class="col-2">
-            <Table period={this.state.period} endpoint="browsers" title="Browsers" headers={["#", "Browser", "Count", "%"]} onAuthError={this.props.onLogout} />
-          </div>
-        </div>
-      </div>
-  </div>
+      </section>
+
+      <footer class="section"></footer>
+    </div>
   )}
 }
 

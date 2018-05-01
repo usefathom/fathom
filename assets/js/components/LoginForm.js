@@ -3,7 +3,7 @@
 import { h, render, Component } from 'preact';
 import Client from '../lib/client.js';
 import Notification from '../components/Notification.js';
-import { bind, memoize, debounce } from 'decko';
+import { bind } from 'decko';
 
 class LoginForm extends Component {
 

@@ -3,6 +3,8 @@
 import { h, render, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import Client from '../lib/client.js';
+import { bind } from 'decko';
+
 const dayInSeconds = 60 * 60 * 24;
 
 class Table extends Component {
@@ -12,27 +14,13 @@ class Table extends Component {
 
     this.state = {
       records: [],
-      limit: 5,
+      limit: 100,
       loading: true
     }
-
-    this.tableHeaders = props.headers.map(heading => <th>{heading}</th>)
-    this.fetchRecords = this.fetchRecords.bind(this)
-    this.handleLimitChoice = this.handleLimitChoice.bind(this)
   }
 
   componentDidMount() {
       this.fetchRecords(this.props.period, this.state.limit)
-  }
-
-  labelCell(p) {
-    if( this.props.labelCell ) {
-      return this.props.labelCell(p)
-    }
-
-    return (
-      <td>{p.Label.substring(0, 15)}</td>
-    )
   }
 
   componentWillReceiveProps(newProps) {
@@ -41,11 +29,7 @@ class Table extends Component {
     }
   }
 
-  handleLimitChoice(e) {
-    this.setState({ limit: parseInt(e.target.value) })
-    this.fetchRecords(this.props.period, this.state.limit)
-  }
-
+  @bind
   fetchRecords(period, limit) {
     this.setState({ loading: true });
     const before = Math.round((+new Date() ) / 1000);
@@ -54,42 +38,31 @@ class Table extends Component {
     Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${limit}`)
       .then((d) => {
         this.setState({ loading: false, records: d }
-      )}).catch((e) => { console.log(e) })
+      )})
   }
 
-  render() {
-    const tableRows = this.state.records !== null ? this.state.records.map((p, i) => (
-      <tr>
-        <td class="muted">{i+1}</td>
-        {this.labelCell(p)}
-        <td>{numbers.formatWithComma(p.Value)}</td>
-        <td>{Math.round(p.PercentageValue)}%</td>
-      </tr>
-    )) :<tr><td colspan="4" class="italic">Nothing here..</td></tr>;
+  render(props, state) {
+    const tableRows = state.records !== null ? state.records.map((p, i) => (
+      <div class="table-row">
+        <div class="cell main-col"><a href="#">/about-us/</a></div>
+        <div class="cell">445.2k</div>
+        <div class="cell">5,456</div>           
+      </div>
+    )) : <div class="table-row">Nothing here, yet.</div>;
 
-    const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
+    const loadingOverlay = state.loading ? <div class="loading-overlay"><div></div></div> : '';
 
     return (
-      <div class="block">
-        {loadingOverlay}
-        <div class="clearfix">
-          <h3 class="pull-left">{this.props.title}</h3>
-          <div class="pull-right">
-            <select onchange={this.handleLimitChoice}>
-              <option>5</option>
-              <option>20</option>
-              <option>100</option>
-            </select>
-          </div>
-          </div>
-        <table>
-          <thead>
-            <tr>{this.tableHeaders}</tr>
-          </thead>
-          <tbody>
-            {tableRows}
-          </tbody>
-        </table>
+      <div class="box box-pages animated fadeInUp delayed_04s">
+            
+        <div class="table-row header">
+          {props.headers.map((header, i) => {
+            let classes = i === 0 ? 'main-col cell' : 'cell';
+            return (<div class={classes}>{header}</div>) 
+            })}        
+        </div>
+
+       {tableRows}
       </div>
     )
   }

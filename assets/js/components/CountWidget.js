@@ -3,6 +3,14 @@
 import { h, render, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import Client from '../lib/client.js';
+import { bind } from 'decko';
+
+function getSundayOfCurrentWeek(d){
+  var day = d.getDay();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (day == 0?0:7)-day );
+}
+
+
 const dayInSeconds = 60 * 60 * 24;
 
 class CountWidget extends Component {
@@ -10,55 +18,57 @@ class CountWidget extends Component {
     super(props)
 
     this.state = {
-      count: 0,
-      previousCount: 0,
+      value: '-',
       loading: false
     }
-
-    this.fetchData = this.fetchData.bind(this);
     this.fetchData(props.period);
   }
 
   componentWillReceiveProps(newProps) {
+    console.log(newProps);
     if(this.props.period != newProps.period) {
       this.fetchData(newProps.period)
     }
   }
 
+  @bind
   fetchData(period) {
-    const before = Math.round((+new Date() ) / 1000);
-    const after = before - ( period * dayInSeconds );
+    let before, after;
+    let afterDate = new Date();
+    afterDate.setHours(0, 0, 0, 0);
+    switch(period) {
+      case "week":
+        afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
+      break;
+      case "month":
+        afterDate.setDate(1);
+      break;
+      case "year":
+        afterDate.setDate(1);
+        afterDate.setMonth(0);
+      break;
+    }
+
+    before = Math.round((+new Date() ) / 1000);
+    after = Math.round((+afterDate) / 1000);
     this.setState({ loading: true })
 
     Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
-      .then((d) => { this.setState({ loading: false, count: d })})
-
-    // query previous period
-    const previousBefore = after;
-    const previousAfter = previousBefore - ( period * dayInSeconds );
-    Client.request(`${this.props.endpoint}/count?before=${previousBefore}&after=${previousAfter}`)
-      .then((d) => { this.setState({ previousCount: d })})
+      .then((d) => { 
+        this.setState({ 
+          loading: false, 
+          value: numbers.formatWithComma(d), 
+        })
+      })
   }
 
-  renderPercentage() {
-    // wait for request to finish
-    if( ! this.state.previousCount ) {
-      return '';
-    }
-
-    const percentage = Math.round(( this.state.count / this.state.previousCount * 100 - 100))
+  render(props, state) {
+    const loadingOverlay = state.loading ? <div class="loading-overlay"><div></div></div> : '';
     return (
-      <small class={percentage > 0 ? 'positive' : 'negative'}>{percentage}%</small>
-    )
-  }
-
-  render() {
-    const loadingOverlay = this.state.loading ? <div class="loading-overlay"><div></div></div> : '';
-    return (
-      <div class="block center-text">
+       <div class="totals-detail">
         {loadingOverlay}
-        <h4 class="">{this.props.title}</h4>
-        <div class="big tiny-margin">{numbers.formatWithComma(this.state.count)} {this.renderPercentage()}</div>
+        <div class="total-heading">{props.title}</div>
+        <div class="total-numbers">{state.value}</div>
       </div>
     )
   }

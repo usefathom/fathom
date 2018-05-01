@@ -2,6 +2,7 @@
 
 import { h, render, Component } from 'preact';
 import Client from '../lib/client.js';
+import { bind } from 'decko';
 
 class Realtime extends Component {
 
@@ -11,11 +12,11 @@ class Realtime extends Component {
     this.state = {
       count: 0
     }
-    this.fetchData = this.fetchData.bind(this);
     this.fetchData();
     window.setInterval(this.fetchData, 15000);
   }
 
+  @bind
   fetchData() {
     Client.request(`visitors/count/realtime`)
       .then((d) => { this.setState({ count: d })})
@@ -24,9 +25,7 @@ class Realtime extends Component {
   render() {
     let visitors = this.state.count == 1 ? 'visitor' : 'visitors';
     return (
-      <div class="block block-float">
-        <span class="count">{this.state.count}</span> <span>{visitors} on the site right now.</span>
-      </div>
+        <span><span class="count">{this.state.count}</span> <span>current {visitors}</span></span>
     )
   }
 }
