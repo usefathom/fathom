@@ -10,8 +10,8 @@ type Pageview struct {
 }
 
 type PageviewCount struct {
-	Hostname    string
-	Path        string
-	Count       int
-	CountUnique int
+	Hostname    string `json:"hostname"`
+	Path        string `json:"path"`
+	Count       int    `json:"count"`
+	CountUnique int    `json:"count_unique"`
 }

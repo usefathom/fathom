@@ -52,9 +52,9 @@ class Table extends Component {
   render(props, state) {
     const tableRows = state.records !== null ? state.records.map((p, i) => (
       <div class="table-row">
-        <div class="cell main-col"><a href="#">/about-us/</a></div>
-        <div class="cell">445.2k</div>
-        <div class="cell">5,456</div>           
+        <div class="cell main-col"><a href={"http://"+p.hostname+p.path}>{p.path||p.label}</a></div>
+        <div class="cell">{p.count||p.value}</div>
+        <div class="cell">{p.count_unique||p.unique_value||"-"}</div>           
       </div>
     )) : <div class="table-row">Nothing here, yet.</div>;
 
