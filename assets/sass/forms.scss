@@ -1,0 +1,23 @@
+
+input {
+   padding: 4px 6px;
+}
+
+label {
+   display: block;
+   margin-bottom: 2px;
+   font-weight: bold;
+}
+
+input[type="submit"] {
+   background: #533feb;
+   color: white;
+   padding: 6px 12px;
+   border: 0;
+   cursor: pointer;
+
+   &:hover,
+   &:active {
+      background: darken(#533feb, 15%);
+   }
+}

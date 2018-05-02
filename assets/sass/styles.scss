@@ -13,21 +13,11 @@ light       #f5f7fa
 padding     8, 16, 20, 32, 64, 128, 256, 512, 1024
 font size   12, 16, 64
 */
-
+@import "normalize";
 @import url('//overpass-30e2.kxcdn.com/overpass.css');
 
-* { 
-  padding: 0; 
-  margin: 0; 
-  border: 0; 
-  outline: 0; 
-  border-radius: 0; 
-  border: none; 
-  vertical-align: baseline; 
-  -webkit-appearance: none; 
-  appearance: none; 
-  list-style: none; 
-  box-sizing: border-box; 
+*{ 
+  box-sizing: border-box;
 }
 
 ::selection       { background: #a0ffd1; }
@@ -93,16 +83,17 @@ footer {}
 .box-pages { background: #fff; }
 .box-referrers { background: #fff; }
 
-nav.main-nav ul { width: 100%; text-align: right; margin-top: 4px; }
+nav.main-nav ul { width: 100%; text-align: right; margin-top: 4px; margin-bottom: 0; padding: 0; }
 nav li { display: inline-block; }
 nav li a { transition: color .2s ease; position: relative; display: inline-block; padding: 0 8px 0 0; }
 nav.main-nav li a { padding: 6px 8px 6px 0; }
 nav li a:hover { color: #98a0a6; }
-nav.date-nav li.active a:after { content:""; background: #88ffc6; display: block; width: 100%; height: 3px; position: absolute; top: 4px; z-index: -1; margin: 0 0 0 -4px; transition: all .4s ease; }
 
+.date-nav ul { padding: 0; margin: 0; }
 nav.date-nav li a { color: #46494d; }
 nav.date-nav li a:hover { color: #98a0a6; }
 nav.date-nav li.active a:hover { color: #46494d; }
+nav.date-nav li.active a:after { content:""; background: #88ffc6; display: block; width: 100%; height: 3px; position: absolute; top: 4px; z-index: -1; margin: 0 0 0 -4px; transition: all .4s ease; }
 
 nav li.visitors { color: #533feb; }
 nav li.signout a { padding-right: 0; }
@@ -110,7 +101,7 @@ nav li.logo { float: left; }
 nav li.logo a { color: #533feb; display: inline-block; background: url("data:image/svg+xml;charset=UTF-8,%3csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 48 48' xml:space='preserve'%3e%3cpath style='fill:%23533feb;' d='M47.882,26.381C47.96,25.598,48,24.804,48,24c0.001-6.623-2.688-12.632-7.029-16.971 C36.632,2.688,30.623-0.001,24,0C17.377-0.001,11.368,2.688,7.029,7.029C2.688,11.368-0.001,17.377,0,24 c0,3.917,0.941,7.624,2.609,10.892c0,0,0,0,0,0c1.985,3.891,4.998,7.165,8.682,9.47C14.975,46.667,19.338,48.001,24,48 c6.221,0.001,11.901-2.372,16.162-6.258C44.424,37.858,47.284,32.45,47.882,26.381C47.882,26.381,47.882,26.381,47.882,26.381 C47.882,26.381,47.882,26.381,47.882,26.381C47.882,26.381,47.882,26.381,47.882,26.381C47.882,26.381,47.882,26.381,47.882,26.381 z M24,2.824c5.852,0.001,11.137,2.368,14.974,6.202c3.596,3.599,5.902,8.472,6.175,13.891l-8.386-8.386 c-0.263-0.263-0.627-0.414-0.998-0.414s-0.735,0.151-0.998,0.413L22.588,26.709l-5.59-5.59c-0.551-0.551-1.445-0.551-1.997,0 l-10.69,10.69C3.353,29.394,2.824,26.762,2.824,24c0.001-5.852,2.368-11.137,6.202-14.974C12.863,5.192,18.148,2.824,24,2.824z'/%3e%3cpath style='fill:%23fff;' d='M4.312,31.809l10.69-10.69c0.551-0.551,1.445-0.551,1.997,0l5.59,5.59l12.178-12.178 c0.263-0.263,0.626-0.413,0.998-0.413s0.735,0.151,0.998,0.414l8.386,8.386c-0.273-5.42-2.579-10.293-6.175-13.891 C35.137,5.192,29.852,2.824,24,2.824C18.148,2.824,12.863,5.192,9.026,9.026C5.192,12.863,2.824,18.148,2.824,24 C2.824,26.762,3.353,29.394,4.312,31.809z'/%3e%3c/svg%3e") top left no-repeat; background-size: 24px 24px; height: 24px; padding: 6px 0 6px 32px; }
 
 
-.main-nav ul { display: inline-block; }
+.main-nav ul { display: inline-block; padding: 0; }
 .spacer { color: #98a0a6; padding: 0 8px; }
 
 svg { width: 24px; height: 24px; display: inline-block; vertical-align: top; }
@@ -149,3 +140,5 @@ a:hover {}
   .total-numbers { font-size: 64px; }
 }
 
+@import "forms";
+@import "util";

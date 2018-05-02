@@ -9,7 +9,6 @@ class LoginForm extends Component {
 
   constructor(props) {
     super(props)
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       email: '',
       password: '',
@@ -20,6 +19,7 @@ class LoginForm extends Component {
   @bind
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({ message: '' });
 
     Client.request('session', {
       method: "POST",
@@ -33,9 +33,8 @@ class LoginForm extends Component {
       this.setState({
         message: e.message,
         password: ''
-      })
-
-    })
+      });
+    });
   }
 
   @bind
