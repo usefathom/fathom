@@ -43,14 +43,3 @@ func parseMajorMinor(v string) string {
 	}
 	return v
 }
-
-func getRequestIp(r *http.Request) string {
-	ipAddress := r.RemoteAddr
-
-	headerForwardedFor := r.Header.Get("X-Forwarded-For")
-	if headerForwardedFor != "" {
-		ipAddress = headerForwardedFor
-	}
-
-	return ipAddress
-}

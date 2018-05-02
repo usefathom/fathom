@@ -3,7 +3,7 @@
 CREATE TABLE visitors(
   id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   visitor_key VARCHAR(255) NOT NULL,
-  ip_address VARCHAR(100) NOT NULL,
+  ip_address VARCHAR(100) NULL,
   device_os VARCHAR(31) NULL,
   browser_name VARCHAR(31) NULL,
   browser_version VARCHAR(31) NULL,

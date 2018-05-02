@@ -34,8 +34,6 @@ var (
 	serverPort       = server.Flag("port", "Port to listen on.").Default("8080").Int()
 	serverWebRoot    = server.Flag("webroot", "Root directory of static assets").Default("./").String()
 	archive          = app.Command("archive", "Process unarchived data.")
-	seed             = app.Command("seed", "Seed the database.")
-	seedN            = seed.Flag("n", "Number of records to seed.").Int()
 )
 
 func main() {
@@ -70,8 +68,6 @@ func main() {
 	case "archive":
 		commands.Archive()
 
-	case "seed":
-		commands.Seed(*seedN)
 	}
 
 }

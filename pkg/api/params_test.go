@@ -31,26 +31,6 @@ func TestGetRequestedPeriods(t *testing.T) {
 	}
 }
 
-func TestGetRequestIp(t *testing.T) {
-	// test X-Forwarded-For header
-	ipAddress := "192.168.1.2"
-	r, _ := http.NewRequest("GET", "", nil)
-	r.Header.Set("X-Forwarded-For", ipAddress)
-	result := getRequestIp(r)
-
-	if result != ipAddress {
-		t.Errorf("Expected IP address of %s does not match %s", ipAddress, result)
-	}
-
-	// test RemoteAddr prop
-	r, _ = http.NewRequest("GET", "", nil)
-	r.RemoteAddr = ipAddress
-	result = getRequestIp(r)
-	if result != ipAddress {
-		t.Errorf("Expected IP address of %s does not match %s", ipAddress, result)
-	}
-}
-
 func TestParseMajorMinor(t *testing.T) {
 	actual := parseMajorMinor("50.0.0")
 	expected := "50.0"

@@ -8,6 +8,5 @@ type Visitor struct {
 	BrowserLanguage  string
 	Country          string
 	DeviceOS         string
-	IpAddress        string
 	ScreenResolution string
 }

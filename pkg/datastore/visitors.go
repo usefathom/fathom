@@ -24,8 +24,8 @@ func GetVisitorByKey(key string) (*models.Visitor, error) {
 
 // SaveVisitor inserts a single visitor model into the connected database
 func SaveVisitor(v *models.Visitor) error {
-	query := dbx.Rebind(`INSERT INTO visitors(visitor_key, ip_address, device_os, browser_name, browser_version, browser_language, screen_resolution, country) VALUES( ?, ?, ?, ?, ?, ?, ?, ? )`)
-	result, err := dbx.Exec(query, v.Key, v.IpAddress, v.DeviceOS, v.BrowserName, v.BrowserVersion, v.BrowserLanguage, v.ScreenResolution, v.Country)
+	query := dbx.Rebind(`INSERT INTO visitors(visitor_key, device_os, browser_name, browser_version, browser_language, screen_resolution, country) VALUES( ?, ?, ?, ?, ?, ?, ? )`)
+	result, err := dbx.Exec(query, v.Key, v.DeviceOS, v.BrowserName, v.BrowserVersion, v.BrowserLanguage, v.ScreenResolution, v.Country)
 	if err != nil {
 		return err
 	}

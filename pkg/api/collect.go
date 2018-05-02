@@ -17,7 +17,7 @@ import (
 
 var buffer []*models.Pageview
 var bufferSize = 250
-var timeout = 100 * time.Millisecond
+var timeout = 200 * time.Millisecond
 
 func persistPageviews() {
 	if len(buffer) > 0 {
@@ -53,20 +53,31 @@ func NewCollectHandler() http.Handler {
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 
 		// abort if this is a bot.
-		ua := user_agent.New(r.UserAgent())
+		userAgent := r.UserAgent()
+		ua := user_agent.New(userAgent)
 		if ua.Bot() {
 			return nil
 		}
 
 		q := r.URL.Query()
 
-		// find or insert page
+		// find page
 		page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
-		if err != nil {
+		if err != nil && err != datastore.ErrNoResults {
+			return err
+		}
+
+		// page does not exist yet, get details & save it
+		if page == nil {
 			page = &models.Page{
+				Scheme:   "http",
 				Hostname: q.Get("h"),
 				Path:     q.Get("p"),
 				Title:    q.Get("t"),
+			}
+
+			if scheme := q.Get("scheme"); scheme != "" {
+				page.Scheme = scheme
 			}
 
 			err = datastore.SavePage(page)
@@ -75,15 +86,18 @@ func NewCollectHandler() http.Handler {
 			}
 		}
 
-		// find or insert visitor.
+		// find visitor by anonymized key from query params
 		now := time.Now()
-		ipAddress := getRequestIp(r)
-		visitorKey := generateVisitorKey(now.Format("2006-01-02"), ipAddress, r.UserAgent())
-
+		visitorKey := q.Get("vk")
+		visitorKey = enhanceVisitorKey(visitorKey, now.Format("2006-01-02"), userAgent, q.Get("l"), q.Get("sr"))
 		visitor, err := datastore.GetVisitorByKey(visitorKey)
-		if err != nil {
+		if err != nil && err != datastore.ErrNoResults {
+			return err
+		}
+
+		// visitor is new, save it
+		if visitor == nil {
 			visitor = &models.Visitor{
-				IpAddress:        ipAddress,
 				BrowserLanguage:  q.Get("l"),
 				ScreenResolution: q.Get("sr"),
 				DeviceOS:         ua.OS(),
@@ -93,13 +107,16 @@ func NewCollectHandler() http.Handler {
 
 			// add browser details
 			visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
-			visitor.BrowserName = parseMajorMinor(visitor.BrowserName)
+
+			// get rid of exact browser versions
+			visitor.BrowserVersion = parseMajorMinor(visitor.BrowserVersion)
 			err = datastore.SaveVisitor(visitor)
 			if err != nil {
 				return err
 			}
 		}
 
+		// get pageview details
 		pageview := &models.Pageview{
 			PageID:          page.ID,
 			VisitorID:       visitor.ID,
@@ -131,7 +148,7 @@ func NewCollectHandler() http.Handler {
 }
 
 // generateVisitorKey generates the "unique" visitor key from date, user agent + screen resolution
-func generateVisitorKey(date string, ipAddress string, userAgent string) string {
-	byteKey := md5.Sum([]byte(date + ipAddress + userAgent))
+func enhanceVisitorKey(key string, date string, userAgent string, lang string, screenRes string) string {
+	byteKey := md5.Sum([]byte(date + userAgent + lang + screenRes))
 	return hex.EncodeToString(byteKey[:])
 }

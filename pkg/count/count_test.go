@@ -2,7 +2,6 @@ package count
 
 import (
 	"testing"
-	"time"
 
 	"github.com/usefathom/fathom/pkg/models"
 )
