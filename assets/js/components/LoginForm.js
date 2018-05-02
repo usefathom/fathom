@@ -47,7 +47,7 @@ class LoginForm extends Component {
     this.setState({ email: e.target.value });
   }
 
-  render() {
+  render(props, state) {
     return (
       <div class="block">
         <h2>Login</h2>
@@ -65,7 +65,7 @@ class LoginForm extends Component {
             <input type="submit" value="Sign in" />
           </div>
         </form>
-        <Notification message={this.state.message} kind="" />
+        {(state.message ? <Notification message={state.message} kind="" /> : '')}
       </div>
 
     )
