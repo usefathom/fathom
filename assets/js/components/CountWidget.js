@@ -30,19 +30,19 @@ class CountWidget extends Component {
   }
 
   componentWillReceiveProps(newProps, prevState) {
-      this.setState({
-        before: newProps.before,
-        after: newProps.after,
-      });
+    if(newProps.before == prevState.before && newProps.after == prevState.after) {
+      return;
+    }
 
-      if(newProps.before != prevState.before || newProps.after != prevState.after) {
-        this.fetchData();
-      }
+    this.setState({
+      before: newProps.before,
+      after: newProps.after,
+    });
+    this.fetchData();
   }
 
   @bind
   fetchData() {
-    console.log(this.state);
     this.setState({ loading: true })
 
     Client.request(`${this.props.endpoint}/count?before=${this.state.before}&after=${this.state.after}`)

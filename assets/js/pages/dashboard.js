@@ -22,14 +22,13 @@ class Dashboard extends Component {
 
   @bind
   changePeriod(s) {
-    console.log(s)
     this.setState({ period: s.period, before: s.before, after: s.after })
     window.history.replaceState(this.state, null, `#!${s.period}`)
   }
 
   render(props, state) {
     return (
-    <div class="rapper">
+    <div class="wrapper">
 
       <header class="section">
         <nav class="main-nav animated fadeInDown">
@@ -56,7 +55,7 @@ class Dashboard extends Component {
           </div>
   
           <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} before={state.before} after={state.after} />
-          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} before={state.before} after={state.after} />
+          <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} before={state.before} after={state.after} showHostname="true" />
 
         </div>
       </section>

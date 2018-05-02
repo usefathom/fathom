@@ -20,25 +20,25 @@ if( ! debug ) {
 gulp.task('default', defaultTasks);
 
 gulp.task('browserify', function () {
-    return browserify({
-            entries: './assets/js/script.js',
-            debug: debug
-        })
-        .transform("babelify", {
-          presets: ["es2015"],
-          plugins: [ 
-            "transform-decorators-legacy", 
-            ["transform-react-jsx", { "pragma":"h" } ] 
-          ]
-        })
-        .bundle()
-        .on('error', function(err){
-          console.log(err.message);
-          this.emit('end');
-        })
-        .pipe(source('script.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest('./build/js/'))
+  return browserify({
+      entries: './assets/js/script.js',
+      debug: debug
+  })
+  .transform("babelify", {
+    presets: ["es2015"],
+    plugins: [ 
+      "transform-decorators-legacy", 
+      ["transform-react-jsx", { "pragma":"h" } ] 
+    ]
+  })
+  .bundle()
+  .on('error', function(err){
+    console.log(err.message);
+    this.emit('end');
+  })
+  .pipe(source('script.js'))
+  .pipe(buffer())
+  .pipe(gulp.dest('./build/js/'))
 });
 
 gulp.task('minify', function(cb) {
@@ -79,5 +79,5 @@ gulp.task('watch', ['default'], function() {
   gulp.watch(['./assets/js/**/*.js'], ['browserify', 'tracker'] );
   gulp.watch(['./assets/sass/**/**/*.scss'], ['sass'] );
   gulp.watch(['./assets/**/*.html'], ['html'] );
-   gulp.watch(['./assets/img/**/*'], ['img'] );
+  gulp.watch(['./assets/img/**/*'], ['img'] );
 });

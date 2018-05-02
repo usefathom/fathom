@@ -35,11 +35,11 @@ func Archive() {
 	log.Infof("finished aggregating metrics. ran for %dms.", (end.UnixNano()-start.UnixNano())/1000000)
 }
 
-func calculatePointPercentages(points []*models.Point, total int) []*models.Point {
+func calculatePercentagesOfTotal(totals []*models.Total, total int) []*models.Total {
 	// calculate percentage values for each point
-	for _, p := range points {
-		p.PercentageValue = float64(p.Value) / float64(total) * 100.00
+	for _, p := range totals {
+		p.PercentageOfTotal = float64(p.Count) / float64(total) * 100.00
 	}
 
-	return points
+	return totals
 }

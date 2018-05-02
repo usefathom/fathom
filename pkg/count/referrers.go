@@ -9,7 +9,7 @@ import (
 )
 
 // Referrers returns a point slice containing browser data per browser name
-func Referrers(before int64, after int64, limit int64) ([]*models.Point, error) {
+func Referrers(before int64, after int64, limit int64) ([]*models.Total, error) {
 	points, err := datastore.TotalsPerReferrer(before, after, limit)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func Referrers(before int64, after int64, limit int64) ([]*models.Point, error) 
 		return nil, err
 	}
 
-	points = calculatePointPercentages(points, total)
+	points = calculatePercentagesOfTotal(points, total)
 	return points, nil
 }
 

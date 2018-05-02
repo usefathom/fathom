@@ -8,16 +8,16 @@ import (
 )
 
 func TestCalculatePointPercentages(t *testing.T) {
-	points := []*models.Point{
-		&models.Point{
-			Label: "Foo",
-			Value: 5,
+	totals := []*models.Total{
+		&models.Total{
+			Value: "Foo",
+			Count: 5,
 		},
 	}
 
-	points = calculatePointPercentages(points, 100)
+	totals = calculatePercentagesOfTotal(totals, 100)
 
-	if points[0].PercentageValue != 5.00 {
-		t.Errorf("Percentage value should be 5.00, is %.2f", points[0].PercentageValue)
+	if totals[0].PercentageOfTotal != 5.00 {
+		t.Errorf("Percentage value should be 5.00, is %.2f", totals[0].PercentageOfTotal)
 	}
 }

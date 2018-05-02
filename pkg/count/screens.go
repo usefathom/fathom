@@ -9,18 +9,18 @@ import (
 )
 
 // Screens returns a point slice containing screen data per size
-func Screens(before int64, after int64, limit int64) ([]*models.Point, error) {
+func Screens(before int64, after int64, limit int64) ([]*models.Total, error) {
 	points, err := datastore.TotalsPerScreen(before, after, limit)
 	if err != nil {
 		return nil, err
 	}
 
-	total, err := datastore.TotalUniqueScreens(before, after)
+	total, err := datastore.TotalScreens(before, after)
 	if err != nil {
 		return nil, err
 	}
 
-	points = calculatePointPercentages(points, total)
+	points = calculatePercentagesOfTotal(points, total)
 	return points, nil
 }
 

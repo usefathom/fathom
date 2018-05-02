@@ -20,15 +20,23 @@ Client.request = function(resource, args) {
   }
 
   return fetch(`/api/${resource}`, args)
+    .then(handleRequestErrors)
     .then(parseJSON)
-    .then(checkData)
+    .then(parseData)
 }
 
 function parseJSON(r) {
   return r.json()
 }
 
-function checkData(d) {
+function handleRequestErrors(r) {
+    if (!r.ok) {
+        throw new Error(r.statusText);
+    }
+    return r;
+}
+
+function parseData(d) {
   if(d.Error) {
     throw new Error(d.Error)
   }

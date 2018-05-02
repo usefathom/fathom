@@ -15,11 +15,12 @@ func TotalVisitors(before int64, after int64) (int, error) {
 }
 
 // TotalVisitorsPerDay returns a point slice containing visitor data per day
-func TotalVisitorsPerDay(before int64, after int64) ([]*models.Point, error) {
-	var results []*models.Point
+func TotalVisitorsPerDay(before int64, after int64) ([]*models.Total, error) {
+	var results []*models.Total
 
 	query := dbx.Rebind(`SELECT
-      COALESCE(SUM(t.count), 0) AS value,
+      COALESCE(SUM(t.count), 0) AS count,
+	  COALESCE(SUM(t.count_unique), 0) AS count_unique,
       DATE_FORMAT(t.date, '%Y-%m-%d') AS label
     FROM total_visitors t
     WHERE UNIX_TIMESTAMP(t.date) <= ? AND UNIX_TIMESTAMP(t.date) >= ?
@@ -29,6 +30,7 @@ func TotalVisitorsPerDay(before int64, after int64) ([]*models.Point, error) {
 	return results, err
 }
 
+// SaveVisitorTotals saves the given totals in the connected datastore
 func SaveVisitorTotals(totals []*models.Total) error {
 	tx, err := dbx.Begin()
 	if err != nil {

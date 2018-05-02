@@ -14,7 +14,7 @@ class Table extends Component {
 
     this.state = {
       records: [],
-      limit: 100,
+      limit: 15,
       loading: true,
       before: props.before,
       after: props.after,
@@ -26,14 +26,15 @@ class Table extends Component {
   }
 
   componentWillReceiveProps(newProps, prevState) {
+      if(newProps.before == prevState.before && newProps.after == prevState.after) {
+        return;
+      }
+
       this.setState({
         before: newProps.before,
         after: newProps.after,
       });
-
-      if(newProps.before != prevState.before || newProps.after != prevState.after) {
-        this.fetchRecords();
-      }
+      this.fetchRecords();
   }
 
   @bind
@@ -44,19 +45,27 @@ class Table extends Component {
       .then((d) => {
         this.setState({ 
           loading: false,
-          records: d 
+          records: d,
         });
       });
   }
 
   render(props, state) {
-    const tableRows = state.records !== null ? state.records.map((p, i) => (
-      <div class="table-row">
-        <div class="cell main-col"><a href={"http://"+p.hostname+p.path}>{p.path||p.label}</a></div>
-        <div class="cell">{p.count||p.value}</div>
-        <div class="cell">{p.count_unique||p.unique_value||"-"}</div>           
+    const tableRows = state.records !== null ? state.records.map((p, i) => {
+      let ahref = document.createElement('a'); ahref.href = p.value;
+      let classes = "table-row w" + Math.round(p.percentage_of_total);
+      let label = ahref.pathname;
+      if( props.showHostname ) {
+        label = ahref.hostname.replace('www.', '') + (ahref.pathname.length > 1 ? ahref.pathname : '');
+      }
+
+      return(
+      <div class={classes}>
+        <div class="cell main-col"><a href={ahref.href}>{label}</a></div>
+        <div class="cell">{p.count}</div>
+        <div class="cell">{p.count_unique||"-"}</div>           
       </div>
-    )) : <div class="table-row">Nothing here, yet.</div>;
+    )}) : <div class="table-row">Nothing here, yet.</div>;
 
     const loadingOverlay = state.loading ? <div class="loading-overlay"><div></div></div> : '';
 

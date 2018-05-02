@@ -7,10 +7,8 @@ import (
 )
 
 func SaveTotals(metric string, totals []*models.Total) error {
-	query := dbx.Rebind(fmt.Sprintf(`
-		INSERT INTO total_%s( value, count, count_unique, date) 
-		VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?
-	`, metric))
+	query := fmt.Sprintf(`INSERT INTO total_%s( value, count, count_unique, date) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`, metric)
+	query = dbx.Rebind(query)
 
 	tx, err := dbx.Begin()
 	if err != nil {

@@ -23,8 +23,8 @@ func GetPageByHostnameAndPath(hostname, path string) (*models.Page, error) {
 
 // SavePage inserts the page model in the connected database
 func SavePage(p *models.Page) error {
-	query := dbx.Rebind(`INSERT INTO pages(hostname, path, title) VALUES(?, ?, ?)`)
-	result, err := dbx.Exec(query, p.Hostname, p.Path, p.Title)
+	query := dbx.Rebind(`INSERT INTO pages(scheme, hostname, path) VALUES(?, ?, ?)`)
+	result, err := dbx.Exec(query, p.Scheme, p.Hostname, p.Path)
 	if err != nil {
 		return err
 	}

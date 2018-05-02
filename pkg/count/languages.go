@@ -9,18 +9,18 @@ import (
 )
 
 // Languages returns a point slice containing language data per language
-func Languages(before int64, after int64, limit int64) ([]*models.Point, error) {
+func Languages(before int64, after int64, limit int64) ([]*models.Total, error) {
 	points, err := datastore.TotalsPerLanguage(before, after, limit)
 	if err != nil {
 		return nil, err
 	}
 
-	total, err := datastore.TotalUniqueLanguages(before, after)
+	total, err := datastore.TotalLanguages(before, after)
 	if err != nil {
 		return nil, err
 	}
 
-	points = calculatePointPercentages(points, total)
+	points = calculatePercentagesOfTotal(points, total)
 	return points, nil
 }
 

@@ -8,10 +8,3 @@ type Pageview struct {
 	ReferrerUrl     string
 	Timestamp       string
 }
-
-type PageviewCount struct {
-	Hostname    string `json:"hostname"`
-	Path        string `json:"path"`
-	Count       int    `json:"count"`
-	CountUnique int    `json:"count_unique"`
-}

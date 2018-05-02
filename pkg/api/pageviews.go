@@ -3,13 +3,14 @@ package api
 import (
 	"net/http"
 
+	"github.com/usefathom/fathom/pkg/count"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // URL: /api/pageviews
 var GetPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
-	results, err := datastore.TotalPageviewsPerPage(before, after, defaultLimit)
+	results, err := count.Pageviews(before, after, defaultLimit)
 	if err != nil {
 		return err
 	}

@@ -9,18 +9,18 @@ import (
 )
 
 // Browsers returns a point slice containing browser data per browser name
-func Browsers(before int64, after int64, limit int64) ([]*models.Point, error) {
+func Browsers(before int64, after int64, limit int64) ([]*models.Total, error) {
 	points, err := datastore.TotalsPerBrowser(before, after, limit)
 	if err != nil {
 		return nil, err
 	}
 
-	total, err := datastore.TotalUniqueBrowsers(before, after)
+	total, err := datastore.TotalBrowsers(before, after)
 	if err != nil {
 		return nil, err
 	}
 
-	points = calculatePointPercentages(points, total)
+	points = calculatePercentagesOfTotal(points, total)
 	return points, nil
 }
 
