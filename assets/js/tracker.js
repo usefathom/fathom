@@ -59,9 +59,13 @@ function trackPageview() {
 
   // get the path or canonical
   var path = location.pathname + location.search;
+
+  // parse path from canonical, if page has one
   var canonical = document.querySelector('link[rel="canonical"][href]');
   if(canonical) {
-    path = canonical.href.substring(canonical.href.indexOf('/', 7)) || '/';
+    var a = document.createElement('a');
+    a.href = canonical.href;
+    path = a.pathname;
   }
 
   var d = {
@@ -73,7 +77,8 @@ function trackPageview() {
     sr: screen.width + "x" + screen.height,
     t: document.title,
     ru: document.referrer,
-    rk: ""
+    rk: "",
+    scheme: location.protocol.substring(0, location.protocol.length - 1),
   };
 
   var i = document.createElement('img');
