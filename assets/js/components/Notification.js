@@ -14,12 +14,18 @@ class Notification extends Component {
     this.timeout = 0
   }
 
-  componentWillReceiveProps(newProps) {
-    if(newProps.message != this.state.message) {
-      this.setState({ message: newProps.message, kind: newProps.kind || 'error' })
-      window.clearTimeout(this.timeout)
-      this.timeout = window.setTimeout(this.clearMessage, 5000)
+  componentWillReceiveProps(newProps, prevState) {
+    if(newProps.message === this.state.message) {
+      return;
     }
+
+    this.setState({ 
+      message: newProps.message, 
+      kind: newProps.kind || 'error' 
+    })
+    
+    window.clearTimeout(this.timeout)
+    this.timeout = window.setTimeout(this.clearMessage, 5000)
   }
 
   @bind

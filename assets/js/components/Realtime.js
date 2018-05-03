@@ -1,6 +1,6 @@
 'use strict';
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import Client from '../lib/client.js';
 import { bind } from 'decko';
 
@@ -16,7 +16,11 @@ class Realtime extends Component {
 
   componentDidMount() {
       this.fetchData();
-      window.setInterval(this.fetchData, 15000);
+      this.interval = window.setInterval(this.fetchData, 15000);
+  }
+
+  componentWillUnmount() {
+      clearInterval(this.interval);
   }
 
   @bind
@@ -25,10 +29,10 @@ class Realtime extends Component {
       .then((d) => { this.setState({ count: d })})
   }
 
-  render() {
-    let visitors = this.state.count == 1 ? 'visitor' : 'visitors';
+  render(props, state) {
+    let visitorText = state.count == 1 ? 'visitor' : 'visitors';
     return (
-        <span><span class="count">{this.state.count}</span> <span>current {visitors}</span></span>
+        <span><span class="count">{state.count}</span> <span>current {visitorText}</span></span>
     )
   }
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import LogoutButton from '../components/LogoutButton.js';
 import Realtime from '../components/Realtime.js';
 import DatePicker from '../components/DatePicker.js';

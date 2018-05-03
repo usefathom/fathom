@@ -55,11 +55,11 @@ class LoginForm extends Component {
         <form method="POST" onSubmit={this.handleSubmit}>
           <div class="small-margin">
             <label>Email address</label>
-            <input type="email" name="email" placeholder="Email address" value={this.state.email} onInput={this.updateEmail} required="required" />
+            <input type="email" name="email" placeholder="Email address" value={state.email} onInput={this.updateEmail} required="required" />
           </div>
           <div class="small-margin">
             <label>Password</label>
-            <input type="password" name="password" placeholder="**********" value={this.state.password} onInput={this.updatePassword} required="required" />
+            <input type="password" name="password" placeholder="**********" value={state.password} onInput={this.updatePassword} required="required" />
           </div>
           <div class="small-margin">
             <input type="submit" value="Sign in" />

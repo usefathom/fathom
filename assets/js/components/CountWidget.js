@@ -1,6 +1,6 @@
 'use strict';
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import Client from '../lib/client.js';
 import { bind } from 'decko';

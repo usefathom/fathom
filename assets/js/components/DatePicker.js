@@ -1,6 +1,6 @@
 'use strict';
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import { bind } from 'decko';
 
 const availablePeriods = [
@@ -27,7 +27,7 @@ class DatePicker extends Component {
     super(props)
 
     this.state = {
-      period: this.props.value,
+      period: props.value,
       before: 0,
       after: 0,
     }
@@ -59,6 +59,7 @@ class DatePicker extends Component {
     before = Math.round((+beforeDate ) / 1000);
     after = Math.round((+afterDate) / 1000);
     this.setState({
+      period: period,
       before: before, 
       after: after,
     });
@@ -69,13 +70,12 @@ class DatePicker extends Component {
   setPeriod(e) {
     e.preventDefault();
 
-    let period = e.target.dataset.value;
-    if( period !== this.state.period) {
-      this.setState({ 
-        period: period, 
-      });
-      this.setTimeRange(this.state.period);
+    let newPeriod = e.target.dataset.value;
+    if( newPeriod === this.state.period) {
+      return;
     }
+
+    this.setTimeRange(newPeriod);
   }
 
   render(props, state) {

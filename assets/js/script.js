@@ -3,6 +3,7 @@
 import { h, render, Component } from 'preact'
 import Login from './pages/login.js'
 import Dashboard from './pages/dashboard.js'
+import { bind } from 'decko';
 
 class App extends Component {
   constructor(props) {
@@ -13,14 +14,21 @@ class App extends Component {
     }
   }
 
+  @bind
+  toggleAuth() {
+    this.setState({ 
+      authenticated: !this.state.authenticated 
+    })
+  }
+
   render() {
     // logged-in
     if( this.state.authenticated ) {
-      return <Dashboard onLogout={() => this.setState({ authenticated: false })} />
+      return <Dashboard onLogout={this.toggleAuth} />
     }
 
     // logged-out
-    return <Login onLogin={() => this.setState({ authenticated: true })} />
+    return <Login onLogin={this.toggleAuth} />
   }
 }
 
