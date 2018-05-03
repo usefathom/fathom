@@ -10,7 +10,8 @@ import (
 // URL: /api/pageviews
 var GetPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 	before, after := getRequestedPeriods(r)
-	results, err := count.Pageviews(before, after, defaultLimit)
+	limit := getRequestedLimit(r)
+	results, err := count.Pageviews(before, after, limit)
 	if err != nil {
 		return err
 	}
