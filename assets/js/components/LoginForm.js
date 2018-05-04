@@ -65,7 +65,7 @@ class LoginForm extends Component {
             <input type="submit" value="Sign in" />
           </div>
         </form>
-        {(state.message ? <Notification message={state.message} kind="" /> : '')}
+        <Notification message={state.message} kind="" />
       </div>
 
     )

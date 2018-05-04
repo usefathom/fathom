@@ -10,7 +10,6 @@ function getSundayOfCurrentWeek(d){
   return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (day == 0?0:7)-day );
 }
 
-
 const dayInSeconds = 60 * 60 * 24;
 
 class CountWidget extends Component {
@@ -37,6 +36,7 @@ class CountWidget extends Component {
     this.setState({
       before: newProps.before,
       after: newProps.after,
+      value: '-',
     });
     this.fetchData();
   }
@@ -44,9 +44,16 @@ class CountWidget extends Component {
   @bind
   fetchData() {
     this.setState({ loading: true })
+    let before = this.state.before;
+    let after = this.state.after;
 
-    Client.request(`${this.props.endpoint}/count?before=${this.state.before}&after=${this.state.after}`)
+    Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
       .then((d) => { 
+        // request finished; check if timestamp range is still the one user wants to see
+        if( this.state.before != before || this.state.after != after ) {
+          return;
+        }
+
         this.setState({ 
           loading: false, 
           value: numbers.formatWithComma(d), 
@@ -55,10 +62,8 @@ class CountWidget extends Component {
   }
 
   render(props, state) {
-    const loadingOverlay = state.loading ? <div class="loading-overlay"><div></div></div> : '';
     return (
-       <div class="totals-detail">
-        {loadingOverlay}
+       <div class={"totals-detail " + ( state.loading ? "loading" : '')}>
         <div class="total-heading">{props.title}</div>
         <div class="total-numbers">{state.value}</div>
       </div>

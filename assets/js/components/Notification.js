@@ -1,6 +1,6 @@
 'use strict'
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import { bind } from 'decko';
 
 class Notification extends Component {

@@ -1,6 +1,6 @@
 'use strict';
 
-import { h, render, Component } from 'preact';
+import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import Client from '../lib/client.js';
 import { bind } from 'decko';
@@ -67,19 +67,17 @@ class Table extends Component {
       </div>
     )}) : <div class="table-row">Nothing here, yet.</div>;
 
-    const loadingOverlay = state.loading ? <div class="loading-overlay"><div></div></div> : '';
-
     return (
-      <div class="box box-pages animated fadeInUp delayed_04s">
-            
+      <div class={"box box-pages animated fadeInUp delayed_04s "  + (state.loading ? "loading" : '')}>
         <div class="table-row header">
           {props.headers.map((header, i) => {
             let classes = i === 0 ? 'main-col cell' : 'cell';
             return (<div class={classes}>{header}</div>) 
             })}        
         </div>
-
-       {tableRows}
+        <div>
+          {tableRows}
+        </div>
       </div>
     )
   }
