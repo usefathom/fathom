@@ -47,7 +47,7 @@ func processBuffer(pv chan *models.Pageview) {
 
 /* middleware */
 func NewCollectHandler() http.Handler {
-	pageviews := make(chan *models.Pageview, 100)
+	pageviews := make(chan *models.Pageview, bufferSize)
 	go processBuffer(pageviews)
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
@@ -114,6 +114,19 @@ func NewCollectHandler() http.Handler {
 			if err != nil {
 				return err
 			}
+		} else {
+			lastPageview, err := datastore.GetLastPageviewForVisitor(visitor.ID)
+			if err != nil && err != datastore.ErrNoResults {
+				return err
+			}
+
+			if lastPageview != nil {
+				lastPageview.Bounced = false
+				err := datastore.UpdatePageview(lastPageview)
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		// get pageview details
@@ -122,6 +135,7 @@ func NewCollectHandler() http.Handler {
 			VisitorID:       visitor.ID,
 			ReferrerUrl:     q.Get("ru"),
 			ReferrerKeyword: q.Get("rk"),
+			Bounced:         true,
 			Timestamp:       now.Format("2006-01-02 15:04:05"),
 		}
 

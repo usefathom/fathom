@@ -51,7 +51,7 @@ class Dashboard extends Component {
             <CountWidget title="Unique visitors" endpoint="visitors" before={state.before} after={state.after} />
             <CountWidget title="Page views" endpoint="pageviews" before={state.before} after={state.after} />
             <CountWidget title="Avg time on site" endpoint="time-on-site" format="time" before={state.before} after={state.after} />
-            <CountWidget title="Bounce rate" endpoint="bounce-rate" format="percentage" before={state.before} after={state.after} />
+            <CountWidget title="Bounce rate" endpoint="bounces" format="percentage" before={state.before} after={state.after} />
           </div>
   
           <Table endpoint="pageviews" headers={["Top pages", "Views", "Uniques"]} before={state.before} after={state.after} />

@@ -56,7 +56,7 @@ class CountWidget extends Component {
 
         this.setState({ 
           loading: false, 
-          value: numbers.formatWithComma(d), 
+          value: numbers.formatWithComma(d) + (this.props.format === 'percentage' ? '%' : ''), 
         })
       })
   }

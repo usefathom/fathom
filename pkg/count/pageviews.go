@@ -32,7 +32,7 @@ func CreatePageviewTotals(since string) {
 		log.Fatal(err)
 	}
 
-	err = datastore.SavePageviewTotals(totals)
+	err = datastore.SavePageTotals("pageviews", totals)
 	if err != nil {
 		log.Fatal(err)
 	}

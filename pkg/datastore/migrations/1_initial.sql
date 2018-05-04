@@ -102,6 +102,7 @@ CREATE TABLE total_referrers (
 CREATE INDEX total_referrers_date ON total_referrers(date);
 ALTER TABLE total_referrers ADD UNIQUE(value, date);
 
+
 -- +migrate Down
 DROP TABLE IF EXISTS pageviews;
 DROP TABLE if exists visitors;

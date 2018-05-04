@@ -29,6 +29,7 @@ func Archive() {
 	CreateLanguageTotals(lastArchived)
 	CreateBrowserTotals(lastArchived)
 	CreateReferrerTotals(lastArchived)
+	CreateBouncesTotals(lastArchived)
 	datastore.SetOption("last_archived", time.Now().Format("2006-01-02"))
 
 	end := time.Now()

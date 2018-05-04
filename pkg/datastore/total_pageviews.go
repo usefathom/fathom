@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"fmt"
+
 	"github.com/usefathom/fathom/pkg/models"
 )
 
@@ -82,13 +84,14 @@ func TotalPageviewsPerPage(before int64, after int64, limit int64) ([]*models.To
 
 // SavePageviewTotals saves the given totals in the connected database
 // Differs slightly from the metric specific totals because of the normalized pages (to save storage)
-func SavePageviewTotals(totals []*models.Total) error {
+func SavePageTotals(metric string, totals []*models.Total) error {
 	tx, err := dbx.Begin()
 	if err != nil {
 		return nil
 	}
 
-	query := dbx.Rebind(`INSERT INTO total_pageviews( page_id, count, count_unique, date ) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`)
+	query := fmt.Sprintf(`INSERT INTO total_%s( page_id, count, count_unique, date ) VALUES( ?, ?, ?, ? ) ON DUPLICATE KEY UPDATE count = ?, count_unique = ?`, metric)
+	query = dbx.Rebind(query)
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		return err
