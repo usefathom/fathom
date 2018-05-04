@@ -54,7 +54,7 @@ class Table extends Component {
     const tableRows = state.records !== null ? state.records.map((p, i) => {
       let ahref = document.createElement('a'); ahref.href = p.value;
       let classes = "table-row w" + Math.round(p.percentage_of_total);
-      let label = ahref.pathname;
+      let label = ahref.pathname + ahref.search;
       if( props.showHostname ) {
         label = ahref.hostname.replace('www.', '') + (ahref.pathname.length > 1 ? ahref.pathname : '');
       }
