@@ -8,8 +8,8 @@ import (
 
 // SavePageview inserts a single pageview model into the connected database
 func SavePageview(pv *models.Pageview) error {
-	query := dbx.Rebind(`INSERT INTO pageviews(page_id, visitor_id, referrer_url, referrer_keyword, timestamp) VALUES( ?, ?, ?, ?, ?)`)
-	result, err := dbx.Exec(query, pv.PageID, pv.VisitorID, pv.ReferrerUrl, pv.ReferrerKeyword, pv.Timestamp)
+	query := dbx.Rebind(`INSERT INTO pageviews(page_id, visitor_id, referrer_url, referrer_keyword, bounced, time_on_page, timestamp) VALUES( ?, ?, ?, ?, ?, ?, ?)`)
+	result, err := dbx.Exec(query, pv.PageID, pv.VisitorID, pv.ReferrerUrl, pv.ReferrerKeyword, pv.Bounced, pv.TimeOnPage, pv.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func SavePageview(pv *models.Pageview) error {
 
 // SavePageviews inserts multiple pageview models into the connected database using a transaction
 func SavePageviews(pvs []*models.Pageview) error {
-	query := dbx.Rebind(`INSERT INTO pageviews(page_id, visitor_id, referrer_url, referrer_keyword, bounced, timestamp ) VALUES( ?, ?, ?, ?, ?, ? )`)
+	query := dbx.Rebind(`INSERT INTO pageviews(page_id, visitor_id, referrer_url, referrer_keyword, bounced, time_on_page, timestamp ) VALUES( ?, ?, ?, ?, ?, ?, ? )`)
 	tx, err := dbx.Begin()
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func SavePageviews(pvs []*models.Pageview) error {
 	defer stmt.Close()
 
 	for _, pv := range pvs {
-		result, err := stmt.Exec(pv.PageID, pv.VisitorID, pv.ReferrerUrl, pv.ReferrerKeyword, pv.Bounced, pv.Timestamp)
+		result, err := stmt.Exec(pv.PageID, pv.VisitorID, pv.ReferrerUrl, pv.ReferrerKeyword, pv.Bounced, pv.TimeOnPage, pv.Timestamp)
 		if err != nil {
 			return err
 		}
@@ -47,8 +47,8 @@ func SavePageviews(pvs []*models.Pageview) error {
 
 // UpdatePageview updates an existing pageview
 func UpdatePageview(p *models.Pageview) error {
-	query := dbx.Rebind(`UPDATE pageviews SET bounced = ? WHERE id = ?`)
-	_, err := dbx.Exec(query, p.Bounced, p.ID)
+	query := dbx.Rebind(`UPDATE pageviews SET bounced = ?, time_on_page = ? WHERE id = ?`)
+	_, err := dbx.Exec(query, p.Bounced, p.TimeOnPage, p.ID)
 	return err
 }
 

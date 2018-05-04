@@ -50,7 +50,7 @@ class Dashboard extends Component {
           <div class="box box-totals animated fadeInUp delayed_03s">
             <CountWidget title="Unique visitors" endpoint="visitors" before={state.before} after={state.after} />
             <CountWidget title="Page views" endpoint="pageviews" before={state.before} after={state.after} />
-            <CountWidget title="Avg time on site" endpoint="time-on-site" format="time" before={state.before} after={state.after} />
+            <CountWidget title="Avg time on site" endpoint="time-on-site" format="duration" before={state.before} after={state.after} />
             <CountWidget title="Bounce rate" endpoint="bounces" format="percentage" before={state.before} after={state.after} />
           </div>
   

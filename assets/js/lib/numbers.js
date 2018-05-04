@@ -1,3 +1,5 @@
+'use strict';
+
 function formatWithComma(nStr) {
 	nStr += '';
 
@@ -15,4 +17,10 @@ function formatWithComma(nStr) {
 	return x1 + x2;
 }
 
-export { formatWithComma }
+function formatDuration(seconds) {
+   var date = new Date(null);
+   date.setSeconds(seconds); // specify value for SECONDS here
+   return date.toISOString().substr(14, 5);
+}
+
+export { formatWithComma, formatDuration }

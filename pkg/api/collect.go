@@ -120,8 +120,11 @@ func NewCollectHandler() http.Handler {
 				return err
 			}
 
-			if lastPageview != nil {
+			if lastPageview != nil && lastPageview.Timestamp.After(now.Add(-30*time.Minute)) {
 				lastPageview.Bounced = false
+				lastPageview.TimeOnPage = now.Unix() - lastPageview.Timestamp.Unix()
+
+				// TODO: Delay storage until in buffer?
 				err := datastore.UpdatePageview(lastPageview)
 				if err != nil {
 					return err
@@ -135,8 +138,9 @@ func NewCollectHandler() http.Handler {
 			VisitorID:       visitor.ID,
 			ReferrerUrl:     q.Get("ru"),
 			ReferrerKeyword: q.Get("rk"),
-			Bounced:         true,
-			Timestamp:       now.Format("2006-01-02 15:04:05"),
+			TimeOnPage:      0,
+			Bounced:         true, // TODO: Only mark as bounced if no other pageviews in this session
+			Timestamp:       now,
 		}
 
 		// only store referrer URL if not coming from own site

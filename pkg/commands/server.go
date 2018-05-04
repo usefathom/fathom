@@ -30,6 +30,7 @@ func Server(port int, webroot string) {
 	//r.Handle("/api/countries", api.Authorize(api.GetCountriesHandler)).Methods("GET")
 	r.Handle("/api/browsers", api.Authorize(api.GetBrowsersHandler)).Methods("GET")
 	r.Handle("/api/bounces/count", api.Authorize(api.GetBouncesCountHandler)).Methods("GET")
+	r.Handle("/api/time-on-site/count", api.Authorize(api.GetTimeOnSiteCountHandler)).Methods("GET")
 
 	r.Path("/tracker.js").Handler(http.FileServer(http.Dir(webroot + "/js/")))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(webroot)))

@@ -54,9 +54,24 @@ class CountWidget extends Component {
           return;
         }
 
+        switch(this.props.format) {
+          case "percentage":
+            d = d + "%";
+          break;  
+
+          default:
+          case "number":
+              d = numbers.formatWithComma(d)
+          break;
+
+          case "duration":
+            d = numbers.formatDuration(d)
+          break;
+        }
+
         this.setState({ 
           loading: false, 
-          value: numbers.formatWithComma(d) + (this.props.format === 'percentage' ? '%' : ''), 
+          value: d, 
         })
       })
   }
