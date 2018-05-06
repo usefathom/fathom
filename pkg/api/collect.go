@@ -1,11 +1,8 @@
 package api
 
 import (
-	"crypto/md5"
 	"encoding/base64"
-	"encoding/hex"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/mssola/user_agent"
@@ -15,13 +12,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var buffer []*models.Pageview
-var bufferSize = 250
+var buffer []*models.RawPageview
+var bufferSize = 50
 var timeout = 200 * time.Millisecond
 
 func persistPageviews() {
 	if len(buffer) > 0 {
-		err := datastore.SavePageviews(buffer)
+		err := datastore.SaveRawPageviews(buffer)
 		if err != nil {
 			log.Errorf("error saving pageviews: %s", err)
 		}
@@ -31,7 +28,7 @@ func persistPageviews() {
 	}
 }
 
-func processBuffer(pv chan *models.Pageview) {
+func processBuffer(pv chan *models.RawPageview) {
 	for {
 		select {
 		case pageview := <-pv:
@@ -47,11 +44,10 @@ func processBuffer(pv chan *models.Pageview) {
 
 /* middleware */
 func NewCollectHandler() http.Handler {
-	pageviews := make(chan *models.Pageview, bufferSize)
+	pageviews := make(chan *models.RawPageview, bufferSize)
 	go processBuffer(pageviews)
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-
 		// abort if this is a bot.
 		userAgent := r.UserAgent()
 		ua := user_agent.New(userAgent)
@@ -60,96 +56,26 @@ func NewCollectHandler() http.Handler {
 		}
 
 		q := r.URL.Query()
-
-		// find page
-		page, err := datastore.GetPageByHostnameAndPath(q.Get("h"), q.Get("p"))
-		if err != nil && err != datastore.ErrNoResults {
-			return err
-		}
-
-		// page does not exist yet, get details & save it
-		if page == nil {
-			page = &models.Page{
-				Scheme:   "http",
-				Hostname: q.Get("h"),
-				Path:     q.Get("p"),
-				Title:    q.Get("t"),
-			}
-
-			if scheme := q.Get("scheme"); scheme != "" {
-				page.Scheme = scheme
-			}
-
-			err = datastore.SavePage(page)
-			if err != nil {
-				return err
-			}
-		}
-
-		// find visitor by anonymized key from query params
 		now := time.Now()
-		visitorKey := q.Get("vk")
-		visitorKey = enhanceVisitorKey(visitorKey, now.Format("2006-01-02"), userAgent, q.Get("l"), q.Get("sr"))
-		visitor, err := datastore.GetVisitorByKey(visitorKey)
-		if err != nil && err != datastore.ErrNoResults {
-			return err
-		}
-
-		// visitor is new, save it
-		if visitor == nil {
-			visitor = &models.Visitor{
-				BrowserLanguage:  q.Get("l"),
-				ScreenResolution: q.Get("sr"),
-				DeviceOS:         ua.OS(),
-				Country:          "",
-				Key:              visitorKey,
-			}
-
-			// add browser details
-			visitor.BrowserName, visitor.BrowserVersion = ua.Browser()
-
-			// get rid of exact browser versions
-			visitor.BrowserVersion = parseMajorMinor(visitor.BrowserVersion)
-			err = datastore.SaveVisitor(visitor)
-			if err != nil {
-				return err
-			}
-		} else {
-			lastPageview, err := datastore.GetLastPageviewForVisitor(visitor.ID)
-			if err != nil && err != datastore.ErrNoResults {
-				return err
-			}
-
-			if lastPageview != nil && lastPageview.Timestamp.After(now.Add(-30*time.Minute)) {
-				lastPageview.Bounced = false
-				lastPageview.TimeOnPage = now.Unix() - lastPageview.Timestamp.Unix()
-
-				// TODO: Delay storage until in buffer?
-				err := datastore.UpdatePageview(lastPageview)
-				if err != nil {
-					return err
-				}
-			}
-		}
 
 		// get pageview details
-		pageview := &models.Pageview{
-			PageID:          page.ID,
-			VisitorID:       visitor.ID,
-			ReferrerUrl:     q.Get("ru"),
-			ReferrerKeyword: q.Get("rk"),
-			TimeOnPage:      0,
-			Bounced:         true, // TODO: Only mark as bounced if no other pageviews in this session
-			Timestamp:       now,
+		pageview := &models.RawPageview{
+			SessionID:    q.Get("sid"),
+			Pathname:     q.Get("p"),
+			IsNewVisitor: q.Get("n") == "1",
+			IsUnique:     q.Get("u") == "1",
+			IsBounce:     q.Get("b") != "0",
+			Referrer:     q.Get("r"),
+			Duration:     0,
+			Timestamp:    now,
 		}
 
-		// only store referrer URL if not coming from own site
-		if strings.Contains(pageview.ReferrerUrl, page.Hostname) {
-			pageview.ReferrerUrl = ""
+		err := datastore.SaveRawPageview(pageview)
+		if err != nil {
+			return err
 		}
-
 		// push onto channel
-		pageviews <- pageview
+		//pageviews <- pageview
 
 		// don't you cache this
 		w.Header().Set("Content-Type", "image/gif")
@@ -163,10 +89,4 @@ func NewCollectHandler() http.Handler {
 		w.Write(b)
 		return nil
 	})
-}
-
-// generateVisitorKey generates the "unique" visitor key from date, user agent + screen resolution
-func enhanceVisitorKey(key string, date string, userAgent string, lang string, screenRes string) string {
-	byteKey := md5.Sum([]byte(date + userAgent + lang + screenRes))
-	return hex.EncodeToString(byteKey[:])
 }

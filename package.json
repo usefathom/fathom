@@ -1,8 +1,8 @@
 {
   "license": "MIT",
-  "repository": { 
-    "type" : "git"
-  , "url" : "https://github.com/usefathom/fathom.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usefathom/fathom.git"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -11,6 +11,7 @@
     "babel-preset-es2015": "^6.18.0",
     "babelify": "^8.0.0",
     "browserify": "^16.2.0",
+    "event-stream": "^3.3.4",
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.1",
@@ -19,6 +20,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "cookies-js": "^1.2.3",
     "d3": "^5.1.0",
     "d3-tip": "^0.7.1",
     "decko": "^1.2.0",

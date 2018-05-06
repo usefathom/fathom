@@ -10,9 +10,10 @@ const gutil = require('gulp-util')
 const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
 const pump = require('pump')
+const es = require('event-stream');
 const debug = process.env.NODE_ENV !== 'production';
 
-let defaultTasks = [ 'browserify', 'sass', 'tracker', 'html', 'img' ] ;
+let defaultTasks = [ 'browserify', 'sass', 'html', 'img' ] ;
 if( ! debug ) {
   defaultTasks.push( 'minify' );
 }
@@ -20,29 +21,33 @@ if( ! debug ) {
 gulp.task('default', defaultTasks);
 
 gulp.task('browserify', function () {
-  return browserify({
-      entries: './assets/js/script.js',
-      debug: debug
-  })
-  .transform("babelify", {
-    presets: ["es2015"],
-    plugins: [ 
-      "transform-decorators-legacy", 
-      ["transform-react-jsx", { "pragma":"h" } ] 
-    ]
-  })
-  .bundle()
-  .on('error', function(err){
-    console.log(err.message);
-    this.emit('end');
-  })
-  .pipe(source('script.js'))
-  .pipe(buffer())
-  .pipe(gulp.dest('./build/js/'))
+  let files = [
+    './assets/js/script.js',
+    './assets/js/tracker.js',
+  ];
+
+  var tasks = files.map(function(entry) {
+      return browserify({
+            entries: entry,
+            debug: debug
+        })
+        .transform("babelify", {
+          presets: ["es2015"],
+          plugins: [ 
+            "transform-decorators-legacy", 
+            ["transform-react-jsx", { "pragma":"h" } ] 
+          ]
+        })
+        .bundle()  
+        .pipe(source(entry.split('/').pop()))
+        .pipe(gulp.dest('./build/js/'))
+      });
+      // create a merged stream
+      return es.merge.apply(null, tasks);
 });
 
 gulp.task('minify', function(cb) {
-  process.env.NODE_ENV = 'production';
+  process.env.NODE_ENV = 'production'; // why is this here?
 
   pump([
     gulp.src('./build/js/*.js'),
@@ -61,11 +66,6 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./build'))
 });
 
-gulp.task('tracker', function() {
-  return gulp.src('./assets/js/tracker.js')
-    .pipe(gulp.dest('./build/js'))
-});
-
 gulp.task('sass', function () {
 	var files = './assets/sass/[^_]*.scss';
 	return gulp.src(files)
@@ -76,7 +76,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/js/**/*.js'], ['browserify', 'tracker'] );
+  gulp.watch(['./assets/js/**/*.js'], ['browserify'] );
   gulp.watch(['./assets/sass/**/**/*.scss'], ['sass'] );
   gulp.watch(['./assets/**/*.html'], ['html'] );
   gulp.watch(['./assets/img/**/*'], ['img'] );

@@ -1,5 +1,6 @@
 package datastore
 
+/*
 import (
 	"database/sql"
 
@@ -95,3 +96,5 @@ func PageviewCountPerPageAndDay(before string, after string) ([]*models.Total, e
 	err := dbx.Select(&results, query, before, after)
 	return results, err
 }
+
+*/

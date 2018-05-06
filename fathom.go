@@ -1,13 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
-	"github.com/robfig/cron"
 	"github.com/usefathom/fathom/pkg/commands"
-	"github.com/usefathom/fathom/pkg/count"
+	"github.com/usefathom/fathom/pkg/counter"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"os"
 
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
@@ -50,11 +50,6 @@ func main() {
 	db := datastore.Init(dbcfg.Driver, dbcfg.Host, dbcfg.Name, dbcfg.User, dbcfg.Password)
 	defer db.Close()
 
-	// setup cron to run count.Archive every hour
-	c := cron.New()
-	c.AddFunc("@hourly", count.Archive)
-	c.Start()
-
 	// parse & run cli commands
 	app.Version("1.0")
 	app.UsageTemplate(kingpin.CompactUsageTemplate)
@@ -66,8 +61,10 @@ func main() {
 		commands.Server(*serverPort, *serverWebRoot)
 
 	case "archive":
-		commands.Archive()
-
+		err := counter.Aggregate()
+		if err != nil {
+			log.Warn(err)
+		}
 	}
 
 }

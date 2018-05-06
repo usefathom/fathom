@@ -44,6 +44,7 @@ func getDSN(driver string, host string, name string, user string, password strin
 	return dsn
 }
 
+// TODO: Move to command (but still auto-run on boot).
 func runMigrations(driver string) {
 	migrations := migrate.FileMigrationSource{
 		Dir: "pkg/datastore/migrations", // TODO: Move to bindata
