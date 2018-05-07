@@ -105,12 +105,6 @@
 			"revisionTime": "2016-12-08T17:59:04Z"
 		},
 		{
-			"checksumSHA1": "7aVQHxIZZYAb+Tq0pbGLL8j+4cM=",
-			"path": "github.com/robfig/cron",
-			"revision": "df38d32658d8788cd446ba74db4bb5375c4b0cb3",
-			"revisionTime": "2017-03-09T13:24:18Z"
-		},
-		{
 			"checksumSHA1": "Qgwcmaxcms96cseiKeTu73RiKJw=",
 			"path": "github.com/rubenv/sql-migrate",
 			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
@@ -175,12 +169,6 @@
 			"path": "gopkg.in/alecthomas/kingpin.v2",
 			"revision": "e9044be3ab2a8e11d4e1f418d12f0790d57e8d70",
 			"revisionTime": "2016-08-29T10:30:05Z"
-		},
-		{
-			"checksumSHA1": "xunNOgG8P6Xh4SM+LPQ1zMDXa8Q=",
-			"path": "gopkg.in/gorp.v1",
-			"revision": "c87af80f3cc5036b55b83d77171e156791085e2e",
-			"revisionTime": "2015-02-04T08:55:30Z"
 		}
 	],
 	"rootPath": "github.com/usefathom/fathom"
