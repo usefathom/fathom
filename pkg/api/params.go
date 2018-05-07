@@ -21,21 +21,25 @@ func getRequestedLimit(r *http.Request) int64 {
 	return limit
 }
 
-func getRequestedPeriods(r *http.Request) (int64, int64) {
-	var before, after int64
+func getRequestedDatePeriods(r *http.Request) (time.Time, time.Time) {
+	var startDate, endDate time.Time
 	var err error
 
-	before, err = strconv.ParseInt(r.URL.Query().Get("before"), 10, 64)
-	if err != nil || before == 0 {
-		before = time.Now().Unix()
+	beforeUnix, err := strconv.ParseInt(r.URL.Query().Get("before"), 10, 64)
+	if err != nil || beforeUnix == 0 {
+		endDate = time.Now()
+	} else {
+		endDate = time.Unix(beforeUnix, 0)
 	}
 
-	after, err = strconv.ParseInt(r.URL.Query().Get("after"), 10, 64)
-	if err != nil || before == 0 {
-		after = time.Now().AddDate(0, 0, -defaultPeriod).Unix()
+	afterUnix, err := strconv.ParseInt(r.URL.Query().Get("after"), 10, 64)
+	if err != nil || afterUnix == 0 {
+		startDate = endDate.AddDate(0, 0, -defaultPeriod)
+	} else {
+		startDate = time.Unix(afterUnix, 0)
 	}
 
-	return before, after
+	return startDate, endDate
 }
 
 func parseMajorMinor(v string) string {

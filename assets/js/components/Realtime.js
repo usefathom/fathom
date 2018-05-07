@@ -25,7 +25,7 @@ class Realtime extends Component {
 
   @bind
   fetchData() {
-    Client.request(`visitors/count/realtime`)
+    Client.request(`stats/site/realtime`)
       .then((d) => { this.setState({ count: d })})
   }
 

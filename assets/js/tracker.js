@@ -25,7 +25,7 @@ function generateKey() {
 }
 
 function getData() {
-  var data = Cookies.get('_fathom');
+  var data = cookies.get('_fathom');
 
   if(data) {
     try{
@@ -83,7 +83,7 @@ function trackPageview() {
     r: referrer,
     scheme: location.protocol.substring(0, location.protocol.length - 1),
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
-    b: data.isNew ? 1 : 0, // because only new visitors can bounce. we update this server-side.
+    b: 1, // TODO: if last pageview is less than 30 mins ago, we can already say this is not a bounce.
     n: data.isNew ? 1 : 0, 
   };
 
@@ -92,7 +92,7 @@ function trackPageview() {
   i.addEventListener('load', function() {
     data.pagesViewed.push(path);
     data.isNew = false;
-    Cookies.set('_fathom', JSON.stringify(data), { expires: 60 * 60 * 24});
+    cookies.set('_fathom', JSON.stringify(data), { expires: 60 * 60 * 24});
   });
   document.body.appendChild(i);
 }

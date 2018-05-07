@@ -6,46 +6,14 @@ import (
 	"time"
 
 	"github.com/mssola/user_agent"
+	"github.com/usefathom/fathom/pkg/counter"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
-
-	log "github.com/sirupsen/logrus"
 )
-
-var buffer []*models.RawPageview
-var bufferSize = 50
-var timeout = 200 * time.Millisecond
-
-func persistPageviews() {
-	if len(buffer) > 0 {
-		err := datastore.SaveRawPageviews(buffer)
-		if err != nil {
-			log.Errorf("error saving pageviews: %s", err)
-		}
-
-		// clear buffer regardless of error... this means data loss, but better than filling the buffer for now
-		buffer = buffer[:0]
-	}
-}
-
-func processBuffer(pv chan *models.RawPageview) {
-	for {
-		select {
-		case pageview := <-pv:
-			buffer = append(buffer, pageview)
-			if len(buffer) >= bufferSize {
-				persistPageviews()
-			}
-		case <-time.After(timeout):
-			persistPageviews()
-		}
-	}
-}
 
 /* middleware */
 func NewCollectHandler() http.Handler {
-	pageviews := make(chan *models.RawPageview, bufferSize)
-	go processBuffer(pageviews)
+	go aggregate()
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		// abort if this is a bot.
@@ -59,7 +27,7 @@ func NewCollectHandler() http.Handler {
 		now := time.Now()
 
 		// get pageview details
-		pageview := &models.RawPageview{
+		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
 			Pathname:     q.Get("p"),
 			IsNewVisitor: q.Get("n") == "1",
@@ -70,12 +38,27 @@ func NewCollectHandler() http.Handler {
 			Timestamp:    now,
 		}
 
-		err := datastore.SaveRawPageview(pageview)
+		// find previous pageview by same visitor
+		previousPageview, err := datastore.GetMostRecentPageviewBySessionID(pageview.SessionID)
+		if err != nil && err != datastore.ErrNoResults {
+			return err
+		}
+
+		// if we have a recent pageview that is less than 30 minutes old
+		if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
+			previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
+			previousPageview.IsBounce = false
+			err := datastore.UpdatePageview(previousPageview)
+			if err != nil {
+				return err
+			}
+		}
+
+		// save new pageview
+		err = datastore.SavePageview(pageview)
 		if err != nil {
 			return err
 		}
-		// push onto channel
-		//pageviews <- pageview
 
 		// don't you cache this
 		w.Header().Set("Content-Type", "image/gif")
@@ -89,4 +72,17 @@ func NewCollectHandler() http.Handler {
 		w.Write(b)
 		return nil
 	})
+}
+
+// runs the aggregate func every 5 mins
+func aggregate() {
+	counter.Aggregate()
+	timeout := 5 * time.Minute
+
+	for {
+		select {
+		case <-time.After(timeout):
+			counter.Aggregate()
+		}
+	}
 }

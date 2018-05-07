@@ -47,7 +47,7 @@ class CountWidget extends Component {
     let before = this.state.before;
     let after = this.state.after;
 
-    Client.request(`${this.props.endpoint}/count?before=${before}&after=${after}`)
+    Client.request(`${this.props.endpoint}?before=${before}&after=${after}`)
       .then((d) => { 
         // request finished; check if timestamp range is still the one user wants to see
         if( this.state.before != before || this.state.after != after ) {

@@ -38,7 +38,7 @@ func getDSN(driver string, host string, name string, user string, password strin
 	case "postgres":
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, name)
 	case "mysql":
-		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true", user, password, host, name)
+		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true&loc=Local", user, password, host, name)
 	}
 
 	return dsn
