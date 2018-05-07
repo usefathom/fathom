@@ -2,8 +2,11 @@ package datastore
 
 import (
 	"database/sql"
-	"github.com/usefathom/fathom/pkg/models"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 // SavePageview inserts a single pageview model into the connected database
@@ -47,4 +50,14 @@ func GetProcessablePageviews() ([]*models.Pageview, error) {
 	query := dbx.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 OR timestamp < ? ) AND timestamp < ? LIMIT 500`)
 	err := dbx.Select(&results, query, thirtyMinsAgo, fiveMinsAgo)
 	return results, err
+}
+
+func DeletePageviews(pageviews []*models.Pageview) error {
+	ids := []string{}
+	for _, p := range pageviews {
+		ids = append(ids, strconv.FormatInt(p.ID, 10))
+	}
+	query := dbx.Rebind(`DELETE FROM pageviews WHERE id IN(` + strings.Join(ids, ",") + `)`)
+	_, err := dbx.Exec(query)
+	return err
 }

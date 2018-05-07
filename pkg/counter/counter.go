@@ -99,6 +99,7 @@ func Aggregate() error {
 
 	}
 
+	// update stats
 	err = datastore.UpdateSiteStats(siteStats)
 	if err != nil {
 		log.Error(err)
@@ -121,7 +122,12 @@ func Aggregate() error {
 		}
 	}
 
-	// TODO: delete data
+	// finally, remove pageviews that we just processed
+	err = datastore.DeletePageviews(pageviews)
+	if err != nil {
+		log.Error(err)
+	}
+
 	return nil
 }
 

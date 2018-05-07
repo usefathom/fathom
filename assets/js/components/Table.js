@@ -43,7 +43,6 @@ class Table extends Component {
   
     Client.request(`${this.props.endpoint}?before=${this.state.before}&after=${this.state.after}&limit=${this.state.limit}`)
       .then((d) => {
-        console.log(d);
         this.setState({ 
           loading: false,
           records: d,
