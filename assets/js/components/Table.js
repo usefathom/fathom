@@ -43,6 +43,7 @@ class Table extends Component {
   
     Client.request(`${this.props.endpoint}?before=${this.state.before}&after=${this.state.after}&limit=${this.state.limit}`)
       .then((d) => {
+        console.log(d);
         this.setState({ 
           loading: false,
           records: d,
@@ -52,8 +53,9 @@ class Table extends Component {
 
   render(props, state) {
     const tableRows = state.records !== null ? state.records.map((p, i) => {
-      let ahref = document.createElement('a'); ahref.href = p.value;
-      let classes = "table-row w" + Math.round(p.percentage_of_total);
+      let ahref = document.createElement('a'); 
+      ahref.href = p.Pathname;
+      let classes = "table-row w"; // TODO: Add percentage of total back in
       let label = ahref.pathname + ahref.search;
       if( props.showHostname ) {
         label = ahref.hostname.replace('www.', '') + (ahref.pathname.length > 1 ? ahref.pathname : '');
@@ -62,8 +64,8 @@ class Table extends Component {
       return(
       <div class={classes}>
         <div class="cell main-col"><a href={ahref.href}>{label}</a></div>
-        <div class="cell">{p.count}</div>
-        <div class="cell">{p.count_unique||"-"}</div>           
+        <div class="cell">{p.Views}</div>
+        <div class="cell">{p.UniqueViews||"-"}</div>           
       </div>
     )}) : <div class="table-row">Nothing here, yet.</div>;
 

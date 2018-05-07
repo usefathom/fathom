@@ -40,15 +40,14 @@ func Aggregate() error {
 
 			// TODO: Only new sessions can bounce, not only new visitors. So this is inaccurate right now.
 			if p.IsBounce {
-				siteStats.Bounced = ((siteStats.BouncedN * siteStats.Bounced) + 10) / (siteStats.BouncedN + 1)
+				siteStats.Bounces = ((siteStats.Sessions * siteStats.Bounces) + 1) / (siteStats.Sessions + 1)
 			} else {
-				siteStats.Bounced = ((siteStats.BouncedN * siteStats.Bounced) + 0) / (siteStats.BouncedN + 1)
+				siteStats.Bounces = ((siteStats.Sessions * siteStats.Bounces) + 0) / (siteStats.Sessions + 1)
 			}
-			siteStats.BouncedN += 1
+			siteStats.Sessions += 1
 		}
 
-		siteStats.AvgDuration = ((siteStats.AvgDuration * siteStats.AvgDurationN) + p.Duration) / (siteStats.AvgDurationN + 1)
-		siteStats.AvgDurationN += 1
+		siteStats.AvgDuration = ((siteStats.AvgDuration * (siteStats.Pageviews - 1)) + p.Duration) / siteStats.Pageviews
 
 		// page stats
 		var pageStats *models.PageStats
@@ -67,16 +66,15 @@ func Aggregate() error {
 			pageStats.UniqueViews += 1
 		}
 
-		pageStats.AvgDuration = ((pageStats.AvgDuration * pageStats.AvgDurationN) + p.Duration) / (pageStats.AvgDurationN + 1)
-		pageStats.AvgDurationN += 1
+		pageStats.AvgDuration = (pageStats.AvgDuration*(pageStats.Views-1) + p.Duration) / pageStats.Views
 
 		if p.IsNewVisitor {
 			if p.IsBounce {
-				pageStats.Bounced = ((pageStats.BouncedN * pageStats.Bounced) + 1) / (pageStats.BouncedN + 1)
+				pageStats.Bounces = ((pageStats.Entries * pageStats.Bounces) + 1) / (pageStats.Entries + 1)
 			} else {
-				pageStats.Bounced = ((pageStats.BouncedN * pageStats.Bounced) + 0) / (pageStats.BouncedN + 1)
+				pageStats.Bounces = ((pageStats.Entries * pageStats.Bounces) + 0) / (pageStats.Entries + 1)
 			}
-			pageStats.BouncedN += 1
+			pageStats.Entries += 1
 		}
 
 		// TODO: referrer stats
