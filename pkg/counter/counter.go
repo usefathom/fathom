@@ -30,6 +30,7 @@ func Aggregate() error {
 	}
 
 	pages := map[string]*models.PageStats{}
+	referrers := map[string]*models.ReferrerStats{}
 
 	for _, p := range pageviews {
 		// site stats
@@ -77,7 +78,31 @@ func Aggregate() error {
 			pageStats.Entries += 1
 		}
 
-		// TODO: referrer stats
+		if p.Referrer != "" {
+			var referrerStats *models.ReferrerStats
+			var ok bool
+			if referrerStats, ok = referrers[p.Referrer]; !ok {
+				referrerStats, err = getReferrerStats(now, p.Referrer)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				referrers[p.Referrer] = referrerStats
+			}
+
+			referrerStats.Pageviews += 1
+
+			if p.IsNewVisitor {
+				referrerStats.Visitors += 1
+			}
+		}
+
+	}
+
+	err = datastore.UpdateSiteStats(siteStats)
+	if err != nil {
+		log.Error(err)
+		return err
 	}
 
 	for _, pageStats := range pages {
@@ -88,10 +113,12 @@ func Aggregate() error {
 		}
 	}
 
-	err = datastore.UpdateSiteStats(siteStats)
-	if err != nil {
-		log.Error(err)
-		return err
+	for _, referrerStats := range referrers {
+		err = datastore.UpdateReferrerStats(referrerStats)
+		if err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	// TODO: delete data
@@ -130,5 +157,23 @@ func getPageStats(date time.Time, pathname string) (*models.PageStats, error) {
 		Date:     date,
 	}
 	err = datastore.InsertPageStats(stats)
+	return stats, err
+}
+
+func getReferrerStats(date time.Time, url string) (*models.ReferrerStats, error) {
+	stats, err := datastore.GetReferrerStats(date, url)
+	if err != nil && err != datastore.ErrNoResults {
+		return nil, err
+	}
+
+	if stats != nil {
+		return stats, nil
+	}
+
+	stats = &models.ReferrerStats{
+		URL:  url,
+		Date: date,
+	}
+	err = datastore.InsertReferrerStats(stats)
 	return stats, err
 }
