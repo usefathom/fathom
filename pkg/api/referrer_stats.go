@@ -1,14 +1,17 @@
 package api
 
 import (
-	"github.com/usefathom/fathom/pkg/models"
 	"net/http"
+
+	"github.com/usefathom/fathom/pkg/datastore"
 )
 
 // URL: /api/stats/referrer
 var GetReferrerStatsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	// before, after := getRequestedPeriods(r)
-	// limit := getRequestedLimit(r)
-	var result []*models.ReferrerStats
+	params := GetRequestParams(r)
+	result, err := datastore.GetAggregatedReferrerStats(params.StartDate, params.EndDate, params.Limit)
+	if err != nil {
+		return err
+	}
 	return respond(w, envelope{Data: result})
 })
