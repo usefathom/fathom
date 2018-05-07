@@ -7,28 +7,8 @@ import (
 	"testing"
 )
 
-func TestGetRequestedLimit(t *testing.T) {
-	r, _ := http.NewRequest("GET", "", nil)
-	limit := getRequestedLimit(r)
-
-	if limit != defaultLimit {
-		t.Errorf("Expected limit of %d does not match %d", defaultLimit, limit)
-	}
-
-	r, _ = http.NewRequest("GET", "?limit=50", nil)
-	limit = getRequestedLimit(r)
-	if limit != 50 {
-		t.Errorf("Expected limit of %d does not match %d", defaultLimit, limit)
-	}
-}
-
-func TestGetRequestedPeriods(t *testing.T) {
-	r, _ := http.NewRequest("GET", "?before=500&after=100", nil)
-	before, after := getRequestedPeriods(r)
-
-	if before != 500 || after != 100 {
-		t.Error("Expected URl argument for `before` or `after` does not match")
-	}
+func TestGetRequestParams(t *testing.T) {
+	// TODO: Implement this
 }
 
 func TestParseMajorMinor(t *testing.T) {

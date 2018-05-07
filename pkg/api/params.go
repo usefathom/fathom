@@ -7,39 +7,33 @@ import (
 	"time"
 )
 
-// TODO: Move params into Params struct (with defaults)
-
-const defaultPeriod = 7
-const defaultLimit = 10
-
-func getRequestedLimit(r *http.Request) int64 {
-	limit, err := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 64)
-	if err != nil || limit == 0 {
-		limit = defaultLimit
-	}
-
-	return limit
+type Params struct {
+	Limit     int
+	StartDate time.Time
+	EndDate   time.Time
 }
 
-func getRequestedDatePeriods(r *http.Request) (time.Time, time.Time) {
-	var startDate, endDate time.Time
-	var err error
-
-	beforeUnix, err := strconv.ParseInt(r.URL.Query().Get("before"), 10, 64)
-	if err != nil || beforeUnix == 0 {
-		endDate = time.Now()
-	} else {
-		endDate = time.Unix(beforeUnix, 0)
+func GetRequestParams(r *http.Request) *Params {
+	params := &Params{
+		Limit:     20,
+		StartDate: time.Now(),
+		EndDate:   time.Now().AddDate(0, 0, -7),
 	}
 
-	afterUnix, err := strconv.ParseInt(r.URL.Query().Get("after"), 10, 64)
-	if err != nil || afterUnix == 0 {
-		startDate = endDate.AddDate(0, 0, -defaultPeriod)
-	} else {
-		startDate = time.Unix(afterUnix, 0)
+	q := r.URL.Query()
+	if after, err := strconv.ParseInt(q.Get("after"), 10, 64); err == nil && after > 0 {
+		params.StartDate = time.Unix(after, 0)
 	}
 
-	return startDate, endDate
+	if before, err := strconv.ParseInt(q.Get("before"), 10, 64); err == nil && before > 0 {
+		params.EndDate = time.Unix(before, 0)
+	}
+
+	if limit, err := strconv.Atoi(q.Get("limit")); err == nil && limit > 0 {
+		params.Limit = limit
+	}
+
+	return params
 }
 
 func parseMajorMinor(v string) string {

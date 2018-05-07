@@ -28,7 +28,7 @@ func UpdatePageStats(s *models.PageStats) error {
 	return err
 }
 
-func GetAggregatedPageStats(startDate time.Time, endDate time.Time, limit int64) ([]*models.PageStats, error) {
+func GetAggregatedPageStats(startDate time.Time, endDate time.Time, limit int) ([]*models.PageStats, error) {
 	var result []*models.PageStats
 	query := dbx.Rebind(`SELECT pathname, SUM(views) AS views, SUM(unique_views) AS unique_views, SUM(entries) AS entries, ROUND(AVG(bounces), 0) AS bounces FROM daily_page_stats WHERE date >= ? AND date <= ? GROUP BY pathname, views, unique_views, entries, bounces ORDER BY views DESC LIMIT ?`)
 	err := dbx.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)

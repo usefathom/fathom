@@ -18,8 +18,8 @@ var GetSiteStatsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 
 // URL: /api/stats/site/pageviews
 var GetSiteStatsPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	startDate, endDate := getRequestedDatePeriods(r)
-	result, err := datastore.GetTotalSiteViews(startDate, endDate)
+	params := GetRequestParams(r)
+	result, err := datastore.GetTotalSiteViews(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
@@ -28,8 +28,8 @@ var GetSiteStatsPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *ht
 
 // URL: /api/stats/site/visitors
 var GetSiteStatsVisitorsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	startDate, endDate := getRequestedDatePeriods(r)
-	result, err := datastore.GetTotalSiteVisitors(startDate, endDate)
+	params := GetRequestParams(r)
+	result, err := datastore.GetTotalSiteVisitors(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
@@ -38,8 +38,8 @@ var GetSiteStatsVisitorsHandler = HandlerFunc(func(w http.ResponseWriter, r *htt
 
 // URL: /api/stats/site/duration
 var GetSiteStatsDurationHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	startDate, endDate := getRequestedDatePeriods(r)
-	result, err := datastore.GetAverageSiteDuration(startDate, endDate)
+	params := GetRequestParams(r)
+	result, err := datastore.GetAverageSiteDuration(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
@@ -48,8 +48,8 @@ var GetSiteStatsDurationHandler = HandlerFunc(func(w http.ResponseWriter, r *htt
 
 // URL: /api/stats/site/bounces
 var GetSiteStatsBouncesHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	startDate, endDate := getRequestedDatePeriods(r)
-	result, err := datastore.GetAverageSiteBounceRate(startDate, endDate)
+	params := GetRequestParams(r)
+	result, err := datastore.GetAverageSiteBounceRate(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}

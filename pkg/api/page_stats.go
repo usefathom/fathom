@@ -8,9 +8,8 @@ import (
 
 // URL: /api/stats/page
 var GetPageStatsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	startDate, endDate := getRequestedDatePeriods(r)
-	limit := getRequestedLimit(r)
-	result, err := datastore.GetAggregatedPageStats(startDate, endDate, limit)
+	params := GetRequestParams(r)
+	result, err := datastore.GetAggregatedPageStats(params.StartDate, params.EndDate, params.Limit)
 	if err != nil {
 		return err
 	}
