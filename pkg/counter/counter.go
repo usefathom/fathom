@@ -10,9 +10,6 @@ import (
 )
 
 func Aggregate() error {
-	// TODO: We might be processing pageviews for another day here. Fix that.
-	now := time.Now()
-
 	// Get unprocessed pageviews
 	pageviews, err := datastore.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
@@ -24,43 +21,47 @@ func Aggregate() error {
 		return nil
 	}
 
-	// site stats
-	siteStats, err := getSiteStats(now)
-	if err != nil {
-		return err
-	}
-
+	sites := map[string]*models.SiteStats{}
 	pages := map[string]*models.PageStats{}
 	referrers := map[string]*models.ReferrerStats{}
 
 	for _, p := range pageviews {
-		// site stats
-		siteStats.Pageviews += 1
+		date := p.Timestamp.Format("2006-01-02")
 
-		if p.IsNewVisitor {
-			siteStats.Visitors += 1
-
-			// TODO: Only new sessions can bounce, not only new visitors. So this is inaccurate right now.
-			if p.IsBounce {
-				siteStats.BounceRate = ((float64(siteStats.Sessions) * siteStats.BounceRate) + 1) / (float64(siteStats.Sessions) + 1)
-			} else {
-				siteStats.BounceRate = ((float64(siteStats.Sessions) * siteStats.BounceRate) + 0) / (float64(siteStats.Sessions) + 1)
-			}
-			siteStats.Sessions += 1
+		var site *models.SiteStats
+		if site, ok := sites[date]; !ok {
+			site, _ = getSiteStats(p.Timestamp)
+			sites[date] = site
 		}
 
-		siteStats.AvgDuration = ((siteStats.AvgDuration * (siteStats.Pageviews - 1)) + p.Duration) / siteStats.Pageviews
+		// site stats
+		site.Pageviews += 1
+		site.AvgDuration = ((site.AvgDuration * (site.Pageviews - 1)) + p.Duration) / site.Pageviews
+
+		if p.IsNewVisitor {
+			site.Visitors += 1
+		}
+
+		if p.IsNewSession {
+			site.Sessions += 1
+
+			if p.IsBounce {
+				site.BounceRate = ((float64(site.Sessions-1) * site.BounceRate) + 1) / (float64(site.Sessions))
+			} else {
+				site.BounceRate = ((float64(site.Sessions-1) * site.BounceRate) + 0) / (float64(site.Sessions))
+			}
+		}
 
 		// page stats
 		var pageStats *models.PageStats
 		var ok bool
-		if pageStats, ok = pages[p.Pathname]; !ok {
-			pageStats, err = getPageStats(now, p.Pathname)
+		if pageStats, ok = pages[date+p.Pathname]; !ok {
+			pageStats, err = getPageStats(p.Timestamp, p.Pathname)
 			if err != nil {
 				log.Error(err)
 				continue
 			}
-			pages[p.Pathname] = pageStats
+			pages[date+p.Pathname] = pageStats
 		}
 
 		pageStats.Pageviews += 1
@@ -70,26 +71,27 @@ func Aggregate() error {
 
 		pageStats.AvgDuration = (pageStats.AvgDuration*(pageStats.Pageviews-1) + p.Duration) / pageStats.Pageviews
 
-		if p.IsNewVisitor {
-			if p.IsBounce {
-				pageStats.BounceRate = ((float64(pageStats.Entries) * pageStats.BounceRate) + 1.00) / (float64(pageStats.Entries) + 1.00)
-			} else {
-				pageStats.BounceRate = ((float64(pageStats.Entries) * pageStats.BounceRate) + 0.00) / (float64(pageStats.Entries) + 1.00)
-			}
+		if p.IsNewSession {
 			pageStats.Entries += 1
+
+			if p.IsBounce {
+				pageStats.BounceRate = ((float64(pageStats.Entries-1) * pageStats.BounceRate) + 1.00) / (float64(pageStats.Entries))
+			} else {
+				pageStats.BounceRate = ((float64(pageStats.Entries-1) * pageStats.BounceRate) + 0.00) / (float64(pageStats.Entries))
+			}
 		}
 
 		// referrer stats
 		if p.Referrer != "" {
 			var referrerStats *models.ReferrerStats
 			var ok bool
-			if referrerStats, ok = referrers[p.Referrer]; !ok {
-				referrerStats, err = getReferrerStats(now, p.Referrer)
+			if referrerStats, ok = referrers[date+p.Referrer]; !ok {
+				referrerStats, err = getReferrerStats(p.Timestamp, p.Referrer)
 				if err != nil {
 					log.Error(err)
 					continue
 				}
-				referrers[p.Referrer] = referrerStats
+				referrers[date+p.Referrer] = referrerStats
 			}
 
 			referrerStats.Pageviews += 1
@@ -97,15 +99,22 @@ func Aggregate() error {
 			if p.IsNewVisitor {
 				referrerStats.Visitors += 1
 			}
+
+			if p.IsBounce {
+				referrerStats.BounceRate = ((float64(referrerStats.Pageviews-1) * referrerStats.BounceRate) + 1.00) / (float64(referrerStats.Pageviews))
+			} else {
+				referrerStats.BounceRate = ((float64(referrerStats.Pageviews-1) * referrerStats.BounceRate) + 0.00) / (float64(referrerStats.Pageviews))
+			}
 		}
 
 	}
 
 	// update stats
-	err = datastore.UpdateSiteStats(siteStats)
-	if err != nil {
-		log.Error(err)
-		return err
+	for _, site := range sites {
+		err = datastore.UpdateSiteStats(site)
+		if err != nil {
+			log.Error(err)
+		}
 	}
 
 	for _, pageStats := range pages {

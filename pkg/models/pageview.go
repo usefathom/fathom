@@ -9,6 +9,7 @@ type Pageview struct {
 	SessionID    string    `db:"session_id"`
 	Pathname     string    `db:"pathname"`
 	IsNewVisitor bool      `db:"is_new_visitor"`
+	IsNewSession bool      `db:"is_new_session"`
 	IsUnique     bool      `db:"is_unique"`
 	IsBounce     bool      `db:"is_bounce"`
 	Referrer     string    `db:"referrer"`

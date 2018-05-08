@@ -30,7 +30,8 @@ func NewCollectHandler() http.Handler {
 		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
 			Pathname:     q.Get("p"),
-			IsNewVisitor: q.Get("n") == "1",
+			IsNewVisitor: q.Get("nv") == "1",
+			IsNewSession: q.Get("ns") == "1",
 			IsUnique:     q.Get("u") == "1",
 			IsBounce:     q.Get("b") != "0",
 			Referrer:     q.Get("r"),
@@ -39,23 +40,25 @@ func NewCollectHandler() http.Handler {
 		}
 
 		// find previous pageview by same visitor
-		previousPageview, err := datastore.GetMostRecentPageviewBySessionID(pageview.SessionID)
-		if err != nil && err != datastore.ErrNoResults {
-			return err
-		}
-
-		// if we have a recent pageview that is less than 30 minutes old
-		if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
-			previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
-			previousPageview.IsBounce = false
-			err := datastore.UpdatePageview(previousPageview)
-			if err != nil {
+		if !pageview.IsNewSession {
+			previousPageview, err := datastore.GetMostRecentPageviewBySessionID(pageview.SessionID)
+			if err != nil && err != datastore.ErrNoResults {
 				return err
+			}
+
+			// if we have a recent pageview that is less than 30 minutes old
+			if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
+				previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
+				previousPageview.IsBounce = false
+				err := datastore.UpdatePageview(previousPageview)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
 		// save new pageview
-		err = datastore.SavePageview(pageview)
+		err := datastore.SavePageview(pageview)
 		if err != nil {
 			return err
 		}
