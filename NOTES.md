@@ -1,2 +1,1 @@
 - Client-side data needs to keep track of new visitor (first pageview that day) vs. new session (new visitor or last pageview > 30 mins ago).
-- API package needs Params struct with defaults
