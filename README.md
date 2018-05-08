@@ -17,7 +17,7 @@ For getting a development version of Fathom up & running, please go through the 
 1. compile into binary & prepare assets: `make all` 
 1. Rename `.env.example` to `.env` and set your database credentials.
 1. Create your user account: `fathom register <email> <password>`
-1. Start the webserver: `fathom server --webroot=./build --port=8080` & visit **localhost:8080** to access your analytics dashboard.
+1. Start the webserver: `fathom server --port=8080` & visit **localhost:8080** to access your analytics dashboard.
 
 To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance.
 

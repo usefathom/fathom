@@ -33,6 +33,12 @@
 			"revisionTime": "2016-12-24T12:10:19Z"
 		},
 		{
+			"checksumSHA1": "8h+jn5DM8qpamdOYYWCCInJZzyM=",
+			"path": "github.com/gobuffalo/packr",
+			"revision": "7f4074995d431987caaa35088199f13c44b24440",
+			"revisionTime": "2018-04-13T17:35:21Z"
+		},
+		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
 			"path": "github.com/gorilla/context",
 			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
@@ -111,10 +117,16 @@
 			"revisionTime": "2016-12-08T17:59:04Z"
 		},
 		{
-			"checksumSHA1": "Qgwcmaxcms96cseiKeTu73RiKJw=",
+			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
+			"path": "github.com/pkg/errors",
+			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
+			"revisionTime": "2018-03-11T21:45:15Z"
+		},
+		{
+			"checksumSHA1": "6nYX6dKRoU5uicZ5wa9nD7dq22Q=",
 			"path": "github.com/rubenv/sql-migrate",
-			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
-			"revisionTime": "2017-01-04T09:54:22Z"
+			"revision": "081fe17d19ff4e2dd9f5a0c1158e6bcf74da6906",
+			"revisionTime": "2018-02-17T20:35:53Z"
 		},
 		{
 			"checksumSHA1": "IQ6NtaJ+F1rtAMIaCetzKb5nrxQ=",

@@ -21,17 +21,20 @@ Using [modl](https://github.com/jmoiron/modl)? Check out [modl-migrate](https://
 To install the library and command line program, use the following:
 
 ```bash
-go get github.com/rubenv/sql-migrate/...
+go get -v github.com/rubenv/sql-migrate/...
 ```
 
 ## Usage
+
 ### As a standalone tool
+
 ```
 $ sql-migrate --help
 usage: sql-migrate [--version] [--help] <command> [<args>]
 
 Available commands are:
     down      Undo a database migration
+    new       Create a new migration
     redo      Reapply the last migration
     status    Show migration status
     up        Migrates the database to the most recent version available
@@ -72,6 +75,8 @@ Options:
   -dryrun              Don't apply migrations, just print them.
 ```
 
+The `new` command creates a new empty migration template using the following pattern `<current time>-<name>.sql`.
+
 The `up` command applies all available migrations. By contrast, `down` will only apply one migration by default. This behavior can be changed for both by using the `-limit` parameter.
 
 The `redo` command will unapply the last migration and reapply it. This is useful during development, when you're writing migrations.
@@ -88,7 +93,22 @@ $ sql-migrate status
 +---------------+-----------------------------------------+
 ```
 
+### MySQL Caveat
+
+If you are using MySQL, you must append `?parseTime=true` to the `datasource` configuration. For example:
+
+```yml
+production:
+    dialect: mysql
+    datasource: root@/dbname?parseTime=true
+    dir: migrations/mysql
+    table: migrations
+```
+
+See [here](https://github.com/go-sql-driver/mysql#parsetime) for more information.
+
 ### As a library
+
 Import sql-migrate into your application:
 
 ```go
@@ -112,6 +132,11 @@ migrations := &migrate.MemoryMigrationSource{
 // OR: Read migrations from a folder:
 migrations := &migrate.FileMigrationSource{
     Dir: "db/migrations",
+}
+
+// OR: Use migrations from a packr box
+migrations := &migrate.PackrMigrationSource{
+    Box: packr.NewBox("./migrations"),
 }
 
 // OR: Use migrations from bindata:
@@ -157,6 +182,10 @@ DROP TABLE people;
 
 You can put multiple statements in each block, as long as you end them with a semicolon (`;`).
 
+You can alternatively set up a separator string that matches an entire line by setting `sqlparse.LineSeparator`. This
+can be used to imitate, for example, MS SQL Query Analyzer functionality where commands can be separated by a line with
+contents of `GO`. If `sqlparse.LineSeparator` is matched, it will not be included in the resulting migration scripts.
+
 If you have complex statements which contain semicolons, use `StatementBegin` and `StatementEnd` to indicate boundaries:
 
 ```sql
@@ -192,8 +221,32 @@ CREATE UNIQUE INDEX people_unique_id_idx CONCURRENTLY ON people (id);
 DROP INDEX people_unique_id_idx;
 ```
 
-## Embedding migrations with [bindata](https://github.com/jteeuwen/go-bindata)
-If you like your Go applications self-contained (that is: a single binary): use [bindata](https://github.com/jteeuwen/go-bindata) to embed the migration files.
+## Embedding migrations with [packr](https://github.com/gobuffalo/packr)
+
+If you like your Go applications self-contained (that is: a single binary): use [packr](https://github.com/gobuffalo/packr) to embed the migration files.
+
+Just write your migration files as usual, as a set of SQL files in a folder.
+
+Use the `PackrMigrationSource` in your application to find the migrations:
+
+```go
+migrations := &migrate.PackrMigrationSource{
+    Box: packr.NewBox("./migrations"),
+}
+```
+
+If you already have a box and would like to use a subdirectory:
+
+```go
+migrations := &migrate.PackrMigrationSource{
+    Box: myBox,
+    Dir: "./migrations",
+}
+```
+
+## Embedding migrations with [bindata](https://github.com/shuLhan/go-bindata)
+
+As an alternative, but slightly less maintained, you can use [bindata](https://github.com/shuLhan/go-bindata) to embed the migration files.
 
 Just write your migration files as usual, as a set of SQL files in a folder.
 
@@ -220,6 +273,7 @@ Both `Asset` and `AssetDir` are functions provided by bindata.
 Then proceed as usual.
 
 ## Extending
+
 Adding a new migration source means implementing `MigrationSource`.
 
 ```go
@@ -230,26 +284,6 @@ type MigrationSource interface {
 
 The resulting slice of migrations will be executed in the given order, so it should usually be sorted by the `Id` field.
 
-## License 
+## License
 
-    (The MIT License)
-
-    Copyright (C) 2014-2016 by Ruben Vermeersch <ruben@rocketeer.be>
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
+This library is distributed under the [MIT](LICENSE) license.

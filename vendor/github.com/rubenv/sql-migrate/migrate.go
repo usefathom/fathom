@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
+	"net/http"
 	"path"
 	"regexp"
 	"sort"
@@ -144,10 +144,25 @@ type MemoryMigrationSource struct {
 var _ MigrationSource = (*MemoryMigrationSource)(nil)
 
 func (m MemoryMigrationSource) FindMigrations() ([]*Migration, error) {
-	// Make sure migrations are sorted
-	sort.Sort(byId(m.Migrations))
+	// Make sure migrations are sorted. In order to make the MemoryMigrationSource safe for
+	// concurrent use we should not mutate it in place. So `FindMigrations` would sort a copy
+	// of the m.Migrations.
+	migrations := make([]*Migration, len(m.Migrations))
+	copy(migrations, m.Migrations)
+	sort.Sort(byId(migrations))
+	return migrations, nil
+}
 
-	return m.Migrations, nil
+// A set of migrations loaded from an http.FileServer
+
+type HttpFileSystemMigrationSource struct {
+	FileSystem http.FileSystem
+}
+
+var _ MigrationSource = (*HttpFileSystemMigrationSource)(nil)
+
+func (f HttpFileSystemMigrationSource) FindMigrations() ([]*Migration, error) {
+	return findMigrations(f.FileSystem)
 }
 
 // A set of migrations loaded from a directory.
@@ -158,9 +173,14 @@ type FileMigrationSource struct {
 var _ MigrationSource = (*FileMigrationSource)(nil)
 
 func (f FileMigrationSource) FindMigrations() ([]*Migration, error) {
+	filesystem := http.Dir(f.Dir)
+	return findMigrations(filesystem)
+}
+
+func findMigrations(dir http.FileSystem) ([]*Migration, error) {
 	migrations := make([]*Migration, 0)
 
-	file, err := os.Open(f.Dir)
+	file, err := dir.Open("/")
 	if err != nil {
 		return nil, err
 	}
@@ -172,14 +192,14 @@ func (f FileMigrationSource) FindMigrations() ([]*Migration, error) {
 
 	for _, info := range files {
 		if strings.HasSuffix(info.Name(), ".sql") {
-			file, err := os.Open(path.Join(f.Dir, info.Name()))
+			file, err := dir.Open(info.Name())
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Error while opening %s: %s", info.Name(), err)
 			}
 
 			migration, err := ParseMigration(info.Name(), file)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Error while parsing %s: %s", info.Name(), err)
 			}
 
 			migrations = append(migrations, migration)
@@ -236,6 +256,60 @@ func (a AssetMigrationSource) FindMigrations() ([]*Migration, error) {
 	return migrations, nil
 }
 
+// Avoids pulling in the packr library for everyone, mimicks the bits of
+// packr.Box that we need.
+type PackrBox interface {
+	List() []string
+	Bytes(name string) []byte
+}
+
+// Migrations from a packr box.
+type PackrMigrationSource struct {
+	Box PackrBox
+
+	// Path in the box to use.
+	Dir string
+}
+
+var _ MigrationSource = (*PackrMigrationSource)(nil)
+
+func (p PackrMigrationSource) FindMigrations() ([]*Migration, error) {
+	migrations := make([]*Migration, 0)
+	items := p.Box.List()
+
+	prefix := ""
+	dir := path.Clean(p.Dir)
+	if dir != "." {
+		prefix = fmt.Sprintf("%s/", dir)
+	}
+
+	for _, item := range items {
+		if !strings.HasPrefix(item, prefix) {
+			continue
+		}
+		name := strings.TrimPrefix(item, prefix)
+		if strings.Contains(name, "/") {
+			continue
+		}
+
+		if strings.HasSuffix(name, ".sql") {
+			file := p.Box.Bytes(item)
+
+			migration, err := ParseMigration(name, bytes.NewReader(file))
+			if err != nil {
+				return nil, err
+			}
+
+			migrations = append(migrations, migration)
+		}
+	}
+
+	// Make sure migrations are sorted
+	sort.Sort(byId(migrations))
+
+	return migrations, nil
+}
+
 // Migration parsing
 func ParseMigration(id string, r io.ReadSeeker) (*Migration, error) {
 	m := &Migration{
@@ -244,7 +318,7 @@ func ParseMigration(id string, r io.ReadSeeker) (*Migration, error) {
 
 	parsed, err := sqlparse.ParseMigration(r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error parsing migration (%s): %s", id, err)
 	}
 
 	m.Up = parsed.UpStatements
@@ -304,22 +378,31 @@ func ExecMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirecti
 			}
 		}
 
-		if dir == Up {
+		switch dir {
+		case Up:
 			err = executor.Insert(&MigrationRecord{
 				Id:        migration.Id,
 				AppliedAt: time.Now(),
 			})
 			if err != nil {
+				if trans, ok := executor.(*gorp.Transaction); ok {
+					trans.Rollback()
+				}
+
 				return applied, newTxError(migration, err)
 			}
-		} else if dir == Down {
+		case Down:
 			_, err := executor.Delete(&MigrationRecord{
 				Id: migration.Id,
 			})
 			if err != nil {
+				if trans, ok := executor.(*gorp.Transaction); ok {
+					trans.Rollback()
+				}
+
 				return applied, newTxError(migration, err)
 			}
-		} else {
+		default:
 			panic("Not possible")
 		}
 
@@ -402,6 +485,55 @@ func PlanMigration(db *sql.DB, dialect string, m MigrationSource, dir MigrationD
 	return result, dbMap, nil
 }
 
+// Skip a set of migrations
+//
+// Will skip at most `max` migrations. Pass 0 for no limit.
+//
+// Returns the number of skipped migrations.
+func SkipMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
+	migrations, dbMap, err := PlanMigration(db, dialect, m, dir, max)
+	if err != nil {
+		return 0, err
+	}
+
+	// Skip migrations
+	applied := 0
+	for _, migration := range migrations {
+		var executor SqlExecutor
+
+		if migration.DisableTransaction {
+			executor = dbMap
+		} else {
+			executor, err = dbMap.Begin()
+			if err != nil {
+				return applied, newTxError(migration, err)
+			}
+		}
+
+		err = executor.Insert(&MigrationRecord{
+			Id:        migration.Id,
+			AppliedAt: time.Now(),
+		})
+		if err != nil {
+			if trans, ok := executor.(*gorp.Transaction); ok {
+				trans.Rollback()
+			}
+
+			return applied, newTxError(migration, err)
+		}
+
+		if trans, ok := executor.(*gorp.Transaction); ok {
+			if err := trans.Commit(); err != nil {
+				return applied, newTxError(migration, err)
+			}
+		}
+
+		applied++
+	}
+
+	return applied, nil
+}
+
 // Filter a slice of migrations into ones that should be applied.
 func ToApply(migrations []*Migration, current string, direction MigrationDirection) []*Migration {
 	var index = -1
@@ -482,7 +614,8 @@ func getMigrationDbMap(db *sql.DB, dialect string) (*gorp.DbMap, error) {
 		var out *time.Time
 		err := db.QueryRow("SELECT NOW()").Scan(&out)
 		if err != nil {
-			if err.Error() == "sql: Scan error on column index 0: unsupported driver -> Scan pair: []uint8 -> *time.Time" {
+			if err.Error() == "sql: Scan error on column index 0: unsupported driver -> Scan pair: []uint8 -> *time.Time" ||
+				err.Error() == "sql: Scan error on column index 0: unsupported Scan, storing driver.Value type []uint8 into type *time.Time" {
 				return nil, errors.New(`Cannot parse dates.
 
 Make sure that the parseTime option is supplied to your database connection.

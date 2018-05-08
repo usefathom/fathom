@@ -6,7 +6,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/usefathom/fathom/pkg/commands"
-	"github.com/usefathom/fathom/pkg/counter"
 	"github.com/usefathom/fathom/pkg/datastore"
 
 	"github.com/kelseyhightower/envconfig"
@@ -27,8 +26,6 @@ var (
 	registerPassword = register.Arg("password", "Password for user.").Required().String()
 	server           = app.Command("server", "Start webserver.").Default()
 	serverPort       = server.Flag("port", "Port to listen on.").Default("8080").Int()
-	serverWebRoot    = server.Flag("webroot", "Root directory of static assets").Default("./").String()
-	archive          = app.Command("archive", "Process unarchived data.")
 )
 
 func main() {
@@ -46,15 +43,8 @@ func main() {
 		commands.Register(*registerEmail, *registerPassword)
 
 	case "server":
-		commands.Server(*serverPort, *serverWebRoot)
-
-	case "archive":
-		err := counter.Aggregate()
-		if err != nil {
-			log.Warn(err)
-		}
+		commands.Server(*serverPort)
 	}
-
 }
 
 func parseConfig() *Config {
@@ -63,6 +53,11 @@ func parseConfig() *Config {
 	err := envconfig.Process("Fathom", &cfg)
 	if err != nil {
 		log.Fatalf("Error parsing Fathom config from environment: %s", err)
+	}
+
+	// alias sqlite to sqlite3
+	if cfg.Database.Driver == "sqlite" {
+		cfg.Database.Driver = "sqlite3"
 	}
 
 	// if secret key is empty, use a randomly generated one to ease first-time installation

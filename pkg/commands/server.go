@@ -11,9 +11,9 @@ import (
 )
 
 // Server starts the HTTP server, listening on the given port
-func Server(port int, webroot string) {
-	r := api.Routes(webroot)
-	log.Printf("Now serving %s on port %d/\n", webroot, port)
+func Server(port int) {
+	r := api.Routes()
+	log.Printf("Now serving on port %d/\n", port)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.LoggingHandler(os.Stdout, r))
 	if err != nil {

@@ -56,7 +56,3 @@ $(EXECUTABLE): $(SOURCES)
 docker:
 	docker build -t metalmatze/ana:latest .
 
-.PHONY: assets
-assets: 
-	if [ ! -d "node_modules" ]; then npm install; fi
-	gulp

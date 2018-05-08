@@ -1,11 +1,12 @@
 package api
 
 import (
+	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
-func Routes(webroot string) *mux.Router {
+func Routes() *mux.Router {
 	// register routes
 	r := mux.NewRouter()
 	r.Handle("/collect", NewCollectHandler()).Methods(http.MethodGet)
@@ -21,7 +22,7 @@ func Routes(webroot string) *mux.Router {
 	r.Handle("/api/stats/pages", Authorize(GetPageStatsHandler)).Methods(http.MethodGet)
 	r.Handle("/api/stats/referrers", Authorize(GetReferrerStatsHandler)).Methods(http.MethodGet)
 
-	r.Path("/tracker.js").Handler(http.FileServer(http.Dir(webroot + "/js/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir(webroot)))
+	r.Path("/tracker.js").Handler(http.FileServer(packr.NewBox("./../../build/js")))
+	r.PathPrefix("/").Handler(http.FileServer(packr.NewBox("./../../build")))
 	return r
 }

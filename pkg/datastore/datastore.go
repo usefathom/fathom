@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/jmoiron/sqlx"
 	//_ "github.com/lib/pq"           // postgresql driver
+	"github.com/gobuffalo/packr"
 	_ "github.com/mattn/go-sqlite3" //sqlite3 driver
 	migrate "github.com/rubenv/sql-migrate"
 	log "github.com/sirupsen/logrus"
@@ -34,10 +35,9 @@ func New(c *Config) *sqlx.DB {
 
 // TODO: Move to command (but still auto-run on boot).
 func runMigrations(driver string) {
-	migrations := migrate.FileMigrationSource{
-		Dir: "pkg/datastore/migrations/" + driver, // TODO: Move to bindata
+	migrations := &migrate.PackrMigrationSource{
+		Box: packr.NewBox("./migrations/" + driver),
 	}
-
 	migrate.SetTable("migrations")
 
 	n, err := migrate.Exec(dbx.DB, driver, migrations, migrate.Up)
