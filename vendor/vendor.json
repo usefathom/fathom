@@ -99,6 +99,12 @@
 			"revisionTime": "2017-01-17T20:56:33Z"
 		},
 		{
+			"checksumSHA1": "VibJh/oNzIw3tY0PCgReKMzrxf0=",
+			"path": "github.com/mattn/go-sqlite3",
+			"revision": "a72efd674f654961a11ac41aae72c0e43963fe6c",
+			"revisionTime": "2018-04-19T07:32:57Z"
+		},
+		{
 			"checksumSHA1": "nP2A51J4e45E5HuXMdfQT2hBMfc=",
 			"path": "github.com/mssola/user_agent",
 			"revision": "6ef8cd49fcd9eb0ca7c76a581419c966ed2cb26e",

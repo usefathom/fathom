@@ -14,13 +14,7 @@ import (
 )
 
 type Config struct {
-	Database struct {
-		Driver   string `default:"mysql"`
-		Host     string `default:"localhost"`
-		User     string `required:"true"`
-		Password string `required:"true"`
-		Name     string `default:"fathom"`
-	}
+	Database *datastore.Config
 
 	Secret string `required:"true"`
 }
@@ -46,8 +40,7 @@ func main() {
 	}
 
 	// setup database connection
-	dbcfg := cfg.Database
-	db := datastore.Init(dbcfg.Driver, dbcfg.Host, dbcfg.Name, dbcfg.User, dbcfg.Password)
+	db := datastore.Init(cfg.Database)
 	defer db.Close()
 
 	// parse & run cli commands

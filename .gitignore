@@ -3,3 +3,4 @@ node_modules
 fathom
 coverage.out
 build
+fathom.db

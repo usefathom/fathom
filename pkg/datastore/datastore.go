@@ -2,12 +2,13 @@ package datastore
 
 import (
 	"errors"
-	"fmt"
+
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq" // postgresql driver
-	"github.com/rubenv/sql-migrate"
-	"log"
+	//_ "github.com/lib/pq"           // postgresql driver
+	_ "github.com/mattn/go-sqlite3" //sqlite3 driver
+	migrate "github.com/rubenv/sql-migrate"
+	log "github.com/sirupsen/logrus"
 )
 
 var dbx *sqlx.DB
@@ -16,38 +17,25 @@ var dbx *sqlx.DB
 var ErrNoResults = errors.New("datastore: query returned 0 results")
 
 // Init creates a database connection pool (using sqlx)
-func Init(driver string, host string, name string, user string, password string) *sqlx.DB {
-	dbx = New(driver, getDSN(driver, host, name, user, password))
+func Init(c *Config) *sqlx.DB {
+	dbx = New(c)
 
 	// run migrations
-	runMigrations(driver)
+	runMigrations(c.Driver)
 
 	return dbx
 }
 
 // New creates a new database pool
-func New(driver string, dsn string) *sqlx.DB {
-	dbx := sqlx.MustConnect(driver, dsn)
+func New(c *Config) *sqlx.DB {
+	dbx := sqlx.MustConnect(c.Driver, c.DSN())
 	return dbx
-}
-
-func getDSN(driver string, host string, name string, user string, password string) string {
-	var dsn string
-
-	switch driver {
-	case "postgres":
-		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, name)
-	case "mysql":
-		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true&loc=Local", user, password, host, name)
-	}
-
-	return dsn
 }
 
 // TODO: Move to command (but still auto-run on boot).
 func runMigrations(driver string) {
 	migrations := migrate.FileMigrationSource{
-		Dir: "pkg/datastore/migrations", // TODO: Move to bindata
+		Dir: "pkg/datastore/migrations/" + driver, // TODO: Move to bindata
 	}
 
 	migrate.SetTable("migrations")

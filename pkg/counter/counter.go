@@ -29,8 +29,14 @@ func Aggregate() error {
 		date := p.Timestamp.Format("2006-01-02")
 
 		var site *models.SiteStats
-		if site, ok := sites[date]; !ok {
-			site, _ = getSiteStats(p.Timestamp)
+		var ok bool
+		if site, ok = sites[date]; !ok {
+			site, err = getSiteStats(p.Timestamp)
+			if err != nil {
+				log.Error(err)
+				continue // TODO: Pageview should not be deleted if this happens
+			}
+
 			sites[date] = site
 		}
 
@@ -54,7 +60,6 @@ func Aggregate() error {
 
 		// page stats
 		var pageStats *models.PageStats
-		var ok bool
 		if pageStats, ok = pages[date+p.Pathname]; !ok {
 			pageStats, err = getPageStats(p.Timestamp, p.Pathname)
 			if err != nil {
