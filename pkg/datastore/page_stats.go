@@ -9,7 +9,7 @@ import (
 func GetPageStats(date time.Time, hostname string, pathname string) (*models.PageStats, error) {
 	stats := &models.PageStats{}
 	query := dbx.Rebind(`SELECT * FROM daily_page_stats WHERE hostname = ? AND pathname = ? AND date = ? LIMIT 1`)
-	err := dbx.Get(stats, query, pathname, date.Format("2006-01-02"))
+	err := dbx.Get(stats, query, hostname, pathname, date.Format("2006-01-02"))
 	if err != nil && err == sql.ErrNoRows {
 		return nil, ErrNoResults
 	}

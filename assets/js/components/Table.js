@@ -53,7 +53,7 @@ class Table extends Component {
   render(props, state) {
     const tableRows = state.records !== null ? state.records.map((p, i) => {
       let ahref = document.createElement('a'); 
-      ahref.href = p.Pathname || p.URL;
+      ahref.href = (p.Hostname + p.Pathname) || p.URL;
       let classes = "table-row w"; // TODO: Add percentage of total back in
       let label = ahref.pathname + ahref.search;
       if( props.showHostname ) {
