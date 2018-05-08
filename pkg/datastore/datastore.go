@@ -36,7 +36,8 @@ func New(c *Config) *sqlx.DB {
 // TODO: Move to command (but still auto-run on boot).
 func runMigrations(driver string) {
 	migrations := &migrate.PackrMigrationSource{
-		Box: packr.NewBox("./migrations/" + driver),
+		Box: packr.NewBox("./migrations"),
+		Dir: "./" + driver,
 	}
 	migrate.SetTable("migrations")
 
