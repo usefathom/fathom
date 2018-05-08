@@ -27,6 +27,11 @@ class Realtime extends Component {
   fetchData() {
     Client.request(`stats/site/realtime`)
       .then((d) => { this.setState({ count: d })})
+      .catch((e) => {
+        if(e.message === "Unauthorized") {
+          this.props.onError();
+        }
+      })
   }
 
   render(props, state) {

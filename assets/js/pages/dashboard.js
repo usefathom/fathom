@@ -34,7 +34,7 @@ class Dashboard extends Component {
         <nav class="main-nav animated fadeInDown">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <li class="visitors"><Realtime /></li>
+              <li class="visitors"><Realtime onError={this.props.onLogout} /></li>
               <li class="spacer">&middot;</li>
               <li class="signout"><LogoutButton onSuccess={this.props.onLogout} /></li>
           </ul>
