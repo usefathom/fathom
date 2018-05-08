@@ -7,7 +7,7 @@ type Config struct {
 	Host     string `default:""`
 	User     string `default:""`
 	Password string `default:""`
-	Name     string `default:"fathom"`
+	Name     string `default:"fathom.db"`
 }
 
 func (c *Config) DSN() string {
@@ -19,6 +19,7 @@ func (c *Config) DSN() string {
 	case "mysql":
 		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true&loc=Local", c.User, c.Password, c.Host, c.Name)
 	case "sqlite3", "sqlite":
+
 		dsn = c.Name + "?_loc=auto" // TODO: Make this configurable
 	}
 
