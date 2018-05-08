@@ -7,12 +7,14 @@ import (
 	"time"
 )
 
+// Params defines the commonly used API parameters
 type Params struct {
 	Limit     int
 	StartDate time.Time
 	EndDate   time.Time
 }
 
+// GetRequestParams parses the query parameters and returns commonly used API parameters, with defaults
 func GetRequestParams(r *http.Request) *Params {
 	params := &Params{
 		Limit:     20,
