@@ -27,7 +27,7 @@ CREATE TABLE daily_page_stats(
    visitors INTEGER NOT NULL,
    entries INTEGER NOT NULL,
    bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration INTEGER NOT NULL,
+   avg_duration NUMERIC(2) NOT NULL,
    date DATE NOT NULL
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE daily_site_stats(
    visitors INTEGER NOT NULL,
    sessions INTEGER NOT NULL,
    bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration INTEGER NOT NULL,
+   avg_duration NUMERIC(2) NOT NULL,
    date DATE NOT NULL
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE daily_referrer_stats(
    pageviews INTEGER NOT NULL,
    visitors INTEGER NOT NULL,
    bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration INTEGER NOT NULL,
+   avg_duration NUMERIC(2) NOT NULL,
    date DATE NOT NULL
 );
 

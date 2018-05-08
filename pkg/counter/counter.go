@@ -42,7 +42,7 @@ func Aggregate() error {
 
 		// site stats
 		site.Pageviews += 1
-		site.AvgDuration = ((site.AvgDuration * (site.Pageviews - 1)) + p.Duration) / site.Pageviews
+		site.AvgDuration = site.AvgDuration + ((float64(p.Duration) - site.AvgDuration) * 1 / float64(site.Pageviews))
 
 		if p.IsNewVisitor {
 			site.Visitors += 1
@@ -74,7 +74,7 @@ func Aggregate() error {
 			pageStats.Visitors += 1
 		}
 
-		pageStats.AvgDuration = (pageStats.AvgDuration*(pageStats.Pageviews-1) + p.Duration) / pageStats.Pageviews
+		pageStats.AvgDuration = pageStats.AvgDuration + ((float64(p.Duration) - pageStats.AvgDuration) * 1 / float64(pageStats.Pageviews))
 
 		if p.IsNewSession {
 			pageStats.Entries += 1
@@ -110,6 +110,9 @@ func Aggregate() error {
 			} else {
 				referrerStats.BounceRate = ((float64(referrerStats.Pageviews-1) * referrerStats.BounceRate) + 0.00) / (float64(referrerStats.Pageviews))
 			}
+
+			referrerStats.AvgDuration = referrerStats.AvgDuration + ((float64(p.Duration) - referrerStats.AvgDuration) * 1 / float64(referrerStats.Pageviews))
+
 		}
 
 	}

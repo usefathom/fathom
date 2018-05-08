@@ -11,6 +11,6 @@ type PageStats struct {
 	Visitors    int64     `db:"visitors"`
 	Entries     int64     `db:"entries"`
 	BounceRate  float64   `db:"bounce_rate"`
-	AvgDuration int64     `db:"avg_duration"`
+	AvgDuration float64   `db:"avg_duration"`
 	Date        time.Time `db:"date" json:"omitempty"`
 }
