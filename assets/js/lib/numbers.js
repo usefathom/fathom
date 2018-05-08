@@ -23,4 +23,12 @@ function formatDuration(seconds) {
    return date.toISOString().substr(14, 5);
 }
 
-export { formatWithComma, formatDuration }
+function formatPercentage(p) {
+   return Math.round(p*100) + "%";
+}
+
+export { 
+   formatWithComma, 
+   formatDuration, 
+   formatPercentage 
+}

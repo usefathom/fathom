@@ -10,6 +10,7 @@ import (
 )
 
 func Aggregate() error {
+	// TODO: We might be processing pageviews for another day here. Fix that.
 	now := time.Now()
 
 	// Get unprocessed pageviews
@@ -41,9 +42,9 @@ func Aggregate() error {
 
 			// TODO: Only new sessions can bounce, not only new visitors. So this is inaccurate right now.
 			if p.IsBounce {
-				siteStats.Bounces = ((siteStats.Sessions * siteStats.Bounces) + 1) / (siteStats.Sessions + 1)
+				siteStats.BounceRate = ((float64(siteStats.Sessions) * siteStats.BounceRate) + 1) / (float64(siteStats.Sessions) + 1)
 			} else {
-				siteStats.Bounces = ((siteStats.Sessions * siteStats.Bounces) + 0) / (siteStats.Sessions + 1)
+				siteStats.BounceRate = ((float64(siteStats.Sessions) * siteStats.BounceRate) + 0) / (float64(siteStats.Sessions) + 1)
 			}
 			siteStats.Sessions += 1
 		}
@@ -62,22 +63,23 @@ func Aggregate() error {
 			pages[p.Pathname] = pageStats
 		}
 
-		pageStats.Views += 1
+		pageStats.Pageviews += 1
 		if p.IsUnique {
-			pageStats.UniqueViews += 1
+			pageStats.Visitors += 1
 		}
 
-		pageStats.AvgDuration = (pageStats.AvgDuration*(pageStats.Views-1) + p.Duration) / pageStats.Views
+		pageStats.AvgDuration = (pageStats.AvgDuration*(pageStats.Pageviews-1) + p.Duration) / pageStats.Pageviews
 
 		if p.IsNewVisitor {
 			if p.IsBounce {
-				pageStats.Bounces = ((pageStats.Entries * pageStats.Bounces) + 1) / (pageStats.Entries + 1)
+				pageStats.BounceRate = ((float64(pageStats.Entries) * pageStats.BounceRate) + 1.00) / (float64(pageStats.Entries) + 1.00)
 			} else {
-				pageStats.Bounces = ((pageStats.Entries * pageStats.Bounces) + 0) / (pageStats.Entries + 1)
+				pageStats.BounceRate = ((float64(pageStats.Entries) * pageStats.BounceRate) + 0.00) / (float64(pageStats.Entries) + 1.00)
 			}
 			pageStats.Entries += 1
 		}
 
+		// referrer stats
 		if p.Referrer != "" {
 			var referrerStats *models.ReferrerStats
 			var ok bool

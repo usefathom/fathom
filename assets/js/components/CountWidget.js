@@ -56,7 +56,7 @@ class CountWidget extends Component {
 
         switch(this.props.format) {
           case "percentage":
-            d = d + "%";
+            d = numbers.formatPercentage(d)
           break;  
 
           default:

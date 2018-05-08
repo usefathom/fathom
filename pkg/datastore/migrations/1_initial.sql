@@ -20,31 +20,36 @@ CREATE TABLE pageviews(
 
 CREATE TABLE daily_page_stats(
    pathname VARCHAR(255) NOT NULL,
-   views INT NOT NULL,
-   unique_views INT NOT NULL,
+   pageviews INT NOT NULL,
+   visitors INT NOT NULL,
    entries INT NOT NULL,
-   bounces INT NOT NULL,
+   bounce_rate FLOAT NOT NULL,
    avg_duration INT NOT NULL,
    date DATE NOT NULL
 );
 
 CREATE TABLE daily_site_stats(
-   visitors INT NOT NULL,
    pageviews INT NOT NULL,
+   visitors INT NOT NULL,
    sessions INT NOT NULL,
-   bounces INT NOT NULL,
+   bounce_rate FLOAT NOT NULL,
    avg_duration INT NOT NULL,
    date DATE NOT NULL
 );
 
 CREATE TABLE daily_referrer_stats(
    url VARCHAR(255) NOT NULL,
-   visitors INT NOT NULL,
    pageviews INT NOT NULL,
-   bounces INT NOT NULL,
+   visitors INT NOT NULL,
+   bounce_rate FLOAT NOT NULL,
    avg_duration INT NOT NULL,
    date DATE NOT NULL
 );
+
+CREATE UNIQUE INDEX unique_user_email ON users(email);
+CREATE UNIQUE INDEX unique_daily_site_stats ON daily_site_stats(date);
+CREATE UNIQUE INDEX unique_daily_page_stats ON daily_page_stats(pathname, date);
+CREATE UNIQUE INDEX unique_daily_referrer_stats ON daily_referrer_stats(url, date);
 
 -- +migrate Down
 

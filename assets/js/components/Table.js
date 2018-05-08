@@ -63,8 +63,8 @@ class Table extends Component {
       return(
       <div class={classes}>
         <div class="cell main-col"><a href={ahref.href}>{label}</a></div>
-        <div class="cell">{p.Views||p.Pageviews}</div>
-        <div class="cell">{p.UniqueViews||p.Visitors||"-"}</div>           
+        <div class="cell">{p.Pageviews}</div>
+        <div class="cell">{p.Visitors||"-"}</div>           
       </div>
     )}) : <div class="table-row">Nothing here, yet.</div>;
 

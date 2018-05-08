@@ -17,14 +17,14 @@ func GetSiteStats(date time.Time) (*models.SiteStats, error) {
 }
 
 func InsertSiteStats(s *models.SiteStats) error {
-	query := dbx.Rebind(`INSERT INTO daily_site_stats(visitors, sessions, pageviews, bounces, avg_duration, date) VALUES(?, ?, ?, ?, ?, ?)`)
-	_, err := dbx.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.Bounces, s.AvgDuration, s.Date.Format("2006-01-02"))
+	query := dbx.Rebind(`INSERT INTO daily_site_stats(visitors, sessions, pageviews, bounce_rate, avg_duration, date) VALUES(?, ?, ?, ?, ?, ?)`)
+	_, err := dbx.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func UpdateSiteStats(s *models.SiteStats) error {
-	query := dbx.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounces = ?, avg_duration = ? WHERE date = ?`)
-	_, err := dbx.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.Bounces, s.AvgDuration, s.Date.Format("2006-01-02"))
+	query := dbx.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ?, avg_duration = ? WHERE date = ?`)
+	_, err := dbx.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.Date.Format("2006-01-02"))
 	return err
 }
 
@@ -60,10 +60,10 @@ func GetAverageSiteDuration(startDate time.Time, endDate time.Time) (int, error)
 	return total, err
 }
 
-func GetAverageSiteBounceRate(startDate time.Time, endDate time.Time) (int, error) {
-	sql := `SELECT COALESCE(ROUND(AVG(bounces), 0), 0) FROM daily_site_stats WHERE date >= ? AND date <= ?`
+func GetAverageSiteBounceRate(startDate time.Time, endDate time.Time) (float64, error) {
+	sql := `SELECT COALESCE(AVG(bounce_rate), 0.00) FROM daily_site_stats WHERE date >= ? AND date <= ?`
 	query := dbx.Rebind(sql)
-	var total int
+	var total float64
 	err := dbx.Get(&total, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 	return total, err
 }

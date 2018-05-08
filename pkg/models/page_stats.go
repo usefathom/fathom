@@ -6,10 +6,10 @@ import (
 
 type PageStats struct {
 	Pathname    string    `db:"pathname"`
-	Views       int64     `db:"views"`
-	UniqueViews int64     `db:"unique_views"`
+	Pageviews   int64     `db:"pageviews"`
+	Visitors    int64     `db:"visitors"`
 	Entries     int64     `db:"entries"`
-	Bounces     int64     `db:"bounces"`
+	BounceRate  float64   `db:"bounce_rate"`
 	AvgDuration int64     `db:"avg_duration"`
 	Date        time.Time `db:"date" json:"omitempty"`
 }

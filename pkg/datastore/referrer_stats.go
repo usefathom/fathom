@@ -18,14 +18,14 @@ func GetReferrerStats(date time.Time, url string) (*models.ReferrerStats, error)
 }
 
 func InsertReferrerStats(s *models.ReferrerStats) error {
-	query := dbx.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounces, avg_duration, url, date) VALUES(?, ?, ?, ?, ?, ?)`)
-	_, err := dbx.Exec(query, s.Visitors, s.Pageviews, s.Bounces, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
+	query := dbx.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, url, date) VALUES(?, ?, ?, ?, ?, ?)`)
+	_, err := dbx.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func UpdateReferrerStats(s *models.ReferrerStats) error {
-	query := dbx.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounces = ?, avg_duration = ? WHERE url = ? AND date = ?`)
-	_, err := dbx.Exec(query, s.Visitors, s.Pageviews, s.Bounces, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
+	query := dbx.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ? WHERE url = ? AND date = ?`)
+	_, err := dbx.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
 	return err
 }
 
