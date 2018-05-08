@@ -61,12 +61,12 @@ func Aggregate() error {
 		// page stats
 		var pageStats *models.PageStats
 		if pageStats, ok = pages[date+p.Pathname]; !ok {
-			pageStats, err = getPageStats(p.Timestamp, p.Pathname)
+			pageStats, err = getPageStats(p.Timestamp, p.Hostname, p.Pathname)
 			if err != nil {
 				log.Error(err)
 				continue
 			}
-			pages[date+p.Pathname] = pageStats
+			pages[date+p.Hostname+p.Pathname] = pageStats
 		}
 
 		pageStats.Pageviews += 1
@@ -164,8 +164,8 @@ func getSiteStats(date time.Time) (*models.SiteStats, error) {
 	return stats, err
 }
 
-func getPageStats(date time.Time, pathname string) (*models.PageStats, error) {
-	stats, err := datastore.GetPageStats(date, pathname)
+func getPageStats(date time.Time, hostname string, pathname string) (*models.PageStats, error) {
+	stats, err := datastore.GetPageStats(date, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -175,6 +175,7 @@ func getPageStats(date time.Time, pathname string) (*models.PageStats, error) {
 	}
 
 	stats = &models.PageStats{
+		Hostname: hostname,
 		Pathname: pathname,
 		Date:     date,
 	}

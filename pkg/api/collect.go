@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/base64"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/mssola/user_agent"
@@ -17,10 +18,14 @@ func NewCollectHandler() http.Handler {
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		// abort if this is a bot.
-		userAgent := r.UserAgent()
-		ua := user_agent.New(userAgent)
+		ua := user_agent.New(r.UserAgent())
 		if ua.Bot() {
 			return nil
+		}
+
+		u, err := url.Parse(r.Referer())
+		if err != nil {
+			return err
 		}
 
 		q := r.URL.Query()
@@ -29,6 +34,7 @@ func NewCollectHandler() http.Handler {
 		// get pageview details
 		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
+			Hostname:     u.Scheme + "://" + u.Host,
 			Pathname:     q.Get("p"),
 			IsNewVisitor: q.Get("nv") == "1",
 			IsNewSession: q.Get("ns") == "1",
@@ -58,7 +64,7 @@ func NewCollectHandler() http.Handler {
 		}
 
 		// save new pageview
-		err := datastore.SavePageview(pageview)
+		err = datastore.SavePageview(pageview)
 		if err != nil {
 			return err
 		}

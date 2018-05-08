@@ -8,8 +8,9 @@ CREATE TABLE users (
 
 CREATE TABLE pageviews(
    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-   session_id VARCHAR(16) NOT NULL,
+   hostname VARCHAR(255) NOT NULL,
    pathname VARCHAR(255) NOT NULL,
+   session_id VARCHAR(16) NOT NULL,
    is_new_visitor TINYINT(1) NOT NULL,
    is_new_session TINYINT(1) NOT NULL,
    is_unique TINYINT(1) NOT NULL,
@@ -20,6 +21,7 @@ CREATE TABLE pageviews(
 );
 
 CREATE TABLE daily_page_stats(
+   hostname VARCHAR(255) NOT NULL,
    pathname VARCHAR(255) NOT NULL,
    pageviews INT NOT NULL,
    visitors INT NOT NULL,

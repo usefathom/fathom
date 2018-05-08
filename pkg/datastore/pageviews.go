@@ -11,8 +11,8 @@ import (
 
 // SavePageview inserts a single pageview model into the connected database
 func SavePageview(p *models.Pageview) error {
-	query := dbx.Rebind(`INSERT INTO pageviews(session_id, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-	result, err := dbx.Exec(query, p.SessionID, p.Pathname, p.IsNewVisitor, p.IsNewSession, p.IsUnique, p.IsBounce, p.Referrer, p.Duration, p.Timestamp)
+	query := dbx.Rebind(`INSERT INTO pageviews(hostname, pathname, session_id, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+	result, err := dbx.Exec(query, p.Hostname, p.Pathname, p.SessionID, p.IsNewVisitor, p.IsNewSession, p.IsUnique, p.IsBounce, p.Referrer, p.Duration, p.Timestamp)
 	if err != nil {
 		return err
 	}
