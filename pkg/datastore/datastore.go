@@ -4,9 +4,9 @@ import (
 	"errors"
 
 	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"github.com/jmoiron/sqlx"
-	//_ "github.com/lib/pq"           // postgresql driver
 	"github.com/gobuffalo/packr"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"           // postgresql driver
 	_ "github.com/mattn/go-sqlite3" //sqlite3 driver
 	migrate "github.com/rubenv/sql-migrate"
 	log "github.com/sirupsen/logrus"
