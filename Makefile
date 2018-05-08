@@ -1,20 +1,37 @@
-DIST := dist
+DIST := build
 EXECUTABLE := fathom
-
 LDFLAGS += -extldflags "-static" -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')"
-
-TARGETS ?= linux/*,darwin/*,windows/*
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 
 .PHONY: all
-all: build assets
+all: assets build 
+
+.PHONY: install
+install: $(wildcard *.go)
+	packr install
+
+.PHONY: build
+build: $(EXECUTABLE)
+
+$(EXECUTABLE): $(SOURCES)
+	packr build -v -ldflags '-w $(LDFLAGS)' -o $@
+
+.PHONY: assets
+assets: 
+	if [ ! -d "node_modules" ]; then npm install; fi
+	gulp	
+
+.PHONY: docker
+docker:
+	docker build -t metalmatze/ana:latest .
 
 .PHONY: clean
 clean:
 	go clean -i ./...
-	rm -rf $(EXECUTABLE) $(DIST) $(BINDATA)
+	packr clean
+	rm -rf $(EXECUTABLE) $(DIST) 
 
 .PHONY: fmt
 fmt:
@@ -41,18 +58,4 @@ lint:
 .PHONY: test
 test:
 	for PKG in $(PACKAGES); do go test -cover -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG || exit 1; done;
-
-.PHONY: install
-install: $(wildcard *.go)
-	go install -v -ldflags '-w $(LDFLAGS)'
-
-.PHONY: build
-build: $(EXECUTABLE)
-
-$(EXECUTABLE): $(SOURCES)
-	go build -v -ldflags '-w $(LDFLAGS)' -o $@
-
-.PHONY: docker
-docker:
-	docker build -t metalmatze/ana:latest .
 
