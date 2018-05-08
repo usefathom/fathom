@@ -13,13 +13,13 @@ This is nowhere near being usable, let alone stable. Please treat as a proof of 
 
 For getting a development version of Fathom up & running, please go through the following steps.
 
-1. get code: `go get -u github.com/usefathom/fathom` (or `git clone` repo into your `$GOPATH` )
-1. compile into binary & prepare assets: `make all` 
-1. Rename `.env.example` to `.env` and set your database credentials.
-1. Create your user account: `fathom register <email> <password>`
-1. Start the webserver: `fathom server --port=8080` & visit **localhost:8080** to access your analytics dashboard.
+1. Ensure you have [Golang](https://golang.org/doc/install#install) installed properly
+1. Get code: `git clone git@github.com:usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
+1. Compile into binary & prepare assets: `make all` 
+1. Register your user account: `fathom register <email> <password>`
+1. Start the webserver: `fathom server --port=8080` and then visit **http://localhost:8080** to access your analytics dashboard.
 
-To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance.
+To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance (twice).
 
 ```html
 <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
