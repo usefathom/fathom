@@ -13,6 +13,7 @@ func Aggregate() error {
 	// Get unprocessed pageviews
 	pageviews, err := datastore.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
+		log.Error(err)
 		return err
 	}
 

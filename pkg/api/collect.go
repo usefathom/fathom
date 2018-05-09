@@ -83,10 +83,10 @@ func NewCollectHandler() http.Handler {
 	})
 }
 
-// runs the aggregate func every 5 mins
+// runs the aggregate func every minute
 func aggregate() {
 	counter.Aggregate()
-	timeout := 5 * time.Minute
+	timeout := 1 * time.Minute
 
 	for {
 		select {
