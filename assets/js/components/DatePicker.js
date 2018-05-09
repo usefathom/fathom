@@ -31,9 +31,7 @@ class DatePicker extends Component {
       before: 0,
       after: 0,
     }
-  }
 
-  componentDidMount() {
     this.setTimeRange(this.state.period)
   }
 

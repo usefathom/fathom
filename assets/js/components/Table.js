@@ -21,10 +21,6 @@ class Table extends Component {
     }
   }
 
-  componentDidMount() {
-      this.fetchRecords()
-  }
-
   componentWillReceiveProps(newProps, prevState) {
       if(newProps.before == prevState.before && newProps.after == prevState.after) {
         return;
@@ -40,9 +36,16 @@ class Table extends Component {
   @bind
   fetchRecords() {
     this.setState({ loading: true });
+    let before = this.state.before;
+    let after = this.state.after;
   
     Client.request(`${this.props.endpoint}?before=${this.state.before}&after=${this.state.after}&limit=${this.state.limit}`)
       .then((d) => {
+         // request finished; check if timestamp range is still the one user wants to see
+        if( this.state.before != before || this.state.after != after ) {
+          return;
+        }
+
         this.setState({ 
           loading: false,
           records: d,

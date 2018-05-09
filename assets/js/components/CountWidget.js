@@ -24,10 +24,6 @@ class CountWidget extends Component {
     }
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
   componentWillReceiveProps(newProps, prevState) {
     if(newProps.before == prevState.before && newProps.after == prevState.after) {
       return;
