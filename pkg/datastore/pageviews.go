@@ -31,7 +31,6 @@ func GetMostRecentPageviewBySessionID(sessionID string) (*models.Pageview, error
 	result := &models.Pageview{}
 	query := dbx.Rebind(`SELECT * FROM pageviews WHERE session_id = ? ORDER BY id DESC LIMIT 1`)
 	err := dbx.Get(result, query, sessionID)
-
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, ErrNoResults
@@ -46,9 +45,8 @@ func GetMostRecentPageviewBySessionID(sessionID string) (*models.Pageview, error
 func GetProcessablePageviews() ([]*models.Pageview, error) {
 	var results []*models.Pageview
 	thirtyMinsAgo := time.Now().Add(-30 * time.Minute)
-	fiveMinsAgo := time.Now().Add(-5 * time.Minute)
-	query := dbx.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 OR timestamp < ? ) AND timestamp < ? LIMIT 500`)
-	err := dbx.Select(&results, query, thirtyMinsAgo, fiveMinsAgo)
+	query := dbx.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 AND is_bounce = 0 ) OR timestamp < ? LIMIT 500`)
+	err := dbx.Select(&results, query, thirtyMinsAgo)
 	return results, err
 }
 

@@ -11,13 +11,13 @@ CREATE TABLE pageviews(
    hostname VARCHAR(255) NOT NULL,
    pathname VARCHAR(255) NOT NULL,
    session_id VARCHAR(16) NOT NULL,
-   is_new_visitor BOOLEAN NOT NULL,
-   is_new_session BOOLEAN NOT NULL,
-   is_unique BOOLEAN NOT NULL,
-   is_bounce BOOLEAN NULL,
+   is_new_visitor SMALLINT NOT NULL,
+   is_new_session SMALLINT NOT NULL,
+   is_unique SMALLINT NOT NULL,
+   is_bounce SMALLINT NULL,
    referrer VARCHAR(255) NULL,
    duration INTEGER NULL,
-   timestamp TIMESTAMP NOT NULL
+   timestamp TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE daily_page_stats(
@@ -26,8 +26,8 @@ CREATE TABLE daily_page_stats(
    pageviews INTEGER NOT NULL,
    visitors INTEGER NOT NULL,
    entries INTEGER NOT NULL,
-   bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration NUMERIC(2) NOT NULL,
+   bounce_rate NUMERIC(4) NOT NULL,
+   avg_duration NUMERIC(4) NOT NULL,
    date DATE NOT NULL
 );
 
@@ -35,8 +35,8 @@ CREATE TABLE daily_site_stats(
    pageviews INTEGER NOT NULL,
    visitors INTEGER NOT NULL,
    sessions INTEGER NOT NULL,
-   bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration NUMERIC(2) NOT NULL,
+   bounce_rate NUMERIC(4) NOT NULL,
+   avg_duration NUMERIC(4) NOT NULL,
    date DATE NOT NULL
 );
 
@@ -44,8 +44,8 @@ CREATE TABLE daily_referrer_stats(
    url VARCHAR(255) NOT NULL,
    pageviews INTEGER NOT NULL,
    visitors INTEGER NOT NULL,
-   bounce_rate NUMERIC(2) NOT NULL,
-   avg_duration NUMERIC(2) NOT NULL,
+   bounce_rate NUMERIC(4) NOT NULL,
+   avg_duration NUMERIC(4) NOT NULL,
    date DATE NOT NULL
 );
 
