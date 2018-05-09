@@ -40,8 +40,12 @@ class DatePicker extends Component {
   @bind
   setTimeRange(period) {
     let beforeDate = new Date();
+    beforeDate.setUTCHours(24);
+    beforeDate.setMinutes(0);
+
     let afterDate = new Date();
-    afterDate.setHours(0, 0, 0, 0);
+    afterDate.setUTCHours(0);
+    afterDate.setMinutes(0);
     switch(period) {
       case "week":
         afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
