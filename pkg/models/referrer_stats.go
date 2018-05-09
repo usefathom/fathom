@@ -10,5 +10,5 @@ type ReferrerStats struct {
 	Pageviews   int64     `db:"pageviews"`
 	BounceRate  float64   `db:"bounce_rate"`
 	AvgDuration float64   `db:"avg_duration"`
-	Date        time.Time `db:"date" json:"omitempty"`
+	Date        time.Time `db:"date" json:",omitempty"`
 }
