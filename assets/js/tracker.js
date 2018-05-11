@@ -62,6 +62,11 @@ function trackPageview() {
     return;
   }
 
+  // ignore prerendered pages
+  if( 'visibilityState' in document && document.visibilityState === 'prerender' ) {
+    return;
+  }
+
   // get the path or canonical
   let path = location.pathname + location.search;
 
