@@ -43,14 +43,18 @@ function getData() {
   return data;  
 }
 
+function findTrackerUrl() {
+  const el = document.getElementById('fathom-script')
+  return el ? el.src.replace('tracker.js', 'collect') : '';
+}
+
 function setTrackerUrl(v) {
   trackerUrl = v;
 }
 
 function trackPageview() {
   if(trackerUrl === '') {
-    console.error('Fathom: invalid tracker URL');
-    return;
+    trackerUrl = findTrackerUrl();
   }
 
   // Respect "Do Not Track" requests
