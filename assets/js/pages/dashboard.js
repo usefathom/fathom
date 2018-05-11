@@ -28,7 +28,7 @@ class Dashboard extends Component {
 
   render(props, state) {
     return (
-    <div class="wrapper">
+    <div class="app-page wrapper">
 
       <header class="section">
         <nav class="main-nav animated fadeInDown">
