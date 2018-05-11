@@ -86,7 +86,6 @@ function trackPageview() {
     t: document.title,
     r: referrer,
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
-    b: 1,
     nv: data.isNewVisitor ? 1 : 0, 
     ns: data.isNewSession ? 1 : 0,
   };
