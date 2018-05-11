@@ -1,23 +1,24 @@
-ana:
-  image: metalmatze/ana
-  links:
-    - mysql
-  ports:
-    - "8080:8080"
-  environment:
-    - "ANA_DATABASE_NAME=ana"
-    - "ANA_DATABASE_USER=ana"
-    - "ANA_DATABASE_PASSWORD=password01"
-    - "ANA_DATABASE_HOST=tcp(mysql:3306)"
-    - "ANA_SECRET_KEY=TWEn6GXQDx45PZfmJWvyGpXf5M8b94bszgw8JcJWEd6WxgrnUkLatS34GwjPTvZb"
+version: "3"
+services:
+  fathom:
+    image: dvkoot/fathom:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - "FATHOM_DATABASE_DRIVER=mysql"
+      - "FATHOM_DATABASE_NAME=fathom"
+      - "FATHOM_DATABASE_USER=fathom"
+      - "FATHOM_DATABASE_PASSWORD=password01"
+      - "FATHOM_DATABASE_HOST=tcp(mysql:3306)"
+      - "FATHOM_SECRET_KEY=TWEn6GXQDx45PZfmJWvyGpXf5M8b94bszgw8JcJWEd6WxgrnUkLatS34GwjPTvZb"
 
-mysql:
-  image: "mysql:5"
-  ports:
-    - "3306:3306"
-  environment:
-    - "MYSQL_ALLOW_EMPTY_PASSWORD=false"
-    - "MYSQL_DATABASE=ana"
-    - "MYSQL_PASSWORD=password01"
-    - "MYSQL_ROOT_PASSWORD=password01"
-    - "MYSQL_USER=ana"
+  mysql:
+    image: "mysql:5"
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=false"
+      - "MYSQL_DATABASE=fathom"
+      - "MYSQL_PASSWORD=password01"
+      - "MYSQL_ROOT_PASSWORD=password01"
+      - "MYSQL_USER=fathom"

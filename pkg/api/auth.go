@@ -70,7 +70,11 @@ var LogoutHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) err
 /* middleware */
 func Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, "auth")
+		session, err := store.Get(r, "auth")
+		if err != nil {
+			return
+		}
+
 		userID, ok := session.Values["user_id"]
 
 		if session.IsNew || !ok {
