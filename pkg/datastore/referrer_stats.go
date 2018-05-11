@@ -35,3 +35,10 @@ func GetAggregatedReferrerStats(startDate time.Time, endDate time.Time, limit in
 	err := dbx.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
 	return result, err
 }
+
+func GetAggregatedReferrerStatsPageviews(startDate time.Time, endDate time.Time) (int, error) {
+	var result int
+	query := dbx.Rebind(`SELECT SUM(pageviews) FROM daily_referrer_stats WHERE date >= ? AND date <= ?`)
+	err := dbx.Get(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	return result, err
+}

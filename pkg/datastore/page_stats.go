@@ -34,3 +34,10 @@ func GetAggregatedPageStats(startDate time.Time, endDate time.Time, limit int) (
 	err := dbx.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
 	return result, err
 }
+
+func GetAggregatedPageStatsPageviews(startDate time.Time, endDate time.Time) (int, error) {
+	var result int
+	query := dbx.Rebind(`SELECT SUM(pageviews) FROM daily_page_stats WHERE date >= ? AND date <= ?`)
+	err := dbx.Get(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	return result, err
+}

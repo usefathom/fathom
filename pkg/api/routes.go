@@ -20,7 +20,10 @@ func Routes() *mux.Router {
 	r.Handle("/api/stats/site/realtime", Authorize(GetSiteStatsRealtimeHandler)).Methods(http.MethodGet)
 
 	r.Handle("/api/stats/pages", Authorize(GetPageStatsHandler)).Methods(http.MethodGet)
+	r.Handle("/api/stats/pages/pageviews", Authorize(GetPageStatsPageviewsHandler)).Methods(http.MethodGet)
+
 	r.Handle("/api/stats/referrers", Authorize(GetReferrerStatsHandler)).Methods(http.MethodGet)
+	r.Handle("/api/stats/referrers/pageviews", Authorize(GetReferrerStatsPageviewsHandler)).Methods(http.MethodGet)
 
 	r.Path("/tracker.js").Handler(http.FileServer(packr.NewBox("./../../build/js")))
 	r.PathPrefix("/").Handler(http.FileServer(packr.NewBox("./../../build")))
