@@ -51,13 +51,13 @@ class Table extends Component {
           loading: false,
           records: d,
         });
+      });
 
-        // fetch totals too
-        Client.request(`${this.props.endpoint}/pageviews?before=${this.state.before}&after=${this.state.after}`)
-        .then((d) => {
-          this.setState({ 
-            total: d
-          });
+     // fetch totals too
+     Client.request(`${this.props.endpoint}/pageviews?before=${this.state.before}&after=${this.state.after}`)
+      .then((d) => {
+        this.setState({ 
+          total: d
         });
       });
 
