@@ -51,7 +51,7 @@ CREATE TABLE daily_referrer_stats(
 
 CREATE UNIQUE INDEX unique_user_email ON users(email);
 CREATE UNIQUE INDEX unique_daily_site_stats ON daily_site_stats(date);
-CREATE UNIQUE INDEX unique_daily_page_stats ON daily_page_stats(pathname, date);
+CREATE UNIQUE INDEX unique_daily_page_stats ON daily_page_stats(hostname, pathname, date);
 CREATE UNIQUE INDEX unique_daily_referrer_stats ON daily_referrer_stats(url, date);
 
 -- +migrate Down
