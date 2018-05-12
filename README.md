@@ -33,7 +33,6 @@ To start tracking, include the following JavaScript on your site and replace `yo
 	o.async=1; o.src=t;
 	m.parentNode.insertBefore(o,m)
 })(document, window, '//yourfathom.com/tracker.js', 'fathom');
-fathom('setTrackerUrl', '//yourfathom.com/collect');
 fathom('trackPageview');
 </script>
 <!-- / Fathom -->

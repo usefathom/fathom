@@ -4,21 +4,14 @@ import { h, render, Component } from 'preact';
 import LoginForm from '../components/LoginForm.js';
 
 class Login extends Component {
-  render() {
+  render(props, state) {
     return (
-      <div class="wrapper">
-         <header class="section">
-           <nav class="main-nav animated fadeInDown">
-               <ul>
-                 <li class="logo"><a href="/">Fathom</a></li>
-             </ul>
-           </nav>
-         </header>
-         <section>
-            <LoginForm onSuccess={this.props.onLogin}/>
-         </section>
-         <footer class="section"></footer>
-       </div>
+      <div class="flex-rapper login-page">
+        <div class="login-rapper">
+          <LoginForm onSuccess={props.onLogin} />
+          <small><a href="https://usefathom.com">Fathom Analytics</a>{/* &middot; <a href="#lost">Password reset</a> */}</small>
+        </div>
+      </div>
     )
   }
 }

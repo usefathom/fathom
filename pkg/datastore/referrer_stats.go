@@ -31,7 +31,14 @@ func UpdateReferrerStats(s *models.ReferrerStats) error {
 
 func GetAggregatedReferrerStats(startDate time.Time, endDate time.Time, limit int) ([]*models.ReferrerStats, error) {
 	var result []*models.ReferrerStats
-	query := dbx.Rebind(`SELECT url, SUM(visitors) AS visitors, SUM(pageviews) AS pageviews, ROUND(AVG(avg_duration), 4) AS avg_duration, ROUND(AVG(bounce_rate), 4) AS bounce_rate FROM daily_referrer_stats WHERE date >= ? AND date <= ? GROUP BY url ORDER BY pageviews DESC LIMIT ?`)
+	query := dbx.Rebind(`SELECT url, SUM(visitors) AS visitors, SUM(pageviews) AS pageviews, COALESCE(ROUND(SUM(pageviews*bounce_rate)/SUM(pageviews), 4), 0.00) AS bounce_rate, COALESCE(ROUND(SUM(avg_duration*pageviews)/SUM(pageviews), 4), 0.00) AS avg_duration FROM daily_referrer_stats WHERE date >= ? AND date <= ? GROUP BY url ORDER BY pageviews DESC LIMIT ?`)
 	err := dbx.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
+	return result, err
+}
+
+func GetAggregatedReferrerStatsPageviews(startDate time.Time, endDate time.Time) (int, error) {
+	var result int
+	query := dbx.Rebind(`SELECT SUM(pageviews) FROM daily_referrer_stats WHERE date >= ? AND date <= ?`)
+	err := dbx.Get(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 	return result, err
 }

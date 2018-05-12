@@ -18,6 +18,7 @@ class Table extends Component {
       loading: true,
       before: props.before,
       after: props.after,
+      total: 0,
     }
   }
 
@@ -51,13 +52,27 @@ class Table extends Component {
           records: d,
         });
       });
+
+     // fetch totals too
+     Client.request(`${this.props.endpoint}/pageviews?before=${this.state.before}&after=${this.state.after}`)
+      .then((d) => {
+        this.setState({ 
+          total: d
+        });
+      });
+
   }
 
   render(props, state) {
-    const tableRows = state.records !== null ? state.records.map((p, i) => {
+    const tableRows = state.records !== null && state.records.length > 0 ? state.records.map((p, i) => {
       let ahref = document.createElement('a'); 
       ahref.href = (p.Hostname + p.Pathname) || p.URL;
-      let classes = "table-row w"; // TODO: Add percentage of total back in
+      let classes = "table-row"; 
+      if(state.total > 0) {
+        classes += " w" + Math.round(p.Pageviews / state.total * 100);
+      }
+
+      // TODO: Add percentage of total back in
       let label = ahref.pathname + ahref.search;
       if( props.showHostname ) {
         label = ahref.hostname.replace('www.', '') + (ahref.pathname.length > 1 ? ahref.pathname : '');
@@ -72,7 +87,7 @@ class Table extends Component {
     )}) : <div class="table-row">Nothing here, yet.</div>;
 
     return (
-      <div class={"box box-pages animated fadeInUp delayed_04s "  + (state.loading ? "loading" : '')}>
+      <div data-total={state.total} class={"box box-pages animated fadeInUp delayed_04s "  + (state.loading ? "loading" : '')}>
         <div class="table-row header">
           {props.headers.map((header, i) => {
             let classes = i === 0 ? 'main-col cell' : 'cell';

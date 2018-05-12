@@ -25,12 +25,7 @@ class Notification extends Component {
     })
     
     window.clearTimeout(this.timeout)
-    this.timeout = window.setTimeout(this.clearMessage, 5000)
-  }
-
-  @bind
-  clearMessage() {
-    this.setState({ message: '' })
+    this.timeout = window.setTimeout(this.props.onDismiss, 5000)
   }
 
   render(props, state) {

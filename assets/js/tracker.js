@@ -43,18 +43,27 @@ function getData() {
   return data;  
 }
 
+function findTrackerUrl() {
+  const el = document.getElementById('fathom-script')
+  return el ? el.src.replace('tracker.js', 'collect') : '';
+}
+
 function setTrackerUrl(v) {
   trackerUrl = v;
 }
 
 function trackPageview() {
   if(trackerUrl === '') {
-    console.error('Fathom: invalid tracker URL');
-    return;
+    trackerUrl = findTrackerUrl();
   }
 
   // Respect "Do Not Track" requests
   if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
+    return;
+  }
+
+  // ignore prerendered pages
+  if( 'visibilityState' in document && document.visibilityState === 'prerender' ) {
     return;
   }
 
@@ -82,7 +91,6 @@ function trackPageview() {
     t: document.title,
     r: referrer,
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
-    b: 1,
     nv: data.isNewVisitor ? 1 : 0, 
     ns: data.isNewSession ? 1 : 0,
   };
