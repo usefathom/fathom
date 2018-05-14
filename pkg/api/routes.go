@@ -25,7 +25,27 @@ func Routes() *mux.Router {
 	r.Handle("/api/stats/referrers", Authorize(GetReferrerStatsHandler)).Methods(http.MethodGet)
 	r.Handle("/api/stats/referrers/pageviews", Authorize(GetReferrerStatsPageviewsHandler)).Methods(http.MethodGet)
 
-	r.Path("/tracker.js").Handler(http.FileServer(packr.NewBox("./../../build/js")))
-	r.PathPrefix("/").Handler(http.FileServer(packr.NewBox("./../../build")))
+	box := packr.NewBox("./../../build")
+	r.Path("/tracker.js").Handler(serveFileFromBox(&box, "js/tracker.js"))
+	r.Path("/").Handler(serveFileFromBox(&box, "/index.html"))
+	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", http.FileServer(box)))
 	return r
+}
+
+func serveFileFromBox(box *packr.Box, filename string) http.Handler {
+	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		f, err := box.Open(filename)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		d, err := f.Stat()
+		if err != nil {
+			return err
+		}
+
+		http.ServeContent(w, r, filename, d.ModTime(), f)
+		return nil
+	})
 }
