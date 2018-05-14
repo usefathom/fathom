@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/mssola/user_agent"
@@ -12,25 +13,32 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
+func ShouldCollect(r *http.Request) bool {
+	// abort if this is a bot.
+	ua := user_agent.New(r.UserAgent())
+	if ua.Bot() {
+		return false
+	}
+
+	if r.Referer() == "" {
+		return false
+	}
+
+	return true
+}
+
 /* middleware */
 func NewCollectHandler() http.Handler {
 	go aggregate()
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		// abort if this is a bot.
-		ua := user_agent.New(r.UserAgent())
-		if ua.Bot() {
+		if !ShouldCollect(r) {
 			return nil
 		}
 
 		u, err := url.Parse(r.Referer())
 		if err != nil {
 			return err
-		}
-
-		// abandon if HTTP referer was empty
-		if u.Scheme == "" || u.Host == "" {
-			return nil
 		}
 
 		q := r.URL.Query()
@@ -40,7 +48,7 @@ func NewCollectHandler() http.Handler {
 		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
 			Hostname:     u.Scheme + "://" + u.Host,
-			Pathname:     q.Get("p"),
+			Pathname:     "/" + strings.TrimLeft(q.Get("p"), "/"),
 			IsNewVisitor: q.Get("nv") == "1",
 			IsNewSession: q.Get("ns") == "1",
 			IsUnique:     q.Get("u") == "1",
