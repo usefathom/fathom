@@ -28,7 +28,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					EnvVar: "FATHOM_SERVER_ADDR",
-					Name:   "addr",
+					Name:   "addr,port",
 					Usage:  "server address",
 					Value:  ":8080",
 				},
