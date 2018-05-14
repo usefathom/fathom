@@ -3,30 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "mwB+SBEBf06n2hoReZ8C3qg5+cc=",
-			"path": "github.com/Pallinder/go-randomdata",
-			"revision": "6fc9e945968728bdf662e5a9f2d4b97f5a24dd03",
-			"revisionTime": "2016-10-21T13:40:32Z"
-		},
-		{
-			"checksumSHA1": "KmjnydoAbofMieIWm+it5OWERaM=",
-			"path": "github.com/alecthomas/template",
-			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
-			"revisionTime": "2016-04-05T07:15:01Z"
-		},
-		{
-			"checksumSHA1": "3wt0pTXXeS+S93unwhGoLIyGX/Q=",
-			"path": "github.com/alecthomas/template/parse",
-			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
-			"revisionTime": "2016-04-05T07:15:01Z"
-		},
-		{
-			"checksumSHA1": "fCc3grA7vIxfBru7R3SqjcW+oLI=",
-			"path": "github.com/alecthomas/units",
-			"revision": "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a",
-			"revisionTime": "2015-10-22T06:55:26Z"
-		},
-		{
 			"checksumSHA1": "QD6LqgLz2JMxXqns8TaxtK9AuHs=",
 			"path": "github.com/go-sql-driver/mysql",
 			"revision": "2e00b5cd70399450106cec6431c2e2ce3cae5034",
@@ -141,6 +117,12 @@
 			"revisionTime": "2018-03-29T22:59:52Z"
 		},
 		{
+			"checksumSHA1": "9/2qvuFPQxW7ZXzQSOYwqZb5cNg=",
+			"path": "github.com/urfave/cli",
+			"revision": "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff",
+			"revisionTime": "2018-02-26T03:02:53Z"
+		},
+		{
 			"checksumSHA1": "Ak1mii27DHhEIjLnNqhK2HNibxg=",
 			"path": "github.com/ziutek/mymysql/godrv",
 			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
@@ -181,12 +163,6 @@
 			"path": "golang.org/x/sys/windows",
 			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
 			"revisionTime": "2018-04-18T21:20:05Z"
-		},
-		{
-			"checksumSHA1": "SeYI7DRWrd0Ku+CLavuwIz3EEmQ=",
-			"path": "gopkg.in/alecthomas/kingpin.v2",
-			"revision": "e9044be3ab2a8e11d4e1f418d12f0790d57e8d70",
-			"revisionTime": "2016-08-29T10:30:05Z"
 		}
 	],
 	"rootPath": "github.com/usefathom/fathom"

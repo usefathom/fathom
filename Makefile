@@ -1,6 +1,7 @@
 DIST := build
 EXECUTABLE := fathom
-LDFLAGS += -extldflags "-static" -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')"
+LDFLAGS += -extldflags "-static"
+MAIN_PKG := ./cmd/fathom
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
@@ -10,13 +11,13 @@ all: assets build
 
 .PHONY: install
 install: $(wildcard *.go)
-	packr install
+	packr install $(MAIN_PKG)
 
 .PHONY: build
 build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES)
-	packr build -v -ldflags '-w $(LDFLAGS)' -o $@
+	packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
 
 .PHONY: assets
 assets: 
