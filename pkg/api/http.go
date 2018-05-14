@@ -2,12 +2,19 @@ package api
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/gobuffalo/packr"
+	log "github.com/sirupsen/logrus"
 )
 
 // Handler is our custom HTTP handler with error returns
 type Handler func(w http.ResponseWriter, r *http.Request) error
+
+type envelope struct {
+	Data  interface{} `json:",omitempty"`
+	Error interface{} `json:",omitempty"`
+}
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := h(w, r); err != nil {
@@ -32,13 +39,38 @@ func HandleError(w http.ResponseWriter, r *http.Request, err error) {
 	w.Write([]byte("false"))
 }
 
-type envelope struct {
-	Data  interface{} `json:",omitempty"`
-	Error interface{} `json:",omitempty"`
-}
-
 func respond(w http.ResponseWriter, d interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(d)
 	return err
+}
+
+func serveFileHandler(box *packr.Box, filename string) http.Handler {
+	return HandlerFunc(serveFile(box, filename))
+}
+
+func serveFile(box *packr.Box, filename string) Handler {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		f, err := box.Open(filename)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		d, err := f.Stat()
+		if err != nil {
+			return err
+		}
+
+		http.ServeContent(w, r, filename, d.ModTime(), f)
+		return nil
+	}
+}
+
+func NotFoundHandler(box *packr.Box) http.Handler {
+	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(box.Bytes("404.html"))
+		return nil
+	})
 }
