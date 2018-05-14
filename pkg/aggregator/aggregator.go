@@ -1,4 +1,4 @@
-package counter
+package aggregator
 
 import (
 	"time"
@@ -9,39 +9,61 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Aggregate() error {
+func Run() {
 	// Get unprocessed pageviews
 	pageviews, err := datastore.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
 		log.Error(err)
-		return err
+		return
 	}
 
 	//  Do we have anything to process?
 	if len(pageviews) == 0 {
-		return nil
+		return
 	}
 
-	sites := map[string]*models.SiteStats{}
-	pages := map[string]*models.PageStats{}
-	referrers := map[string]*models.ReferrerStats{}
+	results := Process(pageviews)
+
+	// update stats
+	for _, site := range results.Sites {
+		err = datastore.UpdateSiteStats(site)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	for _, pageStats := range results.Pages {
+		err = datastore.UpdatePageStats(pageStats)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	for _, referrerStats := range results.Referrers {
+		err = datastore.UpdateReferrerStats(referrerStats)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	// finally, remove pageviews that we just processed
+	err = datastore.DeletePageviews(pageviews)
+	if err != nil {
+		log.Error(err)
+	}
+}
+
+func Process(pageviews []*models.Pageview) *Results {
+	log.Debugf("processing %d pageviews", len(pageviews))
+	results := NewResults()
 
 	for _, p := range pageviews {
-		date := p.Timestamp.Format("2006-01-02")
-
-		var site *models.SiteStats
-		var ok bool
-		if site, ok = sites[date]; !ok {
-			site, err = getSiteStats(p.Timestamp)
-			if err != nil {
-				log.Error(err)
-				continue // TODO: Pageview should not be deleted if this happens
-			}
-
-			sites[date] = site
+		site, err := results.GetSiteStats(p.Timestamp)
+		if err != nil {
+			log.Error(err)
+			continue
 		}
 
-		// site stats
 		site.Pageviews += 1
 
 		// TODO: Weight isn't right here because we need the number of pageview with a known time of page, not all pageviews
@@ -63,15 +85,10 @@ func Aggregate() error {
 			}
 		}
 
-		// page stats
-		var pageStats *models.PageStats
-		if pageStats, ok = pages[date+p.Pathname]; !ok {
-			pageStats, err = getPageStats(p.Timestamp, p.Hostname, p.Pathname)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
-			pages[date+p.Hostname+p.Pathname] = pageStats
+		pageStats, err := results.GetPageStats(p.Timestamp, p.Hostname, p.Pathname)
+		if err != nil {
+			log.Error(err)
+			continue
 		}
 
 		pageStats.Pageviews += 1
@@ -95,15 +112,10 @@ func Aggregate() error {
 
 		// referrer stats
 		if p.Referrer != "" {
-			var referrerStats *models.ReferrerStats
-			var ok bool
-			if referrerStats, ok = referrers[date+p.Referrer]; !ok {
-				referrerStats, err = getReferrerStats(p.Timestamp, p.Referrer)
-				if err != nil {
-					log.Error(err)
-					continue
-				}
-				referrers[date+p.Referrer] = referrerStats
+			referrerStats, err := results.GetReferrerStats(p.Timestamp, p.Referrer)
+			if err != nil {
+				log.Error(err)
+				continue
 			}
 
 			referrerStats.Pageviews += 1
@@ -126,41 +138,11 @@ func Aggregate() error {
 
 	}
 
-	// update stats
-	for _, site := range sites {
-		err = datastore.UpdateSiteStats(site)
-		if err != nil {
-			log.Error(err)
-		}
-	}
-
-	for _, pageStats := range pages {
-		err = datastore.UpdatePageStats(pageStats)
-		if err != nil {
-			log.Error(err)
-			return err
-		}
-	}
-
-	for _, referrerStats := range referrers {
-		err = datastore.UpdateReferrerStats(referrerStats)
-		if err != nil {
-			log.Error(err)
-			return err
-		}
-	}
-
-	// finally, remove pageviews that we just processed
-	err = datastore.DeletePageviews(pageviews)
-	if err != nil {
-		log.Error(err)
-	}
-
-	return nil
+	return results
 }
 
-func getSiteStats(date time.Time) (*models.SiteStats, error) {
-	stats, err := datastore.GetSiteStats(date)
+func getSiteStats(t time.Time) (*models.SiteStats, error) {
+	stats, err := datastore.GetSiteStats(t)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -170,7 +152,7 @@ func getSiteStats(date time.Time) (*models.SiteStats, error) {
 	}
 
 	stats = &models.SiteStats{
-		Date: date,
+		Date: t,
 	}
 	err = datastore.InsertSiteStats(stats)
 	return stats, err

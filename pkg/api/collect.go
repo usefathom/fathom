@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/mssola/user_agent"
-	"github.com/usefathom/fathom/pkg/counter"
+	"github.com/usefathom/fathom/pkg/aggregator"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
 )
@@ -98,13 +98,13 @@ func NewCollectHandler() http.Handler {
 
 // runs the aggregate func every minute
 func aggregate() {
-	counter.Aggregate()
+	aggregator.Run()
 	timeout := 1 * time.Minute
 
 	for {
 		select {
 		case <-time.After(timeout):
-			counter.Aggregate()
+			aggregator.Run()
 		}
 	}
 }
