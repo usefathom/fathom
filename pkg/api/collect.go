@@ -28,6 +28,11 @@ func NewCollectHandler() http.Handler {
 			return err
 		}
 
+		// abandon if HTTP referer was empty
+		if u.Scheme == "" || u.Host == "" {
+			return nil
+		}
+
 		q := r.URL.Query()
 		now := time.Now()
 
