@@ -12,6 +12,13 @@ func TestParse(t *testing.T) {
 		t.Errorf("expected secret, got empty string")
 	}
 
+	secret := "my-super-secret-string"
+	os.Setenv("FATHOM_SECRET", secret)
+	cfg = Parse("")
+	if cfg.Secret != secret {
+		t.Errorf("Expected %#v, got %#v", secret, cfg.Secret)
+	}
+
 	os.Setenv("FATHOM_DATABASE_DRIVER", "sqlite")
 	cfg = Parse("")
 	if cfg.Database.Driver != "sqlite3" {
