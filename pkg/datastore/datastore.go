@@ -44,10 +44,10 @@ func runMigrations(driver string) {
 	n, err := migrate.Exec(dbx.DB, driver, migrations, migrate.Up)
 
 	if err != nil {
-		log.Fatal("Database migrations failed: ", err)
+		log.Fatal("database migrations failed: ", err)
 	}
 
 	if n > 0 {
-		log.Printf("Applied %d database migrations!\n", n)
+		log.Infof("applied %d database migrations", n)
 	}
 }

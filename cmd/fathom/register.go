@@ -22,9 +22,9 @@ func register(c *cli.Context) error {
 	err := datastore.SaveUser(user)
 
 	if err != nil {
-		log.Printf("Error creating user: %s", err)
+		log.Errorf("error creating user: %s", err)
 	} else {
-		log.Printf("User %s #%d created.\n", user.Email, user.ID)
+		log.Infof("created user %s", user.Email)
 	}
 	return nil
 }
