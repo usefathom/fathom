@@ -18,10 +18,13 @@ type Config struct {
 
 func parseConfig(file string) *Config {
 	var cfg Config
+	var err error
 
-	err := godotenv.Load(file)
-	if err != nil && file != ".env" {
-		log.Fatalf("error parsing config file: %s", err)
+	if file != "" {
+		err = godotenv.Load(file)
+		if err != nil && file != ".env" {
+			log.Fatalf("error parsing config file: %s", err)
+		}
 	}
 
 	err = envconfig.Process("Fathom", &cfg)

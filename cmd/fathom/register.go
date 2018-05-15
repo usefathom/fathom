@@ -23,8 +23,9 @@ func register(c *cli.Context) error {
 
 	if err != nil {
 		log.Errorf("error creating user: %s", err)
-	} else {
-		log.Infof("created user %s", user.Email)
+		return err
 	}
+
+	log.Infof("created user %s", user.Email)
 	return nil
 }

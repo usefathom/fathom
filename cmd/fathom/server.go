@@ -30,7 +30,7 @@ func server(c *cli.Context) error {
 	}
 
 	// start listening
-	log.Infof("Server listening on %s", addr)
+	log.Infof("server will now listening on %s", addr)
 	err := http.ListenAndServe(addr, h)
 	if err != nil {
 		log.Errorln(err)
