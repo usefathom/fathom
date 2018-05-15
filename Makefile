@@ -3,26 +3,24 @@ EXECUTABLE := fathom
 LDFLAGS += -extldflags "-static"
 MAIN_PKG := ./cmd/fathom
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
+JS_SOURCES ?= $(shell find assets/. -name "*.js" -type f)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 
 .PHONY: all
-all: assets build 
+all: build 
 
 .PHONY: install
 install: $(wildcard *.go)
-	packr install $(MAIN_PKG)
+	packr install -v -ldflags '-w $(LDFLAGS)' $(MAIN_PKG)
 
 .PHONY: build
 build: $(EXECUTABLE)
 
-$(EXECUTABLE): $(SOURCES)
-	packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
-
-.PHONY: assets
-assets: 
+$(EXECUTABLE): $(SOURCES) $(JS_SOURCES)
 	if [ ! -d "node_modules" ]; then npm install; fi
-	gulp	
+	gulp
+	packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
 
 .PHONY: docker
 docker:
