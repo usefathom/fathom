@@ -18,7 +18,7 @@ func register(c *cli.Context) error {
 		Email:    c.String("email"),
 		Password: string(hash),
 	}
-	err := db.SaveUser(user)
+	err := app.database.SaveUser(user)
 
 	if err != nil {
 		log.Errorf("error creating user: %s", err)

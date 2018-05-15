@@ -5,14 +5,20 @@ import (
 	"os"
 
 	"github.com/urfave/cli"
+	"github.com/usefathom/fathom/pkg/config"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
-var db datastore.Datastore
-var config *Config
+type App struct {
+	*cli.App
+	database datastore.Datastore
+	config   *config.Config
+}
+
+var app *App
 
 func main() {
-	app := cli.NewApp()
+	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
 	app.Version = "1.0.0"
@@ -62,13 +68,13 @@ func main() {
 }
 
 func before(c *cli.Context) error {
-	config = parseConfig(c.String("config"))
-	db = datastore.New(config.Database)
+	app.config = config.Parse(c.String("config"))
+	app.database = datastore.New(app.config.Database)
 
 	return nil
 }
 
 func after(c *cli.Context) error {
-	db.Close()
+	app.database.Close()
 	return nil
 }
