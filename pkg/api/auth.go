@@ -66,7 +66,10 @@ func (api *API) LogoutHandler(w http.ResponseWriter, r *http.Request) error {
 func (api *API) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := api.sessions.Get(r, "auth")
+
+		// an err is returned if cookie has been tampered with, so check that
 		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
