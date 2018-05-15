@@ -31,7 +31,7 @@ function parseJSON(r) {
 
 function handleRequestErrors(r) {
     if (!r.ok) {
-        throw new Error(r.statusText);
+      throw new Error(r.status);
     }
     return r;
 }
