@@ -1,17 +1,25 @@
 package aggregator
 
 import (
-	"time"
-
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func Run() {
+type aggregator struct {
+	database datastore.Datastore
+}
+
+func New(db datastore.Datastore) *aggregator {
+	return &aggregator{
+		database: db,
+	}
+}
+
+func (agg *aggregator) Run() {
 	// Get unprocessed pageviews
-	pageviews, err := datastore.GetProcessablePageviews()
+	pageviews, err := agg.database.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
 		log.Error(err)
 		return
@@ -22,43 +30,43 @@ func Run() {
 		return
 	}
 
-	results := Process(pageviews)
+	results := agg.Process(pageviews)
 
 	// update stats
 	for _, site := range results.Sites {
-		err = datastore.UpdateSiteStats(site)
+		err = agg.database.UpdateSiteStats(site)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, pageStats := range results.Pages {
-		err = datastore.UpdatePageStats(pageStats)
+		err = agg.database.UpdatePageStats(pageStats)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, referrerStats := range results.Referrers {
-		err = datastore.UpdateReferrerStats(referrerStats)
+		err = agg.database.UpdateReferrerStats(referrerStats)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	// finally, remove pageviews that we just processed
-	err = datastore.DeletePageviews(pageviews)
+	err = agg.database.DeletePageviews(pageviews)
 	if err != nil {
 		log.Error(err)
 	}
 }
 
-func Process(pageviews []*models.Pageview) *Results {
+func (agg *aggregator) Process(pageviews []*models.Pageview) *Results {
 	log.Debugf("processing %d pageviews", len(pageviews))
 	results := NewResults()
 
 	for _, p := range pageviews {
-		site, err := results.GetSiteStats(p.Timestamp)
+		site, err := agg.getSiteStats(results, p.Timestamp)
 		if err != nil {
 			log.Error(err)
 			continue
@@ -85,7 +93,7 @@ func Process(pageviews []*models.Pageview) *Results {
 			}
 		}
 
-		pageStats, err := results.GetPageStats(p.Timestamp, p.Hostname, p.Pathname)
+		pageStats, err := agg.getPageStats(results, p.Timestamp, p.Hostname, p.Pathname)
 		if err != nil {
 			log.Error(err)
 			continue
@@ -112,7 +120,7 @@ func Process(pageviews []*models.Pageview) *Results {
 
 		// referrer stats
 		if p.Referrer != "" {
-			referrerStats, err := results.GetReferrerStats(p.Timestamp, p.Referrer)
+			referrerStats, err := agg.getReferrerStats(results, p.Timestamp, p.Referrer)
 			if err != nil {
 				log.Error(err)
 				continue
@@ -139,58 +147,4 @@ func Process(pageviews []*models.Pageview) *Results {
 	}
 
 	return results
-}
-
-func getSiteStats(t time.Time) (*models.SiteStats, error) {
-	stats, err := datastore.GetSiteStats(t)
-	if err != nil && err != datastore.ErrNoResults {
-		return nil, err
-	}
-
-	if stats != nil {
-		return stats, nil
-	}
-
-	stats = &models.SiteStats{
-		Date: t,
-	}
-	err = datastore.InsertSiteStats(stats)
-	return stats, err
-}
-
-func getPageStats(date time.Time, hostname string, pathname string) (*models.PageStats, error) {
-	stats, err := datastore.GetPageStats(date, hostname, pathname)
-	if err != nil && err != datastore.ErrNoResults {
-		return nil, err
-	}
-
-	if stats != nil {
-		return stats, nil
-	}
-
-	stats = &models.PageStats{
-		Hostname: hostname,
-		Pathname: pathname,
-		Date:     date,
-	}
-	err = datastore.InsertPageStats(stats)
-	return stats, err
-}
-
-func getReferrerStats(date time.Time, url string) (*models.ReferrerStats, error) {
-	stats, err := datastore.GetReferrerStats(date, url)
-	if err != nil && err != datastore.ErrNoResults {
-		return nil, err
-	}
-
-	if stats != nil {
-		return stats, nil
-	}
-
-	stats = &models.ReferrerStats{
-		URL:  url,
-		Date: date,
-	}
-	err = datastore.InsertReferrerStats(stats)
-	return stats, err
 }

@@ -13,7 +13,8 @@ import (
 
 func server(c *cli.Context) error {
 	var h http.Handler
-	h = api.Routes()
+	a := api.New(db, config.Secret)
+	h = a.Routes()
 
 	// set debug log level if --debug was passed
 	if c.Bool("debug") {

@@ -1,4 +1,4 @@
-package datastore
+package sqlstore
 
 import "fmt"
 

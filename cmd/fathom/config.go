@@ -2,16 +2,15 @@ package main
 
 import (
 	"math/rand"
-	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
-	"github.com/usefathom/fathom/pkg/datastore"
+	"github.com/usefathom/fathom/pkg/datastore/sqlstore"
 )
 
 type Config struct {
-	Database *datastore.Config
+	Database *sqlstore.Config
 
 	Secret string
 }
@@ -37,10 +36,9 @@ func parseConfig(file string) *Config {
 		cfg.Database.Driver = "sqlite3"
 	}
 
-	// if secret key is empty, use a randomly generated one to ease first-time installation
+	// if secret key is empty, use a randomly generated one
 	if cfg.Secret == "" {
 		cfg.Secret = randomString(40)
-		os.Setenv("FATHOM_SECRET", cfg.Secret)
 	}
 
 	return &cfg

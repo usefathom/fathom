@@ -1,4 +1,4 @@
-package datastore
+package sqlstore
 
 import (
 	"database/sql"
@@ -6,10 +6,10 @@ import (
 )
 
 // GetUser retrieves user from datastore by its ID
-func GetUser(ID int64) (*models.User, error) {
+func (db *sqlstore) GetUser(ID int64) (*models.User, error) {
 	u := &models.User{}
-	query := dbx.Rebind("SELECT * FROM users WHERE id = ? LIMIT 1")
-	err := dbx.Get(u, query, ID)
+	query := db.Rebind("SELECT * FROM users WHERE id = ? LIMIT 1")
+	err := db.Get(u, query, ID)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -23,10 +23,10 @@ func GetUser(ID int64) (*models.User, error) {
 }
 
 // GetUserByEmail retrieves user from datastore by its email
-func GetUserByEmail(email string) (*models.User, error) {
+func (db *sqlstore) GetUserByEmail(email string) (*models.User, error) {
 	u := &models.User{}
-	query := dbx.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1")
-	err := dbx.Get(u, query, email)
+	query := db.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1")
+	err := db.Get(u, query, email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, ErrNoResults
@@ -39,9 +39,9 @@ func GetUserByEmail(email string) (*models.User, error) {
 }
 
 // SaveUser inserts the user model in the connected database
-func SaveUser(u *models.User) error {
-	var query = dbx.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
-	result, err := dbx.Exec(query, u.Email, u.Password)
+func (db *sqlstore) SaveUser(u *models.User) error {
+	var query = db.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
+	result, err := db.Exec(query, u.Email, u.Password)
 	if err != nil {
 		return err
 	}

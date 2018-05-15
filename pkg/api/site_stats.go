@@ -2,65 +2,53 @@ package api
 
 import (
 	"net/http"
-
-	"github.com/usefathom/fathom/pkg/datastore"
-	"github.com/usefathom/fathom/pkg/models"
 )
 
-// URL: /api/stats/site
-var GetSiteStatsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	// before, after := getRequestedPeriods(r)
-	// limit := getRequestedLimit(r)
-
-	var results []*models.SiteStats
-	return respond(w, envelope{Data: results})
-})
-
 // URL: /api/stats/site/pageviews
-var GetSiteStatsPageviewsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+func (api *API) GetSiteStatsPageviewsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := datastore.GetTotalSiteViews(params.StartDate, params.EndDate)
+	result, err := api.database.GetTotalSiteViews(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
 	return respond(w, envelope{Data: result})
-})
+}
 
 // URL: /api/stats/site/visitors
-var GetSiteStatsVisitorsHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+func (api *API) GetSiteStatsVisitorsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := datastore.GetTotalSiteVisitors(params.StartDate, params.EndDate)
+	result, err := api.database.GetTotalSiteVisitors(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
 	return respond(w, envelope{Data: result})
-})
+}
 
 // URL: /api/stats/site/duration
-var GetSiteStatsDurationHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+func (api *API) GetSiteStatsDurationHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := datastore.GetAverageSiteDuration(params.StartDate, params.EndDate)
+	result, err := api.database.GetAverageSiteDuration(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
 	return respond(w, envelope{Data: result})
-})
+}
 
 // URL: /api/stats/site/bounces
-var GetSiteStatsBouncesHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+func (api *API) GetSiteStatsBouncesHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := datastore.GetAverageSiteBounceRate(params.StartDate, params.EndDate)
+	result, err := api.database.GetAverageSiteBounceRate(params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}
 	return respond(w, envelope{Data: result})
-})
+}
 
 // URL: /api/stats/site/realtime
-var GetSiteStatsRealtimeHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	result, err := datastore.GetRealtimeVisitorCount()
+func (api *API) GetSiteStatsRealtimeHandler(w http.ResponseWriter, r *http.Request) error {
+	result, err := api.database.GetRealtimeVisitorCount()
 	if err != nil {
 		return err
 	}
 	return respond(w, envelope{Data: result})
-})
+}

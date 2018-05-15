@@ -4,9 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"os"
 
-	"github.com/gorilla/sessions"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,17 +20,14 @@ type login struct {
 	Password string `json:"password"`
 }
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("FATHOM_SECRET")))
-
 // URL: POST /api/session
-var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-
+func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 	// check login creds
 	var l login
 	json.NewDecoder(r.Body).Decode(&l)
 
 	// find user with given email
-	u, err := datastore.GetUserByEmail(l.Email)
+	u, err := api.database.GetUserByEmail(l.Email)
 	if err != nil && err != datastore.ErrNoResults {
 		return err
 	}
@@ -43,7 +38,7 @@ var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) erro
 		return respond(w, envelope{Error: "invalid_credentials"})
 	}
 
-	session, _ := store.Get(r, "auth")
+	session, _ := api.sessions.Get(r, "auth")
 	session.Values["user_id"] = u.ID
 	err = session.Save(r, w)
 	if err != nil {
@@ -51,11 +46,11 @@ var LoginHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) erro
 	}
 
 	return respond(w, envelope{Data: true})
-})
+}
 
 // URL: DELETE /api/session
-var LogoutHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-	session, _ := store.Get(r, "auth")
+func (api *API) LogoutHandler(w http.ResponseWriter, r *http.Request) error {
+	session, _ := api.sessions.Get(r, "auth")
 	if !session.IsNew {
 		session.Options.MaxAge = -1
 		err := session.Save(r, w)
@@ -65,12 +60,12 @@ var LogoutHandler = HandlerFunc(func(w http.ResponseWriter, r *http.Request) err
 	}
 
 	return respond(w, envelope{Data: true})
-})
+}
 
 /* middleware */
-func Authorize(next http.Handler) http.Handler {
+func (api *API) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := store.Get(r, "auth")
+		session, err := api.sessions.Get(r, "auth")
 		if err != nil {
 			return
 		}
@@ -83,7 +78,7 @@ func Authorize(next http.Handler) http.Handler {
 		}
 
 		// find user
-		u, err := datastore.GetUser(userID.(int64))
+		u, err := api.database.GetUser(userID.(int64))
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return

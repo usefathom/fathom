@@ -1,53 +1,55 @@
 package datastore
 
 import (
-	"errors"
+	"time"
 
-	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"github.com/gobuffalo/packr"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"           // postgresql driver
-	_ "github.com/mattn/go-sqlite3" //sqlite3 driver
-	migrate "github.com/rubenv/sql-migrate"
-	log "github.com/sirupsen/logrus"
+	"github.com/usefathom/fathom/pkg/datastore/sqlstore"
+	"github.com/usefathom/fathom/pkg/models"
 )
 
-var dbx *sqlx.DB
+var ErrNoResults = sqlstore.ErrNoResults // ???
 
-// ErrNoResults is returned when a query yielded 0 results
-var ErrNoResults = errors.New("datastore: query returned 0 results")
+type Datastore interface {
+	// users
+	GetUser(int64) (*models.User, error)
+	GetUserByEmail(string) (*models.User, error)
+	SaveUser(*models.User) error
 
-// Init creates a database connection pool (using sqlx)
-func Init(c *Config) *sqlx.DB {
-	dbx = New(c)
+	// site stats
+	GetSiteStats(time.Time) (*models.SiteStats, error)
+	InsertSiteStats(*models.SiteStats) error
+	UpdateSiteStats(*models.SiteStats) error
+	GetTotalSiteViews(time.Time, time.Time) (int, error)
+	GetTotalSiteVisitors(time.Time, time.Time) (int, error)
+	GetTotalSiteSessions(time.Time, time.Time) (int, error)
+	GetAverageSiteDuration(time.Time, time.Time) (float64, error)
+	GetAverageSiteBounceRate(time.Time, time.Time) (float64, error)
+	GetRealtimeVisitorCount() (int, error)
 
-	// run migrations
-	runMigrations(c.Driver)
+	// pageviews
+	SavePageview(*models.Pageview) error
+	UpdatePageview(*models.Pageview) error
+	GetMostRecentPageviewBySessionID(string) (*models.Pageview, error)
+	GetProcessablePageviews() ([]*models.Pageview, error)
+	DeletePageviews([]*models.Pageview) error
 
-	return dbx
+	// page stats
+	GetPageStats(time.Time, string, string) (*models.PageStats, error)
+	InsertPageStats(*models.PageStats) error
+	UpdatePageStats(*models.PageStats) error
+	GetAggregatedPageStats(time.Time, time.Time, int) ([]*models.PageStats, error)
+	GetAggregatedPageStatsPageviews(time.Time, time.Time) (int, error)
+
+	// referrer stats
+	GetReferrerStats(time.Time, string) (*models.ReferrerStats, error)
+	InsertReferrerStats(*models.ReferrerStats) error
+	UpdateReferrerStats(*models.ReferrerStats) error
+	GetAggregatedReferrerStats(time.Time, time.Time, int) ([]*models.ReferrerStats, error)
+	GetAggregatedReferrerStatsPageviews(time.Time, time.Time) (int, error)
+
+	Close()
 }
 
-// New creates a new database pool
-func New(c *Config) *sqlx.DB {
-	dbx := sqlx.MustConnect(c.Driver, c.DSN())
-	return dbx
-}
-
-// TODO: Move to command (but still auto-run on boot).
-func runMigrations(driver string) {
-	migrations := &migrate.PackrMigrationSource{
-		Box: packr.NewBox("./migrations"),
-		Dir: "./" + driver,
-	}
-	migrate.SetTable("migrations")
-
-	n, err := migrate.Exec(dbx.DB, driver, migrations, migrate.Up)
-
-	if err != nil {
-		log.Fatal("database migrations failed: ", err)
-	}
-
-	if n > 0 {
-		log.Infof("applied %d database migrations", n)
-	}
+func New(c *sqlstore.Config) Datastore {
+	return sqlstore.New(c)
 }

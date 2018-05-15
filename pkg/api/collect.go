@@ -27,9 +27,8 @@ func ShouldCollect(r *http.Request) bool {
 	return true
 }
 
-/* middleware */
-func NewCollectHandler() http.Handler {
-	go aggregate()
+func (api *API) NewCollectHandler() http.Handler {
+	go aggregate(api.database)
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		if !ShouldCollect(r) {
@@ -60,7 +59,7 @@ func NewCollectHandler() http.Handler {
 
 		// find previous pageview by same visitor
 		if !pageview.IsNewSession {
-			previousPageview, err := datastore.GetMostRecentPageviewBySessionID(pageview.SessionID)
+			previousPageview, err := api.database.GetMostRecentPageviewBySessionID(pageview.SessionID)
 			if err != nil && err != datastore.ErrNoResults {
 				return err
 			}
@@ -69,7 +68,7 @@ func NewCollectHandler() http.Handler {
 			if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
 				previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
 				previousPageview.IsBounce = false
-				err := datastore.UpdatePageview(previousPageview)
+				err := api.database.UpdatePageview(previousPageview)
 				if err != nil {
 					return err
 				}
@@ -77,7 +76,7 @@ func NewCollectHandler() http.Handler {
 		}
 
 		// save new pageview
-		err = datastore.SavePageview(pageview)
+		err = api.database.SavePageview(pageview)
 		if err != nil {
 			return err
 		}
@@ -97,14 +96,16 @@ func NewCollectHandler() http.Handler {
 }
 
 // runs the aggregate func every minute
-func aggregate() {
-	aggregator.Run()
+func aggregate(db datastore.Datastore) {
+	agg := aggregator.New(db)
+	agg.Run()
+
 	timeout := 1 * time.Minute
 
 	for {
 		select {
 		case <-time.After(timeout):
-			aggregator.Run()
+			agg.Run()
 		}
 	}
 }

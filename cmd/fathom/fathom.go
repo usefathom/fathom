@@ -4,12 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
-var db *sqlx.DB
+var db datastore.Datastore
 var config *Config
 
 func main() {
@@ -64,7 +63,8 @@ func main() {
 
 func before(c *cli.Context) error {
 	config = parseConfig(c.String("config"))
-	db = datastore.Init(config.Database)
+	db = datastore.New(config.Database)
+
 	return nil
 }
 
