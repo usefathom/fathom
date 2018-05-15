@@ -28,7 +28,7 @@ class Realtime extends Component {
     Client.request(`stats/site/realtime`)
       .then((d) => { this.setState({ count: d })})
       .catch((e) => {
-        if(e.message === "Unauthorized") {
+        if(e.message == 401) {
           this.props.onError();
         }
       })
