@@ -17,7 +17,7 @@ class CountWidget extends Component {
     super(props)
 
     this.state = {
-      value: '-',
+      value: 0.00,
       loading: false,
       before: props.before,
       after: props.after,
@@ -32,9 +32,33 @@ class CountWidget extends Component {
     this.setState({
       before: newProps.before,
       after: newProps.after,
-      value: '-',
     });
     this.fetchData();
+  }
+
+  @bind 
+  countUp(toValue) {
+    const duration = 1000;
+    const easeOutQuint = function (t) { return 1+(--t)*t*t*t*t };
+    const setState = this.setState.bind(this);
+    const startValue = this.state.value;
+    const diff = toValue - startValue;
+    let startTime;
+
+    const tick = function(t) {
+      if(!startTime) { startTime = t; }
+      let progress = ( t - startTime ) / duration;
+      let newValue = Math.round(startValue + (easeOutQuint(progress) * diff));
+      setState({
+        value: newValue,
+      })
+
+      if(progress < 1) {
+        window.requestAnimationFrame(tick);
+      }
+    }
+
+    window.requestAnimationFrame(tick);
   }
 
   @bind
@@ -50,33 +74,37 @@ class CountWidget extends Component {
           return;
         }
 
-        switch(this.props.format) {
-          case "percentage":
-            d = numbers.formatPercentage(d)
-          break;  
-
-          default:
-          case "number":
-              d = numbers.formatWithComma(d)
-          break;
-
-          case "duration":
-            d = numbers.formatDuration(d)
-          break;
-        }
-
         this.setState({ 
-          loading: false, 
-          value: d, 
+          loading: false,
         })
+        this.countUp(d);
       })
   }
 
   render(props, state) {
+    let formattedValue = "-";
+
+    if(state.value > 0) {
+      switch(props.format) {
+        case "percentage":
+          formattedValue = numbers.formatPercentage(state.value)
+        break;  
+
+        default:
+        case "number":
+            formattedValue = numbers.formatWithComma(state.value)
+        break;
+
+        case "duration":
+          formattedValue = numbers.formatDuration(state.value)
+        break;
+      }
+    }
+
     return (
        <div class={"totals-detail " + ( state.loading ? "loading" : '')}>
         <div class="total-heading">{props.title}</div>
-        <div class="total-numbers">{state.value}</div>
+        <div class="total-numbers">{formattedValue}</div>
       </div>
     )
   }
