@@ -4,21 +4,29 @@ import (
 	"log"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
-func main() {
-	cfg := parseConfig()
-	db := datastore.Init(cfg.Database)
-	defer db.Close()
+var db *sqlx.DB
+var config *Config
 
+func main() {
 	app := cli.NewApp()
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
 	app.Version = "1.0.0"
 	app.HelpName = "fathom"
-	app.Flags = []cli.Flag{}
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "config, c",
+			Value: ".env",
+			Usage: "Load configuration from `FILE`",
+		},
+	}
+	app.Before = before
+	app.After = after
 	app.Commands = []cli.Command{
 		{
 			Name:    "server",
@@ -34,7 +42,7 @@ func main() {
 				},
 				cli.BoolFlag{
 					EnvVar: "FATHOM_DEBUG",
-					Name:   "debug",
+					Name:   "debug, d",
 				},
 			},
 		},
@@ -50,5 +58,17 @@ func main() {
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
+		os.Exit(1)
 	}
+}
+
+func before(c *cli.Context) error {
+	config = parseConfig(c.String("config"))
+	db = datastore.Init(config.Database)
+	return nil
+}
+
+func after(c *cli.Context) error {
+	db.Close()
+	return nil
 }

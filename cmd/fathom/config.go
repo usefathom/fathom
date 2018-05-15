@@ -1,12 +1,12 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
@@ -16,12 +16,17 @@ type Config struct {
 	Secret string
 }
 
-func parseConfig() *Config {
+func parseConfig(file string) *Config {
 	var cfg Config
-	godotenv.Load()
-	err := envconfig.Process("Fathom", &cfg)
+
+	err := godotenv.Load(file)
+	if err != nil && file != ".env" {
+		log.Fatalf("error parsing config file: %s", err)
+	}
+
+	err = envconfig.Process("Fathom", &cfg)
 	if err != nil {
-		log.Fatalf("Error parsing Fathom config from environment: %s", err)
+		log.Fatalf("error parsing config from environment values: %s", err)
 	}
 
 	// alias sqlite to sqlite3

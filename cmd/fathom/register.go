@@ -1,11 +1,11 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 func register(c *cli.Context) error {
