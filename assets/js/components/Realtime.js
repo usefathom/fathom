@@ -28,7 +28,7 @@ class Realtime extends Component {
     Client.request(`stats/site/realtime`)
       .then((d) => { 
         this.setState({ count: d })
-        document.title = ( d > 0 ? d + ' current visitors &mdot; Fathom' : 'Fathom' );
+        document.title = ( d > 0 ? d + ' current visitors — Fathom' : 'Fathom' );
       })
       .catch((e) => {
         if(e.message == 401) {
