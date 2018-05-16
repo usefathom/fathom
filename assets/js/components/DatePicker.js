@@ -38,32 +38,42 @@ class DatePicker extends Component {
   @bind
   setTimeRange(period) {
     const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
-    let beforeDate = new Date();
-    beforeDate.setHours(24);
-    beforeDate.setMinutes(0);
 
-    let afterDate = new Date();
-    afterDate.setHours(0);
-    afterDate.setMinutes(0);
+    let startDate = new Date();
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+
+    let endDate = new Date();
+    endDate.setHours(24);
+    endDate.setMinutes(0);
+
     switch(period) {
       case "week":
-        afterDate.setDate(afterDate.getDate() - (afterDate.getDay() + 6) % 7);
+        startDate.setDate(startDate.getDate() - (startDate.getDay() + 6) % 7);
+        endDate.setDate(startDate.getDate() + 7);
       break;
       case "month":
-        afterDate.setDate(1);
+        startDate.setDate(1);
+        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(0);
       break;
       case "year":
-        afterDate.setDate(1);
-        afterDate.setMonth(0);
+        startDate.setDate(1);
+        startDate.setMonth(0);
+        endDate.setYear(startDate.getFullYear() + 1);
+        endDate.setMonth(0);
+        endDate.setDate(0);
       break;
     }
 
     let before, after;
 
-    before = Math.round(((+beforeDate) / 1000) - timezoneOffset);
-    after = Math.round(((+afterDate) / 1000) - timezoneOffset);
+    before = Math.round(((+endDate) / 1000) - timezoneOffset);
+    after = Math.round(((+startDate) / 1000) - timezoneOffset);
     this.setState({
       period: period,
+      startDate: startDate,
+      endDate: endDate,
       before: before, 
       after: after,
     });
@@ -92,6 +102,7 @@ class DatePicker extends Component {
 
       <ul>
         {links}
+        <li><span style="padding: 0 8px 0 0;">&mdash;</span> <strong>{state.startDate.toLocaleDateString()}</strong> to <strong>{state.endDate.toLocaleDateString()}</strong></li>
       </ul>
     )
   }

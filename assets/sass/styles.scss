@@ -67,8 +67,12 @@ body {
   nav.main-nav li a { padding: 6px 8px 6px 0; }
   nav li a:hover { color: #98a0a6; }
 
-  .date-nav ul { padding: 0; margin: 0; }
-  nav.date-nav li a { color: #46494d; }
+  .date-nav ul { padding: 0; margin: 0; font-size: 12px; text-transform: uppercase; }
+  .date-nav li, 
+  .date-nav li a { 
+    color: #46494d; 
+  }
+  nav.date-nav li a {  }
   nav.date-nav li a:hover { color: #98a0a6; }
   nav.date-nav li.active a:hover { color: #46494d; }
   nav.date-nav li.active a:after { content:""; background: #88ffc6; display: block; width: 100%; height: 3px; position: absolute; top: 4px; z-index: -1; margin: 0 0 0 -4px; transition: all .4s ease; }
