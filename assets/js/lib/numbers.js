@@ -18,6 +18,7 @@ function formatWithComma(nStr) {
 }
 
 function formatDuration(seconds) {
+  seconds = Math.round(seconds);
    var date = new Date(null);
    date.setSeconds(seconds); // specify value for SECONDS here
    return date.toISOString().substr(14, 5);
