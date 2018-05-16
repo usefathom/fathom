@@ -35,7 +35,7 @@ class CountWidget extends Component {
     let startTime = performance.now();
 
     const tick = function(t) {
-      let progress = ( t - startTime ) / duration;
+      let progress = Math.min(( t - startTime ) / duration, 1);
       let newValue = startValue + (easeOutQuint(progress) * diff);
       setState({
         value: newValue,
