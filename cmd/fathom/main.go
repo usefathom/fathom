@@ -18,6 +18,10 @@ type App struct {
 var app *App
 
 func main() {
+	// force all times in UTC, regardless of server timezone
+	os.Setenv("TZ", "")
+
+	// setup CLI app
 	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
@@ -70,7 +74,6 @@ func main() {
 func before(c *cli.Context) error {
 	app.config = config.Parse(c.String("config"))
 	app.database = datastore.New(app.config.Database)
-
 	return nil
 }
 
