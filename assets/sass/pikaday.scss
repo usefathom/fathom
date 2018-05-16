@@ -1,68 +1,34 @@
+
+@charset "UTF-8";
+
 /*!
  * Pikaday
  * Copyright © 2014 David Bushell | BSD & MIT license | http://dbushell.com/
  */
 
-// Variables
-// Declare any of these variables before importing this SCSS file to easily override defaults
-// Variables are namespaced with the pd (pikaday) prefix
-
-// Colours
-$pd-text-color: #333 !default;
-$pd-title-color: #333 !default;
-$pd-title-bg: #fff !default;
-$pd-picker-bg: #fff !default;
-$pd-picker-border: #ccc !default;
-$pd-picker-border-bottom: #bbb !default;
-$pd-picker-shadow: rgba(0,0,0,.5) !default;
-$pd-th-color: #999 !default;
-$pd-day-color: #666 !default;
-$pd-day-bg: #f5f5f5 !default;
-$pd-day-hover-color: #fff !default;
-$pd-day-hover-bg: #ff8000 !default;
-$pd-day-today-color: #33aaff !default;
-$pd-day-selected-color: #fff !default;
-$pd-day-selected-bg: #33aaff !default;
-$pd-day-selected-shadow: #178fe5 !default;
-$pd-day-disabled-color: #999 !default;
-$pd-week-color: #999 !default;
-
-// Font
-$pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
-
-
 .pika-single {
     z-index: 9999;
     display: block;
     position: relative;
-    color: $pd-text-color;
-    background: $pd-picker-bg;
-    border: 1px solid $pd-picker-border;
-    border-bottom-color: $pd-picker-border-bottom;
-    font-family: $pd-font-family;
-
-    &.is-hidden {
-        display: none;
-    }
-
-    &.is-bound {
-        position: absolute;
-        box-shadow: 0 5px 15px -5px $pd-picker-shadow;
-    }
+    background: #fff; 
+    border-radius: 4px; 
+    box-shadow: 0 2px 8px 0 rgba(70,73,77,.16);
 }
 
-// clear child float (pika-lendar), using the famous micro clearfix hack
-// http://nicolasgallagher.com/micro-clearfix-hack/
-.pika-single {
-    *zoom: 1;
+.pika-single:before,
+.pika-single:after {
+    content: " ";
+    display: table;
+}
+.pika-single:after { clear: both }
+.pika-single { *zoom: 1 }
 
-    &:before,
-    &:after {
-        content: " ";
-        display: table;
-    }
+.pika-single.is-hidden {
+    display: none;
+}
 
-    &:after { clear: both }
+.pika-single.is-bound {
+    position: absolute;
 }
 
 .pika-lendar {
@@ -74,17 +40,6 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 .pika-title {
     position: relative;
     text-align: center;
-
-    select {
-        cursor: pointer;
-        position: absolute;
-        z-index: 9998;
-        margin: 0;
-        left: 0;
-        top: 5px;
-        filter: alpha(opacity=0);
-        opacity: 0;
-    }
 }
 
 .pika-label {
@@ -97,9 +52,17 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
     padding: 5px 3px;
     font-size: 14px;
     line-height: 20px;
-    font-weight: bold;
-    color: $pd-title-color;
-    background-color: $pd-title-bg;
+    font-weight: 500;
+}
+.pika-title select {
+    cursor: pointer;
+    position: absolute;
+    z-index: 9998;
+    margin: 0;
+    left: 0;
+    top: 5px;
+    filter: alpha(opacity=0);
+    opacity: 0;
 }
 
 .pika-prev,
@@ -112,7 +75,7 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
     padding: 0;
     width: 20px;
     height: 30px;
-    text-indent: 20px; // hide text using text-indent trick, using width value (it's enough)
+    text-indent: 20px;
     white-space: nowrap;
     overflow: hidden;
     background-color: transparent;
@@ -122,15 +85,11 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
     opacity: .5;
     *position: absolute;
     *top: 0;
+}
 
-    &:hover {
-        opacity: 1;
-    }
-
-    &.is-disabled {
-        cursor: default;
-        opacity: .2;
-    }
+.pika-prev:hover,
+.pika-next:hover {
+    opacity: 1;
 }
 
 .pika-prev,
@@ -147,6 +106,12 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
     *right: 0;
 }
 
+.pika-prev.is-disabled,
+.pika-next.is-disabled {
+    cursor: default;
+    opacity: .2;
+}
+
 .pika-select {
     display: inline-block;
     *display: inline;
@@ -157,99 +122,100 @@ $pd-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
     border-collapse: collapse;
     border-spacing: 0;
     border: 0;
+}
 
-    th,
-    td {
-        width: 14.285714285714286%;
-        padding: 0;
-    }
+.pika-table th,
+.pika-table td {
+    width: 14.285714285714286%;
+    padding: 0;
+}
 
-    th {
-        color: $pd-th-color;
-        font-size: 12px;
-        line-height: 25px;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    abbr {
-        border-bottom: none;
-        cursor: help;
-    }
+.pika-table th {
+    color: #98a0a6;
+    font-size: 12px;
+    line-height: 25px;
+    font-weight: 500;
+    text-align: center;
 }
 
 .pika-button {
     cursor: pointer;
     display: block;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
     outline: none;
     border: 0;
     margin: 0;
     width: 100%;
-    padding: 5px;
-    color: $pd-day-color;
+    padding: 4px;
+    color: #666;
     font-size: 12px;
-    line-height: 15px;
+    line-height: 16px;
     text-align: right;
-    background: $pd-day-bg;
-
-    .is-today & {
-        color: $pd-day-today-color;
-        font-weight: bold;
-    }
-
-    .is-selected & {
-        color: $pd-day-selected-color;
-        font-weight: bold;
-        background: $pd-day-selected-bg;
-        box-shadow: inset 0 1px 3px $pd-day-selected-shadow;
-        border-radius: 3px;
-    }
-
-    .is-disabled &,
-    .is-outside-current-month & {        
-        color: $pd-day-disabled-color;
-        opacity: .3;
-    }
-
-    .is-disabled & {
-        pointer-events: none;
-        cursor: default;
-    }
-
-    &:hover {
-        color: $pd-day-hover-color;
-        background: $pd-day-hover-bg;
-        box-shadow: none;
-        border-radius: 3px;
-    }
-
-    .is-selection-disabled {
-        pointer-events: none;
-        cursor: default;
-    }
+    background: #f5f7fa;
 }
 
 .pika-week {
     font-size: 11px;
-    color: $pd-week-color;
+    color: #98a0a6;
 }
 
+.is-today .pika-button {
+    color: #533feb;
+    font-weight: 500;
+}
+
+.is-selected .pika-button,
+.has-event .pika-button {
+    color: #fff;
+    font-weight: 500;
+    background: #46494d;
+}
+
+.has-event .pika-button {
+    background: #005da9;
+}
+
+.is-disabled .pika-button,
 .is-inrange .pika-button {
-    background: #D5E9F7;
+    background: #88ffc6;
 }
 
 .is-startrange .pika-button {
-    color: #fff;
-    background: #6CB31D;
+    background: #88ffc6;
     box-shadow: none;
-    border-radius: 3px;
 }
 
 .is-endrange .pika-button {
     color: #fff;
     background: #33aaff;
     box-shadow: none;
-    border-radius: 3px;
 }
+
+.is-disabled .pika-button {
+    pointer-events: none;
+    cursor: default;
+}
+
+.is-outside-current-month .pika-button {
+}
+
+.is-selection-disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+.pika-button:hover,
+.pika-row.pick-whole-week:hover .pika-button {
+    color: #46494d;
+    background: #88ffc6;
+    box-shadow: none;
+}
+
+.pika-table abbr {
+    border: none;
+    cursor: normal;
+    text-decoration: none;
+        font-size: 12px; 
+}
+

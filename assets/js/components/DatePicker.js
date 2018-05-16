@@ -128,7 +128,6 @@ class DatePicker extends Component {
       <ul>
         {links}
         <li class="custom">
-          <span style="padding: 0 8px 0 0;">&mdash;</span> 
           <Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} />
           <span style="margin: 0 8px"> to </span> 
           <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  />
