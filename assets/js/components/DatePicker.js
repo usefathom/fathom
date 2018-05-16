@@ -60,8 +60,8 @@ class DatePicker extends Component {
 
     let before, after;
 
-    before = Math.round(((+beforeDate) / 1000) + timezoneOffset);
-    after = Math.round(((+afterDate) / 1000) + timezoneOffset);
+    before = Math.round(((+beforeDate) / 1000) - timezoneOffset);
+    after = Math.round(((+afterDate) / 1000) - timezoneOffset);
     this.setState({
       period: period,
       before: before, 
