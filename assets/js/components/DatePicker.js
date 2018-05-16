@@ -37,6 +37,7 @@ class DatePicker extends Component {
 
   @bind
   setTimeRange(period) {
+    const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
     let beforeDate = new Date();
     beforeDate.setHours(24);
     beforeDate.setMinutes(0);
@@ -58,8 +59,9 @@ class DatePicker extends Component {
     }
 
     let before, after;
-    before = Math.round((+beforeDate ) / 1000);
-    after = Math.round((+afterDate) / 1000);
+
+    before = Math.round(((+beforeDate) / 1000) + timezoneOffset);
+    after = Math.round(((+afterDate) / 1000) + timezoneOffset);
     this.setState({
       period: period,
       before: before, 
