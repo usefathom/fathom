@@ -122,9 +122,22 @@ body {
   .w10:after{width:10%}.w09:after{width:9%}.w08:after{width:8%}.w07:after{width:7%}.w06:after{width:6%}
   .w05:after{width:5%}.w04:after{width:4%}.w03:after{width:3%}.w02:after{width:2%}.w01:after{width:1%}.w00:after{width:0} 
 
-
   a { color: #46494d; text-decoration: none; transition: all .4s ease; }
   .cell a:hover { color: #533feb; }
+
+.datepicker-wrap{ position: relative; }
+.datepicker{ 
+  position: absolute; 
+  left: 0; 
+  top: 20px; 
+  padding: 6px; 
+  display: block;  
+  z-index: 10; 
+  
+  background: #f5f7fa;
+  box-shadow: 0 2px 8px 0 rgba(70, 73, 77, 0.16);
+  border-radius: 4px;
+}
 
   @media ( min-width: 1220px ) {
     nav.main-nav ul { margin-top: 24px; }

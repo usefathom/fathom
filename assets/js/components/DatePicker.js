@@ -32,13 +32,11 @@ class DatePicker extends Component {
       after: 0,
     }
 
-    this.setTimeRange(this.state.period)
+    this.updateDatesFromPeriod(this.state.period)
   }
 
   @bind
-  setTimeRange(period) {
-    const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
-
+  updateDatesFromPeriod(period) {
     let startDate = new Date();
     startDate.setHours(0);
     startDate.setMinutes(0);
@@ -66,17 +64,25 @@ class DatePicker extends Component {
       break;
     }
 
-    let before, after;
+    this.setDateRange(startDate, endDate, period);
+  }
 
+  @bind
+  setDateRange(startDate, endDate, period) {
+    const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
+
+    let before, after;
     before = Math.round(((+endDate) / 1000) - timezoneOffset);
     after = Math.round(((+startDate) / 1000) - timezoneOffset);
     this.setState({
-      period: period,
+      period: period || '',
       startDate: startDate,
       endDate: endDate,
       before: before, 
       after: after,
+      picking: '',
     });
+
     this.props.onChange(this.state);
   }
 
@@ -89,37 +95,38 @@ class DatePicker extends Component {
       return;
     }
 
-    this.setTimeRange(newPeriod);
+    this.updateDatesFromPeriod(newPeriod);
   }
 
   dateValue(date) {
-    return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+    const addZero = function(n){return n<10? '0'+n:''+n;}
+    return date.getFullYear() + '-' + addZero(date.getMonth() + 1) + '-' + addZero(date.getDate());
   }
 
   @bind
-  pickStart(e) {
-    this.setState({ picking: 'start' })
+  startPicking(e) {
+    this.setState({ picking: e.target.dataset.value })
   }
 
   @bind
-  pickEnd(e) {
-    this.setState({ picking: 'end' })
+  stopPicking(e) {
+    this.setState({ picking: '' })
   }
 
   @bind 
   setStartDate(e) {
-    // TODO: Parse input value
-    this.setState({
-      picking: '',
-    })
+    let newStartDate = e.target.valueAsDate;
+    if(newStartDate) {
+      this.setDateRange(newStartDate, this.state.endDate, '')
+    }
   }
 
   @bind 
   setEndDate(e) {
-    // TODO: Parse input value
-    this.setState({
-      picking: '',
-    })
+    let newEndDate = e.target.valueAsDate;
+    if(newEndDate) {
+      this.setDateRange(this.state.startDate, newEndDate, '')
+    }
   }
 
   render(props, state) {
@@ -133,12 +140,20 @@ class DatePicker extends Component {
         {links}
         <li>
           <span style="padding: 0 8px 0 0;">&mdash;</span> 
-          <span>
-            {state.picking === 'start' ? <input type="date" value={this.dateValue(state.startDate)} onchange={this.setStartDate} /> : <strong onclick={this.pickStart}>{state.startDate.toLocaleDateString()}</strong> }
+          <span class="datepicker-wrap">
+            <strong onclick={this.startPicking} data-value="start">{state.startDate.toLocaleDateString()}</strong>
+            <span class="datepicker" style={state.picking === 'start' ? '' : 'display: none'}>
+              <label>Choose start date</label>
+              <input type="date" value={this.dateValue(state.startDate)} onblur={this.stopPicking} onchange={this.setStartDate} />
+            </span>
           </span>
           <span> to </span> 
-          <span>
-            {state.picking === 'end' ? <input type="date" value={this.dateValue(state.endDate)} onchange={this.setEndDate} /> : <strong onclick={this.pickEnd}>{state.endDate.toLocaleDateString()}</strong> }
+          <span class="datepicker-wrap">
+            <strong onclick={this.startPicking} data-value="end">{state.endDate.toLocaleDateString()}</strong>
+            <span class="datepicker" style={state.picking === 'end' ? '' : 'display: none'}>
+              <label>Choose end date</label>
+              <input type="date" value={this.dateValue(state.endDate)} onblur={this.stopPicking} onchange={this.setStartDate} />
+            </span>
           </span>
         </li>
       </ul>
