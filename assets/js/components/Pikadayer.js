@@ -8,6 +8,7 @@ class Pikadayer extends Component {
     new Pikaday({ 
       field: this.base,
       onSelect: this.props.onSelect,
+      position: 'bottom right',
    })
   }
   render(props) {

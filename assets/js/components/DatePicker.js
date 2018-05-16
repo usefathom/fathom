@@ -70,6 +70,12 @@ class DatePicker extends Component {
 
   @bind
   setDateRange(startDate, endDate, period) {
+    // don't update state if start > end. user may be busy picking dates.
+    // todo: show error
+    if(startDate > endDate) {
+      return;
+    }
+
     const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
 
     let before, after;

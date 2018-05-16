@@ -85,8 +85,13 @@ body {
     border: 0;
     width: 68px;
     outline: 0;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
+
+    &:hover,
+    &:focus {
+      color: #533feb;
+    }
 }
 
   nav li.visitors { color: #533feb; }
