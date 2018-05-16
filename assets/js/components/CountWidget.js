@@ -32,10 +32,9 @@ class CountWidget extends Component {
     const setState = this.setState.bind(this);
     const startValue = isFinite(this.state.value) ? this.state.value : 0;
     const diff = toValue - startValue;
-    let startTime;
+    let startTime = performance.now();
 
     const tick = function(t) {
-      if(!startTime) { startTime = t; }
       let progress = ( t - startTime ) / duration;
       let newValue = startValue + (easeOutQuint(progress) * diff);
       setState({
@@ -46,7 +45,7 @@ class CountWidget extends Component {
         window.requestAnimationFrame(tick);
       }
     }
-
+    
     window.requestAnimationFrame(tick);
   }
 
