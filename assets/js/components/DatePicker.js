@@ -92,6 +92,36 @@ class DatePicker extends Component {
     this.setTimeRange(newPeriod);
   }
 
+  dateValue(date) {
+    return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+  }
+
+  @bind
+  pickStart(e) {
+    this.setState({ picking: 'start' })
+  }
+
+  @bind
+  pickEnd(e) {
+    this.setState({ picking: 'end' })
+  }
+
+  @bind 
+  setStartDate(e) {
+    // TODO: Parse input value
+    this.setState({
+      picking: '',
+    })
+  }
+
+  @bind 
+  setEndDate(e) {
+    // TODO: Parse input value
+    this.setState({
+      picking: '',
+    })
+  }
+
   render(props, state) {
     const links = availablePeriods.map((p) => {
       let className = ( p.id == state.period ) ? 'active' : '';
@@ -99,10 +129,18 @@ class DatePicker extends Component {
     });
 
     return (
-
       <ul>
         {links}
-        <li><span style="padding: 0 8px 0 0;">&mdash;</span> <strong>{state.startDate.toLocaleDateString()}</strong> to <strong>{state.endDate.toLocaleDateString()}</strong></li>
+        <li>
+          <span style="padding: 0 8px 0 0;">&mdash;</span> 
+          <span>
+            {state.picking === 'start' ? <input type="date" value={this.dateValue(state.startDate)} onchange={this.setStartDate} /> : <strong onclick={this.pickStart}>{state.startDate.toLocaleDateString()}</strong> }
+          </span>
+          <span> to </span> 
+          <span>
+            {state.picking === 'end' ? <input type="date" value={this.dateValue(state.endDate)} onchange={this.setEndDate} /> : <strong onclick={this.pickEnd}>{state.endDate.toLocaleDateString()}</strong> }
+          </span>
+        </li>
       </ul>
     )
   }
