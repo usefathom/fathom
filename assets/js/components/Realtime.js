@@ -26,7 +26,10 @@ class Realtime extends Component {
   @bind
   fetchData() {
     Client.request(`stats/site/realtime`)
-      .then((d) => { this.setState({ count: d })})
+      .then((d) => { 
+        this.setState({ count: d })
+        document.title = ( d > 0 ? d + ' current visitors &mdot; Fathom' : 'Fathom' );
+      })
       .catch((e) => {
         if(e.message == 401) {
           this.props.onError();

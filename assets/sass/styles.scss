@@ -76,6 +76,14 @@ body {
   nav.date-nav li a:hover { color: #98a0a6; }
   nav.date-nav li.active a:hover { color: #46494d; }
   nav.date-nav li.active a:after { content:""; background: #88ffc6; display: block; width: 100%; height: 3px; position: absolute; top: 4px; z-index: -1; margin: 0 0 0 -4px; transition: all .4s ease; }
+.date-nav .custom input {
+    background: transparent;
+    border: 0;
+    width: 65px;
+    outline: 0;
+    font-weight: bold;
+    cursor: pointer;
+}
 
   nav li.visitors { color: #533feb; }
   nav li.signout a { padding-right: 0; }
@@ -125,20 +133,6 @@ body {
   a { color: #46494d; text-decoration: none; transition: all .4s ease; }
   .cell a:hover { color: #533feb; }
 
-.datepicker-wrap{ position: relative; }
-.datepicker{ 
-  position: absolute; 
-  left: 0; 
-  top: 20px; 
-  padding: 6px; 
-  display: block;  
-  z-index: 10; 
-  
-  background: #f5f7fa;
-  box-shadow: 0 2px 8px 0 rgba(70, 73, 77, 0.16);
-  border-radius: 4px;
-}
-
   @media ( min-width: 1220px ) {
     nav.main-nav ul { margin-top: 24px; }
 
@@ -170,8 +164,5 @@ body {
 }
 
 
-        
-
-
-
 @import "util";
+@import "pikaday";

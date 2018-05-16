@@ -69,10 +69,9 @@ class Table extends Component {
       ahref.href = (p.Hostname + p.Pathname) || p.URL;
       let classes = "table-row"; 
       if(state.total > 0) {
-        classes += " w" + Math.round(p.Pageviews / state.total * 100);
+        classes += " w" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5));
       }
 
-      // TODO: Add percentage of total back in
       let label = ahref.pathname + ahref.search;
       if( props.showHostname ) {
         label = ahref.hostname.replace('www.', '') + (ahref.pathname.length > 1 ? ahref.pathname : '');

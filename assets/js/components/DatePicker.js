@@ -2,6 +2,7 @@
 
 import { h, Component } from 'preact';
 import { bind } from 'decko';
+import Pikadayer from './Pikadayer.js';
 
 const availablePeriods = [
   {
@@ -103,29 +104,17 @@ class DatePicker extends Component {
     return date.getFullYear() + '-' + addZero(date.getMonth() + 1) + '-' + addZero(date.getDate());
   }
 
-  @bind
-  startPicking(e) {
-    this.setState({ picking: e.target.dataset.value })
-  }
-
-  @bind
-  stopPicking(e) {
-    this.setState({ picking: '' })
-  }
-
   @bind 
-  setStartDate(e) {
-    let newStartDate = e.target.valueAsDate;
-    if(newStartDate) {
-      this.setDateRange(newStartDate, this.state.endDate, '')
+  setStartDate(date) {
+    if(date) {
+      this.setDateRange(date, this.state.endDate, '')
     }
   }
 
   @bind 
-  setEndDate(e) {
-    let newEndDate = e.target.valueAsDate;
-    if(newEndDate) {
-      this.setDateRange(this.state.startDate, newEndDate, '')
+  setEndDate(date) {
+    if(date) {
+      this.setDateRange(this.state.startDate, date, '')
     }
   }
 
@@ -138,23 +127,11 @@ class DatePicker extends Component {
     return (
       <ul>
         {links}
-        <li>
+        <li class="custom">
           <span style="padding: 0 8px 0 0;">&mdash;</span> 
-          <span class="datepicker-wrap">
-            <strong onclick={this.startPicking} data-value="start">{state.startDate.toLocaleDateString()}</strong>
-            <span class="datepicker" style={state.picking === 'start' ? '' : 'display: none'}>
-              <label>Choose start date</label>
-              <input type="date" value={this.dateValue(state.startDate)} onblur={this.stopPicking} onchange={this.setStartDate} />
-            </span>
-          </span>
-          <span> to </span> 
-          <span class="datepicker-wrap">
-            <strong onclick={this.startPicking} data-value="end">{state.endDate.toLocaleDateString()}</strong>
-            <span class="datepicker" style={state.picking === 'end' ? '' : 'display: none'}>
-              <label>Choose end date</label>
-              <input type="date" value={this.dateValue(state.endDate)} onblur={this.stopPicking} onchange={this.setStartDate} />
-            </span>
-          </span>
+          <Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} />
+          <span style="margin: 0 8px"> to </span> 
+          <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  />
         </li>
       </ul>
     )
