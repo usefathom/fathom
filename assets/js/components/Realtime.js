@@ -24,11 +24,18 @@ class Realtime extends Component {
   }
 
   @bind
+  setDocumentTitle() {
+    // update document title
+    let visitorText = this.state.count == 1 ? 'visitor' : 'visitors';
+    document.title = ( this.state.count > 0 ? `${this.state.count} current ${visitorText} — Fathom` : 'Fathom' );
+  }
+
+  @bind
   fetchData() {
     Client.request(`stats/site/realtime`)
       .then((d) => { 
         this.setState({ count: d })
-        document.title = ( d > 0 ? d + ' current visitors — Fathom' : 'Fathom' );
+        this.setDocumentTitle();
       })
       .catch((e) => {
         if(e.message == 401) {
