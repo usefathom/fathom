@@ -7,7 +7,7 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-func (agg *aggregator) getSiteStats(r *Results, t time.Time) (*models.SiteStats, error) {
+func (agg *aggregator) getSiteStats(r *results, t time.Time) (*models.SiteStats, error) {
 	// get from map
 	date := t.Format("2006-01-02")
 	if stats, ok := r.Sites[date]; ok {
@@ -37,7 +37,7 @@ func (agg *aggregator) getSiteStats(r *Results, t time.Time) (*models.SiteStats,
 	return stats, nil
 }
 
-func (agg *aggregator) getPageStats(r *Results, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
+func (agg *aggregator) getPageStats(r *results, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
 	date := t.Format("2006-01-02")
 	if stats, ok := r.Pages[date+hostname+pathname]; ok {
 		return stats, nil
@@ -64,7 +64,7 @@ func (agg *aggregator) getPageStats(r *Results, t time.Time, hostname string, pa
 	return stats, nil
 }
 
-func (agg *aggregator) getReferrerStats(r *Results, t time.Time, url string) (*models.ReferrerStats, error) {
+func (agg *aggregator) getReferrerStats(r *results, t time.Time, url string) (*models.ReferrerStats, error) {
 	date := t.Format("2006-01-02")
 	if stats, ok := r.Referrers[date+url]; ok {
 		return stats, nil

@@ -7,6 +7,7 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
+// ErrNoResults is returned whenever a single-item query returns 0 results
 var ErrNoResults = sqlstore.ErrNoResults // ???
 
 type Datastore interface {
@@ -47,9 +48,11 @@ type Datastore interface {
 	GetAggregatedReferrerStats(time.Time, time.Time, int) ([]*models.ReferrerStats, error)
 	GetAggregatedReferrerStatsPageviews(time.Time, time.Time) (int, error)
 
+	// misc
 	Close()
 }
 
+// New instantiates a new datastore from the given configuration struct
 func New(c *sqlstore.Config) Datastore {
 	return sqlstore.New(c)
 }

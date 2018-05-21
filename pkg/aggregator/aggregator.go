@@ -11,12 +11,14 @@ type aggregator struct {
 	database datastore.Datastore
 }
 
+// New returns a new aggregator instance with the database dependency injected.
 func New(db datastore.Datastore) *aggregator {
 	return &aggregator{
 		database: db,
 	}
 }
 
+// Run processes the pageviews which are ready to be processed and adds them to daily aggregation
 func (agg *aggregator) Run() {
 	// Get unprocessed pageviews
 	pageviews, err := agg.database.GetProcessablePageviews()
@@ -61,9 +63,10 @@ func (agg *aggregator) Run() {
 	}
 }
 
-func (agg *aggregator) Process(pageviews []*models.Pageview) *Results {
+// Process processes the given pageviews and returns the (aggregated) results per metric per day
+func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 	log.Debugf("processing %d pageviews", len(pageviews))
-	results := NewResults()
+	results := newResults()
 
 	for _, p := range pageviews {
 		site, err := agg.getSiteStats(results, p.Timestamp)

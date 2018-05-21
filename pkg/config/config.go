@@ -9,12 +9,13 @@ import (
 	"github.com/usefathom/fathom/pkg/datastore/sqlstore"
 )
 
+// Config wraps the configuration structs for the various application parts
 type Config struct {
 	Database *sqlstore.Config
-
-	Secret string
+	Secret   string
 }
 
+// Parses the supplied file + environment into a Config struct
 func Parse(file string) *Config {
 	var cfg Config
 	var err error

@@ -4,14 +4,14 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-type Results struct {
+type results struct {
 	Sites     map[string]*models.SiteStats
 	Pages     map[string]*models.PageStats
 	Referrers map[string]*models.ReferrerStats
 }
 
-func NewResults() *Results {
-	return &Results{
+func newResults() *results {
+	return &results{
 		Sites:     map[string]*models.SiteStats{},
 		Pages:     map[string]*models.PageStats{},
 		Referrers: map[string]*models.ReferrerStats{},
