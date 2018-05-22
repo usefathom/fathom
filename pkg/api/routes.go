@@ -13,6 +13,7 @@ func (api *API) Routes() *mux.Router {
 	r.Handle("/api/session", HandlerFunc(api.LoginHandler)).Methods(http.MethodPost)
 	r.Handle("/api/session", HandlerFunc(api.LogoutHandler)).Methods(http.MethodDelete)
 
+	r.Handle("/api/stats/site/groupby/day", api.Authorize(HandlerFunc(api.GetSiteStatsPerDayHandler))).Methods(http.MethodGet)
 	r.Handle("/api/stats/site/pageviews", api.Authorize(HandlerFunc(api.GetSiteStatsPageviewsHandler))).Methods(http.MethodGet)
 	r.Handle("/api/stats/site/visitors", api.Authorize(HandlerFunc(api.GetSiteStatsVisitorsHandler))).Methods(http.MethodGet)
 	r.Handle("/api/stats/site/duration", api.Authorize(HandlerFunc(api.GetSiteStatsDurationHandler))).Methods(http.MethodGet)

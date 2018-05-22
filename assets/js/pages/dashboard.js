@@ -6,7 +6,7 @@ import Realtime from '../components/Realtime.js';
 import DatePicker from '../components/DatePicker.js';
 import CountWidget from '../components/CountWidget.js';
 import Table from '../components/Table.js';
-
+import Chart from '../components/Chart.js';
 import { bind } from 'decko';
 
 class Dashboard extends Component {
@@ -47,6 +47,12 @@ class Dashboard extends Component {
         </nav>
 
         <div class="boxes">
+          <div class="box box-graph animated fadeInUp delayed_03s" style="padding: 0;">
+            <Chart before={state.before} after={state.after}  />
+          </div>
+        </div>
+
+        <div class="boxes">
           <div class="box box-totals animated fadeInUp delayed_03s">
             <CountWidget title="Unique visitors" endpoint="stats/site/visitors" before={state.before} after={state.after} />
             <CountWidget title="Page views" endpoint="stats/site/pageviews" before={state.before} after={state.after} />
@@ -56,8 +62,8 @@ class Dashboard extends Component {
   
           <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} before={state.before} after={state.after} />
           <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} before={state.before} after={state.after} showHostname="true" />
-
         </div>
+
       </section>
 
       <footer class="section"></footer>

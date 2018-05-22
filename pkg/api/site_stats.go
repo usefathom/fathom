@@ -52,3 +52,13 @@ func (api *API) GetSiteStatsRealtimeHandler(w http.ResponseWriter, r *http.Reque
 	}
 	return respond(w, envelope{Data: result})
 }
+
+// URL: /api/stats/site/groupby/day
+func (api *API) GetSiteStatsPerDayHandler(w http.ResponseWriter, r *http.Request) error {
+	params := GetRequestParams(r)
+	result, err := api.database.GetSiteStatsPerDay(params.StartDate, params.EndDate)
+	if err != nil {
+		return err
+	}
+	return respond(w, envelope{Data: result})
+}

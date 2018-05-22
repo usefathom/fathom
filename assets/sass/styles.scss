@@ -103,7 +103,6 @@ body {
   .main-nav ul { display: inline-block; padding: 0; }
   .spacer { color: #98a0a6; padding: 0 8px; }
 
-  svg { width: 24px; height: 24px; display: inline-block; vertical-align: top; }
 
   .header div, .date-nav a, .total-heading { font-size: 12px; text-transform: uppercase; color: #98a0a6; }
 
@@ -178,3 +177,4 @@ body {
 
 @import "util";
 @import "pikaday";
+@import "chart";

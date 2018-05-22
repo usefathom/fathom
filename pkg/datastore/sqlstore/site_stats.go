@@ -28,6 +28,14 @@ func (db *sqlstore) UpdateSiteStats(s *models.SiteStats) error {
 	return err
 }
 
+func (db *sqlstore) GetSiteStatsPerDay(startDate time.Time, endDate time.Time) ([]*models.SiteStats, error) {
+	results := []*models.SiteStats{}
+	sql := `SELECT * FROM daily_site_stats WHERE date >= ? AND date <= ?`
+	query := db.Rebind(sql)
+	err := db.Select(&results, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	return results, err
+}
+
 func (db *sqlstore) GetTotalSiteViews(startDate time.Time, endDate time.Time) (int, error) {
 	sql := `SELECT COALESCE(SUM(pageviews), 0) FROM daily_site_stats WHERE date >= ? AND date <= ?`
 	query := db.Rebind(sql)
