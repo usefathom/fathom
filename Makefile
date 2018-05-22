@@ -19,7 +19,7 @@ build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(SOURCES) $(JS_SOURCES)
 	if [ ! -d "node_modules" ]; then npm install; fi
-	gulp
+	NODE_ENV=production gulp
 	packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
 
 .PHONY: docker

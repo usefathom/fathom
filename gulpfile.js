@@ -47,8 +47,6 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('minify', function(cb) {
-  process.env.NODE_ENV = 'production'; // why is this here?
-
   pump([
     gulp.src('./build/js/*.js'),
     uglify().on('error', gutil.log),
