@@ -13,7 +13,7 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-func ShouldCollect(r *http.Request) bool {
+func shouldCollect(r *http.Request) bool {
 	// abort if this is a bot.
 	ua := user_agent.New(r.UserAgent())
 	if ua.Bot() {
@@ -27,32 +27,67 @@ func ShouldCollect(r *http.Request) bool {
 	return true
 }
 
+func parsePathname(p string) string {
+	return "/" + strings.TrimLeft(p, "/")
+}
+
+func parseReferrer(r string) string {
+	u, err := url.Parse(r)
+	if err != nil {
+		return ""
+	}
+
+	// remove AMP & UTM vars
+	q := u.Query()
+	keys := []string{"amp", "utm_campaign", "utm_medium", "utm_source"}
+	for _, k := range keys {
+		q.Del(k)
+	}
+	u.RawQuery = q.Encode()
+
+	// remove /amp/
+	if strings.HasSuffix(u.Path, "/amp/") {
+		u.Path = u.Path[0:(len(u.Path) - 5)]
+	}
+
+	return u.String()
+}
+
+func parseHostname(r string) string {
+	u, err := url.Parse(r)
+	if err != nil {
+		return ""
+	}
+
+	return u.Scheme + "://" + u.Host
+}
+
 func (api *API) NewCollectHandler() http.Handler {
 	go aggregate(api.database)
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		if !ShouldCollect(r) {
+		if !shouldCollect(r) {
 			return nil
-		}
-
-		u, err := url.Parse(r.Referer())
-		if err != nil {
-			return err
 		}
 
 		q := r.URL.Query()
 		now := time.Now()
 
+		hostname := parseHostname(r.Referer())
+		if hostname == "" {
+			return nil
+		}
+
 		// get pageview details
 		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
-			Hostname:     u.Scheme + "://" + u.Host,
-			Pathname:     "/" + strings.TrimLeft(q.Get("p"), "/"),
+			Hostname:     hostname,
+			Pathname:     parsePathname(q.Get("p")),
 			IsNewVisitor: q.Get("nv") == "1",
 			IsNewSession: q.Get("ns") == "1",
 			IsUnique:     q.Get("u") == "1",
 			IsBounce:     q.Get("b") != "0",
-			Referrer:     q.Get("r"),
+			Referrer:     parseReferrer(q.Get("r")),
 			Duration:     0,
 			Timestamp:    now,
 		}
@@ -76,7 +111,7 @@ func (api *API) NewCollectHandler() http.Handler {
 		}
 
 		// save new pageview
-		err = api.database.SavePageview(pageview)
+		err := api.database.SavePageview(pageview)
 		if err != nil {
 			return err
 		}
