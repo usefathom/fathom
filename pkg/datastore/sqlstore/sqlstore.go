@@ -42,7 +42,7 @@ func (db *sqlstore) Migrate() {
 	n, err := migrate.Exec(db.DB.DB, db.Config.Driver, migrations, migrate.Up)
 
 	if err != nil {
-		log.Fatal("database migrations failed: ", err)
+		log.Errorf("database migrations failed: %s", err)
 	}
 
 	if n > 0 {
