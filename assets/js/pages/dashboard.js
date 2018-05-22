@@ -47,7 +47,7 @@ class Dashboard extends Component {
         </nav>
 
         <div class="boxes">
-          <div class="box box-graph animated fadeInUp delayed_03s" style="padding: 0;">
+          <div class="box box-graph">
             <Chart before={state.before} after={state.after}  />
           </div>
         </div>

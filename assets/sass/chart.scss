@@ -1,3 +1,10 @@
+.box-graph {
+   background: white;
+}
+
+#chart {
+}
+
 g.pageviews {
    fill: #88ffc6;
 }
@@ -7,6 +14,17 @@ g.visitors {
 }
 
 .axis {
-   font-size: 12px;
-   fill: #6c7680;
+   .domain{ 
+      stroke: none; 
+   }
+
+   line {
+   stroke: rgb(218, 218, 218);
+   }
+
+   text {
+      font-size: 12px;
+      fill: #6c7680;
+   }
 }
+
