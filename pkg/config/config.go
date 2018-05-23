@@ -1,12 +1,14 @@
 package config
 
 import (
+	"math/rand"
+	"os"
+	"path/filepath"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"github.com/usefathom/fathom/pkg/datastore/sqlstore"
-	"math/rand"
-	"os"
 )
 
 // Config wraps the configuration structs for the various application parts
@@ -21,9 +23,7 @@ func Parse(file string) *Config {
 	var err error
 
 	if file != "" {
-		// get absolute path to config file
-		wd, _ := os.Getwd()
-		absfile := wd + "/" + file
+		absfile, _ := filepath.Abs(file)
 
 		// check if file exists
 		_, err := os.Stat(absfile)
