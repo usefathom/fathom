@@ -109,7 +109,7 @@ function new_fathom_user() {
    echo "Create user account: "
    read -p "  Email address: " USER_EMAIL
    read -p "  Password: " USER_PASSWORD
-   fathom --config="$SITE_DIR_ABS/config.env" register "$USER_EMAIL" "$USER_PASSWORD"
+   fathom --config="$SITE_DIR_ABS/config.env" register --email="$USER_EMAIL" --password="$USER_PASSWORD"
    echo ""
 }
 

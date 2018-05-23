@@ -16,7 +16,7 @@ For getting a development version of Fathom up & running, please go through the 
 1. Ensure you have [Golang](https://golang.org/doc/install#install) installed properly
 1. Get code: `git clone git@github.com:usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
 1. Compile into binary & prepare assets: `make all` 
-1. Register your user account: `fathom register <email> <password>`
+1. Register your user account: `fathom register --email=<email> --password=<password>`
 1. Start the webserver: `fathom server` and then visit **http://localhost:8080** to access your analytics dashboard.
 
 To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance (twice).

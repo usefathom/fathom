@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/models"
@@ -8,21 +11,25 @@ import (
 )
 
 func register(c *cli.Context) error {
-	if c.NArg() < 2 {
-		cli.ShowSubcommandHelp(c)
-		return nil
+	email := c.String("email")
+	if email == "" {
+		return errors.New("invalid args: missing email address")
 	}
 
-	hash, _ := bcrypt.GenerateFromPassword([]byte(c.String("password")), 10)
+	password := c.String("password")
+	if password == "" {
+		return errors.New("invalid args: missing password")
+	}
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 	user := &models.User{
-		Email:    c.String("email"),
+		Email:    email,
 		Password: string(hash),
 	}
 	err := app.database.SaveUser(user)
 
 	if err != nil {
-		log.Errorf("error creating user: %s", err)
-		return err
+		return fmt.Errorf("error creating user: %s", err)
 	}
 
 	log.Infof("created user %s", user.Email)
