@@ -7,6 +7,11 @@
 set -e               # Exit on error
 SERVER_PORT="9000"   # Port for Fathom server
 
+# Check if running as root
+if [ "$EUID" -ne 0 ]
+  then echo "Please run the Fathom installer as root (to install the necessary NGINX & systemd files)"
+  exit
+fi
 
 function download_fathom() {
    # Download latest version of the Fathom application
@@ -187,7 +192,7 @@ setup_config
 # Ask to setup new NGINX server block
 if [ "$(command -v nginx)" ]; then
    read -p "NGINX detected. Create a new server block? (Y/n): " CONTINUE
-   if [ "$CONTINUE" != "n" ]; 
+   if [ "$CONTINUE" != "n" ]; then
       new_nginx_server
    fi;
 fi;
