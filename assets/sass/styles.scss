@@ -22,6 +22,7 @@ font size   12, 16, 64
 ::-moz-selection  { background: #a0ffd1; }
 
 html, body, #root { height: 100%; }
+body { overflow-y: scroll; }
 
 html {}
 body { 
@@ -48,18 +49,21 @@ body {
     stretch; width: 100%; 
   }
 
+  .boxes-col {
+    width: 100%;
+  }
+
   .box { 
     border-radius: 4px; 
     margin-bottom: 8px; 
     box-shadow: 0 2px 8px 0 rgba(70,73,77,.16); 
-    padding: 24px 0; 
+    padding: 16px;
     flex: 1; 
     flex-basis: 100%; 
     min-width: 40px;
   }
-  .box-totals { background: #46494d; color: #fff; padding: 32px 16px 0 16px; }
-  .box-pages { background: #fff; }
-  .box-referrers { background: #fff; }
+  .box-totals { background: #46494d; color: #fff; }
+  .box-pages, .box-referrers, .box-graph { background: #fff; }
 
   nav.main-nav ul { width: 100%; text-align: right; margin-top: 4px; margin-bottom: 0; padding: 0; }
   nav li { display: inline-block; }
@@ -146,8 +150,23 @@ body {
 
     .boxes { justify-content: space-between; flex-wrap: nowrap; }
     .box { margin: 0 4px; }
+    .boxes-col {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .box-graph {
+        margin: 0 0 4px 0;
+    }
     .box-totals { max-width: 230px; margin-left: 0; }
-    .box-referrers { margin-right: 0; }
+    .box-pages {
+        flex-basis: 464px;
+        width: 50%;
+        margin: 0 2px 0 0;
+    }
+    .box-referrers {
+        flex-basis: 464px;
+        margin: 0 0 0 2px;
+    }
 
     .totals-detail { width: 100%; }
     .total-numbers { font-size: 64px; }

@@ -86,7 +86,7 @@ class Table extends Component {
     )}) : <div class="table-row">Nothing here, yet.</div>;
 
     return (
-      <div data-total={state.total} class={"box box-pages animated fadeInUp delayed_04s "  + (state.loading ? "loading" : '')}>
+      <div class={(state.loading ? "loading" : '')}>
         <div class="table-row header">
           {props.headers.map((header, i) => {
             let classes = i === 0 ? 'main-col cell' : 'cell';
