@@ -33,20 +33,28 @@ func New(c *Config) *sqlstore {
 }
 
 func (db *sqlstore) Migrate() {
-	migrations := &migrate.PackrMigrationSource{
+	migrationSource := &migrate.PackrMigrationSource{
 		Box: packr.NewBox("./migrations"),
 		Dir: "./" + db.Config.Driver,
 	}
 	migrate.SetTable("migrations")
 
-	n, err := migrate.Exec(db.DB.DB, db.Config.Driver, migrations, migrate.Up)
-
+	migrations, err := migrationSource.FindMigrations()
 	if err != nil {
-		log.Errorf("database migrations failed: %s", err)
+		log.Errorf("Error loading database migrations: %s", err)
+	}
+
+	if len(migrations) == 0 {
+		log.Fatalf("Missing database migrations")
+	}
+
+	n, err := migrate.Exec(db.DB.DB, db.Config.Driver, migrationSource, migrate.Up)
+	if err != nil {
+		log.Errorf("Error applying database migrations: %s", err)
 	}
 
 	if n > 0 {
-		log.Infof("applied %d database migrations", n)
+		log.Infof("Applied %d database migrations!", n)
 	}
 }
 

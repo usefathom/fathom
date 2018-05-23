@@ -1,12 +1,12 @@
 package config
 
 import (
-	"math/rand"
-
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 	"github.com/usefathom/fathom/pkg/datastore/sqlstore"
+	"math/rand"
+	"os"
 )
 
 // Config wraps the configuration structs for the various application parts
@@ -21,15 +21,35 @@ func Parse(file string) *Config {
 	var err error
 
 	if file != "" {
-		err = godotenv.Load(file)
-		if err != nil && file != ".env" {
-			log.Fatalf("error parsing config file: %s", err)
+		// get absolute path to config file
+		wd, _ := os.Getwd()
+		absfile := wd + "/" + file
+
+		// check if file exists
+		_, err := os.Stat(absfile)
+		fileNotExists := os.IsNotExist(err)
+
+		// Print config file location
+		if file != ".env" || !fileNotExists {
+			log.Printf("Configuration file: %s", absfile)
+		}
+
+		// Abort if custom config file does not exist
+		if file != ".env" && fileNotExists {
+			log.Fatalf("Error reading configuration. File `%s` does not exist.", file)
+		}
+
+		// read file into env values
+		err = godotenv.Load(absfile)
+		if err != nil {
+			log.Fatalf("Error parsing configuration file: %s", err)
 		}
 	}
 
+	// with config file loaded into env values, we can now parse env into our config struct
 	err = envconfig.Process("Fathom", &cfg)
 	if err != nil {
-		log.Fatalf("error parsing config from environment values: %s", err)
+		log.Fatalf("Error parsing configuration from environment: %s", err)
 	}
 
 	// alias sqlite to sqlite3

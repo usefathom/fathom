@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/config"
 	"github.com/usefathom/fathom/pkg/datastore"
@@ -72,7 +72,8 @@ func main() {
 }
 
 func before(c *cli.Context) error {
-	app.config = config.Parse(c.String("config"))
+	configFile := c.String("config")
+	app.config = config.Parse(configFile)
 	app.database = datastore.New(app.config.Database)
 	return nil
 }
