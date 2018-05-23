@@ -156,16 +156,19 @@ body {
     }
     .box-graph {
         margin: 0 0 4px 0;
+        max-width: 1000px;
     }
     .box-totals { max-width: 230px; margin-left: 0; }
     .box-pages {
         flex-basis: 464px;
         width: 50%;
         margin: 0 2px 0 0;
+        max-width: 500px;
     }
     .box-referrers {
         flex-basis: 464px;
         margin: 0 0 0 2px;
+         max-width: 500px;
     }
 
     .totals-detail { width: 100%; }

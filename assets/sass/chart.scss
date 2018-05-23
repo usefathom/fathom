@@ -4,13 +4,17 @@
 }
 
 #chart {
+   height: 100%;
+   svg{ height: 100%; }
+
+   * { box-sizing: content-box; }
 }
 
-g.pageviews {
+.bar-pageviews {
    fill: #88ffc6;
 }
 
-g.visitors {
+.bar-visitors {
    fill: #533feb;
 }
 
@@ -30,6 +34,40 @@ g.visitors {
 }
 
 .d3-tip {
-   color: #98a0a6;
    font-size: 12px;
+   color: #959da5;
+   text-align: left;
+   background: rgba(0,0,0,.8);
+   border-radius: 3px;
+}
+
+.tip-heading {
+ font-weight: 600;
+ padding: 10px;
+ line-height: 1;
+}
+
+.tip-content {
+   display: flex;
+
+   > div {
+      padding: 5px 10px;
+      width: 50%;
+      display: block;
+      flex: 1;
+      min-width: 90px;
+   }
+}
+
+.tip-pageviews {
+   border-top: 3px solid rgb(136, 255, 198);
+}
+
+.tip-visitors {
+   border-top: 3px solid rgb(83, 63, 235);
+}
+
+.tip-number {
+   color: #dfe2e5;
+   font-weight: 600;
 }

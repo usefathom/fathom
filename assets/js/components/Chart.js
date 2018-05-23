@@ -69,8 +69,8 @@ class Chart extends Component {
       return;
     }
 
-    let padding = { top: 24, right: 24, bottom: 64, left: 48 };
-    let height = 240;
+    let padding = { top: 24, right: 12, bottom: 64, left: 24 };
+    let height = Math.max( this.base.clientHeight, 240 );
     let width = this.base.clientWidth;
     let innerWidth = width - padding.left - padding.right;
     let innerHeight = height - padding.top - padding.bottom;
@@ -92,7 +92,7 @@ class Chart extends Component {
     
     // axes
     let x  = d3.scaleBand().range([0, innerWidth]).padding(0.1).domain(data.map((d) => d.Date)),
-      y  = d3.scaleLinear().range([innerHeight, 0]).domain([0, (max*1.155)]),
+      y  = d3.scaleLinear().range([innerHeight, 0]).domain([0, (max*1.1)]),
       yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth),
       xAxis = d3.axisBottom().scale(x);
 
@@ -108,50 +108,52 @@ class Chart extends Component {
       .call(xAxis)
     xTicks.selectAll('g text').style('display', (d, i) => { 
       return i % nxLabels != 0 ? 'none' : 'block'
-    }).attr("transform", "rotate(-50)").style("text-anchor", "end");
+    }).attr("transform", "rotate(-60)").style("text-anchor", "end");
     xTicks.selectAll('g').style('display', (d, i) => {
       return i % nxTicks != 0 ? 'none' : 'block';
     });
 
-    // pageviews
-    const pageviewTip = d3.tip().attr('class', 'd3-tip').html((d) => d.Pageviews);
-    graph.call(pageviewTip)
+    // tooltip
+    const tip = d3.tip().attr('class', 'd3-tip').html((d) => (`
+      <div class="tip-heading">${d.Date}</div>
+      <div class="tip-content">
+        <div class="tip-pageviews">
+          <div class="tip-number">${d.Pageviews}</div>
+          <div class="tip-metric">Pageviews</div>
+        </div>
+        <div class="tip-visitors">
+          <div class="tip-number">${d.Visitors}</div>
+          <div class="tip-metric">Visitors</div>
+        </div>
+      </div>
+    `));
+    graph.call(tip)
 
-    let pageviewBars = graph.selectAll('g.pageviews').data(data).enter()
+    let days = graph.selectAll('g.day').data(data).enter()
       .append('g')
-      .attr('class', 'pageviews') 
-      .on('mouseover', pageviewTip.show)
-      .on('mouseout', pageviewTip.hide)
-      .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" });
-      
-    pageviewBars.append('rect')
+      .attr('class', 'day') 
+      .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" })
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide)
+
+    let pageviews = days.append('rect')
+      .attr('class', 'bar-pageviews') 
       .attr('width', x.bandwidth() * 0.5)
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition(t)
       .attr('y', d => y(d.Pageviews))
       .attr('height', (d) => innerHeight - y(d.Pageviews))
-      
 
-    // visitors  
-    const visitorTip = d3.tip().attr('class', 'd3-tip').html((d) => d.Visitors);
-    graph.call(visitorTip)
-
-    let visitorBars = graph.selectAll('g.visitors').data(data).enter()
-      .append('g')
-      .attr('class', 'visitors')
-      .on('mouseover', visitorTip.show)
-      .on('mouseout', visitorTip.hide)
-      .attr('transform', function (d, i) { return "translate(" + ( x(d.Date) + 0.5 * x.bandwidth() ) + ", 0)" });
-    
-    visitorBars.append('rect')
+    let visitors = days.append('rect')
+      .attr('class', 'bar-visitors')
       .attr('width', x.bandwidth() * 0.5)
       .attr("y", innerHeight)
       .attr("height", 0)
+      .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
       .transition(t)
       .attr('height', (d) => (innerHeight - y(d.Visitors)) )
-      .attr('y', (d) => y(d.Visitors))
-  
+      .attr('y', (d) => y(d.Visitors))  
   }
 
   @bind
