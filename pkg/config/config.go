@@ -29,21 +29,24 @@ func Parse(file string) *Config {
 		_, err := os.Stat(absfile)
 		fileNotExists := os.IsNotExist(err)
 
-		// Print config file location
-		if file != ".env" || !fileNotExists {
+		if file == ".env" && fileNotExists {
+			log.Warnf("Missing configuration file. Using defaults.")
+		} else {
 			log.Printf("Configuration file: %s", absfile)
 		}
 
-		// Abort if custom config file does not exist
-		if file != ".env" && fileNotExists {
-			log.Fatalf("Error reading configuration. File `%s` does not exist.", file)
+		if fileNotExists {
+			if file != ".env" {
+				log.Fatalf("Error reading configuration. File `%s` does not exist.", file)
+			}
+		} else {
+			// read file into env values
+			err = godotenv.Load(absfile)
+			if err != nil {
+				log.Fatalf("Error parsing configuration file: %s", err)
+			}
 		}
 
-		// read file into env values
-		err = godotenv.Load(absfile)
-		if err != nil {
-			log.Fatalf("Error parsing configuration file: %s", err)
-		}
 	}
 
 	// with config file loaded into env values, we can now parse env into our config struct
