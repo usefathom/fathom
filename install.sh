@@ -12,6 +12,8 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
+echo "Welcome to the Fathom quick installer. Press CTRL-C at any time to abort."
+
 function download_fathom() {
    # Download latest version of the Fathom application
    echo "Downloading Fathom"
@@ -185,6 +187,11 @@ END
    echo ""
 }
 
+function new_cerbot_cert() {
+   certbot --nginx -d "$SERVER_NAME"
+   echo ""
+}
+
 # Download Fathom if command does not exist
 FATHOM_PATH="$(command -v fathom)"
 if [ "$FATHOM_PATH" != "" ]; then
@@ -214,6 +221,14 @@ if [ "$(command -v systemctl)" ]; then
    read -p "Systemctl detected. Create a new service? (Y/n): " CONTINUE
    if [ "$CONTINUE" != "n" ]; then 
       new_systemctl_service
+   fi
+fi;
+
+# Ask to request new LetsEncrypt certificate
+if [ "$SERVER_NAME" != "" ] && [ "$(command -v certbot)" ]; then
+   read -p "LetsEncrypt detected. Request SSL certificate for $SERVER_NAME? (Y/n): " CONTINUE
+   if [ "$CONTINUE" != "n" ]; then 
+      new_cerbot_cert
    fi
 fi;
 
