@@ -6,6 +6,7 @@ import { bind } from 'decko';
 
 import * as d3 from 'd3';
 import 'd3-transition';
+d3.tip = require('d3-tip');
 
 function padZero(s) {
   return s < 10 ? "0" + s : s;
@@ -62,14 +63,13 @@ class Chart extends Component {
 
   @bind
   redrawChart() {
-
     var data = this.state.data;
     this.base.parentNode.style.display = data.length <= 1 ? 'none' : '';
     if(data.length <= 1) {
       return;
     }
 
-    let padding = { top: 10, right: 24, bottom: 48, left: 48 };
+    let padding = { top: 24, right: 24, bottom: 64, left: 48 };
     let height = 240;
     let width = this.base.clientWidth;
     let innerWidth = width - padding.left - padding.right;
@@ -84,8 +84,8 @@ class Chart extends Component {
     graph
       .append('svg').attr('width', width)
       .attr('height', height)
-      .append('g').attr('transform', 'translate(' + padding.left + ', 0)');
-    graph = graph.select('g');
+      .append('g').attr('transform', 'translate(' + padding.left + ', '+padding.top+')');
+    graph = graph.select('g')
 
     const t = d3.transition().duration(500).ease(d3.easeQuadOut);
     const max = d3.max(data, (d) => d.Pageviews);
@@ -112,13 +112,16 @@ class Chart extends Component {
     xTicks.selectAll('g').style('display', (d, i) => {
       return i % nxTicks != 0 ? 'none' : 'block';
     });
- 
-    // pageview bars
-    let pageviewBars = graph.selectAll('g.pageviews')
-      .data(data)
-      .enter()
+
+    // pageviews
+    const pageviewTip = d3.tip().attr('class', 'd3-tip').html((d) => d.Pageviews);
+    graph.call(pageviewTip)
+
+    let pageviewBars = graph.selectAll('g.pageviews').data(data).enter()
       .append('g')
       .attr('class', 'pageviews') 
+      .on('mouseover', pageviewTip.show)
+      .on('mouseout', pageviewTip.hide)
       .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" });
       
     pageviewBars.append('rect')
@@ -127,15 +130,18 @@ class Chart extends Component {
       .attr("height", 0)
       .transition(t)
       .attr('y', d => y(d.Pageviews))
-      .attr('height', (d) => innerHeight - y(d.Pageviews) )
+      .attr('height', (d) => innerHeight - y(d.Pageviews))
       
 
     // visitors  
-    let visitorBars = graph.selectAll('g.visitors')
-      .data(data)
-      .enter()
+    const visitorTip = d3.tip().attr('class', 'd3-tip').html((d) => d.Visitors);
+    graph.call(visitorTip)
+
+    let visitorBars = graph.selectAll('g.visitors').data(data).enter()
       .append('g')
       .attr('class', 'visitors')
+      .on('mouseover', visitorTip.show)
+      .on('mouseout', visitorTip.hide)
       .attr('transform', function (d, i) { return "translate(" + ( x(d.Date) + 0.5 * x.bandwidth() ) + ", 0)" });
     
     visitorBars.append('rect')

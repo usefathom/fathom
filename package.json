@@ -23,6 +23,7 @@
   "dependencies": {
     "cookies-js": "^1.2.3",
     "d3": "^5.4.0",
+    "d3-tip": "^0.9.1",
     "d3-transition": "^1.1.1",
     "decko": "^1.2.0",
     "gulp-uglify": "^3.0.0",
