@@ -36,8 +36,12 @@ function new_site_dir() {
      read -p "Warning: $SITE_DIR_ABS already exists. Are you sure? (y/N): " CONTINUE
      if [ "$CONTINUE" != "y" ]; then exit 0; fi
    fi;
-
-   mkdir -p "$SITE_DIR" || true
+   
+   if [ ! -e "$SITE_DIR" ]; then
+      mkdir -p "$SITE_DIR"
+      chmod 755 "$SITE_DIR"
+   fi;
+   
    cd "$SITE_DIR"
    echo ""
 }
@@ -98,6 +102,14 @@ END
    echo "$TEMPLATE" > "config.env"
    echo "Created configuration file: $SITE_DIR_ABS/config.env"
    echo "Success! You can now run Fathom using \`fathom --config=$SITE_DIR_ABS/config.env server\`"
+   echo ""
+}
+
+function new_fathom_user() {
+   echo "Create user account: "
+   read -p "  Email address: " USER_EMAIL
+   read -p "  Password: " USER_PASSWORD
+   fathom --config="$SITE_DIR_ABS/config.env" register "$USER_EMAIL" "$USER_PASSWORD"
    echo ""
 }
 
@@ -187,6 +199,7 @@ fi;
 
 new_site_dir
 setup_config
+new_fathom_user
 
 # Ask to setup new NGINX server block
 if [ "$(command -v nginx)" ]; then
