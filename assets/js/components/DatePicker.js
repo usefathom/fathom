@@ -21,7 +21,9 @@ const availablePeriods = [
     id: 'year',
     label: 'This year'
   }
-]
+];
+
+const padZero = function(n){return n<10? '0'+n:''+n;}
 
 class DatePicker extends Component {
   constructor(props) {
@@ -106,8 +108,7 @@ class DatePicker extends Component {
   }
 
   dateValue(date) {
-    const addZero = function(n){return n<10? '0'+n:''+n;}
-    return date.getFullYear() + '-' + addZero(date.getMonth() + 1) + '-' + addZero(date.getDate());
+    return date.getFullYear() + '-' + padZero(date.getMonth() + 1) + '-' + padZero(date.getDate());
   }
 
   @bind 
