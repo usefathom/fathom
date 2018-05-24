@@ -33,6 +33,8 @@ class DatePicker extends Component {
       period: props.value,
       before: 0,
       after: 0,
+      startDate: null,
+      endDate: null,
     }
 
     this.updateDatesFromPeriod(this.state.period)
@@ -89,17 +91,21 @@ class DatePicker extends Component {
       endDate: endDate,
       before: before, 
       after: after,
-      picking: '',
     });
 
-    this.props.onChange(this.state);
+    if(!this.timeout) {
+      this.timeout = window.setTimeout(() => {
+        this.props.onChange(this.state);
+        this.timeout = null;
+      }, 5)
+    }
   }
 
   @bind
   setPeriod(e) {
     e.preventDefault();
 
-    let newPeriod = e.target.dataset.value;
+    let newPeriod = e.target.getAttribute('data-value');
     if( newPeriod === this.state.period) {
       return;
     }

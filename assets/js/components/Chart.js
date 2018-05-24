@@ -82,14 +82,13 @@ class Chart extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps, prevState) {
-    if(newProps.before == prevState.before && newProps.after == prevState.after) {
+  componentWillReceiveProps(newProps) {
+    if(newProps.before == this.props.before && newProps.after == this.props.after) {
       return;
     }
 
     this.fetchData(newProps.before, newProps.after);
   }
-
 
   @bind
   redrawChart() {
@@ -202,9 +201,8 @@ class Chart extends Component {
         this.setState({ 
           loading: false,
           data: prepareData(after, before, d),
-        });
-
-        this.redrawChart();
+        })
+        this.redrawChart()
       })
   }
  

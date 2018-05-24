@@ -14,14 +14,17 @@ class Pikadayer extends Component {
 
   componentWillReceiveProps(newProps) {
     // make sure pikaday updates if we set a date using one of our presets
-    if(newProps.value !== this.state.value) {
-      this.state.value = newProps.value;
-      this.pikaday.setDate(newProps.value, false);
+    if(this.pikaday && newProps.value !== this.props.value) {
+      this.pikaday.setDate(newProps.value, true)
     }
   }
 
+  componentWillUnmount() {
+    this.pikaday.destroy()
+  }
+
   render(props) {
-    return <input {...props} />
+    return <input />
   }
 }
 

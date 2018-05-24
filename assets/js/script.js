@@ -21,9 +21,9 @@ class App extends Component {
     })
   }
 
-  render() {
+  render(props, state) {
     // logged-in
-    if( this.state.authenticated ) {
+    if( state.authenticated ) {
       return <Dashboard onLogout={this.toggleAuth} />
     }
 

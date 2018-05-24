@@ -16,34 +16,26 @@ class Table extends Component {
       records: [],
       limit: 15,
       loading: true,
-      before: props.before,
-      after: props.after,
       total: 0,
     }
   }
 
-  componentWillReceiveProps(newProps, prevState) {
-      if(newProps.before == prevState.before && newProps.after == prevState.after) {
+  componentWillReceiveProps(newProps) {
+      if(newProps.before == this.props.before && newProps.after == this.props.after) {
         return;
       }
 
-      this.setState({
-        before: newProps.before,
-        after: newProps.after,
-      });
-      this.fetchRecords();
+      this.fetchRecords(newProps.before, newProps.after);
   }
 
   @bind
-  fetchRecords() {
+  fetchRecords(before, after) {
     this.setState({ loading: true });
-    let before = this.state.before;
-    let after = this.state.after;
   
-    Client.request(`${this.props.endpoint}?before=${this.state.before}&after=${this.state.after}&limit=${this.state.limit}`)
+    Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${this.state.limit}`)
       .then((d) => {
          // request finished; check if timestamp range is still the one user wants to see
-        if( this.state.before != before || this.state.after != after ) {
+        if( this.props.before != before || this.props.after != after ) {
           return;
         }
 
@@ -54,7 +46,7 @@ class Table extends Component {
       });
 
      // fetch totals too
-     Client.request(`${this.props.endpoint}/pageviews?before=${this.state.before}&after=${this.state.after}`)
+     Client.request(`${this.props.endpoint}/pageviews?before=${before}&after=${after}`)
       .then((d) => {
         this.setState({ 
           total: d
