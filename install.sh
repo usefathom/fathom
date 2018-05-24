@@ -16,12 +16,14 @@ echo "Welcome to the Fathom quick installer. Press CTRL-C at any time to abort."
 
 function download_fathom() {
    # Download latest version of the Fathom application
-   echo "Downloading Fathom"
+   echo "Downloading latest Fathom"
    wget -O fathom https://usesfathom.com/downloads/fathom-latest
 
    # Move Fathom to $PATH so we can run the command from anywhere
+   echo "Moving Fathom to /usr/local/bin/fathom"
    chmod +x fathom
    mv fathom /usr/local/bin/fathom
+   
    FATHOM_PATH=$(command -v fathom)
    echo "Fathom installed to $FATHOM_PATH" 
    echo ""
@@ -40,6 +42,7 @@ function new_site_dir() {
    fi;
    
    if [ ! -e "$SITE_DIR" ]; then
+      echo "Creating directory $SITE_DIR_ABS"
       mkdir -p "$SITE_DIR"
       chmod 755 "$SITE_DIR"
    fi;
@@ -83,7 +86,7 @@ function setup_config() {
          DATABASE_NAME="fathom"
       fi;
 
-      echo "Creating database $DATABASE_NAME"
+      echo "Creating $DATABASE database $DATABASE_NAME"
       mysql --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --execute="CREATE DATABASE $DATABASE_NAME;"
       # TODO: Add Postgres support 
    fi;
@@ -138,9 +141,14 @@ server {
 }
 END
 )
+   echo "Creating file /etc/nginx/sites-available/$SERVER_NAME"
    echo "$TEMPLATE" > "/etc/nginx/sites-available/$SERVER_NAME"
    ln -s "/etc/nginx/sites-available/$SERVER_NAME" "/etc/nginx/sites-enabled/$SERVER_NAME" || true
+
+   echo "Testing NGINX configuration"
    nginx -t
+
+   echo "Reloading NGINX"
    service nginx reload
    echo ""
 }
@@ -177,13 +185,19 @@ WantedBy=multi-user.target
 END
 )     
    
+   echo "Creating file /etc/systemd/system/$SERVICE_NAME.service"
    echo "$TEMPLATE" > "/etc/systemd/system/$SERVICE_NAME.service"
+
+   echo "Reloading systemd service files"
    systemctl daemon-reload
+
+   echo "Enabling $SERVICE_NAME at system boot"
    systemctl enable "$SERVICE_NAME"
+
+   echo "Starting service $SERVICE_NAME"
    systemctl start "$SERVICE_NAME"
 
-   echo "Success! Service $SERVICE_NAME created & started."
-   echo "You can manually start the service using systemctl start $SERVICE_NAME"
+   echo "Success! You can manually start the service using \`systemctl start $SERVICE_NAME\`"
    echo ""
 }
 
