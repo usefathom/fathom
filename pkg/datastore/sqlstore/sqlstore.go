@@ -26,6 +26,9 @@ func New(c *Config) *sqlstore {
 	dbx := sqlx.MustConnect(c.Driver, c.DSN())
 	db := &sqlstore{dbx, c}
 
+	// write log statement
+	log.Infof("Connected to %s database: %s", c.Driver, c.Name)
+
 	// run migrations
 	db.Migrate()
 
