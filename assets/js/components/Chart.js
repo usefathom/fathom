@@ -13,21 +13,21 @@ function padZero(s) {
 }
 
 const timeFormats = [
-[() => '', function(d, n) { 
-  return true;
-}],
-[d3.timeFormat("%Y"), function (d, i, n) {
-  return d.getUTCMonth() === 0 && d.getUTCDate() === 1;;
-}],
-[d3.timeFormat("%b"), function (d, i, n) {
-  return ( d.getUTCMonth() > 0 && d.getUTCDate() === 1 );
-}],
-[d3.timeFormat("%d"), function (d, i, n) {
-  return ( d.getUTCDate() > 1 ) && n < 32;
-}],
-[d3.timeFormat("%b %d"), function (d, i, n) {
-  return i === 0 && d.getUTCDate() > 1;
-}]
+  [() => '', function(d, n) { 
+    return true;
+  }],
+  [d3.timeFormat("%Y"), function (d, i, n) {
+    return d.getMonth() === 0 && d.getDate() === 1;;
+  }],
+  [d3.timeFormat("%b"), function (d, i, n) {
+    return ( d.getMonth() > 0 && d.getDate() === 1 );
+  }],
+  [d3.timeFormat("%d"), function (d, i, n) {
+    return ( d.getDate() > 1 ) && n < 32;
+  }],
+  [d3.timeFormat("%b %d"), function (d, i, n) {
+    return i === 0 && d.getDate() > 1;
+  }]
 ]
 
 var timeFormatPicker = function (formats, len) {
@@ -48,8 +48,11 @@ function prepareData(startUnix, endUnix, data) {
 
   // create keyed array for quick date access
   data.forEach((d) => {
-    d.Date = d.Date.substring(0, 10);
-    datamap[d.Date] = d;
+    // replace date with actual date object & store in datamap
+    let date = new Date(d.Date);
+    let key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
+    d.Date = date;
+    datamap[key] = d;
   });
 
   // make sure we have values for each date
@@ -59,13 +62,13 @@ function prepareData(startUnix, endUnix, data) {
     let data = datamap[key] ? datamap[key] : {
         "Pageviews": 0,
         "Visitors": 0,
+        "Date": new Date(currentDate),
      };
 
-     // replace Date property with actual date object
-    data.Date = new Date(currentDate);
     newData.push(data);  
     currentDate.setDate(currentDate.getDate() + 1);
   }
+
 
  return newData;
 }
@@ -137,7 +140,7 @@ class Chart extends Component {
    
     // hide all "day" ticks if we're watching more than 100 days of data
     xTicks.selectAll('g').style('display', (d, i) => { 
-      if(data.length > 100 && d.getUTCDate() > 1 ) {
+      if(data.length > 100 && d.getDate() > 1 ) {
         return 'none';
       }
 
