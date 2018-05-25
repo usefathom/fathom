@@ -24,7 +24,7 @@ class Pikadayer extends Component {
   }
 
   render(props) {
-    return <input />
+    return <input value={props.value} />
   }
 }
 
