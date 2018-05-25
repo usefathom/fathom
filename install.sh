@@ -101,9 +101,9 @@ function setup_config() {
 END
 )
 
-   echo "$TEMPLATE" > "config.env"
-   echo "Created configuration file: $SITE_DIR_ABS/config.env"
-   echo "Success! You can now run Fathom using \`fathom --config=$SITE_DIR_ABS/config.env server\`"
+   echo "$TEMPLATE" > ".env"
+   echo "Created configuration file: $SITE_DIR_ABS/.env"
+   echo "Success! You can now run Fathom using \`fathom --config=$SITE_DIR_ABS/.env server\`"
    echo ""
 }
 
@@ -111,7 +111,7 @@ function new_fathom_user() {
    echo "Create user account: "
    read -p "  Email address: " USER_EMAIL
    read -p "  Password: " USER_PASSWORD
-   fathom --config="$SITE_DIR_ABS/config.env" register --email="$USER_EMAIL" --password="$USER_PASSWORD"
+   fathom --config="$SITE_DIR_ABS/.env" register --email="$USER_EMAIL" --password="$USER_PASSWORD"
    echo ""
 }
 
@@ -169,7 +169,8 @@ After=network.target
 Type=simple
 User=$USER
 Restart=always
-ExecStart=$FATHOM_PATH --config=$SITE_DIR_ABS/config.env server
+WorkingDirectory=$SITE_DIR_ABS
+ExecStart=$FATHOM_PATH --config=$SITE_DIR_ABS/.env server
 SyslogIdentifier=$SERVICE_NAME
 
 [Install]
