@@ -13,12 +13,12 @@ import (
 func register(c *cli.Context) error {
 	email := c.String("email")
 	if email == "" {
-		return errors.New("invalid args: missing email address")
+		return errors.New("Invalid arguments: missing email address")
 	}
 
 	password := c.String("password")
 	if password == "" {
-		return errors.New("invalid args: missing password")
+		return errors.New("Invalid arguments: missing password")
 	}
 
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
@@ -29,9 +29,9 @@ func register(c *cli.Context) error {
 	err := app.database.SaveUser(user)
 
 	if err != nil {
-		return fmt.Errorf("error creating user: %s", err)
+		return fmt.Errorf("Error creating user: %s", err)
 	}
 
-	log.Infof("created user %s", user.Email)
+	log.Infof("Created user %s", user.Email)
 	return nil
 }

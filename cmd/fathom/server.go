@@ -31,7 +31,7 @@ func server(c *cli.Context) error {
 	}
 
 	// start listening
-	log.Printf("Fathom is now listening on %s", addr)
+	log.Printf("Server is now listening on %s", addr)
 	err := http.ListenAndServe(addr, h)
 	if err != nil {
 		log.Errorln(err)
