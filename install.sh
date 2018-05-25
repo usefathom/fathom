@@ -69,7 +69,7 @@ function setup_config() {
 
    # set filename if using sqlite3
    if [ "$DATABASE" == "sqlite3" ]; then
-      DATABASE_NAME="fathom.db"
+      DATABASE_NAME="$SITE_DIR_ABS/fathom.db"
    fi;
 
    # or ask for credentials if using postgres or mysql
