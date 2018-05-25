@@ -21,7 +21,9 @@ const availablePeriods = [
     id: 'year',
     label: 'This year'
   }
-]
+];
+
+const padZero = function(n){return n<10? '0'+n:''+n;}
 
 class DatePicker extends Component {
   constructor(props) {
@@ -31,6 +33,8 @@ class DatePicker extends Component {
       period: props.value,
       before: 0,
       after: 0,
+      startDate: null,
+      endDate: null,
     }
 
     this.updateDatesFromPeriod(this.state.period)
@@ -87,17 +91,21 @@ class DatePicker extends Component {
       endDate: endDate,
       before: before, 
       after: after,
-      picking: '',
     });
 
-    this.props.onChange(this.state);
+    if(!this.timeout) {
+      this.timeout = window.setTimeout(() => {
+        this.props.onChange(this.state);
+        this.timeout = null;
+      }, 5)
+    }
   }
 
   @bind
   setPeriod(e) {
     e.preventDefault();
 
-    let newPeriod = e.target.dataset.value;
+    let newPeriod = e.target.getAttribute('data-value');
     if( newPeriod === this.state.period) {
       return;
     }
@@ -106,8 +114,7 @@ class DatePicker extends Component {
   }
 
   dateValue(date) {
-    const addZero = function(n){return n<10? '0'+n:''+n;}
-    return date.getFullYear() + '-' + addZero(date.getMonth() + 1) + '-' + addZero(date.getDate());
+    return date.getFullYear() + '-' + padZero(date.getMonth() + 1) + '-' + padZero(date.getDate());
   }
 
   @bind 

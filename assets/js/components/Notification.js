@@ -14,7 +14,7 @@ class Notification extends Component {
     this.timeout = 0
   }
 
-  componentWillReceiveProps(newProps, prevState) {
+  componentWillReceiveProps(newProps) {
     if(newProps.message === this.state.message) {
       return;
     }
