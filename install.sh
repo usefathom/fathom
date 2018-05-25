@@ -106,7 +106,7 @@ END
 
    echo "$TEMPLATE" > ".env"
    echo "Created configuration file: $SITE_DIR_ABS/.env"
-   echo "Success! You can now run Fathom using \`fathom --config=$SITE_DIR_ABS/.env server\`"
+   echo "You can now run Fathom using \`fathom --config=$SITE_DIR_ABS/.env server\`"
    echo ""
 }
 
@@ -114,12 +114,15 @@ function new_fathom_user() {
    echo "Create user account: "
    read -p "  Email address: " USER_EMAIL
    read -p "  Password: " USER_PASSWORD
+
+   echo "Running command: fathom --config=\"$SITE_DIR_ABS/.env\" register --email=\"$USER_EMAIL\" --password=\"$USER_PASSWORD\""
    fathom --config="$SITE_DIR_ABS/.env" register --email="$USER_EMAIL" --password="$USER_PASSWORD"
    echo ""
 }
 
 function new_nginx_server() {
-   read -p "Server name (full domain): " SERVER_NAME
+   echo "Set your domain name, eg fathom.yoursite.com. Make sure you have a DNS record pointing the domain to this server."
+   read -p "Domain name: " SERVER_NAME
    if [ "$SERVER_NAME" == "" ]; then exit 0; fi
 
    # Make sure we're not overwriting existing server blocks
@@ -145,7 +148,7 @@ END
    echo "$TEMPLATE" > "/etc/nginx/sites-available/$SERVER_NAME"
    ln -s "/etc/nginx/sites-available/$SERVER_NAME" "/etc/nginx/sites-enabled/$SERVER_NAME" || true
 
-   echo "Testing NGINX configuration"
+   echo "Testing updated NGINX configuration"
    nginx -t
 
    echo "Reloading NGINX"
@@ -158,6 +161,7 @@ function new_systemctl_service() {
    # Use server name or ask for new service name   
    SERVICE_NAME="$SERVER_NAME"   
    if [ "$SERVICE_NAME" == "" ]; then
+      echo "Choose a name for your service. We recommend something descriptive like the domain to your Fathom instance."
       read -p "Service name: " SERVICE_NAME      
    fi;
 
