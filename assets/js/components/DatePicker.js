@@ -85,6 +85,7 @@ class DatePicker extends Component {
     let before, after;
     before = Math.round(((+endDate) / 1000) - timezoneOffset);
     after = Math.round(((+startDate) / 1000) - timezoneOffset);
+
     this.setState({
       period: period || '',
       startDate: startDate,
@@ -93,6 +94,7 @@ class DatePicker extends Component {
       after: after,
     });
 
+    // use slight delay for updating rest of application to allow this function to be called again
     if(!this.timeout) {
       this.timeout = window.setTimeout(() => {
         this.props.onChange(this.state);

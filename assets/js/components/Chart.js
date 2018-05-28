@@ -41,8 +41,10 @@ var timeFormatPicker = function (formats, len) {
 };
 
 function prepareData(startUnix, endUnix, data) {
-  let startDate = new Date(startUnix * 1000);
-  let endDate = new Date(endUnix * 1000);
+  // add timezone offset back in to get local start date
+  const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
+  let startDate = new Date((startUnix + timezoneOffset) * 1000);
+  let endDate = new Date((endUnix+timezoneOffset) * 1000);
   let datamap = [];
   let newData = [];
 
