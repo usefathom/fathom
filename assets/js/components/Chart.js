@@ -12,33 +12,26 @@ function padZero(s) {
   return s < 10 ? "0" + s : s;
 }
 
-const timeFormats = [
-  [() => '', function(d, n) { 
-    return true;
-  }],
-  [d3.timeFormat("%Y"), function (d, i, n) {
-    return d.getMonth() === 0 && d.getDate() === 1;;
-  }],
-  [d3.timeFormat("%b"), function (d, i, n) {
-    return ( d.getMonth() > 0 && d.getDate() === 1 );
-  }],
-  [d3.timeFormat("%d"), function (d, i, n) {
-    return ( d.getDate() > 1 ) && n < 32;
-  }],
-  [d3.timeFormat("%b %d"), function (d, i, n) {
-    return i === 0 && d.getDate() > 1;
-  }]
-]
+const formatDay = d3.timeFormat("%e"),
+    formatMonth = d3.timeFormat("%b"),
+    formatMonthDay = d3.timeFormat("%b %d"),
+    formatYear = d3.timeFormat("%Y");
 
-var timeFormatPicker = function (formats, len) {
-  return function (date, pos) {
-    var i = formats.length - 1, f = formats[i];
-    while (!f[1](date, pos, len)) {
-      f = formats[--i];
+function timeFormatPicker(n) {
+  return function(d, i) {
+    if(d.getDate() === 1) {
+      return d.getMonth() === 0 ? formatYear(d) : formatMonth(d) 
+    } 
+
+    if(i === 0) {
+      return formatMonthDay(d)
+    } else if(n < 32) {
+      return formatDay(d);
     }
-    return f[0](date);
-  };
-};
+    
+    return '';
+  }
+}
 
 function prepareData(startUnix, endUnix, data) {
   // add timezone offset back in to get local start date
@@ -51,7 +44,8 @@ function prepareData(startUnix, endUnix, data) {
   // create keyed array for quick date access
   data.forEach((d) => {
     // replace date with actual date object & store in datamap
-    let date = new Date(d.Date);
+    let dateParts = d.Date.split('T')[0].split('-');
+    let date = new Date(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0)
     let key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
     d.Date = date;
     datamap[key] = d;
@@ -128,7 +122,7 @@ class Chart extends Component {
     let x = d3.scaleBand().range([0, innerWidth]).padding(0.1).domain(data.map((d) => d.Date))
     let y  = d3.scaleLinear().range([innerHeight, 0]).domain([0, (max*1.1)])
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
-    let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(timeFormats, data.length))
+    let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
 
     let yTicks = graph.append("g")
       .attr("class", "y axis")
