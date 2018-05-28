@@ -60,6 +60,11 @@ func Parse(file string) *Config {
 		cfg.Database.Driver = "sqlite3"
 	}
 
+	// use absolute path to sqlite3 database
+	if cfg.Database.Driver == "sqlite3" {
+		cfg.Database.Name, _ = filepath.Abs(cfg.Database.Name)
+	}
+
 	// if secret key is empty, use a randomly generated one
 	if cfg.Secret == "" {
 		cfg.Secret = randomString(40)
