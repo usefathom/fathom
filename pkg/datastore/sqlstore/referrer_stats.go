@@ -18,14 +18,14 @@ func (db *sqlstore) GetReferrerStats(date time.Time, url string) (*models.Referr
 }
 
 func (db *sqlstore) InsertReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, url, date) VALUES(?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, known_durations, url, date) VALUES(?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.URL, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func (db *sqlstore) UpdateReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4) WHERE url = ? AND date = ?`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.URL, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE url = ? AND date = ?`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.URL, s.Date.Format("2006-01-02"))
 	return err
 }
 

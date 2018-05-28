@@ -17,14 +17,14 @@ func (db *sqlstore) GetPageStats(date time.Time, hostname string, pathname strin
 }
 
 func (db *sqlstore) InsertPageStats(s *models.PageStats) error {
-	query := db.Rebind(`INSERT INTO daily_page_stats(pageviews, visitors, entries, bounce_rate, avg_duration, hostname, pathname, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.Pageviews, s.Visitors, s.Entries, s.BounceRate, s.AvgDuration, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO daily_page_stats(pageviews, visitors, entries, bounce_rate, avg_duration, known_durations, hostname, pathname, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.Pageviews, s.Visitors, s.Entries, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func (db *sqlstore) UpdatePageStats(s *models.PageStats) error {
-	query := db.Rebind(`UPDATE daily_page_stats SET pageviews = ?, visitors = ?, entries = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4) WHERE hostname = ? AND pathname = ? AND date = ?`)
-	_, err := db.Exec(query, s.Pageviews, s.Visitors, s.Entries, s.BounceRate, s.AvgDuration, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE daily_page_stats SET pageviews = ?, visitors = ?, entries = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE hostname = ? AND pathname = ? AND date = ?`)
+	_, err := db.Exec(query, s.Pageviews, s.Visitors, s.Entries, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
 	return err
 }
 

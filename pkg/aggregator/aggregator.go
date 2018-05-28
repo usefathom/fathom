@@ -77,9 +77,9 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 
 		site.Pageviews += 1
 
-		// TODO: Weight isn't right here because we need the number of pageview with a known time of page, not all pageviews
 		if p.Duration > 0.00 {
-			site.AvgDuration = site.AvgDuration + ((float64(p.Duration) - site.AvgDuration) * 1 / float64(site.Pageviews))
+			site.KnownDurations += 1
+			site.AvgDuration = site.AvgDuration + ((float64(p.Duration) - site.AvgDuration) * 1 / float64(site.KnownDurations))
 		}
 
 		if p.IsNewVisitor {
@@ -108,7 +108,8 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 		}
 
 		if p.Duration > 0.00 {
-			pageStats.AvgDuration = pageStats.AvgDuration + ((float64(p.Duration) - pageStats.AvgDuration) * 1 / float64(pageStats.Pageviews))
+			pageStats.KnownDurations += 1
+			pageStats.AvgDuration = pageStats.AvgDuration + ((float64(p.Duration) - pageStats.AvgDuration) * 1 / float64(pageStats.KnownDurations))
 		}
 
 		if p.IsNewSession {
@@ -142,7 +143,8 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 			}
 
 			if p.Duration > 0.00 {
-				referrerStats.AvgDuration = referrerStats.AvgDuration + ((float64(p.Duration) - referrerStats.AvgDuration) * 1 / float64(referrerStats.Pageviews))
+				referrerStats.KnownDurations += 1
+				referrerStats.AvgDuration = referrerStats.AvgDuration + ((float64(p.Duration) - referrerStats.AvgDuration) * 1 / float64(referrerStats.KnownDurations))
 			}
 
 		}

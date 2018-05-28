@@ -17,14 +17,14 @@ func (db *sqlstore) GetSiteStats(date time.Time) (*models.SiteStats, error) {
 }
 
 func (db *sqlstore) InsertSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`INSERT INTO daily_site_stats(visitors, sessions, pageviews, bounce_rate, avg_duration, date) VALUES(?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO daily_site_stats(visitors, sessions, pageviews, bounce_rate, avg_duration, known_durations, date) VALUES(?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func (db *sqlstore) UpdateSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4) WHERE date = ?`)
-	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE date = ?`)
+	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Date.Format("2006-01-02"))
 	return err
 }
 

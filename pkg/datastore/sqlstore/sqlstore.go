@@ -38,7 +38,7 @@ func New(c *Config) *sqlstore {
 func (db *sqlstore) Migrate() {
 	migrationSource := &migrate.PackrMigrationSource{
 		Box: packr.NewBox("./migrations"),
-		Dir: "./" + db.Config.Driver,
+		Dir: db.Config.Driver,
 	}
 	migrate.SetTable("migrations")
 
