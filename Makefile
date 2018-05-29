@@ -3,7 +3,7 @@ EXECUTABLE := fathom
 LDFLAGS += -extldflags "-static"
 MAIN_PKG := ./cmd/fathom
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
-JS_SOURCES ?= $(shell find assets/. -name "*.js" -type f)
+JS_SOURCES ?= $(shell find assets/src/. -name "*.js" -type f)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 
@@ -12,19 +12,30 @@ all: build
 
 .PHONY: install
 install: $(wildcard *.go)
-	packr install -v -ldflags '-w $(LDFLAGS)' $(MAIN_PKG)
+	$(GOPATH)/bin/packr install -v -ldflags '-w $(LDFLAGS)' $(MAIN_PKG)
 
 .PHONY: build
 build: $(EXECUTABLE)
 
-$(EXECUTABLE): $(SOURCES) $(JS_SOURCES)
+$(EXECUTABLE): $(SOURCES) assets/build $(GOPATH)/bin/packr
+	$(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
+
+dist: assets/dist build/fathom-linux-amd64
+
+build/fathom-linux-amd64: $(GOPATH)/bin/packr
+	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG)
+
+$(GOPATH)/bin/packr:
+	GOBIN=$(GOPATH)/bin go get github.com/gobuffalo/packr/...
+
+
+assets/build: $(JS_SOURCES)
+	if [ ! -d "node_modules" ]; then npm install; fi
+	gulp	
+
+assets/dist: $(JS_SOURCES)
 	if [ ! -d "node_modules" ]; then npm install; fi
 	NODE_ENV=production gulp
-	packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG) 
-
-.PHONY: docker
-docker:
-	docker build -t metalmatze/ana:latest .
 
 .PHONY: clean
 clean:

@@ -27,7 +27,7 @@ func (api *API) Routes() *mux.Router {
 	r.Handle("/api/stats/referrers/pageviews", api.Authorize(HandlerFunc(api.GetReferrerStatsPageviewsHandler))).Methods(http.MethodGet)
 
 	// static assets & 404 handler
-	box := packr.NewBox("./../../build")
+	box := packr.NewBox("./../../assets/build")
 	r.Path("/tracker.js").Handler(serveFileHandler(&box, "js/tracker.js"))
 	r.Path("/").Handler(serveFileHandler(&box, "index.html"))
 	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", http.FileServer(box)))

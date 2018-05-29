@@ -5,3 +5,6 @@ build
 fathom.db
 fathom
 !cmd/fathom
+
+assets/build
+assets/dist
