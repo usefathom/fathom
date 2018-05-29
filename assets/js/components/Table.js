@@ -75,7 +75,7 @@ class Table extends Component {
         <div class="cell">{p.Pageviews}</div>
         <div class="cell">{p.Visitors||"-"}</div>           
       </div>
-    )}) : <div class="table-row">Nothing here, yet.</div>;
+    )}) : <div class="table-row"><div class="cell main-col">Nothing here, yet.</div></div>;
 
     return (
       <div class={(state.loading ? "loading" : '')}>
