@@ -31,6 +31,7 @@ func parsePathname(p string) string {
 	return "/" + strings.TrimLeft(p, "/")
 }
 
+// TODO: Move this to aggregator, as we need this endpoint to be as fast as possible
 func parseReferrer(r string) string {
 	u, err := url.Parse(r)
 	if err != nil {

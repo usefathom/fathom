@@ -64,6 +64,7 @@ func (agg *aggregator) getPageStats(r *results, t time.Time, hostname string, pa
 	return stats, nil
 }
 
+// TODO: Set referrers group here.
 func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
 	date := t.Format("2006-01-02")
 	if stats, ok := r.Referrers[date+hostname+pathname]; ok {
