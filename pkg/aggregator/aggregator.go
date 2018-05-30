@@ -3,6 +3,7 @@ package aggregator
 import (
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
+	"net/url"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -124,7 +125,8 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 
 		// referrer stats
 		if p.Referrer != "" {
-			referrerStats, err := agg.getReferrerStats(results, p.Timestamp, p.Referrer)
+			hostname, pathname, _ := parseUrlParts(p.Referrer)
+			referrerStats, err := agg.getReferrerStats(results, p.Timestamp, hostname, pathname)
 			if err != nil {
 				log.Error(err)
 				continue
@@ -152,4 +154,13 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 	}
 
 	return results
+}
+
+func parseUrlParts(s string) (string, string, error) {
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", "", err
+	}
+
+	return u.Scheme + "://" + u.Host, u.Path, nil
 }
