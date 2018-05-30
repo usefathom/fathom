@@ -15,6 +15,7 @@ For getting a development version of Fathom up & running, go through the followi
 
 1. Ensure you have [Golang](https://golang.org/doc/install#install) installed properly
 1. Get code: `git clone git@github.com:usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
+1. If you don't have [packr](https://github.com/gobuffalo/packr/), install it with `go get -u github.com/gobuffalo/packr/...`
 1. Compile into binary & prepare assets: `make build` 
 1. Register your user account: `fathom register --email=<email> --password=<password>`
 1. Start the webserver: `fathom server` and then visit **http://localhost:8080** to access your analytics dashboard.
