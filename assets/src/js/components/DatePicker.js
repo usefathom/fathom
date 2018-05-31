@@ -72,9 +72,6 @@ class DatePicker extends Component {
       break;
     }
 
-    console.log("Start", startDate);
-    console.log("End", endDate);
-
     this.setDateRange(startDate, endDate, period);
   }
 

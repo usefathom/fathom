@@ -30,11 +30,11 @@ $(GOPATH)/bin/packr:
 
 assets/build: $(JS_SOURCES)
 	if [ ! -d "node_modules" ]; then npm install; fi
-	gulp	
+	./node_modules/gulp/bin/gulp.js	
 
 assets/dist: $(JS_SOURCES)
 	if [ ! -d "node_modules" ]; then npm install; fi
-	NODE_ENV=production gulp
+	NODE_ENV=production ./node_modules/gulp/bin/gulp.js
 
 .PHONY: clean
 clean:
