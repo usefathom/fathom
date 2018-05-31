@@ -68,8 +68,8 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/js/**/*.js'], ['browserify'] );
-  gulp.watch(['./assets/sass/**/**/*.scss'], ['sass'] );
-  gulp.watch(['./assets/**/*.html'], ['html'] );
-  gulp.watch(['./assets/img/**/*'], ['img'] );
+  gulp.watch(['./assets/src/js/**/*.js'], ['browserify'] );
+  gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
+  gulp.watch(['./assets/src/**/*.html'], ['html'] );
+  gulp.watch(['./assets/src/img/**/*'], ['img'] );
 });
