@@ -45,19 +45,22 @@ class DatePicker extends Component {
     let startDate = new Date();
     startDate.setHours(0);
     startDate.setMinutes(0);
+    startDate.setSeconds(0);
 
     let endDate = new Date();
-    endDate.setHours(24);
-    endDate.setMinutes(0);
+    endDate.setHours(23);
+    endDate.setMinutes(59);
+    endDate.setSeconds(59);
 
     switch(period) {
       case "week":
         startDate.setDate(startDate.getDate() - (startDate.getDay() + 6) % 7);
-        endDate.setDate(startDate.getDate() + 7);
+        endDate.setDate(startDate.getDate() + 6);
       break;
       case "month":
         startDate.setDate(1);
-        endDate.setMonth(endDate.getMonth() + 1);
+        endDate.setDate(5); // because every month has date 5... use date-fn here later on
+        endDate.setMonth(startDate.getMonth() + 1);
         endDate.setDate(0);
       break;
       case "year":
@@ -68,6 +71,9 @@ class DatePicker extends Component {
         endDate.setDate(0);
       break;
     }
+
+    console.log("Start", startDate);
+    console.log("End", endDate);
 
     this.setDateRange(startDate, endDate, period);
   }
