@@ -98,7 +98,7 @@ class Chart extends Component {
     }
 
     let padding = { top: 12, right: 12, bottom: 24, left: 40 };
-    let height = Math.max( this.base.clientHeight, 240 );
+    let height = 240;
     let width = this.base.clientWidth;
     let innerWidth = width - padding.left - padding.right;
     let innerHeight = height - padding.top - padding.bottom;
