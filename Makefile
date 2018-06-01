@@ -6,6 +6,7 @@ PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 JS_SOURCES ?= $(shell find assets/src/. -name "*.js" -type f)
 SOURCES ?= $(shell find . -name "*.go" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
+GOPATH=$(shell go env GOPATH)
 
 .PHONY: all
 all: build 
