@@ -42,36 +42,36 @@ class DatePicker extends Component {
 
   @bind
   updateDatesFromPeriod(period) {
-    let startDate = new Date();
-    startDate.setHours(0);
-    startDate.setMinutes(0);
-    startDate.setSeconds(0);
-
-    let endDate = new Date();
-    endDate.setHours(23);
-    endDate.setMinutes(59);
-    endDate.setSeconds(59);
+    let now = new Date();
+    let startDate, endDate;
 
     switch(period) {
+      case "day":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+
       case "week":
-        startDate.setDate(startDate.getDate() - (startDate.getDay() + 6) % 7);
-        endDate.setDate(startDate.getDate() + 6);
+        startDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - (now.getDay() + 6) % 7));
+        endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);
       break;
       case "month":
-        startDate.setDate(1);
-        endDate.setDate(5); // because every month has date 5... use date-fn here later on
-        endDate.setMonth(startDate.getMonth() + 1);
-        endDate.setDate(0);
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
       break;
       case "year":
-        startDate.setDate(1);
-        startDate.setMonth(0);
-        endDate.setYear(startDate.getFullYear() + 1);
-        endDate.setMonth(0);
-        endDate.setDate(0);
+        startDate = new Date(now.getFullYear(), 0, 1);
+        endDate = new Date(startDate.getFullYear() + 1, 0, 0);
+      break;
+
+      case "":
+      default:
+        return; // empty period, don't update state
       break;
     }
 
+    startDate.setHours(0, 0, 0);
+    endDate.setHours(23, 59, 59);
     this.setDateRange(startDate, endDate, period);
   }
 
