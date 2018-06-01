@@ -4,7 +4,8 @@ LDFLAGS += -extldflags "-static"
 MAIN_PKG := ./cmd/fathom
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 JS_SOURCES ?= $(shell find assets/src/. -name "*.js" -type f)
-SOURCES ?= $(shell find . -name "*.go" -type f)
+GO_SOURCES ?= $(shell find . -name "*.go" -type f)
+SQL_SOURCES ?= $(shell find . -name "*.sql" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 GOPATH=$(shell go env GOPATH)
 
@@ -18,12 +19,12 @@ install: $(wildcard *.go) $(GOPATH)/bin/packr
 .PHONY: build
 build: $(EXECUTABLE)
 
-$(EXECUTABLE): $(SOURCES) assets/build $(GOPATH)/bin/packr
-	go build -o $@ $(MAIN_PKG) 
+$(EXECUTABLE): $(GO_SOURCES) assets/build
+	go build -o $@ $(MAIN_PKG)
 
 dist: assets/dist build/fathom-linux-amd64
 
-build/fathom-linux-amd64: $(GOPATH)/bin/packr
+build/fathom-linux-amd64: $(GOPATH)/bin/packr $(SQL_SOURCES) $(GO_SOURCES) $(JS_SOURCES)
 	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:

@@ -43,7 +43,7 @@ type Datastore interface {
 	GetAggregatedPageStatsPageviews(time.Time, time.Time) (int, error)
 
 	// referrer stats
-	GetReferrerStats(time.Time, string) (*models.ReferrerStats, error)
+	GetReferrerStats(time.Time, string, string) (*models.ReferrerStats, error)
 	InsertReferrerStats(*models.ReferrerStats) error
 	UpdateReferrerStats(*models.ReferrerStats) error
 	GetAggregatedReferrerStats(time.Time, time.Time, int) ([]*models.ReferrerStats, error)

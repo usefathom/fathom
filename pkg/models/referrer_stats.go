@@ -5,7 +5,9 @@ import (
 )
 
 type ReferrerStats struct {
-	URL            string    `db:"url"`
+	Hostname       string    `db:"hostname"`
+	Pathname       string    `db:"pathname"`
+	Group          string    `db:"groupname"`
 	Visitors       int64     `db:"visitors"`
 	Pageviews      int64     `db:"pageviews"`
 	BounceRate     float64   `db:"bounce_rate"`

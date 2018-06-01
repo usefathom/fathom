@@ -1,6 +1,7 @@
 package aggregator
 
 import (
+	"strings"
 	"time"
 
 	"github.com/usefathom/fathom/pkg/datastore"
@@ -64,14 +65,14 @@ func (agg *aggregator) getPageStats(r *results, t time.Time, hostname string, pa
 	return stats, nil
 }
 
-func (agg *aggregator) getReferrerStats(r *results, t time.Time, url string) (*models.ReferrerStats, error) {
+func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
 	date := t.Format("2006-01-02")
-	if stats, ok := r.Referrers[date+url]; ok {
+	if stats, ok := r.Referrers[date+hostname+pathname]; ok {
 		return stats, nil
 	}
 
 	// get from db
-	stats, err := agg.database.GetReferrerStats(t, url)
+	stats, err := agg.database.GetReferrerStats(t, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -79,15 +80,23 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, url string) (*m
 	// create in db
 	if stats == nil {
 		stats = &models.ReferrerStats{
-			URL:  url,
-			Date: t,
+			Hostname: hostname,
+			Pathname: pathname,
+			Date:     t,
+			Group:    "",
 		}
+
+		// TODO: Abstract this
+		if strings.Contains(stats.Hostname, "www.google.") {
+			stats.Group = "Google"
+		}
+
 		err = agg.database.InsertReferrerStats(stats)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	r.Referrers[date+url] = stats
+	r.Referrers[date+hostname+pathname] = stats
 	return stats, nil
 }
