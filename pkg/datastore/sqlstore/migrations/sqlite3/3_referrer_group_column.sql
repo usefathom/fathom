@@ -1,6 +1,6 @@
 -- +migrate Up
 
-ALTER TABLE daily_referrer_stats ADD COLUMN groupname VARCHAR(255) NULL;
+ALTER TABLE daily_referrer_stats ADD COLUMN groupname VARCHAR(255);
 ALTER TABLE daily_referrer_stats ADD COLUMN hostname VARCHAR(255);
 ALTER TABLE daily_referrer_stats ADD COLUMN pathname VARCHAR(255);
 
