@@ -20,17 +20,18 @@ func New(db datastore.Datastore) *aggregator {
 }
 
 // Run processes the pageviews which are ready to be processed and adds them to daily aggregation
-func (agg *aggregator) Run() {
+func (agg *aggregator) Run() int {
 	// Get unprocessed pageviews
 	pageviews, err := agg.database.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
 		log.Error(err)
-		return
+		return 0
 	}
 
 	//  Do we have anything to process?
-	if len(pageviews) == 0 {
-		return
+	n := len(pageviews)
+	if n == 0 {
+		return 0
 	}
 
 	results := agg.Process(pageviews)
@@ -62,6 +63,8 @@ func (agg *aggregator) Run() {
 	if err != nil {
 		log.Error(err)
 	}
+
+	return n
 }
 
 // Process processes the given pageviews and returns the (aggregated) results per metric per day
