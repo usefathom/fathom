@@ -29,12 +29,6 @@ func New(c *Config) *sqlstore {
 	// write log statement
 	log.Infof("Connected to %s database: %s", c.Driver, c.Name)
 
-	// Driver specific database options
-	if c.Driver == "mysql" {
-		// Because SQLite doesn't have CONCAT, tell MySQL to accept pipes for concatenating string columns
-		db.Exec("SET sql_mode=PIPES_AS_CONCAT;")
-	}
-
 	// run migrations
 	db.Migrate()
 

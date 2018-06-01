@@ -31,7 +31,8 @@ func (db *sqlstore) UpdateReferrerStats(s *models.ReferrerStats) error {
 
 func (db *sqlstore) GetAggregatedReferrerStats(startDate time.Time, endDate time.Time, limit int) ([]*models.ReferrerStats, error) {
 	var result []*models.ReferrerStats
-	query := db.Rebind(`
+
+	sql := `
 	SELECT 
 		MIN(hostname) AS hostname,
 		MIN(pathname) AS pathname,
@@ -42,7 +43,14 @@ func (db *sqlstore) GetAggregatedReferrerStats(startDate time.Time, endDate time
 		COALESCE(ROUND(SUM(avg_duration*pageviews)/SUM(pageviews), 4), 0.00) AS avg_duration 
 	FROM daily_referrer_stats 
 	WHERE date >= ? AND date <= ? 
-	GROUP BY COALESCE(NULLIF(groupname, ""), hostname || pathname) ORDER BY pageviews DESC LIMIT ?`)
+	GROUP BY COALESCE(NULLIF(groupname, ""), `
+	if db.Config.Driver == "sqlite3" {
+		sql = sql + `hostname || pathname`
+	} else {
+		sql = sql + ` CONCAT(hostname, pathname)`
+	}
+	sql = sql + `) ORDER BY pageviews DESC LIMIT ?`
+	query := db.Rebind(sql)
 
 	err := db.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
 	return result, err
