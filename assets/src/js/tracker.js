@@ -105,6 +105,7 @@ function trackPageview() {
     cookies.set('_fathom', JSON.stringify(data), { expires: 60 * 60 * 24});
   });
   document.body.appendChild(i);
+  window.setTimeout(() => { document.body.removeChild(i)}, 1000);
 }
 
 // override global fathom object
