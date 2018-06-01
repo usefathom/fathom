@@ -35,14 +35,15 @@ func (db *sqlstore) GetAggregatedReferrerStats(startDate time.Time, endDate time
 	SELECT 
 		MIN(hostname) AS hostname,
 		MIN(pathname) AS pathname,
-		MIN(COALESCE(groupname, "")) AS groupname, 
+		MIN(COALESCE(groupname, "")) AS groupname,  
 		SUM(visitors) AS visitors, 
 		SUM(pageviews) AS pageviews, 
 		COALESCE(ROUND(SUM(pageviews*bounce_rate)/SUM(pageviews), 4), 0.00) AS bounce_rate, 
 		COALESCE(ROUND(SUM(avg_duration*pageviews)/SUM(pageviews), 4), 0.00) AS avg_duration 
 	FROM daily_referrer_stats 
 	WHERE date >= ? AND date <= ? 
-	GROUP BY COALESCE(groupname, hostname, pathname) ORDER BY pageviews DESC LIMIT ?`)
+	GROUP BY COALESCE(NULLIF(groupname, ""), hostname || pathname) ORDER BY pageviews DESC LIMIT ?`)
+
 	err := db.Select(&result, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
 	return result, err
 }
