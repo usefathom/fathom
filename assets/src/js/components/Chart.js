@@ -14,7 +14,7 @@ function padZero(s) {
 
 const formatDay = d3.timeFormat("%e"),
     formatMonth = d3.timeFormat("%b"),
-    formatMonthDay = d3.timeFormat("%b %d"),
+    formatMonthDay = d3.timeFormat("%b %e"),
     formatYear = d3.timeFormat("%Y");
 
 function timeFormatPicker(n) {
