@@ -21,6 +21,7 @@ type Datastore interface {
 	GetSiteStatsPerDay(time.Time, time.Time) ([]*models.SiteStats, error)
 	InsertSiteStats(*models.SiteStats) error
 	UpdateSiteStats(*models.SiteStats) error
+	GetAggregatedSiteStats(time.Time, time.Time) (*models.SiteStats, error)
 	GetTotalSiteViews(time.Time, time.Time) (int, error)
 	GetTotalSiteVisitors(time.Time, time.Time) (int, error)
 	GetTotalSiteSessions(time.Time, time.Time) (int, error)

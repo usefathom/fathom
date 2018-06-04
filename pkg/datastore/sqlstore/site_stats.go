@@ -36,6 +36,22 @@ func (db *sqlstore) GetSiteStatsPerDay(startDate time.Time, endDate time.Time) (
 	return results, err
 }
 
+func (db *sqlstore) GetAggregatedSiteStats(startDate time.Time, endDate time.Time) (*models.SiteStats, error) {
+	stats := &models.SiteStats{}
+	query := db.Rebind(`SELECT 
+		COALESCE(SUM(pageviews), 0) AS pageviews,
+		COALESCE(SUM(visitors), 0) AS visitors,
+		COALESCE(SUM(sessions), 0) AS sessions,
+		COALESCE(ROUND(SUM(pageviews*avg_duration)/SUM(pageviews), 4), 0.00) AS avg_duration,
+		COALESCE(ROUND(SUM(sessions*bounce_rate)/SUM(sessions), 4), 0.00) AS bounce_rate
+	 FROM daily_site_stats WHERE date >= ? AND date <= ? LIMIT 1`)
+	err := db.Get(stats, query, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	if err != nil && err == sql.ErrNoRows {
+		return nil, ErrNoResults
+	}
+	return stats, err
+}
+
 func (db *sqlstore) GetTotalSiteViews(startDate time.Time, endDate time.Time) (int, error) {
 	sql := `SELECT COALESCE(SUM(pageviews), 0) FROM daily_site_stats WHERE date >= ? AND date <= ?`
 	query := db.Rebind(sql)

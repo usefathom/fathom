@@ -4,7 +4,7 @@ import { h, Component } from 'preact';
 import LogoutButton from '../components/LogoutButton.js';
 import Realtime from '../components/Realtime.js';
 import DatePicker from '../components/DatePicker.js';
-import CountWidget from '../components/CountWidget.js';
+import Sidebar from '../components/Sidebar.js';
 import Table from '../components/Table.js';
 import Chart from '../components/Chart.js';
 import { bind } from 'decko';
@@ -47,12 +47,7 @@ class Dashboard extends Component {
         </nav>
 
         <div class="boxes">
-          <div class="box box-totals animated fadeInUp delayed_03s">
-            <CountWidget title="Unique visitors" endpoint="stats/site/visitors" before={state.before} after={state.after} />
-            <CountWidget title="Page views" endpoint="stats/site/pageviews" before={state.before} after={state.after} />
-            <CountWidget title="Avg time on site" endpoint="stats/site/duration" format="duration" before={state.before} after={state.after} />
-            <CountWidget title="Bounce rate" endpoint="stats/site/bounces" format="percentage" before={state.before} after={state.after} />
-          </div>
+          <Sidebar before={state.before} after={state.after} />
 
           <div class="boxes-col">
             <div class="box box-graph">

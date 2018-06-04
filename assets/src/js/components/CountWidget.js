@@ -2,7 +2,6 @@
 
 import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
-import Client from '../lib/client.js';
 import { bind } from 'decko';
 
 
@@ -11,17 +10,16 @@ class CountWidget extends Component {
     super(props)
 
     this.state = {
-      value: "-",
-      loading: false,
+      value: "-"
     }
   }
 
   componentWillReceiveProps(newProps, newState) {
-    if(newProps.before == this.props.before && newProps.after == this.props.after) {
+    if(newProps.value == this.props.value) {
       return;
     }
 
-    this.fetchData(newProps.before, newProps.after);
+    this.countUp(newProps.value);
   }
 
   // TODO: Move to component of its own
@@ -49,24 +47,6 @@ class CountWidget extends Component {
     window.requestAnimationFrame(tick);
   }
 
-  @bind
-  fetchData(before, after) {
-    this.setState({ loading: true })
-
-    Client.request(`${this.props.endpoint}?before=${before}&after=${after}`)
-      .then((d) => { 
-        // request finished; check if timestamp range is still the one user wants to see
-        if( this.props.before != before || this.props.after != after ) {
-          return;
-        }
-
-        this.setState({ 
-          loading: false,
-        })
-        this.countUp(d);
-      })
-  }
-
   render(props, state) {
     let formattedValue = "-";
 
@@ -88,7 +68,7 @@ class CountWidget extends Component {
     }
 
     return (
-       <div class={"totals-detail " + ( state.loading ? "loading" : '')}>
+       <div class={"totals-detail " + ( props.loading ? "loading" : '')}>
         <div class="total-heading">{props.title}</div>
         <div class="total-numbers">{formattedValue}</div>
       </div>

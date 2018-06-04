@@ -4,6 +4,16 @@ import (
 	"net/http"
 )
 
+// URL: /api/stats/site
+func (api *API) GetSiteStatsHandler(w http.ResponseWriter, r *http.Request) error {
+	params := GetRequestParams(r)
+	result, err := api.database.GetAggregatedSiteStats(params.StartDate, params.EndDate)
+	if err != nil {
+		return err
+	}
+	return respond(w, envelope{Data: result})
+}
+
 // URL: /api/stats/site/pageviews
 func (api *API) GetSiteStatsPageviewsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
