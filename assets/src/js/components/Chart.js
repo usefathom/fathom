@@ -28,7 +28,7 @@ function timeFormatPicker(n) {
     } else if(n < 32) {
       return formatDay(d);
     }
-    
+
     return '';
   }
 }
@@ -41,21 +41,24 @@ function prepareData(startUnix, endUnix, data) {
   let datamap = [];
   let newData = [];
 
-  // create keyed array for quick date access
-  data.forEach((d) => {
+   // create keyed array for quick date access
+  let length = data.length;
+  let d, dateParts, date, key;
+  for(var i=0;i<length;i++) {
+    d = data[i];
     // replace date with actual date object & store in datamap
-    let dateParts = d.Date.split('T')[0].split('-');
-    let date = new Date(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0)
-    let key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
+    dateParts = d.Date.split('T')[0].split('-');
+    date = new Date(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0)
+    key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
     d.Date = date;
     datamap[key] = d;
-  });
+  }
 
   // make sure we have values for each date
   let currentDate = startDate;
   while(currentDate < endDate) {
-    let key = currentDate.getFullYear() + "-" + padZero(currentDate.getMonth() + 1) + "-" + padZero(currentDate.getDate());
-    let data = datamap[key] ? datamap[key] : {
+    key = currentDate.getFullYear() + "-" + padZero(currentDate.getMonth() + 1) + "-" + padZero(currentDate.getDate());
+    data = datamap[key] ? datamap[key] : {
         "Pageviews": 0,
         "Visitors": 0,
         "Date": new Date(currentDate),
@@ -65,11 +68,8 @@ function prepareData(startUnix, endUnix, data) {
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-
  return newData;
 }
-
-
 
 class Chart extends Component {
   constructor(props) {
@@ -90,6 +90,23 @@ class Chart extends Component {
   }
 
   @bind
+  prepareChart() {
+    let padding = { top: 12, right: 12, bottom: 24, left: 40 };
+    let height = 240;
+    let width = this.base.clientWidth;
+
+    this.innerWidth = width - padding.left - padding.right;
+    this.innerHeight = height - padding.top - padding.bottom;
+
+    this.ctx =  d3.select(this.base)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', 'translate(' + padding.left + ', '+padding.top+')')
+  }
+
+  @bind
   redrawChart() {
     var data = this.state.data;
     this.base.parentNode.style.display = data.length <= 1 ? 'none' : '';
@@ -97,24 +114,17 @@ class Chart extends Component {
       return;
     }
 
-    let padding = { top: 12, right: 12, bottom: 24, left: 40 };
-    let height = 240;
-    let width = this.base.clientWidth;
-    let innerWidth = width - padding.left - padding.right;
-    let innerHeight = height - padding.top - padding.bottom;
+    if( ! this.ctx ) {
+      this.prepareChart()
+    }
 
+    let innerWidth = this.innerWidth
+    let innerHeight = this.innerHeight
+  
     // empty previous graph
-    if( this.previousGraph ) {
-      this.previousGraph.selectAll('*').remove();
-    } 
+    this.ctx.selectAll('*').remove()
 
-    let graph = this.previousGraph = d3.select(this.base)
-    graph
-      .append('svg').attr('width', width)
-      .attr('height', height)
-      .append('g').attr('transform', 'translate(' + padding.left + ', '+padding.top+')');
-    graph = graph.select('g')
-
+    let graph = this.ctx;
     const t = d3.transition().duration(500).ease(d3.easeQuadOut);
     const max = d3.max(data, (d) => d.Pageviews);
 
