@@ -58,7 +58,7 @@ class CountWidget extends Component {
 
         default:
         case "number":
-            formattedValue = numbers.formatWithComma(Math.round(state.value))
+            formattedValue = numbers.formatPretty(Math.round(state.value))
         break;
 
         case "duration":

@@ -3,6 +3,7 @@
 import { h, Component } from 'preact';
 import Client from '../lib/client.js';
 import { bind } from 'decko';
+import * as numbers from '../lib/numbers.js';
 
 class Realtime extends Component {
 
@@ -27,7 +28,7 @@ class Realtime extends Component {
   setDocumentTitle() {
     // update document title
     let visitorText = this.state.count == 1 ? 'visitor' : 'visitors';
-    document.title = ( this.state.count > 0 ? `${this.state.count} current ${visitorText} — Fathom` : 'Fathom' );
+    document.title = ( this.state.count > 0 ? `${numbers.formatPretty(this.state.count)} current ${visitorText} — Fathom` : 'Fathom' );
   }
 
   @bind
@@ -47,7 +48,7 @@ class Realtime extends Component {
   render(props, state) {
     let visitorText = state.count == 1 ? 'visitor' : 'visitors';
     return (
-        <span><span class="count">{state.count}</span> <span>current {visitorText}</span></span>
+        <span><span class="count">{numbers.formatPretty(state.count)}</span> <span>current {visitorText}</span></span>
     )
   }
 }

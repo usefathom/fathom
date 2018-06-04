@@ -1,5 +1,19 @@
 'use strict';
 
+function formatPretty(num) {
+  let M = 1000000, K = 1000;
+
+  if (num >= M) {
+    return (num / M).toFixed(num > (M * 10) ? 1 : 2).replace(/\.0$/, '') + 'M';
+  }
+
+  if (num >= (K * 10)) {
+    return (num / K).toFixed(num > (K*100) ? 0 : 1).replace(/\.0$/, '') + 'K';
+  }
+
+  return formatWithComma(num);
+}
+
 function formatWithComma(nStr) {
 	nStr += '';
 
@@ -19,9 +33,9 @@ function formatWithComma(nStr) {
 
 function formatDuration(seconds) {
   seconds = Math.round(seconds);
-   var date = new Date(null);
-   date.setSeconds(seconds); // specify value for SECONDS here
-   return date.toISOString().substr(14, 5);
+  var date = new Date(null);
+  date.setSeconds(seconds); // specify value for SECONDS here
+  return date.toISOString().substr(14, 5);
 }
 
 function formatPercentage(p) {
@@ -29,7 +43,8 @@ function formatPercentage(p) {
 }
 
 export { 
-   formatWithComma, 
-   formatDuration, 
-   formatPercentage 
+  formatPretty,
+  formatWithComma, 
+  formatDuration, 
+  formatPercentage 
 }

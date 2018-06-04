@@ -76,8 +76,8 @@ class Table extends Component {
       return(
       <div class={classes}>
         <div class="cell main-col"><a href={href}>{label}</a></div>
-        <div class="cell">{p.Pageviews}</div>
-        <div class="cell">{p.Visitors||"-"}</div>           
+        <div class="cell">{numbers.formatPretty(p.Pageviews)}</div>
+        <div class="cell">{numbers.formatPretty(p.Visitors)||"-"}</div>           
       </div>
     )}) : <div class="table-row"><div class="cell main-col">Nothing here, yet.</div></div>;
 
