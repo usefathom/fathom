@@ -73,7 +73,10 @@ func main() {
 		},
 	}
 
-	log.Infof("%s %s", app.Name, app.Version)
+	if len(os.Args) < 2 || os.Args[1] != "--version" {
+		log.Infof("%s %s", app.Name, app.Version)
+	}
+
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
