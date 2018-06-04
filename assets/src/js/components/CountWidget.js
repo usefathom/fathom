@@ -4,40 +4,31 @@ import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import { bind } from 'decko';
 
+const duration = 1000;
+const easeOutQuint = function (t) { return 1+(--t)*t*t*t*t };
 
 class CountWidget extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      value: "-"
-    }
-  }
-
   componentWillReceiveProps(newProps, newState) {
     if(newProps.value == this.props.value) {
       return;
     }
 
-    this.countUp(newProps.value);
+    this.countUp(this.props.value || 0, newProps.value);
   }
 
   // TODO: Move to component of its own
   @bind 
-  countUp(toValue) { 
-    const duration = 1000;
-    const easeOutQuint = function (t) { return 1+(--t)*t*t*t*t };
-    const setState = this.setState.bind(this);
-    const startValue = isFinite(this.state.value) ? this.state.value : 0;
+  countUp(fromValue, toValue) { 
+    const format = this.formatValue.bind(this);
+    const startValue = isFinite(fromValue) ? fromValue : 0;
+    const numberEl = this.numberEl;
     const diff = toValue - startValue;
     let startTime = performance.now();
 
     const tick = function(t) {
       let progress = Math.min(( t - startTime ) / duration, 1);
       let newValue = startValue + (easeOutQuint(progress) * diff);
-      setState({
-        value: newValue,
-      })
+      numberEl.textContent = format(newValue)
 
       if(progress < 1) {
         window.requestAnimationFrame(tick);
@@ -47,30 +38,35 @@ class CountWidget extends Component {
     window.requestAnimationFrame(tick);
   }
 
-  render(props, state) {
+  @bind
+  formatValue(value) {
     let formattedValue = "-";
 
-    if(isFinite(state.value)) {
-      switch(props.format) {
+    if(isFinite(value)) {
+      switch(this.props.format) {
         case "percentage":
-          formattedValue = numbers.formatPercentage(state.value)
+          formattedValue = numbers.formatPercentage(value)
         break;  
 
         default:
         case "number":
-            formattedValue = numbers.formatPretty(Math.round(state.value))
+          formattedValue = numbers.formatPretty(Math.round(value))
         break;
 
         case "duration":
-          formattedValue = numbers.formatDuration(state.value)
+          formattedValue = numbers.formatDuration(value)
         break;
       }
     }
 
+    return formattedValue;
+  }
+
+  render(props, state) {
     return (
        <div class={"totals-detail " + ( props.loading ? "loading" : '')}>
         <div class="total-heading">{props.title}</div>
-        <div class="total-numbers">{formattedValue}</div>
+        <div class="total-numbers" ref={(e) => { this.numberEl = e; }}>{this.formatValue(props.value)}</div>
       </div>
     )
   }
