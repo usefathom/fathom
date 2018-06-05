@@ -166,7 +166,9 @@ class Chart extends Component {
       .call(xAxis)
 
     // hide all "day" ticks if we're watching more than 100 days of data
-    xTicks.selectAll('g').filter(d => data.length > 100 && d.getDate() > 1).remove()
+    if(data.length > 100) {
+      xTicks.selectAll('g').filter(d => d.getDate() > 1).remove()
+    }
 
     // add data for each day
     let days = graph.selectAll('g.day').data(data).enter()
