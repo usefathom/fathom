@@ -149,6 +149,9 @@ class Chart extends Component {
     let y = this.y.domain([0, (max*1.1)])
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
+
+    window.xAxis = xAxis;
+    window.data = data;
     
     // empty previous graph
     graph.selectAll('*').remove()
@@ -163,13 +166,7 @@ class Chart extends Component {
       .call(xAxis)
 
     // hide all "day" ticks if we're watching more than 100 days of data
-    xTicks.selectAll('g').style('display', (d, i) => { 
-      if(data.length > 100 && d.getDate() > 1 ) {
-        return 'none';
-      }
-
-      return '';
-    })
+    xTicks.selectAll('g').filter(d => data.length > 100 && d.getDate() > 1).remove()
 
     // add data for each day
     let days = graph.selectAll('g.day').data(data).enter()
