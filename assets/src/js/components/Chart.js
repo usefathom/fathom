@@ -217,7 +217,7 @@ class Chart extends Component {
  
   render(props, state) {
     return (
-       <div id="chart"></div>
+       <div id="chart" class={state.loading ? 'loading': ''}></div>
     )
   }
 }
