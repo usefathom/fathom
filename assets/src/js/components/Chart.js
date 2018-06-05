@@ -131,7 +131,7 @@ class Chart extends Component {
 
   @bind
   redrawChart() {
-    const data = this.state.data;
+    let data = this.state.data;
     this.base.parentNode.style.display = data.length <= 1 ? 'none' : '';
     if(data.length <= 1) {
       return;
@@ -150,9 +150,6 @@ class Chart extends Component {
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
 
-    window.xAxis = xAxis;
-    window.data = data;
-    
     // empty previous graph
     graph.selectAll('*').remove()
 
@@ -170,8 +167,8 @@ class Chart extends Component {
       xTicks.selectAll('g').filter(d => d.getDate() > 1).remove()
     }
 
-    // add data for each day
-    let days = graph.selectAll('g.day').data(data).enter()
+    // add data for each day that we have something to show for
+    let days = graph.selectAll('g.day').data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
       .append('g')
       .attr('class', 'day') 
       .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" })
