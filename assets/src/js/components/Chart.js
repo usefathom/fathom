@@ -150,49 +150,57 @@ class Chart extends Component {
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
 
+     // hide all "day" ticks if we're watching more than 100 days of data
+    if(data.length > 100) {
+      xAxis.tickValues(data.filter(d => d.Date.getDate() === 1).map(d => d.Date))
+    }
+
     // empty previous graph
     graph.selectAll('*').remove()
 
     // add axes
-    let yTicks = graph.append("g")
+    requestAnimationFrame(() => {
+      let yTicks = graph.append("g")
       .attr("class", "y axis")
       .call(yAxis);
-    let xTicks = graph.append("g")
+
+      let xTicks = graph.append("g")
       .attr("class", "x axis")
       .attr('transform', 'translate(0,' + innerHeight + ')')
       .call(xAxis)
-
-    // hide all "day" ticks if we're watching more than 100 days of data
-    if(data.length > 100) {
-      xTicks.selectAll('g').filter(d => d.getDate() > 1).remove()
-    }
-
+    })
+    
     // add data for each day that we have something to show for
     let days = graph.selectAll('g.day').data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
       .append('g')
       .attr('class', 'day') 
       .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" })
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide)
 
-    let pageviews = days.append('rect')
-      .attr('class', 'bar-pageviews') 
-      .attr('width', x.bandwidth() * 0.5)
-      .attr("y", innerHeight)
-      .attr("height", 0)
-      .transition(t)
-      .attr('y', d => y(d.Pageviews))
-      .attr('height', (d) => innerHeight - y(d.Pageviews))
+    requestAnimationFrame(() => {
+      let pageviews = days.append('rect')
+        .attr('class', 'bar-pageviews') 
+        .attr('width', x.bandwidth() * 0.5)
+        .attr("y", innerHeight)
+        .attr("height", 0)
+        .transition(t)
+        .attr('y', d => y(d.Pageviews))
+        .attr('height', (d) => innerHeight - y(d.Pageviews))
+    })
 
-    let visitors = days.append('rect')
-      .attr('class', 'bar-visitors')
-      .attr('width', x.bandwidth() * 0.5)
-      .attr("y", innerHeight)
-      .attr("height", 0)
-      .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
-      .transition(t)
-      .attr('height', (d) => (innerHeight - y(d.Visitors)) )
-      .attr('y', (d) => y(d.Visitors))  
+    requestAnimationFrame(() => {
+      let visitors = days.append('rect')
+        .attr('class', 'bar-visitors')
+        .attr('width', x.bandwidth() * 0.5)
+        .attr("y", innerHeight)
+        .attr("height", 0)
+        .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
+        .transition(t)
+        .attr('height', (d) => (innerHeight - y(d.Visitors)) )
+        .attr('y', (d) => y(d.Visitors))  
+    })
+
+    // add event listeners for tooltips
+    days.on('mouseover', tip.show).on('mouseout', tip.hide)   
   }
 
   @bind
