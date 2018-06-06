@@ -22,6 +22,11 @@ For getting a development version of Fathom up & running, go through the followi
 
 To install and run Fathom in production, [have a look at the installation instructions](https://github.com/usefathom/fathom/wiki/Installing-&-running-Fathom).
 
+## Building with Docker
+
+Ensure you have Docker installed and run `docker build -t fathom .`.
+Run the container with `docker run -d -p 8080:8080 fathom`.
+
 #### Tracking snippet 
 
 To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance.
