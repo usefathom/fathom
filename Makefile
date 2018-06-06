@@ -19,6 +19,10 @@ install: $(wildcard *.go) $(GOPATH)/bin/packr
 .PHONY: build
 build: $(EXECUTABLE)
 
+.PHONY: docker
+docker: $(GO_SOURCES) assets/build
+	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
+
 $(EXECUTABLE): $(GO_SOURCES) assets/build
 	go build -o $@ $(MAIN_PKG)
 
