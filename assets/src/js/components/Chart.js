@@ -159,16 +159,14 @@ class Chart extends Component {
     graph.selectAll('*').remove()
 
     // add axes
-    requestAnimationFrame(() => {
-      let yTicks = graph.append("g")
+    let yTicks = graph.append("g")
       .attr("class", "y axis")
       .call(yAxis);
 
-      let xTicks = graph.append("g")
+    let xTicks = graph.append("g")
       .attr("class", "x axis")
       .attr('transform', 'translate(0,' + innerHeight + ')')
       .call(xAxis)
-    })
     
     // add data for each day that we have something to show for
     let days = graph.selectAll('g.day').data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
@@ -176,29 +174,27 @@ class Chart extends Component {
       .attr('class', 'day') 
       .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" })
 
-    requestAnimationFrame(() => {
-      let pageviews = days.append('rect')
-        .attr('class', 'bar-pageviews') 
-        .attr('width', x.bandwidth() * 0.5)
-        .attr("y", innerHeight)
-        .attr("height", 0)
-        .transition(t)
-        .attr('y', d => y(d.Pageviews))
-        .attr('height', (d) => innerHeight - y(d.Pageviews))
-    })
+    let pageviews = days.append('rect')
+      .attr('class', 'bar-pageviews') 
+      .attr('width', x.bandwidth() * 0.5)
+      .attr("y", innerHeight)
+      .attr("height", 0)
+      
+    let visitors = days.append('rect')
+      .attr('class', 'bar-visitors')
+      .attr('width', x.bandwidth() * 0.5)
+      .attr("y", innerHeight)
+      .attr("height", 0)
+      .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
+    
+    pageviews.transition(t)
+      .attr('y', d => y(d.Pageviews))
+      .attr('height', (d) => innerHeight - y(d.Pageviews)) 
 
-    requestAnimationFrame(() => {
-      let visitors = days.append('rect')
-        .attr('class', 'bar-visitors')
-        .attr('width', x.bandwidth() * 0.5)
-        .attr("y", innerHeight)
-        .attr("height", 0)
-        .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
-        .transition(t)
-        .attr('height', (d) => (innerHeight - y(d.Visitors)) )
-        .attr('y', (d) => y(d.Visitors))  
-    })
-
+    visitors.transition(t)
+      .attr('height', (d) => (innerHeight - y(d.Visitors)) )
+      .attr('y', (d) => y(d.Visitors))   
+      
     // add event listeners for tooltips
     days.on('mouseover', tip.show).on('mouseout', tip.hide)   
   }
