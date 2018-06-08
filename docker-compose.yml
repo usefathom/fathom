@@ -1,16 +1,17 @@
 version: "3"
 services:
   fathom:
-    image: dvkoot/fathom:latest
+    image: usefathom/fathom:latest
     ports:
       - "8080:8080"
     environment:
+      - "FATHOM_DEBUG=false"
       - "FATHOM_DATABASE_DRIVER=mysql"
       - "FATHOM_DATABASE_NAME=fathom"
       - "FATHOM_DATABASE_USER=fathom"
       - "FATHOM_DATABASE_PASSWORD=password01"
       - "FATHOM_DATABASE_HOST=tcp(mysql:3306)"
-      - "FATHOM_SECRET_KEY=TWEn6GXQDx45PZfmJWvyGpXf5M8b94bszgw8JcJWEd6WxgrnUkLatS34GwjPTvZb"
+      - "FATHOM_SECRET=TWEn6GXQDx45PZfmJWvyGpXf5M8b94bszgw8JcJWEd6WxgrnUkLatS34GwjPTvZb"
 
   mysql:
     image: "mysql:5"
