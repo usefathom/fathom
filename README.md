@@ -14,7 +14,7 @@ Google Analytics may give you free access to their services but in turn, they’
 
 We need to stop giving away our data and our users' privacy for free access to a tool.
 
-Fathom does not collect presonally identifiable information and respects the privacy of your users. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
+Fathom respects the privacy of your users and does not collect any personally identifiable information. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/blob/master/assets/src/img/fathom.jpg?v=7)
 
