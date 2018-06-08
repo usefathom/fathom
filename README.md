@@ -4,8 +4,17 @@ Fathom - simple website analytics
 [![Go Report Card](https://goreportcard.com/badge/github.com/usefathom/fathom)](https://goreportcard.com/report/github.com/usefathom/fathom)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/usefathom/fathom/master/LICENSE)
 
+Fathom Analytics is a simpler and more privacy-focused alternative to Google Analytics.
 
-This is nowhere near being usable, let alone stable. Please treat as a proof of concept while we work on getting this to a stable state. **Do not run Fathom in production yet unless you like spending time on it.** Things will keep changing for the next few months.
+Collecting information on the internet is important, but it’s broken. We’ve become complacent in trading information for free access to web services, and then complaining when those web services do crappy things with that data.
+
+The problem is this: _if we aren’t paying for the product, we are the product_.
+
+Google Analytics may give you free access to their services but in turn, they’re assembling data profiles on your website visitors, which they can then use for better targeting of advertisements across their network.
+
+We need to stop giving away our data and our users' privacy for free access to a tool.
+
+Fathom does not collect presonally identifiable information and respects the privacy of your users. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/blob/master/assets/src/img/fathom.jpg?v=7)
 
