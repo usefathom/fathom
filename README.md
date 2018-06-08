@@ -16,7 +16,7 @@ We need to stop giving away our data and our users' privacy for free access to a
 
 Fathom respects the privacy of your users and does not collect any personally identifiable information. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
 
-![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/blob/master/assets/src/img/fathom.jpg?v=7)
+![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/src/img/screenshot.png?v=7)
 
 ## Installation
 
