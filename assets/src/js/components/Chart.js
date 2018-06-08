@@ -144,9 +144,9 @@ class Chart extends Component {
     let graph = this.ctx;
     let innerWidth = this.innerWidth
     let innerHeight = this.innerHeight
-    const max = d3.max(data, (d) => d.Pageviews);
+    const max = d3.max(data, d => d.Pageviews); 
     let x = this.x.domain(data.map((d) => d.Date))
-    let y = this.y.domain([0, (max*1.1)])
+    let y = this.y.domain([0, max*1.1])
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
 
@@ -157,6 +157,16 @@ class Chart extends Component {
 
     // empty previous graph
     graph.selectAll('*').remove()
+
+    // add text indicating there's no data yet
+    if(max===0) {
+      graph.append('text')
+        .attr('class', 'muted')
+        .attr("text-anchor", "middle")
+        .attr('x', innerWidth / 2 - 30)
+        .attr('y', innerHeight / 2)
+        .text('Nothing here, yet.')
+    }
 
     // add axes
     let yTicks = graph.append("g")
@@ -169,23 +179,25 @@ class Chart extends Component {
       .call(xAxis)
     
     // add data for each day that we have something to show for
-    let days = graph.selectAll('g.day').data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
+    let barWidth = 0.5 * x.bandwidth()
+    let days = graph.selectAll('.day')
+      .data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
       .append('g')
       .attr('class', 'day') 
-      .attr('transform', function (d, i) { return "translate(" + x(d.Date) + ", 0)" })
-
+      
     let pageviews = days.append('rect')
       .attr('class', 'bar-pageviews') 
-      .attr('width', x.bandwidth() * 0.5)
+      .attr('x', d => x(d.Date))
+      .attr('width', barWidth)
       .attr("y", innerHeight)
       .attr("height", 0)
       
     let visitors = days.append('rect')
       .attr('class', 'bar-visitors')
-      .attr('width', x.bandwidth() * 0.5)
+      .attr('x', d => x(d.Date) + barWidth)
+      .attr('width', barWidth)
       .attr("y", innerHeight)
       .attr("height", 0)
-      .attr('transform', function (d, i) { return "translate(" + ( 0.5 * x.bandwidth() ) + ", 0)" })
     
     pageviews.transition(t)
       .attr('y', d => y(d.Pageviews))
@@ -210,9 +222,10 @@ class Chart extends Component {
           return;
         }
 
+        let chartData = prepareData(after, before, d);
         this.setState({ 
           loading: false,
-          data: prepareData(after, before, d),
+          data: chartData,
         })
         this.redrawChart()
       })
