@@ -44,9 +44,9 @@ func (db *sqlstore) GetAggregatedReferrerStats(startDate time.Time, endDate time
 	WHERE date >= ? AND date <= ? `
 
 	if db.Config.Driver == "sqlite3" {
-		sql = sql + `GROUP BY COALESCE(groupname, hostname || pathname ) `
+		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), hostname || pathname ) `
 	} else {
-		sql = sql + `GROUP BY COALESCE(groupname, CONCAT(hostname, pathname) ) `
+		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), CONCAT(hostname, pathname) ) `
 	}
 	sql = sql + ` ORDER BY pageviews DESC LIMIT ?`
 
