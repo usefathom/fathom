@@ -122,11 +122,16 @@ func (api *API) NewCollectHandler() http.Handler {
 			return err
 		}
 
-		// don't you cache this
+		// indicate that we're not tracking user data, see https://github.com/usefathom/fathom/issues/65
+		w.Header().Set("Tk", "N")
+
+		// headers to prevent caching
 		w.Header().Set("Content-Type", "image/gif")
 		w.Header().Set("Expires", "Mon, 01 Jan 1990 00:00:00 GMT")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Pragma", "no-cache")
+
+		// response
 		w.WriteHeader(http.StatusOK)
 
 		// 1x1 px transparent GIF
