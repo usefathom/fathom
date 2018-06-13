@@ -5,6 +5,7 @@ import * as util from './lib/util.js';
 
 let queue = window.fathom.q || [];
 let trackerUrl = '';
+
 const commands = {
   "trackPageview": trackPageview,
   "setTrackerUrl": setTrackerUrl,
@@ -98,11 +99,14 @@ function trackPageview() {
   let i = document.createElement('img');
   i.src = trackerUrl + util.stringifyObject(d);
   i.addEventListener('load', function() {
+    let now = new Date();
+    let midnight = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0));
+    let expires = Math.round((midnight - now) / 1000);
     data.pagesViewed.push(path);
     data.isNewVisitor = false;
     data.isNewSession = false;
     data.lastSeen = +new Date();
-    cookies.set('_fathom', JSON.stringify(data), { expires: 60 * 60 * 24});
+    cookies.set('_fathom', JSON.stringify(data), { 'expires': expires });
   });
   document.body.appendChild(i);
   window.setTimeout(() => { document.body.removeChild(i)}, 1000);
