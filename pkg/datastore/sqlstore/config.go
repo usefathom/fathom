@@ -1,6 +1,9 @@
 package sqlstore
 
-import "fmt"
+import (
+	"fmt"
+	mysql "github.com/go-sql-driver/mysql"
+)
 
 type Config struct {
 	Driver   string `default:"sqlite3"`
@@ -17,7 +20,17 @@ func (c *Config) DSN() string {
 	case "postgres":
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", c.Host, c.User, c.Password, c.Name)
 	case "mysql":
-		dsn = fmt.Sprintf("%s:%s@%s/%s?parseTime=true&loc=Local", c.User, c.Password, c.Host, c.Name)
+		mc := mysql.NewConfig()
+		mc.User = c.User
+		mc.Passwd = c.Password
+		mc.Addr = c.Host
+		mc.Net = "tcp"
+		mc.DBName = c.Name
+		mc.Params = map[string]string{
+			"parseTime": "true",
+			"loc":       "Local",
+		}
+		dsn = mc.FormatDSN()
 	case "sqlite3":
 		dsn = c.Name + "?_loc=auto"
 	}
