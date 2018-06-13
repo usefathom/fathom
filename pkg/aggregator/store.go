@@ -90,6 +90,21 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string
 		if strings.Contains(stats.Hostname, "www.google.") {
 			stats.Group = "Google"
 		}
+		elseif strings.Contains(stats.Hostname, "www.bing.") {
+			stats.Group = "Bing"
+		}
+		elseif strings.Contains(stats.Hostname, "www.baidu.") {
+			stats.Group = "Baidu"
+		}
+		elseif strings.Contains(stats.Hostname, "www.yandex.") {
+			stats.Group = "Yandex"
+		}
+		elseif strings.Contains(stats.Hostname, "search.yahoo.") {
+			stats.Group = "Yahoo!"
+		}
+		elseif strings.Contains(stats.Hostname, "www.findx.") {
+			stats.Group = "Findx"
+		}
 
 		err = agg.database.InsertReferrerStats(stats)
 		if err != nil {
