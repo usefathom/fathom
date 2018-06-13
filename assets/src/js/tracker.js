@@ -101,7 +101,7 @@ function trackPageview() {
     data.pagesViewed.push(path);
     data.isNewVisitor = false;
     data.isNewSession = false;
-    data.lastSeen += new Date();
+    data.lastSeen = +new Date();
     cookies.set('_fathom', JSON.stringify(data), { expires: 60 * 60 * 24});
   });
   document.body.appendChild(i);
