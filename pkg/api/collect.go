@@ -20,6 +20,11 @@ func shouldCollect(r *http.Request) bool {
 		return false
 	}
 
+	// abort if DNT header is set to "1" (these should have been filtered client-side already)
+	if r.Header.Get("DNT") == "1" {
+		return false
+	}
+
 	if r.Referer() == "" {
 		return false
 	}
