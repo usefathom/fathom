@@ -91,6 +91,11 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string
 			stats.Group = "Google"
 		}
 
+		// Group Facebook together
+		if strings.Contains(stats.Hostname, "facebook.") {
+			stats.Group = "Facebook"
+		}
+
 		err = agg.database.InsertReferrerStats(stats)
 		if err != nil {
 			return nil, err
