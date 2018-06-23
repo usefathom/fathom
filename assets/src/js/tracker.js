@@ -79,6 +79,11 @@ function trackPageview() {
     path = a.pathname;
   }
 
+  // if parsing path failed, default to main page
+  if(!path) {
+    path = '/';
+  }
+
   // only set referrer if not internal
   let referrer = '';
   if(document.referrer.indexOf(location.hostname) < 0) {
