@@ -102,7 +102,7 @@ class DatePicker extends Component {
       this.timeout = window.setTimeout(() => {
         this.props.onChange(this.state);
         this.timeout = null;
-      }, 5)
+      }, 2)
     }
   }
 
