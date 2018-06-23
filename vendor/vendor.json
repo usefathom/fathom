@@ -3,10 +3,14 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "QD6LqgLz2JMxXqns8TaxtK9AuHs=",
+			"path": "appengine/cloudsql",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "uLlP+3wneMxXVKTGi9zZZVnpZlI=",
 			"path": "github.com/go-sql-driver/mysql",
-			"revision": "2e00b5cd70399450106cec6431c2e2ce3cae5034",
-			"revisionTime": "2016-12-24T12:10:19Z"
+			"revision": "2307b45d3a41dcc64a2bf46db80f61fd182e0186",
+			"revisionTime": "2018-06-12T15:06:50Z"
 		},
 		{
 			"checksumSHA1": "8h+jn5DM8qpamdOYYWCCInJZzyM=",
@@ -163,6 +167,12 @@
 			"path": "golang.org/x/sys/windows",
 			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
 			"revisionTime": "2018-04-18T21:20:05Z"
+		},
+		{
+			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
+			"path": "google.golang.org/appengine/cloudsql",
+			"revision": "b1f26356af11148e710935ed1ac8a7f5702c7612",
+			"revisionTime": "2018-05-21T22:34:13Z"
 		}
 	],
 	"rootPath": "github.com/usefathom/fathom"

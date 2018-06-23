@@ -45,7 +45,8 @@ func (db *sqlstore) GetMostRecentPageviewBySessionID(sessionID string) (*models.
 func (db *sqlstore) GetProcessablePageviews() ([]*models.Pageview, error) {
 	var results []*models.Pageview
 	thirtyMinsAgo := time.Now().Add(-30 * time.Minute)
-	query := db.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 AND is_bounce = 0 ) OR timestamp < ? LIMIT 500`)
+	// We use FALSE here, even though SQLite has no BOOLEAN value. If it fails, maybe we can roll our own Rebind?
+	query := db.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 AND is_bounce = FALSE ) OR timestamp < ? LIMIT 500`)
 	err := db.Select(&results, query, thirtyMinsAgo)
 	return results, err
 }
