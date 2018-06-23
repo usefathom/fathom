@@ -11,16 +11,23 @@ services:
       - "FATHOM_DATABASE_NAME=fathom"
       - "FATHOM_DATABASE_USER=fathom"
       - "FATHOM_DATABASE_PASSWORD=password01"
-      - "FATHOM_DATABASE_HOST=tcp(mysql:3306)"
+      - "FATHOM_DATABASE_HOST=mysql:3306"
       - "FATHOM_SECRET=TWEn6GXQDx45PZfmJWvyGpXf5M8b94bszgw8JcJWEd6WxgrnUkLatS34GwjPTvZb"
-
+    links:
+      - "mysql:mysql"
+    depends_on:
+      - mysql
+    restart: always
   mysql:
     image: "mysql:5"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     environment:
       - "MYSQL_ALLOW_EMPTY_PASSWORD=false"
       - "MYSQL_DATABASE=fathom"
       - "MYSQL_PASSWORD=password01"
       - "MYSQL_ROOT_PASSWORD=password01"
       - "MYSQL_USER=fathom"
+    restart: always
