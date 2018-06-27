@@ -1,3 +1,4 @@
+ARCH := amd64
 DIST := build
 EXECUTABLE := fathom
 LDFLAGS += -extldflags "-static"
@@ -21,15 +22,15 @@ build: $(EXECUTABLE)
 
 .PHONY: docker
 docker: $(GO_SOURCES) 
-	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
+	GOOS=linux GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
 $(EXECUTABLE): $(GO_SOURCES) assets/build
 	go build -o $@ $(MAIN_PKG)
 
-dist: assets/dist build/fathom-linux-amd64
+dist: assets/dist build/fathom-linux-$(ARCH)
 
-build/fathom-linux-amd64: $(GOPATH)/bin/packr $(SQL_SOURCES) $(GO_SOURCES) $(JS_SOURCES)
-	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG)
+build/fathom-linux-$(ARCH): $(GOPATH)/bin/packr $(SQL_SOURCES) $(GO_SOURCES) $(JS_SOURCES)
+	GOOS=linux GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
 	GOBIN=$(GOPATH)/bin go get github.com/gobuffalo/packr/...
