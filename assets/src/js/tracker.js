@@ -100,7 +100,6 @@ function trackPageview() {
     sid: data.sid,
     p: path,
     h: hostname,
-    t: document.title,
     r: referrer,
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
     nv: data.isNewVisitor ? 1 : 0, 
