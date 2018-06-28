@@ -25,10 +25,6 @@ func shouldCollect(r *http.Request) bool {
 		return false
 	}
 
-	if r.Referer() == "" {
-		return false
-	}
-
 	return true
 }
 
@@ -79,15 +75,10 @@ func (api *API) NewCollectHandler() http.Handler {
 		q := r.URL.Query()
 		now := time.Now()
 
-		hostname := parseHostname(r.Referer())
-		if hostname == "" {
-			return nil
-		}
-
 		// get pageview details
 		pageview := &models.Pageview{
 			SessionID:    q.Get("sid"),
-			Hostname:     hostname,
+			Hostname:     parseHostname(q.Get("h")),
 			Pathname:     parsePathname(q.Get("p")),
 			IsNewVisitor: q.Get("nv") == "1",
 			IsNewSession: q.Get("ns") == "1",
