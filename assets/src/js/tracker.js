@@ -112,7 +112,11 @@ function trackPageview() {
     let now = new Date();
     let midnight = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0));
     let expires = Math.round((midnight - now) / 1000);
-    data.pagesViewed.push(path);
+
+    if( data.pagesViewed.indexOf(path) == -1 ) {
+      data.pagesViewed.push(path);
+    }
+    
     data.isNewVisitor = false;
     data.isNewSession = false;
     data.lastSeen = +new Date();
