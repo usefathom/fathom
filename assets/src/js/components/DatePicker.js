@@ -23,6 +23,7 @@ const availablePeriods = [
   }
 ];
 
+const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
 const padZero = function(n){return n<10? '0'+n:''+n;}
 
 class DatePicker extends Component {
@@ -70,8 +71,6 @@ class DatePicker extends Component {
       break;
     }
 
-    startDate.setHours(0, 0, 0);
-    endDate.setHours(23, 59, 59);
     this.setDateRange(startDate, endDate, period);
   }
 
@@ -83,8 +82,11 @@ class DatePicker extends Component {
       return;
     }
 
-    const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
+    // include start & end day by forcing time
+    startDate.setHours(0, 0, 0);
+    endDate.setHours(23, 59, 59);
 
+    // create unix timestamps from local date objects
     let before, after;
     before = Math.round(((+endDate) / 1000) - timezoneOffset);
     after = Math.round(((+startDate) / 1000) - timezoneOffset);
@@ -124,16 +126,12 @@ class DatePicker extends Component {
 
   @bind 
   setStartDate(date) {
-    if(date) {
-      this.setDateRange(date, this.state.endDate, '')
-    }
+    this.setDateRange(date, this.state.endDate, '')
   }
 
   @bind 
   setEndDate(date) {
-    if(date) {
-      this.setDateRange(this.state.startDate, date, '')
-    }
+    this.setDateRange(this.state.startDate, date, '')
   }
 
   render(props, state) {
