@@ -11,12 +11,12 @@ function stringifyObject(json) {
       }).join('&');
 }
 
-function generateKey() {
+function randomString(n) {
   var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return Array(16).join().split(',').map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+  return Array(n).join().split(',').map(() => s.charAt(Math.floor(Math.random() * s.length))).join('');
 }
 
 export { 
-   generateKey, 
+   randomString, 
    stringifyObject
 }

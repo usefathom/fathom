@@ -13,10 +13,10 @@ const commands = {
 
 function newVisitorData() {
   return {
-    sid: util.generateKey(),
     isNewVisitor: true, 
     isNewSession: true,
     pagesViewed: [],
+    previousPageviewId: '',
     lastSeen: +new Date(),
   }
 }
@@ -97,7 +97,8 @@ function trackPageview() {
 
   let data = getData();
   const d = {
-    sid: data.sid,
+    id: util.randomString(20),
+    pid: data.previousPageviewId || '',
     p: path,
     h: hostname,
     r: referrer,
@@ -113,10 +114,11 @@ function trackPageview() {
     let midnight = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0));
     let expires = Math.round((midnight - now) / 1000);
 
+    // update data in cookie
     if( data.pagesViewed.indexOf(path) == -1 ) {
       data.pagesViewed.push(path);
     }
-    
+    data.previousPageviewId = d.id;
     data.isNewVisitor = false;
     data.isNewSession = false;
     data.lastSeen = +new Date();

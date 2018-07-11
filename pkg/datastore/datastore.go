@@ -32,7 +32,7 @@ type Datastore interface {
 	// pageviews
 	SavePageview(*models.Pageview) error
 	UpdatePageview(*models.Pageview) error
-	GetMostRecentPageviewBySessionID(string) (*models.Pageview, error)
+	GetPageview(string) (*models.Pageview, error)
 	GetProcessablePageviews() ([]*models.Pageview, error)
 	DeletePageviews([]*models.Pageview) error
 

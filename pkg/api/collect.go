@@ -77,7 +77,7 @@ func (api *API) NewCollectHandler() http.Handler {
 
 		// get pageview details
 		pageview := &models.Pageview{
-			SessionID:    q.Get("sid"),
+			ID:           q.Get("id"),
 			Hostname:     parseHostname(q.Get("h")),
 			Pathname:     parsePathname(q.Get("p")),
 			IsNewVisitor: q.Get("nv") == "1",
@@ -90,8 +90,9 @@ func (api *API) NewCollectHandler() http.Handler {
 		}
 
 		// find previous pageview by same visitor
-		if !pageview.IsNewSession {
-			previousPageview, err := api.database.GetMostRecentPageviewBySessionID(pageview.SessionID)
+		previousPageviewID := q.Get("pid")
+		if !pageview.IsNewSession && previousPageviewID != "" {
+			previousPageview, err := api.database.GetPageview(previousPageviewID)
 			if err != nil && err != datastore.ErrNoResults {
 				return err
 			}

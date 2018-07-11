@@ -93,7 +93,7 @@ func (db *sqlstore) GetAverageSiteBounceRate(startDate time.Time, endDate time.T
 }
 
 func (db *sqlstore) GetRealtimeVisitorCount() (int, error) {
-	sql := `SELECT COUNT(DISTINCT(session_id)) FROM pageviews WHERE timestamp > ?`
+	sql := `SELECT COUNT(*) FROM pageviews WHERE ( duration = 0 OR is_bounce = TRUE ) AND  timestamp > ?`
 	query := db.Rebind(sql)
 	var total int
 	err := db.Get(&total, query, time.Now().Add(-5*time.Minute))

@@ -5,8 +5,7 @@ import (
 )
 
 type Pageview struct {
-	ID           int64     `db:"id"`
-	SessionID    string    `db:"session_id"`
+	ID           string    `db:"id"`
 	Hostname     string    `db:"hostname"`
 	Pathname     string    `db:"pathname"`
 	IsNewVisitor bool      `db:"is_new_visitor"`
