@@ -11,6 +11,7 @@ type Config struct {
 	User     string `default:""`
 	Password string `default:""`
 	Name     string `default:"fathom.db"`
+	SSLMode  string `default:""`
 }
 
 func (c *Config) DSN() string {
@@ -19,6 +20,10 @@ func (c *Config) DSN() string {
 	switch c.Driver {
 	case "postgres":
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", c.Host, c.User, c.Password, c.Name)
+
+		if c.SSLMode != "" {
+			dsn = dsn + fmt.Sprintf(" sslmode=%s", c.SSLMode)
+		}
 	case "mysql":
 		mc := mysql.NewConfig()
 		mc.User = c.User
@@ -29,6 +34,9 @@ func (c *Config) DSN() string {
 		mc.Params = map[string]string{
 			"parseTime": "true",
 			"loc":       "Local",
+		}
+		if c.SSLMode != "" {
+			mc.Params["tls"] = c.SSLMode
 		}
 		dsn = mc.FormatDSN()
 	case "sqlite3":
