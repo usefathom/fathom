@@ -15,14 +15,19 @@ import (
 )
 
 func shouldCollect(r *http.Request) bool {
-	// abort if this is a bot.
-	ua := user_agent.New(r.UserAgent())
-	if ua.Bot() {
+	// abort if DNT header is set to "1" (these should have been filtered client-side already)
+	if r.Header.Get("DNT") == "1" {
 		return false
 	}
 
-	// abort if DNT header is set to "1" (these should have been filtered client-side already)
-	if r.Header.Get("DNT") == "1" {
+	// don't track prerendered pages, see https://github.com/usefathom/fathom/issues/13
+	if r.Header.Get("X-Moz") == "prefetch" || r.Header.Get("X-Purpose") == "preview" {
+		return false
+	}
+
+	// abort if this is a bot.
+	ua := user_agent.New(r.UserAgent())
+	if ua.Bot() {
 		return false
 	}
 
