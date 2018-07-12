@@ -8,17 +8,6 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-// SavePageview inserts a single pageview model into the connected database
-func (db *sqlstore) SavePageview(p *models.Pageview) error {
-	query := db.Rebind(`INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, p.ID, p.Hostname, p.Pathname, p.IsNewVisitor, p.IsNewSession, p.IsUnique, p.IsBounce, p.Referrer, p.Duration, p.Timestamp)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // GetPageview selects a single pageview by its string ID
 func (db *sqlstore) GetPageview(id string) (*models.Pageview, error) {
 	result := &models.Pageview{}
@@ -36,9 +25,53 @@ func (db *sqlstore) GetPageview(id string) (*models.Pageview, error) {
 	return result, nil
 }
 
-func (db *sqlstore) UpdatePageview(p *models.Pageview) error {
-	query := db.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ? WHERE id = ?`)
-	_, err := db.Exec(query, p.IsBounce, p.Duration, p.ID)
+// InsertPageviews inserts multiple pageviews using a single INSERT statement
+func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
+	if len(pageviews) == 0 {
+		return nil
+	}
+
+	placeholders := make([]string, 0, len(pageviews))
+	values := make([]interface{}, 0, len(pageviews)*10)
+
+	for _, p := range pageviews {
+		placeholders = append(placeholders, "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+		values = append(values, p.ID, p.Hostname, p.Pathname, p.IsNewVisitor, p.IsNewSession, p.IsUnique, p.IsBounce, p.Referrer, p.Duration, p.Timestamp)
+	}
+	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES `
+	query = query + strings.Join(placeholders, ",")
+
+	query = db.Rebind(query)
+	_, err := db.Exec(query, values...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdatePageviews updates multiple pageviews using a single transaction
+// Please note that this function only updates the IsBounce and Duration properties
+func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
+	if len(pageviews) == 0 {
+		return nil
+	}
+
+	tx, err := db.Beginx()
+	if err != nil {
+		return err
+	}
+	query := tx.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ? WHERE id = ?`)
+	stmt, err := tx.Preparex(query)
+	if err != nil {
+		return err
+	}
+
+	for _, p := range pageviews {
+		_, err = stmt.Exec(query, p.IsBounce, p.Duration)
+	}
+
+	err = tx.Commit()
 	return err
 }
 

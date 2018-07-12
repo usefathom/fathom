@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/base64"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 	"strings"
@@ -65,7 +66,9 @@ func parseHostname(r string) string {
 }
 
 func (api *API) NewCollectHandler() http.Handler {
+	pageviews := make(chan *models.Pageview, 10)
 	go aggregate(api.database)
+	go collect(api.database, pageviews)
 
 	return HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		if !shouldCollect(r) {
@@ -101,18 +104,14 @@ func (api *API) NewCollectHandler() http.Handler {
 			if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
 				previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
 				previousPageview.IsBounce = false
-				err := api.database.UpdatePageview(previousPageview)
-				if err != nil {
-					return err
-				}
+
+				// push onto channel to be updated (in batch) later
+				pageviews <- previousPageview
 			}
 		}
 
-		// save new pageview
-		err := api.database.SavePageview(pageview)
-		if err != nil {
-			return err
-		}
+		// push pageview onto channel to be inserted (in batch) later
+		pageviews <- pageview
 
 		// indicate that we're not tracking user data, see https://github.com/usefathom/fathom/issues/65
 		w.Header().Set("Tk", "N")
@@ -145,5 +144,54 @@ func aggregate(db datastore.Datastore) {
 		case <-time.After(timeout):
 			agg.Run()
 		}
+	}
+}
+
+func collect(db datastore.Datastore, pageviews chan *models.Pageview) {
+	var buffer []*models.Pageview
+	var size = 250
+	var timeout = 500 * time.Millisecond
+
+	for {
+		select {
+		case pageview := <-pageviews:
+			buffer = append(buffer, pageview)
+			if len(buffer) >= size {
+				persist(db, buffer)
+				buffer = buffer[:0]
+			}
+		case <-time.After(timeout):
+			if len(buffer) > 0 {
+				persist(db, buffer)
+				buffer = buffer[:0]
+			}
+		}
+	}
+}
+
+func persist(db datastore.Datastore, pageviews []*models.Pageview) {
+	n := len(pageviews)
+	updates := make([]*models.Pageview, 0, n)
+	inserts := make([]*models.Pageview, 0, n)
+
+	for _, p := range pageviews {
+		if !p.IsBounce {
+			updates = append(updates, p)
+		} else {
+			inserts = append(inserts, p)
+		}
+	}
+
+	log.Debugf("persisting %d pageviews (%d inserts, %d updates)", len(pageviews), len(inserts), len(updates))
+
+	var err error
+	err = db.InsertPageviews(inserts)
+	if err != nil {
+		log.Error(err)
+	}
+
+	err = db.UpdatePageviews(updates)
+	if err != nil {
+		log.Error(err)
 	}
 }

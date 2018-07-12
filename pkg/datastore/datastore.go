@@ -30,8 +30,8 @@ type Datastore interface {
 	GetRealtimeVisitorCount() (int, error)
 
 	// pageviews
-	SavePageview(*models.Pageview) error
-	UpdatePageview(*models.Pageview) error
+	InsertPageviews([]*models.Pageview) error
+	UpdatePageviews([]*models.Pageview) error
 	GetPageview(string) (*models.Pageview, error)
 	GetProcessablePageviews() ([]*models.Pageview, error)
 	DeletePageviews([]*models.Pageview) error
