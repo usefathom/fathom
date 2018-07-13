@@ -11,6 +11,25 @@ import (
 	"github.com/usefathom/fathom/pkg/api"
 )
 
+var serverCmd = cli.Command{
+	Name:    "server",
+	Aliases: []string{"s"},
+	Usage:   "start the fathom web server",
+	Action:  server,
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			EnvVar: "FATHOM_SERVER_ADDR",
+			Name:   "addr,port",
+			Usage:  "server address",
+			Value:  ":8080",
+		},
+		cli.BoolFlag{
+			EnvVar: "FATHOM_DEBUG",
+			Name:   "debug, d",
+		},
+	},
+}
+
 func server(c *cli.Context) error {
 	var h http.Handler
 	a := api.New(app.database, app.config.Secret)

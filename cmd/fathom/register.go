@@ -10,6 +10,23 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var registerCmd = cli.Command{
+	Name:    "register",
+	Aliases: []string{"r"},
+	Usage:   "register a new admin user",
+	Action:  register,
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "email, e",
+			Usage: "user email",
+		},
+		cli.StringFlag{
+			Name:  "password, p",
+			Usage: "user password",
+		},
+	},
+}
+
 func register(c *cli.Context) error {
 	email := c.String("email")
 	if email == "" {

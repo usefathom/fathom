@@ -37,40 +37,8 @@ func main() {
 	app.Before = before
 	app.After = after
 	app.Commands = []cli.Command{
-		{
-			Name:    "server",
-			Aliases: []string{"s"},
-			Usage:   "start the fathom web server",
-			Action:  server,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					EnvVar: "FATHOM_SERVER_ADDR",
-					Name:   "addr,port",
-					Usage:  "server address",
-					Value:  ":8080",
-				},
-				cli.BoolFlag{
-					EnvVar: "FATHOM_DEBUG",
-					Name:   "debug, d",
-				},
-			},
-		},
-		{
-			Name:    "register",
-			Aliases: []string{"r"},
-			Usage:   "register a new admin user",
-			Action:  register,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "email, e",
-					Usage: "user email",
-				},
-				cli.StringFlag{
-					Name:  "password, p",
-					Usage: "user password",
-				},
-			},
-		},
+		serverCmd,
+		registerCmd,
 	}
 
 	if len(os.Args) < 2 || os.Args[1] != "--version" {
