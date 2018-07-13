@@ -18,7 +18,7 @@ var serverCmd = cli.Command{
 	Action:  server,
 	Flags: []cli.Flag{
 		cli.StringFlag{
-			EnvVar: "FATHOM_SERVER_ADDR",
+			EnvVar: "FATHOM_SERVER_ADDR,PORT",
 			Name:   "addr,port",
 			Usage:  "server address",
 			Value:  ":8080",
