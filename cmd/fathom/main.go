@@ -60,6 +60,6 @@ func before(c *cli.Context) error {
 }
 
 func after(c *cli.Context) error {
-	app.database.Close()
-	return nil
+	err := app.database.Close()
+	return err
 }

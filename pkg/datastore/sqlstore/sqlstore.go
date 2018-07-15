@@ -62,6 +62,6 @@ func (db *sqlstore) Migrate() {
 }
 
 // Closes the db pool
-func (db *sqlstore) Close() {
-	db.DB.Close()
+func (db *sqlstore) Close() error {
+	return db.DB.Close()
 }

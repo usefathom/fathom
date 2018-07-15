@@ -51,7 +51,7 @@ type Datastore interface {
 	GetAggregatedReferrerStatsPageviews(time.Time, time.Time) (int, error)
 
 	// misc
-	Close()
+	Close() error
 }
 
 // New instantiates a new datastore from the given configuration struct
