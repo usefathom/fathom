@@ -27,17 +27,19 @@ func (db *sqlstore) GetPageview(id string) (*models.Pageview, error) {
 
 // InsertPageviews inserts multiple pageviews using a single INSERT statement
 func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
-	if len(pageviews) == 0 {
+	n := len(pageviews)
+	if n == 0 {
 		return nil
 	}
 
-	placeholders := make([]string, 0, len(pageviews))
-	values := make([]interface{}, 0, len(pageviews)*10)
+	placeholders := make([]string, 0, n)
+	values := make([]interface{}, 0, n*10)
 
-	for _, p := range pageviews {
+	for i := 0; i < n; i++ {
 		placeholders = append(placeholders, "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-		values = append(values, p.ID, p.Hostname, p.Pathname, p.IsNewVisitor, p.IsNewSession, p.IsUnique, p.IsBounce, p.Referrer, p.Duration, p.Timestamp)
+		values = append(values, pageviews[i].ID, pageviews[i].Hostname, pageviews[i].Pathname, pageviews[i].IsNewVisitor, pageviews[i].IsNewSession, pageviews[i].IsUnique, pageviews[i].IsBounce, pageviews[i].Referrer, pageviews[i].Duration, pageviews[i].Timestamp)
 	}
+
 	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES `
 	query = query + strings.Join(placeholders, ",")
 
@@ -67,8 +69,8 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 		return err
 	}
 
-	for _, p := range pageviews {
-		_, err = stmt.Exec(query, p.IsBounce, p.Duration)
+	for i := 0; i < len(pageviews); i++ {
+		_, err = stmt.Exec(query, pageviews[i].IsBounce, pageviews[i].Duration)
 	}
 
 	err = tx.Commit()
