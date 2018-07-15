@@ -32,17 +32,17 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 		return nil
 	}
 
-	placeholders := make([]string, 0, n)
-	values := make([]interface{}, 0, n*10)
+	// generate placeholders string
+	placeholders := strings.Repeat("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),", n)
+	placeholders = placeholders[:len(placeholders)-1]
 
+	// generate values slice
+	values := make([]interface{}, 0, n*10)
 	for i := 0; i < n; i++ {
-		placeholders = append(placeholders, "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 		values = append(values, pageviews[i].ID, pageviews[i].Hostname, pageviews[i].Pathname, pageviews[i].IsNewVisitor, pageviews[i].IsNewSession, pageviews[i].IsUnique, pageviews[i].IsBounce, pageviews[i].Referrer, pageviews[i].Duration, pageviews[i].Timestamp)
 	}
 
-	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES `
-	query = query + strings.Join(placeholders, ",")
-
+	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES ` + placeholders
 	query = db.Rebind(query)
 	_, err := db.Exec(query, values...)
 	if err != nil {
