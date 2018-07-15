@@ -154,8 +154,8 @@ func aggregate(db datastore.Datastore) {
 
 func collect(db datastore.Datastore, pageviews chan *models.Pageview) {
 	var buffer []*models.Pageview
-	var size = 250
-	var timeout = 500 * time.Millisecond
+	var size = 800
+	var timeout = 600 * time.Millisecond
 
 	for {
 		select {
