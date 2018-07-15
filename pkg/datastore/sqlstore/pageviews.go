@@ -36,12 +36,27 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	placeholders := strings.Repeat("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),", n)
 	placeholders = placeholders[:len(placeholders)-1]
 
-	// generate values slice
-	values := make([]interface{}, 0, n*10)
-	for i := 0; i < n; i++ {
-		values = append(values, pageviews[i].ID, pageviews[i].Hostname, pageviews[i].Pathname, pageviews[i].IsNewVisitor, pageviews[i].IsNewSession, pageviews[i].IsUnique, pageviews[i].IsBounce, pageviews[i].Referrer, pageviews[i].Duration, pageviews[i].Timestamp)
+	// init values slice with correct length
+	nValues := n * 10
+	values := make([]interface{}, nValues)
+
+	// overwrite nil values in slice
+	j := 0
+	for i := range pageviews {
+		j = i * 10
+		values[j] = pageviews[i].ID
+		values[j+1] = pageviews[i].Hostname
+		values[j+2] = pageviews[i].Pathname
+		values[j+3] = pageviews[i].IsNewVisitor
+		values[j+4] = pageviews[i].IsNewSession
+		values[j+5] = pageviews[i].IsUnique
+		values[j+6] = pageviews[i].IsBounce
+		values[j+7] = pageviews[i].Referrer
+		values[j+8] = pageviews[i].Duration
+		values[j+9] = pageviews[i].Timestamp
 	}
 
+	// string together query & execute with values
 	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES ` + placeholders
 	query = db.Rebind(query)
 	_, err := db.Exec(query, values...)
@@ -69,7 +84,7 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 		return err
 	}
 
-	for i := 0; i < len(pageviews); i++ {
+	for i := range pageviews {
 		_, err = stmt.Exec(query, pageviews[i].IsBounce, pageviews[i].Duration)
 	}
 

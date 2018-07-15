@@ -153,9 +153,9 @@ func aggregate(db datastore.Datastore) {
 }
 
 func collect(db datastore.Datastore, pageviews chan *models.Pageview) {
-	var buffer []*models.Pageview
 	var size = 800
 	var timeout = 600 * time.Millisecond
+	var buffer = make([]*models.Pageview, 0)
 
 	for {
 		select {
@@ -163,12 +163,12 @@ func collect(db datastore.Datastore, pageviews chan *models.Pageview) {
 			buffer = append(buffer, pageview)
 			if len(buffer) >= size {
 				persist(db, buffer)
-				buffer = buffer[:0]
+				buffer = make([]*models.Pageview, 0)
 			}
 		case <-time.After(timeout):
 			if len(buffer) > 0 {
 				persist(db, buffer)
-				buffer = buffer[:0]
+				buffer = make([]*models.Pageview, 0)
 			}
 		}
 	}
@@ -179,11 +179,11 @@ func persist(db datastore.Datastore, pageviews []*models.Pageview) {
 	updates := make([]*models.Pageview, 0, n)
 	inserts := make([]*models.Pageview, 0, n)
 
-	for _, p := range pageviews {
-		if !p.IsBounce {
-			updates = append(updates, p)
+	for i := range pageviews {
+		if !pageviews[i].IsBounce {
+			updates = append(updates, pageviews[i])
 		} else {
-			inserts = append(inserts, p)
+			inserts = append(inserts, pageviews[i])
 		}
 	}
 
@@ -192,11 +192,11 @@ func persist(db datastore.Datastore, pageviews []*models.Pageview) {
 	var err error
 	err = db.InsertPageviews(inserts)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error inserting pageviews: %s", err)
 	}
 
 	err = db.UpdatePageviews(updates)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("error updating pageviews: %s", err)
 	}
 }
