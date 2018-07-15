@@ -17,40 +17,37 @@ type Config struct {
 	Secret   string
 }
 
-// Parses the supplied file + environment into a Config struct
-func Parse(file string) *Config {
-	var cfg Config
-	var err error
-
-	if file != "" {
-		absfile, _ := filepath.Abs(file)
-
-		// check if file exists
-		_, err := os.Stat(absfile)
-		fileNotExists := os.IsNotExist(err)
-
-		if file == ".env" && fileNotExists {
-			log.Warnf("Missing configuration file. Using defaults.")
-		} else {
-			log.Printf("Configuration file: %s", absfile)
-		}
-
-		if fileNotExists {
-			if file != ".env" {
-				log.Fatalf("Error reading configuration. File `%s` does not exist.", file)
-			}
-		} else {
-			// read file into env values
-			err = godotenv.Load(absfile)
-			if err != nil {
-				log.Fatalf("Error parsing configuration file: %s", err)
-			}
-		}
-
+// LoadEnv loads env values from the supplied file
+func LoadEnv(file string) {
+	if file == "" {
+		log.Warn("Missing configuration file. Using defaults.")
+		return
 	}
 
+	absFile, _ := filepath.Abs(file)
+	_, err := os.Stat(absFile)
+	fileNotExists := os.IsNotExist(err)
+
+	if fileNotExists {
+		log.Warnf("Error reading configuration. File `%s` does not exist.", file)
+		return
+	}
+
+	log.Printf("Configuration file: %s", absFile)
+
+	// read file into env values
+	err = godotenv.Load(absFile)
+	if err != nil {
+		log.Fatalf("Error parsing configuration file: %s", err)
+	}
+}
+
+// Parse environment into a Config struct
+func Parse() *Config {
+	var cfg Config
+
 	// with config file loaded into env values, we can now parse env into our config struct
-	err = envconfig.Process("Fathom", &cfg)
+	err := envconfig.Process("Fathom", &cfg)
 	if err != nil {
 		log.Fatalf("Error parsing configuration from environment: %s", err)
 	}
