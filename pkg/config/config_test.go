@@ -1,30 +1,52 @@
 package config
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 )
 
+func TestLoadEnv(t *testing.T) {
+	before := len(os.Environ())
+	LoadEnv("")
+	LoadEnv("1230")
+	after := len(os.Environ())
+
+	if before != after {
+		t.Errorf("Expected the same number of env values")
+	}
+
+	data := []byte("FATHOM_DATABASE_DRIVER=\"sqlite3\"")
+	ioutil.WriteFile("env_values", data, 0644)
+	defer os.Remove("env_values")
+
+	LoadEnv("env_values")
+
+	got := os.Getenv("FATHOM_DATABASE_DRIVER")
+	if got != "sqlite3" {
+		t.Errorf("Expected %v, got %v", "sqlite3", got)
+	}
+}
+
 func TestParse(t *testing.T) {
 	// empty config, should not fatal
-	cfg := Parse("")
+	cfg := Parse()
 	if cfg.Secret == "" {
 		t.Errorf("expected secret, got empty string")
 	}
 
 	secret := "my-super-secret-string"
 	os.Setenv("FATHOM_SECRET", secret)
-	cfg = Parse("")
+	cfg = Parse()
 	if cfg.Secret != secret {
 		t.Errorf("Expected %#v, got %#v", secret, cfg.Secret)
 	}
 
 	os.Setenv("FATHOM_DATABASE_DRIVER", "sqlite")
-	cfg = Parse("")
+	cfg = Parse()
 	if cfg.Database.Driver != "sqlite3" {
 		t.Errorf("expected %#v, got %#v", "sqlite3", cfg.Database.Driver)
 	}
-
 }
 
 func TestRandomString(t *testing.T) {
