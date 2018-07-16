@@ -54,7 +54,7 @@ func main() {
 
 func before(c *cli.Context) error {
 	configFile := c.String("config")
-	LoadEnv(configFile)
+	config.LoadEnv(configFile)
 	app.config = config.Parse()
 	app.database = datastore.New(app.config.Database)
 	return nil
