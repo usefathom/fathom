@@ -68,7 +68,7 @@ function trackPageview() {
     return;
   }
 
-  let req = window.location;
+  let req = document.location;
 
   // parse canonical, if page has one
   let canonical = document.querySelector('link[rel="canonical"][href]');
@@ -80,18 +80,22 @@ function trackPageview() {
     req = a;
   }
 
-  // get path and pathname from location or canonical
-  let path = req.pathname + req.search;
-  let hostname = req.protocol + "//" + req.hostname;
-
-  // if parsing path failed, default to main page
+  if (URL) {
+    req = new URL(req);
+    let path = req.pathname + req.search;
+    let hostname = req.origin;
+  }
+  // if parsing path failed, default to main page and origin
   if(!path) {
-    path = '/';
+    let path = '/';
+  }
+  if(!hostname) {
+    let hostname = document.location.origin;
   }
 
   // only set referrer if not internal
   let referrer = '';
-  if(document.referrer.indexOf(location.hostname) < 0) {
+  if(document.referrer.indexOf(document.location.origin) < 0) {
     referrer = document.referrer;
   }
 
