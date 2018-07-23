@@ -73,11 +73,7 @@ function trackPageview() {
   // parse canonical, if page has one
   let canonical = document.querySelector('link[rel="canonical"][href]');
   if(canonical) {
-    let a = document.createElement('a');
-    a.href = canonical.href;
-
-    // use parsed canonical as location object
-    req = a;
+    req = canonical.href;
   }
 
   // get path and pathname from location or canonical
