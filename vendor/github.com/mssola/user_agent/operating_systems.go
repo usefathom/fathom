@@ -1,10 +1,23 @@
-// Copyright (C) 2012-2016 Miquel Sabaté Solà <mikisabate@gmail.com>
+// Copyright (C) 2012-2018 Miquel Sabaté Solà <mikisabate@gmail.com>
 // This file is licensed under the MIT license.
 // See the LICENSE file.
 
 package user_agent
 
 import "strings"
+
+// Represents full information on the operating system extracted from the user agent.
+type OSInfo struct {
+	// Full name of the operating system. This is identical to the output of ua.OS()
+	FullName string
+
+	// Name of the operating system. This is sometimes a shorter version of the
+	// operating system name, e.g. "Mac OS X" instead of "Intel Mac OS X"
+	Name string
+
+	// Operating system version, e.g. 7 for Windows 7 or 10.8 for Max OS X Mountain Lion
+	Version string
+}
 
 // Normalize the name of the operating system. By now, this just
 // affects to Windows NT.
@@ -75,6 +88,8 @@ func webkit(p *UserAgent, comment []string) {
 		}
 		if len(comment) > 3 {
 			p.localization = comment[3]
+		} else if len(comment) == 3 {
+			_ = p.googleBot()
 		}
 	} else if len(comment) > 0 {
 		if len(comment) > 3 {
@@ -114,7 +129,7 @@ func gecko(p *UserAgent, comment []string) {
 				p.os = normalizeOS(comment[1])
 			}
 		} else {
-			if p.platform == "Android" {
+			if strings.Contains(p.platform, "Android") {
 				p.mobile = true
 				p.platform, p.os = normalizeOS(comment[1]), p.platform
 			} else if comment[0] == "Mobile" || comment[0] == "Tablet" {
@@ -280,4 +295,65 @@ func (p *UserAgent) OS() string {
 // Returns a string containing the localization.
 func (p *UserAgent) Localization() string {
 	return p.localization
+}
+
+// Return OS name and version from a slice of strings created from the full name of the OS.
+func osName(osSplit []string) (name, version string) {
+	if len(osSplit) == 1 {
+		name = osSplit[0]
+		version = ""
+	} else {
+		// Assume version is stored in the last part of the array.
+		nameSplit := osSplit[:len(osSplit)-1]
+		version = osSplit[len(osSplit)-1]
+
+		// Nicer looking Mac OS X
+		if len(nameSplit) >= 2 && nameSplit[0] == "Intel" && nameSplit[1] == "Mac" {
+			nameSplit = nameSplit[1:]
+		}
+		name = strings.Join(nameSplit, " ")
+
+		if strings.Contains(version, "x86") || strings.Contains(version, "i686") {
+			// x86_64 and i868 are not Linux versions but architectures
+			version = ""
+		} else if version == "X" && name == "Mac OS" {
+			// X is not a version for Mac OS.
+			name = name + " " + version
+			version = ""
+		}
+	}
+	return name, version
+}
+
+// Returns combined information for the operating system.
+func (p *UserAgent) OSInfo() OSInfo {
+	// Special case for iPhone weirdness
+	os := strings.Replace(p.os, "like Mac OS X", "", 1)
+	os = strings.Replace(os, "CPU", "", 1)
+	os = strings.Trim(os, " ")
+
+	osSplit := strings.Split(os, " ")
+
+	// Special case for x64 edition of Windows
+	if os == "Windows XP x64 Edition" {
+		osSplit = osSplit[:len(osSplit)-2]
+	}
+
+	name, version := osName(osSplit)
+
+	// Special case for names that contain a forward slash version separator.
+	if strings.Contains(name, "/") {
+		s := strings.Split(name, "/")
+		name = s[0]
+		version = s[1]
+	}
+
+	// Special case for versions that use underscores
+	version = strings.Replace(version, "_", ".", -1)
+
+	return OSInfo{
+		FullName: p.os,
+		Name:     name,
+		Version:  version,
+	}
 }

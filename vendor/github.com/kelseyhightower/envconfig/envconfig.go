@@ -19,6 +19,8 @@ import (
 // ErrInvalidSpecification indicates that a specification is of the wrong type.
 var ErrInvalidSpecification = errors.New("specification must be a struct pointer")
 
+var gatherRegexp = regexp.MustCompile("([^A-Z]+|[A-Z][^A-Z]+|[A-Z]+)")
+
 // A ParseError occurs when an environment variable cannot be converted to
 // the type required by a struct field during assignment.
 type ParseError struct {
@@ -56,7 +58,6 @@ type varInfo struct {
 
 // GatherInfo gathers information about the specified struct
 func gatherInfo(prefix string, spec interface{}) ([]varInfo, error) {
-	expr := regexp.MustCompile("([^A-Z]+|[A-Z][^A-Z]+|[A-Z]+)")
 	s := reflect.ValueOf(spec)
 
 	if s.Kind() != reflect.Ptr {
@@ -102,7 +103,7 @@ func gatherInfo(prefix string, spec interface{}) ([]varInfo, error) {
 
 		// Best effort to un-pick camel casing as separate words
 		if isTrue(ftype.Tag.Get("split_words")) {
-			words := expr.FindAllStringSubmatch(ftype.Name, -1)
+			words := gatherRegexp.FindAllStringSubmatch(ftype.Name, -1)
 			if len(words) > 0 {
 				var name []string
 				for _, words := range words {
@@ -202,7 +203,7 @@ func Process(prefix string, spec interface{}) error {
 			continue
 		}
 
-		err := processField(value, info.Field)
+		err = processField(value, info.Field)
 		if err != nil {
 			return &ParseError{
 				KeyName:   info.Key,

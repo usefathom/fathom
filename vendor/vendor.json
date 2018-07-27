@@ -3,20 +3,144 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "C",
+			"revision": ""
+		},
+		{
 			"path": "appengine/cloudsql",
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "uLlP+3wneMxXVKTGi9zZZVnpZlI=",
-			"path": "github.com/go-sql-driver/mysql",
-			"revision": "2307b45d3a41dcc64a2bf46db80f61fd182e0186",
-			"revisionTime": "2018-06-12T15:06:50Z"
+			"path": "bufio",
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "8h+jn5DM8qpamdOYYWCCInJZzyM=",
+			"path": "bytes",
+			"revision": ""
+		},
+		{
+			"path": "compress/flate",
+			"revision": ""
+		},
+		{
+			"path": "compress/gzip",
+			"revision": ""
+		},
+		{
+			"path": "context",
+			"revision": ""
+		},
+		{
+			"path": "crypto/aes",
+			"revision": ""
+		},
+		{
+			"path": "crypto/cipher",
+			"revision": ""
+		},
+		{
+			"path": "crypto/hmac",
+			"revision": ""
+		},
+		{
+			"path": "crypto/md5",
+			"revision": ""
+		},
+		{
+			"path": "crypto/rand",
+			"revision": ""
+		},
+		{
+			"path": "crypto/rsa",
+			"revision": ""
+		},
+		{
+			"path": "crypto/sha1",
+			"revision": ""
+		},
+		{
+			"path": "crypto/sha256",
+			"revision": ""
+		},
+		{
+			"path": "crypto/sha512",
+			"revision": ""
+		},
+		{
+			"path": "crypto/subtle",
+			"revision": ""
+		},
+		{
+			"path": "crypto/tls",
+			"revision": ""
+		},
+		{
+			"path": "crypto/x509",
+			"revision": ""
+		},
+		{
+			"path": "database/sql",
+			"revision": ""
+		},
+		{
+			"path": "database/sql/driver",
+			"revision": ""
+		},
+		{
+			"path": "encoding",
+			"revision": ""
+		},
+		{
+			"path": "encoding/base32",
+			"revision": ""
+		},
+		{
+			"path": "encoding/base64",
+			"revision": ""
+		},
+		{
+			"path": "encoding/binary",
+			"revision": ""
+		},
+		{
+			"path": "encoding/gob",
+			"revision": ""
+		},
+		{
+			"path": "encoding/hex",
+			"revision": ""
+		},
+		{
+			"path": "encoding/json",
+			"revision": ""
+		},
+		{
+			"path": "encoding/pem",
+			"revision": ""
+		},
+		{
+			"path": "errors",
+			"revision": ""
+		},
+		{
+			"path": "flag",
+			"revision": ""
+		},
+		{
+			"path": "fmt",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "k9izYoyobR8Upb3Yjsw9htgE/Mk=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "99ff426eb706cffe92ff3d058e168b278cabf7c7",
+			"revisionTime": "2018-07-19T07:19:42Z"
+		},
+		{
+			"checksumSHA1": "miq6rtrLoaiB6tqIWAp+gmaPVGk=",
 			"path": "github.com/gobuffalo/packr",
-			"revision": "7f4074995d431987caaa35088199f13c44b24440",
-			"revisionTime": "2018-04-13T17:35:21Z"
+			"revision": "147bee9cde84aeca6693d1b1aedc595298f24d5b",
+			"revisionTime": "2018-07-22T18:22:49Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -25,64 +149,64 @@
 			"revisionTime": "2016-08-17T18:46:32Z"
 		},
 		{
-			"checksumSHA1": "I+GdpjQMP4tAYwF4CAklylRWeYI=",
+			"checksumSHA1": "g2vlK3BKoHhvkbK22D/KiMr5tJg=",
 			"path": "github.com/gorilla/handlers",
-			"revision": "3a5767ca75ece5f7f1440b1d16975247f8d8b221",
-			"revisionTime": "2016-12-06T05:51:44Z"
+			"revision": "6257a585e449b97a6b520bbd86575c4aa9f7c596",
+			"revisionTime": "2018-07-17T23:33:20Z"
 		},
 		{
-			"checksumSHA1": "urMd7A9QPAJYY0GZJL9qBhlUmD8=",
+			"checksumSHA1": "Aw8z8w/d+EFt8XCUYPjzSe0bPrU=",
 			"path": "github.com/gorilla/mux",
-			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
-			"revisionTime": "2016-09-20T23:08:13Z"
+			"revision": "cb4698366aa625048f3b815af6a0dea8aef9280a",
+			"revisionTime": "2018-06-05T21:15:56Z"
 		},
 		{
-			"checksumSHA1": "veX5bpYOBjZZWMyWxXxys8EH9d8=",
+			"checksumSHA1": "mitzC+fL94AXk/KeUfEZG6Ynb3U=",
 			"path": "github.com/gorilla/securecookie",
-			"revision": "fa5329f913702981df43dcb2a380bac429c810b5",
-			"revisionTime": "2016-10-03T05:16:01Z"
+			"revision": "78f3d318a8bf316cda921f25e96fd0b441c5173d",
+			"revisionTime": "2018-06-08T14:44:17Z"
 		},
 		{
-			"checksumSHA1": "vYfmVqC/UFKA66ZZdUJsnIcXR4E=",
+			"checksumSHA1": "nB526COHQwGljTcMf+JJP3gc9Ck=",
 			"path": "github.com/gorilla/sessions",
-			"revision": "83c8db3bdc9be789e57e3756ffbcffd2d7d40176",
-			"revisionTime": "2016-12-22T01:33:42Z"
+			"revision": "03b6f63cc43ef9c7240a635a5e22b13180e822b8",
+			"revisionTime": "2018-06-06T15:52:11Z"
 		},
 		{
 			"checksumSHA1": "F45m6rdNc9pgzu5vWN1n1Rwbk4A=",
 			"path": "github.com/jmoiron/sqlx",
-			"revision": "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41",
-			"revisionTime": "2018-04-06T16:44:12Z"
+			"revision": "0dae4fefe7c0e190f7b5a78dac28a1c82cc8d849",
+			"revisionTime": "2018-06-14T18:06:43Z"
 		},
 		{
 			"checksumSHA1": "bXFrevmVL5Q2EwYlRHlPihxvAJA=",
 			"path": "github.com/jmoiron/sqlx/reflectx",
-			"revision": "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41",
-			"revisionTime": "2018-04-06T16:44:12Z"
+			"revision": "0dae4fefe7c0e190f7b5a78dac28a1c82cc8d849",
+			"revisionTime": "2018-06-14T18:06:43Z"
 		},
 		{
-			"checksumSHA1": "h9EtLdks5ODcJVIA+j4qmrW2/mw=",
+			"checksumSHA1": "o0+6uQDysjh6+RsudtQDW3AOwec=",
 			"path": "github.com/joho/godotenv",
-			"revision": "726cc8b906e3d31c70a9671c90a13716a8d3f50d",
-			"revisionTime": "2016-12-16T23:05:37Z"
+			"revision": "1709ab122c988931ad53508747b3c061400c2984",
+			"revisionTime": "2018-04-05T05:36:34Z"
 		},
 		{
-			"checksumSHA1": "MMeRLzVlQa2QyxxpLTWu0FIB/M0=",
+			"checksumSHA1": "WYgvNuGj5g1sej4dJWBHF5bSKGE=",
 			"path": "github.com/kelseyhightower/envconfig",
-			"revision": "b2c5c876e2659d9060d82e9b8494150d53854cc4",
-			"revisionTime": "2018-03-08T19:05:16Z"
+			"revision": "dd1402a4d99de9ac2f396cd6fcb957bc2c695ec1",
+			"revisionTime": "2018-05-17T19:45:57Z"
 		},
 		{
-			"checksumSHA1": "tvimR1R9mxvCDSUxlnKgIXjJBus=",
+			"checksumSHA1": "s6eyIXpJ7VAU06FM27GcEBM/5lo=",
 			"path": "github.com/lib/pq",
-			"revision": "67c3f2a8884c9b1aac5503c8d42ae4f73a93511c",
-			"revisionTime": "2017-01-17T20:56:33Z"
+			"revision": "90697d60dd844d5ef6ff15135d0203f65d2f53b8",
+			"revisionTime": "2018-05-23T17:54:26Z"
 		},
 		{
-			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
 			"path": "github.com/lib/pq/oid",
-			"revision": "67c3f2a8884c9b1aac5503c8d42ae4f73a93511c",
-			"revisionTime": "2017-01-17T20:56:33Z"
+			"revision": "90697d60dd844d5ef6ff15135d0203f65d2f53b8",
+			"revisionTime": "2018-05-23T17:54:26Z"
 		},
 		{
 			"checksumSHA1": "tTx90HHLD8waQ+mlpd7kRzp9kyY=",
@@ -91,10 +215,10 @@
 			"revisionTime": "2018-07-18T00:29:43Z"
 		},
 		{
-			"checksumSHA1": "nP2A51J4e45E5HuXMdfQT2hBMfc=",
+			"checksumSHA1": "Byaa390AhImHSUlSXz14tOCRBHo=",
 			"path": "github.com/mssola/user_agent",
-			"revision": "6ef8cd49fcd9eb0ca7c76a581419c966ed2cb26e",
-			"revisionTime": "2016-12-08T17:59:04Z"
+			"revision": "d7bd3b07ee86d981b0fb75b59ea68e09c51fa1b6",
+			"revisionTime": "2018-06-08T08:16:48Z"
 		},
 		{
 			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
@@ -103,22 +227,22 @@
 			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
-			"checksumSHA1": "6nYX6dKRoU5uicZ5wa9nD7dq22Q=",
+			"checksumSHA1": "N11d95+f/kzeTCb408INaeNcPCE=",
 			"path": "github.com/rubenv/sql-migrate",
-			"revision": "081fe17d19ff4e2dd9f5a0c1158e6bcf74da6906",
-			"revisionTime": "2018-02-17T20:35:53Z"
+			"revision": "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c",
+			"revisionTime": "2018-07-04T11:13:56Z"
 		},
 		{
-			"checksumSHA1": "IQ6NtaJ+F1rtAMIaCetzKb5nrxQ=",
+			"checksumSHA1": "rkHieYOGBsxJaDbC7vl/e4KSatw=",
 			"path": "github.com/rubenv/sql-migrate/sqlparse",
-			"revision": "1ed79968dfca5de79adb13c84523caaa4fc865a9",
-			"revisionTime": "2017-01-04T09:54:22Z"
+			"revision": "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c",
+			"revisionTime": "2018-07-04T11:13:56Z"
 		},
 		{
-			"checksumSHA1": "9ZSqjmvF/JE6Qj/5xOoCAmUgXz8=",
+			"checksumSHA1": "aB+ZDcX9agmLOO+/dKINbhbCbsg=",
 			"path": "github.com/sirupsen/logrus",
-			"revision": "778f2e774c725116edbc3d039dc0dfc1cc62aae8",
-			"revisionTime": "2018-03-29T22:59:52Z"
+			"revision": "c108f5553c369120b773da633aca62a8b42b1cf4",
+			"revisionTime": "2018-07-23T11:49:25Z"
 		},
 		{
 			"checksumSHA1": "9/2qvuFPQxW7ZXzQSOYwqZb5cNg=",
@@ -127,52 +251,242 @@
 			"revisionTime": "2018-02-26T03:02:53Z"
 		},
 		{
-			"checksumSHA1": "Ak1mii27DHhEIjLnNqhK2HNibxg=",
+			"checksumSHA1": "Hhh/KG88My1ajZQdLA+bhqGmeCo=",
+			"path": "github.com/usefathom/fathom/cmd/fathom",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "wFmVhlA6qrZxeI/TYRl4G08KiYc=",
+			"path": "github.com/usefathom/fathom/pkg/aggregator",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "QDeH42w8NilSFfpcjjOi/pGDz1E=",
+			"path": "github.com/usefathom/fathom/pkg/api",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "+kQAroJzFzETI1gonovZVYT2aSQ=",
+			"path": "github.com/usefathom/fathom/pkg/config",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "qGOY5RadJrOyMby2MQ2aXqwvP2k=",
+			"path": "github.com/usefathom/fathom/pkg/datastore",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "tx2YKxPaiwu00GbnzXxq72pKx2M=",
+			"path": "github.com/usefathom/fathom/pkg/datastore/sqlstore",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "ippSiueOXDP6/eQ1DsjlaUGG0WY=",
+			"path": "github.com/usefathom/fathom/pkg/models",
+			"revision": "1c2682878eba8a61ac513f90da1913f73a88ca19",
+			"revisionTime": "2018-07-27T06:54:46Z"
+		},
+		{
+			"checksumSHA1": "2TJV/f15/49inUOLH5hJK+nkRNw=",
 			"path": "github.com/ziutek/mymysql/godrv",
-			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
-			"revisionTime": "2016-11-23T14:17:03Z"
+			"revision": "ff6cc86d3d933e6c0e3185a19fb46e171a7651b2",
+			"revisionTime": "2017-12-17T23:40:33Z"
 		},
 		{
-			"checksumSHA1": "x5wFYF5U9/AMBxJ5LQZayskPW7o=",
+			"checksumSHA1": "oRXWHvweXZQ99jtuUtYVvKv8oI0=",
+			"path": "github.com/ziutek/mymysql/mysql",
+			"revision": "ff6cc86d3d933e6c0e3185a19fb46e171a7651b2",
+			"revisionTime": "2017-12-17T23:40:33Z"
+		},
+		{
+			"checksumSHA1": "jV9XesO+NZ2UqmMw3zoUwM4UmAE=",
 			"path": "github.com/ziutek/mymysql/native",
-			"revision": "501176fc99be4b4fb0fd01ae8d6af5d8bb408e44",
-			"revisionTime": "2016-11-23T14:17:03Z"
+			"revision": "ff6cc86d3d933e6c0e3185a19fb46e171a7651b2",
+			"revisionTime": "2017-12-17T23:40:33Z"
 		},
 		{
-			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
+			"path": "go/build",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
 			"path": "golang.org/x/crypto/bcrypt",
-			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
-			"revisionTime": "2016-12-21T04:54:10Z"
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
 		},
 		{
-			"checksumSHA1": "JsJdKXhz87gWenMwBeejTOeNE7k=",
+			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
 			"path": "golang.org/x/crypto/blowfish",
-			"revision": "f6b343c37ca80bfa8ea539da67a0b621f84fab1d",
-			"revisionTime": "2016-12-21T04:54:10Z"
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
 		},
 		{
 			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
 			"path": "golang.org/x/crypto/ssh/terminal",
-			"revision": "b0697eccbea9adec5b7ba8008f4c33d98d733388",
-			"revisionTime": "2018-04-23T13:30:03Z"
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
 		},
 		{
-			"checksumSHA1": "RSCMWnn21rwYF//Yt89AC1f1wXY=",
+			"checksumSHA1": "PqZlazU/dKCEc8I353TYnUJNobw=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
-			"revisionTime": "2018-04-18T21:20:05Z"
+			"revision": "e072cadbbdc8dd3d3ffa82b8b4b9304c261d9311",
+			"revisionTime": "2018-07-24T16:28:38Z"
 		},
 		{
-			"checksumSHA1": "Dfz4tGItokMvHZENCsBmPPB8FGQ=",
+			"checksumSHA1": "P8Y8GFwxybTfltfh8Q0lHqlEYIM=",
 			"path": "golang.org/x/sys/windows",
-			"revision": "79b0c6888797020a994db17c8510466c72fe75d9",
-			"revisionTime": "2018-04-18T21:20:05Z"
+			"revision": "e072cadbbdc8dd3d3ffa82b8b4b9304c261d9311",
+			"revisionTime": "2018-07-24T16:28:38Z"
 		},
 		{
 			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
 			"path": "google.golang.org/appengine/cloudsql",
 			"revision": "b1f26356af11148e710935ed1ac8a7f5702c7612",
 			"revisionTime": "2018-05-21T22:34:13Z"
+		},
+		{
+			"checksumSHA1": "xunNOgG8P6Xh4SM+LPQ1zMDXa8Q=",
+			"path": "gopkg.in/gorp.v1",
+			"revision": "c87af80f3cc5036b55b83d77171e156791085e2e",
+			"revisionTime": "2015-02-04T08:55:30Z"
+		},
+		{
+			"path": "hash",
+			"revision": ""
+		},
+		{
+			"path": "io",
+			"revision": ""
+		},
+		{
+			"path": "io/ioutil",
+			"revision": ""
+		},
+		{
+			"path": "log",
+			"revision": ""
+		},
+		{
+			"path": "math",
+			"revision": ""
+		},
+		{
+			"path": "math/rand",
+			"revision": ""
+		},
+		{
+			"path": "net",
+			"revision": ""
+		},
+		{
+			"path": "net/http",
+			"revision": ""
+		},
+		{
+			"path": "net/http/httptest",
+			"revision": ""
+		},
+		{
+			"path": "net/url",
+			"revision": ""
+		},
+		{
+			"path": "os",
+			"revision": ""
+		},
+		{
+			"path": "os/exec",
+			"revision": ""
+		},
+		{
+			"path": "os/user",
+			"revision": ""
+		},
+		{
+			"path": "path",
+			"revision": ""
+		},
+		{
+			"path": "path/filepath",
+			"revision": ""
+		},
+		{
+			"path": "reflect",
+			"revision": ""
+		},
+		{
+			"path": "regexp",
+			"revision": ""
+		},
+		{
+			"path": "runtime",
+			"revision": ""
+		},
+		{
+			"path": "runtime/debug",
+			"revision": ""
+		},
+		{
+			"path": "sort",
+			"revision": ""
+		},
+		{
+			"path": "strconv",
+			"revision": ""
+		},
+		{
+			"path": "strings",
+			"revision": ""
+		},
+		{
+			"path": "sync",
+			"revision": ""
+		},
+		{
+			"path": "sync/atomic",
+			"revision": ""
+		},
+		{
+			"path": "syscall",
+			"revision": ""
+		},
+		{
+			"path": "testing",
+			"revision": ""
+		},
+		{
+			"path": "text/tabwriter",
+			"revision": ""
+		},
+		{
+			"path": "text/template",
+			"revision": ""
+		},
+		{
+			"path": "time",
+			"revision": ""
+		},
+		{
+			"path": "unicode",
+			"revision": ""
+		},
+		{
+			"path": "unicode/utf16",
+			"revision": ""
+		},
+		{
+			"path": "unicode/utf8",
+			"revision": ""
+		},
+		{
+			"path": "unsafe",
+			"revision": ""
 		}
 	],
 	"rootPath": "github.com/usefathom/fathom"
