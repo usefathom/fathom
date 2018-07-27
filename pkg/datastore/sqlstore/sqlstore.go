@@ -23,7 +23,10 @@ var ErrNoResults = errors.New("datastore: query returned 0 results")
 
 // New creates a new database pool
 func New(c *Config) *sqlstore {
-	dbx := sqlx.MustConnect(c.Driver, c.DSN())
+	dbx, err := sqlx.Connect(c.Driver, c.DSN())
+	if err != nil {
+		log.Fatalf("Error connecting to database: %s", err)
+	}
 	db := &sqlstore{dbx, c}
 
 	// write log statement
