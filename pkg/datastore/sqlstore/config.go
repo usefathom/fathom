@@ -6,6 +6,7 @@ import (
 )
 
 type Config struct {
+	URL      string `default:""`
 	Driver   string `default:"sqlite3"`
 	Host     string `default:""`
 	User     string `default:""`
@@ -19,23 +20,26 @@ func (c *Config) DSN() string {
 
 	switch c.Driver {
 	case "postgres":
-		params := map[string]string{
-			"host":     c.Host,
-			"dbname":   c.Name,
-			"user":     c.User,
-			"password": c.Password,
-			"sslmode":  c.SSLMode,
-		}
-
-		for k, v := range params {
-			if v == "" {
-				continue
+		if c.URL != "" {
+			dsn = c.URL
+		} else {
+			params := map[string]string{
+				"host":     c.Host,
+				"dbname":   c.Name,
+				"user":     c.User,
+				"password": c.Password,
+				"sslmode":  c.SSLMode,
 			}
 
-			dsn = dsn + k + "=" + v + " "
-		}
+			for k, v := range params {
+				if v == "" {
+					continue
+				}
 
-		dsn = strings.TrimSpace(dsn)
+				dsn = dsn + k + "=" + v + " "
+			}
+			dsn = strings.TrimSpace(dsn)
+		}
 	case "mysql":
 		mc := mysql.NewConfig()
 		mc.User = c.User

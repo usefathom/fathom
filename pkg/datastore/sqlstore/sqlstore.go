@@ -30,7 +30,7 @@ func New(c *Config) *sqlstore {
 	db := &sqlstore{dbx, c}
 
 	// write log statement
-	log.Printf("Connected to %s database: %s", c.Driver, c.Name)
+	log.Printf("Connected to %s database: %s", c.Driver, c.DSN())
 
 	// run migrations
 	db.Migrate()
