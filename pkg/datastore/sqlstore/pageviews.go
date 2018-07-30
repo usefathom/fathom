@@ -78,7 +78,9 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 	if err != nil {
 		return err
 	}
+
 	query := tx.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ? WHERE id = ?`)
+
 	stmt, err := tx.Preparex(query)
 	if err != nil {
 		return err
@@ -86,6 +88,11 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 
 	for i := range pageviews {
 		_, err = stmt.Exec(query, pageviews[i].IsBounce, pageviews[i].Duration)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	err = tx.Commit()

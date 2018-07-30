@@ -1,8 +1,8 @@
 package sqlstore
 
 import (
-	"fmt"
 	mysql "github.com/go-sql-driver/mysql"
+	"strings"
 )
 
 type Config struct {
@@ -19,11 +19,23 @@ func (c *Config) DSN() string {
 
 	switch c.Driver {
 	case "postgres":
-		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s", c.Host, c.User, c.Password, c.Name)
-
-		if c.SSLMode != "" {
-			dsn = dsn + fmt.Sprintf(" sslmode=%s", c.SSLMode)
+		params := map[string]string{
+			"host":     c.Host,
+			"dbname":   c.Name,
+			"user":     c.User,
+			"password": c.Password,
+			"sslmode":  c.SSLMode,
 		}
+
+		for k, v := range params {
+			if v == "" {
+				continue
+			}
+
+			dsn = dsn + k + "=" + v + " "
+		}
+
+		dsn = strings.TrimSpace(dsn)
 	case "mysql":
 		mc := mysql.NewConfig()
 		mc.User = c.User
