@@ -80,14 +80,13 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 	}
 
 	query := tx.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ? WHERE id = ?`)
-
 	stmt, err := tx.Preparex(query)
 	if err != nil {
 		return err
 	}
 
 	for i := range pageviews {
-		_, err = stmt.Exec(query, pageviews[i].IsBounce, pageviews[i].Duration)
+		_, err := stmt.Exec(pageviews[i].IsBounce, pageviews[i].Duration, pageviews[i].ID)
 
 		if err != nil {
 			tx.Rollback()
