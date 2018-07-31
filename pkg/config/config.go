@@ -2,9 +2,9 @@ package config
 
 import (
 	"math/rand"
+	"net/url"
 	"os"
 	"path/filepath"
-	"net/url"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -54,11 +54,10 @@ func Parse() *Config {
 	}
 
 	if cfg.Database.URL != "" {
-		u, err := url.Parse(cfg.Database.URL)
+		_, err := url.Parse(cfg.Database.URL)
 		if err != nil {
 			log.Fatalf("Error parsing DATABASE_URL from environment: %s", err)
 		}
-		cfg.Database.Driver = u.Scheme
 	}
 
 	// alias sqlite to sqlite3
