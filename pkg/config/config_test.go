@@ -49,6 +49,23 @@ func TestParse(t *testing.T) {
 	}
 }
 
+func TestDatabaseURL(t *testing.T) {
+	data := []byte("FATHOM_DATABASE_URL=\"postgres://dbuser:dbsecret@dbhost:1234/dbname\"")
+	ioutil.WriteFile("env_values", data, 0644)
+	defer os.Remove("env_values")
+
+	LoadEnv("env_values")
+	cfg := Parse()
+	driver := "postgres"
+	url := "postgres://dbuser:dbsecret@dbhost:1234/dbname"
+	if cfg.Database.Driver != driver {
+		t.Errorf("Expected %#v, got %#v", driver, cfg.Database.Driver)
+	}
+	if cfg.Database.URL != url {
+		t.Errorf("Expected %#v, got %#v", url, cfg.Database.URL)
+	}
+}
+
 func TestRandomString(t *testing.T) {
 	r1 := randomString(10)
 	r2 := randomString(10)
