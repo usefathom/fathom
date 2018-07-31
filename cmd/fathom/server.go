@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/usefathom/fathom/pkg/api"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 var serverCmd = cli.Command{
@@ -23,6 +24,18 @@ var serverCmd = cli.Command{
 			Usage:  "server address",
 			Value:  ":8080",
 		},
+
+		cli.BoolFlag{
+			EnvVar: "FATHOM_LETS_ENCRYPT",
+			Name:   "lets-encrypt",
+		},
+
+		cli.StringFlag{
+			EnvVar: "FATHOM_HOSTNAME",
+			Name:   "hostname",
+			Usage:  "domain when using --lets-encrypt",
+		},
+
 		cli.BoolFlag{
 			EnvVar: "FATHOM_DEBUG",
 			Name:   "debug, d",
@@ -49,11 +62,20 @@ func server(c *cli.Context) error {
 		addr = ":" + addr
 	}
 
-	// start listening
-	log.Printf("Server is now listening on %s", addr)
-	err := http.ListenAndServe(addr, h)
-	if err != nil {
-		log.Errorln(err)
+	// start server without letsencrypt / tls enabled
+	if !c.Bool("lets-encrypt") {
+		// start listening
+		log.Printf("Server is now listening on %s", addr)
+		err := http.ListenAndServe(addr, h)
+		if err != nil {
+			log.Errorln(err)
+		}
+		return nil
 	}
+
+	// start server with autocert (letsencrypt)
+	hostname := c.String("hostname")
+	log.Printf("Server is now listening on %s:443", hostname)
+	log.Fatal(http.Serve(autocert.NewListener(hostname), h))
 	return nil
 }
