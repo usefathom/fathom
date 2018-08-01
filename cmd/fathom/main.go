@@ -39,6 +39,7 @@ func main() {
 	app.Commands = []cli.Command{
 		serverCmd,
 		registerCmd,
+		statsCmd,
 	}
 
 	if len(os.Args) < 2 || os.Args[1] != "--version" {
@@ -50,6 +51,8 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
+
+	os.Exit(0)
 }
 
 func before(c *cli.Context) error {

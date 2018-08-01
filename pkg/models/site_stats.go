@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -12,4 +13,8 @@ type SiteStats struct {
 	AvgDuration    float64   `db:"avg_duration"`
 	KnownDurations int64     `db:"known_durations" json:",omitempty"`
 	Date           time.Time `db:"date" json:",omitempty"`
+}
+
+func (s *SiteStats) FormattedDuration() string {
+	return fmt.Sprintf("%d:%d", int(s.AvgDuration/60.00), (int(s.AvgDuration) % 60))
 }
