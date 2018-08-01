@@ -10,10 +10,9 @@ import (
 )
 
 var registerCmd = cli.Command{
-	Name:    "register",
-	Aliases: []string{"r"},
-	Usage:   "register a new admin user",
-	Action:  register,
+	Name:   "register",
+	Usage:  "register a new admin user",
+	Action: register,
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:  "email, e",
