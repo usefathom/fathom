@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var registerCmd = cli.Command{
@@ -30,7 +29,7 @@ var registerCmd = cli.Command{
 func register(c *cli.Context) error {
 	email := c.String("email")
 	if email == "" {
-		return errors.New("Invalid arguments: missing email address")
+		return errors.New("Invalid arguments: missing email")
 	}
 
 	password := c.String("password")
@@ -38,12 +37,8 @@ func register(c *cli.Context) error {
 		return errors.New("Invalid arguments: missing password")
 	}
 
-	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
-	user := &models.User{
-		Email:    email,
-		Password: string(hash),
-	}
-	err := app.database.SaveUser(user)
+	user := models.NewUser(email, password)
+	err := app.database.SaveUser(&user)
 
 	if err != nil {
 		return fmt.Errorf("Error creating user: %s", err)

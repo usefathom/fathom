@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/usefathom/fathom/pkg/datastore"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type key int
@@ -24,7 +23,10 @@ type login struct {
 func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 	// check login creds
 	var l login
-	json.NewDecoder(r.Body).Decode(&l)
+	err := json.NewDecoder(r.Body).Decode(&l)
+	if err != nil {
+		return err
+	}
 
 	// find user with given email
 	u, err := api.database.GetUserByEmail(l.Email)
@@ -33,7 +35,7 @@ func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// compare pwd
-	if err == datastore.ErrNoResults || bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(l.Password)) != nil {
+	if err == datastore.ErrNoResults || u.ComparePassword(l.Password) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return respond(w, envelope{Error: "invalid_credentials"})
 	}
