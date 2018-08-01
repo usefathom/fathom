@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/urfave/cli"
+	"os"
 	"time"
 )
 
@@ -19,6 +21,10 @@ var statsCmd = cli.Command{
 		cli.StringFlag{
 			Name:  "end-date",
 			Usage: "end date, expects a date in format 2006-01-02",
+		},
+		cli.BoolFlag{
+			Name:  "json",
+			Usage: "get a json response",
 		},
 	},
 }
@@ -37,6 +43,14 @@ func stats(c *cli.Context) error {
 	result, err := app.database.GetAggregatedSiteStats(start, end)
 	if err != nil {
 		return err
+	}
+
+	if c.Bool("json") {
+		if err := json.NewEncoder(os.Stdout).Encode(result); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	fmt.Printf("%s - %s\n", start.Format("Jan 01, 2006"), end.Format("Jan 01, 2006"))
