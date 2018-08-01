@@ -22,6 +22,10 @@ var registerCmd = cli.Command{
 			Name:  "password, p",
 			Usage: "user password",
 		},
+		cli.BoolFlag{
+			Name:  "skip-bcrypt",
+			Usage: "store password string as is, skipping bcrypt",
+		},
 	},
 }
 
@@ -37,9 +41,14 @@ func register(c *cli.Context) error {
 	}
 
 	user := models.NewUser(email, password)
-	err := app.database.SaveUser(&user)
 
-	if err != nil {
+	// set password manually if --skip-bcrypt was given
+	// this is used to supply an already encrypted password string
+	if c.Bool("skip-bcrypt") {
+		user.Password = password
+	}
+
+	if err := app.database.SaveUser(&user); err != nil {
 		return fmt.Errorf("Error creating user: %s", err)
 	}
 
