@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -66,10 +67,13 @@ func server(c *cli.Context) error {
 	if !c.Bool("lets-encrypt") {
 		// start listening
 		log.Printf("Server is now listening on %s", addr)
-		err := http.ListenAndServe(addr, h)
-		if err != nil {
-			log.Errorln(err)
+		server := &http.Server{
+			Addr:         addr,
+			Handler:      h,
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
 		}
+		log.Fatal(server.ListenAndServe())
 		return nil
 	}
 
