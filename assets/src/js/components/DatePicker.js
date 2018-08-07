@@ -4,24 +4,47 @@ import { h, Component } from 'preact';
 import { bind } from 'decko';
 import Pikadayer from './Pikadayer.js';
 
-const availablePeriods = [
-  {
-    id: 'day',
-    label: 'Today'
-  },
-  {
-    id: 'week',
-    label: 'This week'
-  },
-  {
-    id: 'month',
-    label: 'This month'
-  },
-  {
-    id: 'year',
-    label: 'This year'
-  }
-];
+const now = new Date();
+
+// today, yesterday, this week, last 7 days, last 30 days
+const availablePeriods = {
+  'today': { 
+    label: 'Today',
+    start: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    },
+    end: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    },
+ },
+  'last-7-days': { 
+    label: 'Last 7 days',
+    start: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-7);
+    },
+    end: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    },
+ },
+  'last-30-days': { 
+    label: 'Last 30 days',
+    start: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-30);
+    },
+    end: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    },
+ },
+  'this-year': { 
+    label: 'This year',
+    start: function() {
+      return new Date(now.getFullYear(), 0, 1);
+    },
+    end: function() {
+      return new Date(this.start().getFullYear() + 1, 0, 0);
+    },
+ },
+}
 
 const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
 const padZero = function(n){return n<10? '0'+n:''+n;}
@@ -43,35 +66,11 @@ class DatePicker extends Component {
 
   @bind
   updateDatesFromPeriod(period) {
-    let now = new Date();
-    let startDate, endDate;
-
-    switch(period) {
-      case "day":
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      break;
-
-      case "week":
-        startDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - (now.getDay() + 6) % 7));
-        endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);
-      break;
-      case "month":
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-      break;
-      case "year":
-        startDate = new Date(now.getFullYear(), 0, 1);
-        endDate = new Date(startDate.getFullYear() + 1, 0, 0);
-      break;
-
-      case "":
-      default:
-        return; // empty period, don't update state
-      break;
+    if(typeof(availablePeriods[period]) !== "object") {
+      return;
     }
-
-    this.setDateRange(startDate, endDate, period);
+    let p = availablePeriods[period];
+    this.setDateRange(p.start(), p.end(), period);
   }
 
   @bind
@@ -135,9 +134,10 @@ class DatePicker extends Component {
   }
 
   render(props, state) {
-    const links = availablePeriods.map((p) => {
-      let className = ( p.id == state.period ) ? 'active' : '';
-      return <li class={className} ><a href="#" data-value={p.id} onClick={this.setPeriod}>{p.label}</a></li>
+    const links = Object.keys(availablePeriods).map((id) => {
+      let p = availablePeriods[id];
+      let className = ( id == state.period ) ? 'active' : '';
+      return <li class={className} ><a href="#" data-value={id} onClick={this.setPeriod}>{p.label}</a></li>
     });
 
     return (

@@ -14,7 +14,7 @@ class Dashboard extends Component {
     super(props)
 
     this.state = {
-      period: (window.location.hash.substring(2) || 'week'),
+      period: (window.location.hash.substring(2) || 'last-7-days'),
       before: 0,
       after: 0,
     }
