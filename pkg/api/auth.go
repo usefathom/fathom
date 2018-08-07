@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	gcontext "github.com/gorilla/context"
 	"github.com/usefathom/fathom/pkg/datastore"
 )
 
@@ -40,6 +41,7 @@ func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 		return respond(w, envelope{Error: "invalid_credentials"})
 	}
 
+	// ignore error here as we want a (new) session regardless
 	session, _ := api.sessions.Get(r, "auth")
 	session.Values["user_id"] = u.ID
 	err = session.Save(r, w)
@@ -68,7 +70,6 @@ func (api *API) LogoutHandler(w http.ResponseWriter, r *http.Request) error {
 func (api *API) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := api.sessions.Get(r, "auth")
-
 		// an err is returned if cookie has been tampered with, so check that
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -76,7 +77,6 @@ func (api *API) Authorize(next http.Handler) http.Handler {
 		}
 
 		userID, ok := session.Values["user_id"]
-
 		if session.IsNew || !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
@@ -91,5 +91,9 @@ func (api *API) Authorize(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), userKey, u)
 		next.ServeHTTP(w, r.WithContext(ctx))
+
+		// clear context from request after it is handled
+		// see http://www.gorillatoolkit.org/pkg/sessions#overview
+		gcontext.Clear(r)
 	})
 }
