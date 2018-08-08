@@ -1,15 +1,16 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 func (api *API) Routes() *mux.Router {
 	// register routes
 	r := mux.NewRouter()
-	r.Handle("/collect", api.NewCollectHandler()).Methods(http.MethodGet)
+	r.Handle("/collect", NewCollector(api.database)).Methods(http.MethodGet)
 	r.Handle("/api/session", HandlerFunc(api.LoginHandler)).Methods(http.MethodPost)
 	r.Handle("/api/session", HandlerFunc(api.LogoutHandler)).Methods(http.MethodDelete)
 
