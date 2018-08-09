@@ -1,9 +1,10 @@
 package aggregator
 
 import (
+	"net/url"
+
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
-	"net/url"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -73,10 +74,12 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 	results := newResults()
 
 	for _, p := range pageviews {
-		err := agg.handleSiteview(results, p)
+		site, err := agg.getSiteStats(results, p.Timestamp)
 		if err != nil {
+			log.Error(err)
 			continue
 		}
+		site.HandlePageview(p)
 
 		err = agg.handlePageview(results, p)
 		if err != nil {
