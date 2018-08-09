@@ -81,10 +81,12 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 		}
 		site.HandlePageview(p)
 
-		err = agg.handlePageview(results, p)
+		pageStats, err := agg.getPageStats(results, p.Timestamp, p.Hostname, p.Pathname)
 		if err != nil {
+			log.Error(err)
 			continue
 		}
+		pageStats.HandlePageview(p)
 
 		// referrer stats
 		if p.Referrer != "" {
