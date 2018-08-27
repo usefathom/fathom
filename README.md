@@ -31,16 +31,18 @@ For getting a development version of Fathom up & running, go through the followi
 
 To install and run Fathom in production, [have a look at the installation instructions](https://github.com/usefathom/fathom/wiki/Installing-&-running-Fathom).
 
-## Building with Docker
+## Docker
+
+### Building
 
 Ensure you have Docker installed and run `docker build -t fathom .`.
 Run the container with `docker run -d -p 8080:8080 fathom`.
 
-## Running with Docker
+### Running
 
 To run [our pre-built Docker image](https://hub.docker.com/r/usefathom/fathom/), run `docker run -d -p 8080:8080 usefathom/fathom:latest`
 
-#### Tracking snippet 
+## Tracking snippet
 
 To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance.
 
@@ -59,6 +61,15 @@ To start tracking, include the following JavaScript on your site and replace `yo
 fathom('trackPageview');
 </script>
 <!-- / Fathom -->
+```
+
+### Content Security Policy
+
+If you use a [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) to specify security policies for your website, Fathom requires the following CSP directives (replace `yourfathom.com` with the URL to your Fathom instance):
+
+```
+script-src: yourfathom.com;
+img-src: yourfathom.com;
 ```
 
 ## Copyright and license
