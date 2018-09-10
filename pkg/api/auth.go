@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	gcontext "github.com/gorilla/context"
 	"github.com/usefathom/fathom/pkg/datastore"
@@ -20,6 +21,10 @@ type login struct {
 	Password string `json:"password"`
 }
 
+func (l *login) Sanitize() {
+	l.Email = strings.ToLower(strings.TrimSpace(l.Email))
+}
+
 // URL: POST /api/session
 func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 	// check login creds
@@ -28,6 +33,7 @@ func (api *API) LoginHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	l.Sanitize()
 
 	// find user with given email
 	u, err := api.database.GetUserByEmail(l.Email)
