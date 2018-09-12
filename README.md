@@ -4,7 +4,7 @@ Fathom - simple website analytics
 [![Go Report Card](https://goreportcard.com/badge/github.com/usefathom/fathom)](https://goreportcard.com/report/github.com/usefathom/fathom)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/usefathom/fathom/master/LICENSE)
 
-Fathom Analytics is a simpler and more privacy-focused alternative to Google Analytics.
+[Fathom Analytics](https://usefathom.com/) is a simpler and more privacy-focused alternative to Google Analytics.
 
 Collecting information on the internet is important, but it’s broken. We’ve become complacent in trading information for free access to web services, and then complaining when those web services do crappy things with that data.
 
@@ -14,7 +14,7 @@ Google Analytics may give you free access to their services but in turn, they’
 
 We need to stop giving away our data and our users' privacy for free access to a tool.
 
-Fathom respects the privacy of your users and does not collect any personally identifiable information. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
+Fathom [respects the privacy of your users and does not collect any personally identifiable information](https://usefathom.com/data/). All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/src/img/fathom.jpg?v=7)
 
@@ -71,6 +71,12 @@ If you use a [Content Security Policy (CSP)](https://developer.mozilla.org/en-US
 script-src: yourfathom.com;
 img-src: yourfathom.com;
 ```
+
+## Roadmap
+
+Find [our public roadmap here](https://trello.com/b/x2aBwH2J/fathom-roadmap). 
+
+If you have an idea or suggestion for Fathom, [submit it as an issue here on GitHub](https://github.com/usefathom/fathom/issues).
 
 ## Copyright and license
 
