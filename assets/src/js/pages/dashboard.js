@@ -17,6 +17,7 @@ class Dashboard extends Component {
       period: (window.location.hash.substring(2) || 'last-7-days'),
       before: 0,
       after: 0,
+      isPublic: document.cookie.indexOf('auth') < 0,
     }
   }
 
@@ -27,6 +28,11 @@ class Dashboard extends Component {
   }
 
   render(props, state) {
+    // only show logout link if this dashboard is not public
+    let logoutMenuItem = state.isPublic ? '' : (
+      <li class="signout"><span class="spacer">&middot;</span><LogoutButton onSuccess={props.onLogout} /></li>
+    );
+
     return (
     <div class="app-page wrapper">
 
@@ -34,9 +40,8 @@ class Dashboard extends Component {
         <nav class="main-nav animated fadeInDown">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <li class="visitors"><Realtime onError={props.onLogout} /></li>
-              <li class="spacer">&middot;</li>
-              <li class="signout"><LogoutButton onSuccess={props.onLogout} /></li>
+              <li class="visitors"><Realtime /></li>
+              {logoutMenuItem}
           </ul>
         </nav>
       </header>

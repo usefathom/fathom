@@ -11,8 +11,10 @@ func (api *API) Routes() *mux.Router {
 	// register routes
 	r := mux.NewRouter()
 	r.Handle("/collect", NewCollector(api.database)).Methods(http.MethodGet)
-	r.Handle("/api/session", HandlerFunc(api.LoginHandler)).Methods(http.MethodPost)
-	r.Handle("/api/session", HandlerFunc(api.LogoutHandler)).Methods(http.MethodDelete)
+
+	r.Handle("/api/session", HandlerFunc(api.GetSession)).Methods(http.MethodGet)
+	r.Handle("/api/session", HandlerFunc(api.CreateSession)).Methods(http.MethodPost)
+	r.Handle("/api/session", HandlerFunc(api.DeleteSession)).Methods(http.MethodDelete)
 
 	r.Handle("/api/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler))).Methods(http.MethodGet)
 	r.Handle("/api/stats/site/groupby/day", api.Authorize(HandlerFunc(api.GetSiteStatsPerDayHandler))).Methods(http.MethodGet)

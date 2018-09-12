@@ -16,6 +16,10 @@ class LogoutButton extends Component {
   }
 
   render() {
+    if(document.cookie.indexOf('auth') < 0) {
+      return ''
+    }
+
     return (
       <a href="#" onClick={this.handleSubmit}>Sign out</a>
     )
