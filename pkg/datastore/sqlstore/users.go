@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+
 	"github.com/usefathom/fathom/pkg/models"
 )
 
@@ -48,4 +49,13 @@ func (db *sqlstore) SaveUser(u *models.User) error {
 
 	u.ID, _ = result.LastInsertId()
 	return nil
+}
+
+// CountUsers returns the number of users
+func (db *sqlstore) CountUsers() (int64, error) {
+	var c int64
+	var sql = `SELECT COUNT(*) FROM users`
+	query := db.Rebind(sql)
+	err := db.Get(&c, query)
+	return c, err
 }

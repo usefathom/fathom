@@ -10,11 +10,13 @@ import (
 // ErrNoResults is returned whenever a single-item query returns 0 results
 var ErrNoResults = sqlstore.ErrNoResults // ???
 
+// Datastore represents a database implementations
 type Datastore interface {
 	// users
 	GetUser(int64) (*models.User, error)
 	GetUserByEmail(string) (*models.User, error)
 	SaveUser(*models.User) error
+	CountUsers() (int64, error)
 
 	// site stats
 	GetSiteStats(time.Time) (*models.SiteStats, error)

@@ -72,7 +72,7 @@ func (api *API) LogoutHandler(w http.ResponseWriter, r *http.Request) error {
 	return respond(w, envelope{Data: true})
 }
 
-/* middleware */
+// Authorize is middleware that aborts the request if unauthorized
 func (api *API) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// clear context from request after it is handled
