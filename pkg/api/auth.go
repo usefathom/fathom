@@ -75,6 +75,10 @@ func (api *API) LogoutHandler(w http.ResponseWriter, r *http.Request) error {
 /* middleware */
 func (api *API) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// clear context from request after it is handled
+		// see http://www.gorillatoolkit.org/pkg/sessions#overview
+		defer gcontext.Clear(r)
+
 		session, err := api.sessions.Get(r, "auth")
 		// an err is returned if cookie has been tampered with, so check that
 		if err != nil {
@@ -97,9 +101,5 @@ func (api *API) Authorize(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), userKey, u)
 		next.ServeHTTP(w, r.WithContext(ctx))
-
-		// clear context from request after it is handled
-		// see http://www.gorillatoolkit.org/pkg/sessions#overview
-		gcontext.Clear(r)
 	})
 }
