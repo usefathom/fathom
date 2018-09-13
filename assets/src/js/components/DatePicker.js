@@ -46,7 +46,6 @@ const availablePeriods = {
  },
 }
 
-const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
 const padZero = function(n){return n<10? '0'+n:''+n;}
 
 class DatePicker extends Component {
@@ -55,10 +54,10 @@ class DatePicker extends Component {
 
     this.state = {
       period: props.value,
-      before: 0,
-      after: 0,
-      startDate: null,
-      endDate: null,
+      before: 0, // UTC timestamp
+      after: 0, // UTC timestamp
+      startDate: null, // local date object
+      endDate: null, // local date object
     }
 
     this.updateDatesFromPeriod(this.state.period)
@@ -87,8 +86,8 @@ class DatePicker extends Component {
 
     // create unix timestamps from local date objects
     let before, after;
-    before = Math.round(((+endDate) / 1000) - timezoneOffset);
-    after = Math.round(((+startDate) / 1000) - timezoneOffset);
+    before = Math.round((+endDate) / 1000);
+    after = Math.round((+startDate) / 1000);
 
     this.setState({
       period: period || '',
