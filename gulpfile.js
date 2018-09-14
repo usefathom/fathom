@@ -1,6 +1,5 @@
 'use strict';
 
-const babelify = require("babelify")
 const browserify = require('browserify')
 const gulp = require('gulp')
 const source = require('vinyl-source-stream')
@@ -9,43 +8,41 @@ const rename = require('gulp-rename')
 const gutil = require('gulp-util')
 const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
-const pump = require('pump')
-const es = require('event-stream');
 const debug = process.env.NODE_ENV !== 'production';
-let defaultTasks = [ 'browserify', 'sass', 'html', 'img' ] ;
+let defaultTasks = [ 'app-js', 'tracker-js', 'sass', 'html', 'img' ] ;
+const babel = require('gulp-babel');
 
 gulp.task('default', defaultTasks);
 
-gulp.task('browserify', function () {
-  let files = [
-    './assets/src/js/script.js',
-    './assets/src/js/tracker.js',
-  ];
-
-  var tasks = files.map(function(entry) {
+gulp.task('app-js', function () {
     let stream = browserify({
-        entries: entry,
+        entries: './assets/src/js/script.js',
         debug: debug
     })
     .transform("babelify", {
-      presets: ["es2015"],
+      presets: ["@babel/preset-env"],
       plugins: [ 
-        "transform-decorators-legacy", 
-        ["transform-react-jsx", { "pragma":"h" } ] 
+        ["@babel/plugin-proposal-decorators", { "legacy": true }],
+        ["@babel/plugin-transform-react-jsx", { "pragma":"h" } ]
       ]
-    })
+    })    
     .bundle()  
-    .pipe(source(entry.split('/').pop()))
-
+    .pipe(source('script.js'))
+  
     if(!debug) {
       stream.pipe(buffer()).pipe(uglify())
     }    
 
     return stream.pipe(gulp.dest(`./assets/build/js`))  
-  });
+});  
 
-  // create a merged stream
-  return es.merge.apply(null, tasks);
+gulp.task('tracker-js', function () {
+  return gulp.src('./assets/src/js/tracker.js')
+        .pipe(babel({
+            presets: ["@babel/preset-env"],
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest('./assets/build/js'));
 });
 
 gulp.task('img', function() {
@@ -68,7 +65,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', ['default'], function() {
-  gulp.watch(['./assets/src/js/**/*.js'], ['browserify'] );
+  gulp.watch(['./assets/src/js/**/*.js'], ['app-js', 'tracker-js'] );
   gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
   gulp.watch(['./assets/src/**/*.html'], ['html'] );
   gulp.watch(['./assets/src/img/**/*'], ['img'] );
