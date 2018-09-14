@@ -1,7 +1,4 @@
 /*
-  
-TODO: move fonts to local hosting - only host the needed weights/styles not all weights styles
-
 overpass    200, 500, 600
 purple      #533feb
 green       #88ffc6
@@ -14,13 +11,11 @@ padding     8, 16, 20, 32, 64, 128, 256, 512, 1024
 font size   12, 16, 64
 */
 @import "normalize";
-@import url('//overpass-30e2.kxcdn.com/overpass.css');
-
-*{ box-sizing: border-box; }
+@import "fonts-overpass";
 
 ::selection       { background: #a0ffd1; }
 ::-moz-selection  { background: #a0ffd1; }
-
+*{ box-sizing: border-box; }
 html, body, #root { height: 100%; }
 body { overflow-y: scroll; }
 

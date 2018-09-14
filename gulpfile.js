@@ -9,7 +9,7 @@ const gutil = require('gulp-util')
 const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
 const debug = process.env.NODE_ENV !== 'production';
-let defaultTasks = [ 'app-js', 'tracker-js', 'sass', 'html', 'img' ] ;
+let defaultTasks = [ 'app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ] ;
 const babel = require('gulp-babel');
 
 gulp.task('default', defaultTasks);
@@ -45,6 +45,11 @@ gulp.task('tracker-js', function () {
         .pipe(gulp.dest('./assets/build/js'));
 });
 
+gulp.task('fonts', function() {
+  return gulp.src('./assets/src/fonts/**/*')
+    .pipe(gulp.dest(`./assets/build/fonts`))
+});
+
 gulp.task('img', function() {
   return gulp.src('./assets/src/img/**/*')
     .pipe(gulp.dest(`./assets/build/img`))
@@ -69,4 +74,5 @@ gulp.task('watch', ['default'], function() {
   gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
   gulp.watch(['./assets/src/**/*.html'], ['html'] );
   gulp.watch(['./assets/src/img/**/*'], ['img'] );
+  gulp.watch(['./assets/src/fonts/**/*'], ['fonts'] );
 });
