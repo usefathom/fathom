@@ -4,43 +4,50 @@ import { h, Component } from 'preact';
 import { bind } from 'decko';
 import Pikadayer from './Pikadayer.js';
 
-const now = new Date();
 
 // today, yesterday, this week, last 7 days, last 30 days
 const availablePeriods = {
   'today': { 
     label: 'Today',
     start: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
     end: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
   'last-7-days': { 
     label: 'Last 7 days',
     start: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate()-6);
     },
     end: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
   'last-30-days': { 
     label: 'Last 30 days',
     start: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate()-29);
     },
     end: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
   'this-year': { 
     label: 'This year',
     start: function() {
+      const now = new Date();
       return new Date(now.getFullYear(), 0, 1);
     },
     end: function() {
+      const now = new Date();
       return new Date(this.start().getFullYear() + 1, 0, 0);
     },
  },
