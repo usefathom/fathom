@@ -53,6 +53,7 @@ type Datastore interface {
 	GetAggregatedReferrerStatsPageviews(time.Time, time.Time) (int, error)
 
 	// misc
+	Health() error
 	Close() error
 }
 
