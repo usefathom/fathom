@@ -53,6 +53,7 @@ const availablePeriods = {
  },
 }
 
+const defaultPeriod = 'last-7-days';
 const padZero = function(n){return n<10? '0'+n:''+n;}
 
 class DatePicker extends Component {
@@ -60,7 +61,7 @@ class DatePicker extends Component {
     super(props)
 
     this.state = {
-      period: props.value,
+      period: window.location.hash.substring(2) || window.localStorage.getItem('period') || defaultPeriod,
       before: 0, // UTC timestamp
       after: 0, // UTC timestamp
       startDate: null, // local date object
@@ -109,6 +110,9 @@ class DatePicker extends Component {
       this.timeout = window.setTimeout(() => {
         this.props.onChange(this.state);
         this.timeout = null;
+
+        window.localStorage.setItem('period', this.state.period) 
+        window.history.replaceState(this.state, null, '#!' + this.state.period)
       }, 2)
     }
   }

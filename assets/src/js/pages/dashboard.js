@@ -14,7 +14,6 @@ class Dashboard extends Component {
     super(props)
 
     this.state = {
-      period: (window.location.hash.substring(2) || 'last-7-days'),
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
@@ -22,9 +21,11 @@ class Dashboard extends Component {
   }
 
   @bind
-  changePeriod(s) {
-    this.setState({ period: s.period, before: s.before, after: s.after })
-    window.history.replaceState(this.state, null, `#!${s.period}`)
+  updateDateRange(s) {
+    this.setState({ 
+      before: s.before, 
+      after: s.after 
+    })
   }
 
   render(props, state) {
@@ -48,7 +49,7 @@ class Dashboard extends Component {
 
       <section class="section animated fadeInUp delayed_02s">
         <nav class="date-nav">
-          <DatePicker onChange={this.changePeriod} value={state.period} />
+          <DatePicker onChange={this.updateDateRange} />
         </nav>
 
         <div class="boxes">
