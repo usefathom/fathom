@@ -4,7 +4,7 @@ import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import { bind } from 'decko';
 
-const duration = 1000;
+const duration = 600;
 const easeOutQuint = function (t) { return 1+(--t)*t*t*t*t };
 
 class CountWidget extends Component {

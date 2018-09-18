@@ -13,7 +13,7 @@ const formatDay = d3.timeFormat("%e"),
     formatMonthDay = d3.timeFormat("%b %e"),
     formatYear = d3.timeFormat("%Y");
 
-const t = d3.transition().duration(500).ease(d3.easeQuadOut);
+const t = d3.transition().duration(600).ease(d3.easeQuadOut);
 
 // tooltip
 const tip = d3.tip().attr('class', 'd3-tip').html((d) => (`
