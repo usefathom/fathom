@@ -67,6 +67,10 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
+
+        <div class="footer hide-on-mobile">
+          <p>Use <strong>ALT + arrow-key</strong> to cycle through date ranges.</p>
+        </div>
       </section>
 
       <footer class="section"></footer>

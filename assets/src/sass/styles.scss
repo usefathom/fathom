@@ -93,6 +93,17 @@ body {
     }
 }
 
+.footer {
+  text-align: right;
+  margin: 20px 0;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.hide-on-mobile {
+  display: none;
+}
+
   nav li.visitors { color: #533feb; }
   nav li.signout a { padding-right: 0; }
   nav li.logo { float: left; }
@@ -142,6 +153,7 @@ body {
 
   @media ( min-width: 1220px ) {
     nav.main-nav ul { margin-top: 24px; }
+    .hide-on-mobile{ display: initial; }
 
     .boxes { justify-content: space-between; flex-wrap: nowrap; }
     .box { margin: 0 4px; }
