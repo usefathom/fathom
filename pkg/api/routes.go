@@ -30,6 +30,8 @@ func (api *API) Routes() *mux.Router {
 	r.Handle("/api/stats/referrers", api.Authorize(HandlerFunc(api.GetReferrerStatsHandler))).Methods(http.MethodGet)
 	r.Handle("/api/stats/referrers/pageviews", api.Authorize(HandlerFunc(api.GetReferrerStatsPageviewsHandler))).Methods(http.MethodGet)
 
+	r.Handle("/health", HandlerFunc(api.Health)).Methods(http.MethodGet)
+
 	// static assets & 404 handler
 	box := packr.NewBox("./../../assets/build")
 	r.Path("/tracker.js").Handler(serveTrackerFile(&box))

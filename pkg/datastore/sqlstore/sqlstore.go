@@ -1,7 +1,9 @@
 package sqlstore
 
 import (
+	"context"
 	"errors"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/gobuffalo/packr"
@@ -62,6 +64,14 @@ func (db *sqlstore) Migrate() {
 	if n > 0 {
 		log.Infof("Applied %d database migrations!", n)
 	}
+}
+
+// Health check health of database
+func (db *sqlstore) Health() error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	return db.PingContext(ctx)
 }
 
 // Closes the db pool
