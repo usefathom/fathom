@@ -69,6 +69,7 @@ class DatePicker extends Component {
     }
 
     this.updateDatesFromPeriod(this.state.period)
+    window.addEventListener('keydown', this.handleKeyPress);
   }
 
   @bind
@@ -112,7 +113,7 @@ class DatePicker extends Component {
         this.timeout = null;
 
         window.localStorage.setItem('period', this.state.period) 
-        window.history.replaceState(this.state, null, '#!' + this.state.period)
+        window.history.replaceState(this.state, null, `#!${this.state.period}`)
       }, 2)
     }
   }
@@ -141,6 +142,33 @@ class DatePicker extends Component {
   @bind 
   setEndDate(date) {
     this.setDateRange(this.state.startDate, date, '')
+  }
+
+  @bind
+  handleKeyPress(evt) {
+    if( ! evt.altKey ) {
+      return;
+    }
+
+    // TODO: Account for leap years
+    let diff = this.state.endDate - this.state.startDate + 1000;
+    let newStartDate, newEndDate;
+
+    switch(evt.keyCode) {
+      // ALT + left-arrow
+      case 37:
+        newStartDate = new Date(+this.state.startDate - diff)
+        newEndDate = new Date(+this.state.endDate - diff)
+        this.setDateRange(newStartDate, newEndDate)
+      break;
+
+      // ALT + right-arrow
+      case 39:
+      newStartDate = new Date(+this.state.startDate + diff)
+      newEndDate = new Date(+this.state.endDate + diff)
+      this.setDateRange(newStartDate, newEndDate)
+      break;
+    }
   }
 
   render(props, state) {
