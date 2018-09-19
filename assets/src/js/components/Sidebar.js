@@ -36,6 +36,11 @@ class Sidebar extends Component {
           return;
         }
 
+        // Make sure we always show at least 1 visitor when there are pageviews
+        if ( data.Visitors == 0 && data.Pageviews > 0 ) {
+          data.Visitors = 1
+        }
+
         this.setState({ 
           loading: false,
           data: data
@@ -47,7 +52,7 @@ class Sidebar extends Component {
     return (
       <div class="box box-totals animated fadeInUp delayed_03s">
         <CountWidget title="Unique visitors" value={state.data.Visitors} loading={state.loading} />
-        <CountWidget title="Page views" value={state.data.Pageviews} loading={state.loading} />
+        <CountWidget title="Pageviews" value={state.data.Pageviews} loading={state.loading} />
         <CountWidget title="Avg time on site" value={state.data.AvgDuration} format="duration" loading={state.loading} />
         <CountWidget title="Bounce rate" value={state.data.BounceRate} format="percentage" loading={state.loading} />
       </div>

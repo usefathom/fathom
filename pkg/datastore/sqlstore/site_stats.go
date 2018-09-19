@@ -2,8 +2,9 @@ package sqlstore
 
 import (
 	"database/sql"
-	"github.com/usefathom/fathom/pkg/models"
 	"time"
+
+	"github.com/usefathom/fathom/pkg/models"
 )
 
 func (db *sqlstore) GetSiteStats(date time.Time) (*models.SiteStats, error) {
@@ -49,6 +50,7 @@ func (db *sqlstore) GetAggregatedSiteStats(startDate time.Time, endDate time.Tim
 	if err != nil && err == sql.ErrNoRows {
 		return nil, ErrNoResults
 	}
+
 	return stats, err
 }
 
