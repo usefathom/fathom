@@ -52,9 +52,9 @@ function timeFormatPicker(n) {
 
 function prepareData(startUnix, endUnix, data) {
   // add timezone offset back in to get local start date
-  //const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
-  let startDate = new Date((startUnix) * 1000);
-  let endDate = new Date((endUnix) * 1000);
+  const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
+  let startDate = new Date((startUnix + timezoneOffset) * 1000);
+  let endDate = new Date((endUnix + timezoneOffset) * 1000);
   let datamap = [];
   let newData = [];
 
@@ -65,7 +65,7 @@ function prepareData(startUnix, endUnix, data) {
     d = data[i];
     // replace date with actual date object & store in datamap
     dateParts = d.Date.split('T')[0].split('-');
-    date = new Date(Date.UTC(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0))
+    date = new Date(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0)
     key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
     d.Date = date;
     datamap[key] = d;
