@@ -33,17 +33,19 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	}
 
 	// generate placeholders string
-	placeholders := strings.Repeat("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),", n)
+	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),"
+	placeholders := strings.Repeat(placeholderTemplate, n)
 	placeholders = placeholders[:len(placeholders)-1]
+	nPlaceholders := strings.Count(placeholderTemplate, "?")
 
 	// init values slice with correct length
-	nValues := n * 10
+	nValues := n * nPlaceholders
 	values := make([]interface{}, nValues)
 
 	// overwrite nil values in slice
 	j := 0
 	for i := range pageviews {
-		j = i * 10
+		j = i * nPlaceholders
 		values[j] = pageviews[i].ID
 		values[j+1] = pageviews[i].Hostname
 		values[j+2] = pageviews[i].Pathname

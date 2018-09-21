@@ -27,8 +27,8 @@ type Collector struct {
 }
 
 func NewCollector(store datastore.Datastore) *Collector {
-	bufferCap := 512                        // persist every 512 pageviews
-	bufferTimeout := 600 * time.Millisecond // or every 600ms
+	bufferCap := 90                         // persist every 90 pageviews, see https://github.com/usefathom/fathom/issues/132
+	bufferTimeout := 900 * time.Millisecond // or every 900 ms, whichever comes first
 
 	c := &Collector{
 		Store:     store,
