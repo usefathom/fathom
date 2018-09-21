@@ -11,7 +11,7 @@ func (api *API) GetSiteStatsHandler(w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/pageviews
@@ -21,7 +21,7 @@ func (api *API) GetSiteStatsPageviewsHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/visitors
@@ -31,7 +31,7 @@ func (api *API) GetSiteStatsVisitorsHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/duration
@@ -41,7 +41,7 @@ func (api *API) GetSiteStatsDurationHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/bounces
@@ -51,7 +51,7 @@ func (api *API) GetSiteStatsBouncesHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/realtime
@@ -60,7 +60,7 @@ func (api *API) GetSiteStatsRealtimeHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/site/groupby/day
@@ -70,5 +70,5 @@ func (api *API) GetSiteStatsPerDayHandler(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }

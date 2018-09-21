@@ -11,7 +11,7 @@ func (api *API) GetReferrerStatsHandler(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 // URL: /api/stats/referrer/pageviews
@@ -21,5 +21,5 @@ func (api *API) GetReferrerStatsPageviewsHandler(w http.ResponseWriter, r *http.
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }

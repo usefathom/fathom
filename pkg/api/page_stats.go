@@ -11,7 +11,7 @@ func (api *API) GetPageStatsHandler(w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
 func (api *API) GetPageStatsPageviewsHandler(w http.ResponseWriter, r *http.Request) error {
@@ -20,5 +20,5 @@ func (api *API) GetPageStatsPageviewsHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return err
 	}
-	return respond(w, envelope{Data: result})
+	return respond(w, http.StatusOK, envelope{Data: result})
 }

@@ -39,8 +39,9 @@ func HandleError(w http.ResponseWriter, r *http.Request, err error) {
 	w.Write([]byte("false"))
 }
 
-func respond(w http.ResponseWriter, d interface{}) error {
+func respond(w http.ResponseWriter, statusCode int, d interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
 	err := json.NewEncoder(w).Encode(d)
 	return err
 }

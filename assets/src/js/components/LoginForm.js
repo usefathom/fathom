@@ -31,7 +31,7 @@ class LoginForm extends Component {
         this.props.onSuccess()
     }).catch((e) => {
       this.setState({
-        message: e.message,
+        message: e.code === 'invalid_credentials' ? "Invalid username or password" : e.message,
         password: ''
       });
     });

@@ -33,17 +33,17 @@ func (api *API) GetSession(w http.ResponseWriter, r *http.Request) error {
 
 	// if 0 users in database, dashboard is public
 	if userCount == 0 {
-		return respond(w, envelope{Data: true})
+		return respond(w, http.StatusOK, envelope{Data: true})
 	}
 
 	// if existing session, assume logged-in
 	session, _ := api.sessions.Get(r, "auth")
 	if !session.IsNew {
-		respond(w, envelope{Data: true})
+		return respond(w, http.StatusOK, envelope{Data: true})
 	}
 
 	// otherwise: not logged-in yet
-	return respond(w, envelope{Data: false})
+	return respond(w, http.StatusOK, envelope{Data: false})
 }
 
 // URL: POST /api/session
@@ -64,8 +64,7 @@ func (api *API) CreateSession(w http.ResponseWriter, r *http.Request) error {
 
 	// compare pwd
 	if err == datastore.ErrNoResults || u.ComparePassword(l.Password) != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return respond(w, envelope{Error: "invalid_credentials"})
+		return respond(w, http.StatusUnauthorized, envelope{Error: "invalid_credentials"})
 	}
 
 	// ignore error here as we want a (new) session regardless
@@ -76,7 +75,7 @@ func (api *API) CreateSession(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return respond(w, envelope{Data: true})
+	return respond(w, http.StatusOK, envelope{Data: true})
 }
 
 // URL: DELETE /api/session
@@ -90,7 +89,7 @@ func (api *API) DeleteSession(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	return respond(w, envelope{Data: true})
+	return respond(w, http.StatusOK, envelope{Data: true})
 }
 
 // Authorize is middleware that aborts the request if unauthorized
