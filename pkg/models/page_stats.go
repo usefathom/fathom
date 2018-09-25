@@ -5,6 +5,7 @@ import (
 )
 
 type PageStats struct {
+	SiteID         int64     `db:"site_id"`
 	Hostname       string    `db:"hostname"`
 	Pathname       string    `db:"pathname"`
 	Pageviews      int64     `db:"pageviews"`

@@ -6,6 +6,7 @@ import (
 )
 
 type SiteStats struct {
+	SiteID         int64     `db:"site_id"`
 	Visitors       int64     `db:"visitors"`
 	Pageviews      int64     `db:"pageviews"`
 	Sessions       int64     `db:"sessions"`
