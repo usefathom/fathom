@@ -16,6 +16,7 @@ type Datastore interface {
 	GetUser(int64) (*models.User, error)
 	GetUserByEmail(string) (*models.User, error)
 	SaveUser(*models.User) error
+	DeleteUser(*models.User) error
 	CountUsers() (int64, error)
 
 	// site stats

@@ -51,6 +51,13 @@ func (db *sqlstore) SaveUser(u *models.User) error {
 	return nil
 }
 
+// DeleteUser deletes the user in the datastore
+func (db *sqlstore) DeleteUser(user *models.User) error {
+	query := db.Rebind("DELETE FROM users WHERE id = ?")
+	_, err := db.Exec(query, user.ID)
+	return err
+}
+
 // CountUsers returns the number of users
 func (db *sqlstore) CountUsers() (int64, error) {
 	var c int64
