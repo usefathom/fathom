@@ -38,7 +38,7 @@ func main() {
 	app.After = after
 	app.Commands = []cli.Command{
 		serverCmd,
-		registerCmd,
+		userCmd,
 		statsCmd,
 	}
 
