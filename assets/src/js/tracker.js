@@ -171,6 +171,23 @@ function trackPageview() {
   window.setTimeout(() => { document.body.removeChild(i)}, 1000);
 }
 
+// add listener for history.pushState to detect SPA navigation
+var his = window.history
+if (his && his.pushState && Event && window.dispatchEvent) {
+  var stateListener = function(type) {
+    var orig = his[type]
+    return function() {
+      var rv = orig.apply(this, arguments)
+      var event = new Event(type)
+      event.arguments = arguments
+      window.dispatchEvent(event)
+      return rv
+    }
+  }
+  his.pushState = stateListener('pushState')
+  window.addEventListener('pushState', trackPageview)
+}
+
 // override global fathom object
 window.fathom = function() {
   var args = [].slice.call(arguments);
