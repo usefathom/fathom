@@ -3,11 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
+	"syscall"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 var userCmd = cli.Command{
@@ -23,10 +25,6 @@ var userCmd = cli.Command{
 				cli.StringFlag{
 					Name:  "email, e",
 					Usage: "user email",
-				},
-				cli.StringFlag{
-					Name:  "password, p",
-					Usage: "user password",
 				},
 				cli.BoolFlag{
 					Name:  "skip-bcrypt",
@@ -53,9 +51,17 @@ func userAdd(c *cli.Context) error {
 		return errors.New("Invalid arguments: missing email")
 	}
 
-	password := c.String("password")
-	if password == "" {
-		return errors.New("Invalid arguments: missing password")
+	// Read and validate password
+	fmt.Print("\nPassword: ")
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Print("\n\n")
+	if err != nil {
+		return fmt.Errorf("Error reading password: %s", err)
+	}
+
+	password := string(bytePassword)
+	if len(password) < 8 {
+		return errors.New("Invalid password: must be at least 8 characters")
 	}
 
 	user := models.NewUser(email, password)
