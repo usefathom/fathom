@@ -83,11 +83,11 @@ class Table extends Component {
     )}) : <div class="table-row"><div class="cell main-col">Nothing here, yet.</div></div>;
 
     return (
-      <div class={(state.loading ? "loading" : '')}>
+      <div class={classNames({ loading: state.loading })}>
         <div class="table-row header">
           {props.headers.map((header, i) => {
-            return (<div class={i === 0 ? 'main-col cell' : 'cell'}>{header}</div>)
-            })}
+            return <div class={classNames("cell", { "main-col": i === 0 })}>{header}</div>
+          })}
         </div>
         <div>
           {tableRows}
