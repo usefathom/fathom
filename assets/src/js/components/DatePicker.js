@@ -3,6 +3,7 @@
 import { h, Component } from 'preact';
 import { bind } from 'decko';
 import Pikadayer from './Pikadayer.js';
+import classNames from 'classnames';
 
 const defaultPeriod = 'last-7-days';
 const padZero = function(n){return n<10? '0'+n:''+n;}
@@ -24,7 +25,7 @@ function getNow() {
 
 // today, yesterday, this week, last 7 days, last 30 days
 const availablePeriods = {
-  'today': { 
+  'today': {
     label: 'Today',
     start: function() {
       const now = getNow();
@@ -35,7 +36,7 @@ const availablePeriods = {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
-  'last-7-days': { 
+  'last-7-days': {
     label: 'Last 7 days',
     start: function() {
       const now = getNow();
@@ -46,7 +47,7 @@ const availablePeriods = {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
-  'last-30-days': { 
+  'last-30-days': {
     label: 'Last 30 days',
     start: function() {
       const now = getNow();
@@ -57,7 +58,7 @@ const availablePeriods = {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
-  'this-year': { 
+  'this-year': {
     label: 'This year',
     start: function() {
       const now = getNow();
@@ -117,7 +118,7 @@ class DatePicker extends Component {
       period: period || '',
       startDate: startDate,
       endDate: endDate,
-      before: before, 
+      before: before,
       after: after,
     });
 
@@ -127,7 +128,7 @@ class DatePicker extends Component {
         this.props.onChange(this.state);
         this.timeout = null;
 
-        window.localStorage.setItem('period', this.state.period) 
+        window.localStorage.setItem('period', this.state.period)
         window.history.replaceState(this.state, null, `#!${this.state.period}`)
       }, 2)
     }
@@ -149,12 +150,12 @@ class DatePicker extends Component {
     return date.getFullYear() + '-' + padZero(date.getMonth() + 1) + '-' + padZero(date.getDate());
   }
 
-  @bind 
+  @bind
   setStartDate(date) {
     this.setDateRange(date, this.state.endDate, '')
   }
 
-  @bind 
+  @bind
   setEndDate(date) {
     this.setDateRange(this.state.startDate, date, '')
   }
@@ -189,8 +190,11 @@ class DatePicker extends Component {
   render(props, state) {
     const links = Object.keys(availablePeriods).map((id) => {
       let p = availablePeriods[id];
-      let className = ( id == state.period ) ? 'active' : '';
-      return <li class={className} ><a href="#" data-value={id} onClick={this.setPeriod}>{p.label}</a></li>
+      return (
+        <li class={classNames({ active: id == state.period })}>
+          <a href="#" data-value={id} onClick={this.setPeriod}>{p.label}</a>
+        </li>
+      );
     });
 
     return (
@@ -198,7 +202,7 @@ class DatePicker extends Component {
         {links}
         <li class="custom">
           <Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} />
-          <span style="margin: 0 8px"> to </span> 
+          <span style="margin: 0 8px"> to </span>
           <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  />
         </li>
       </ul>
