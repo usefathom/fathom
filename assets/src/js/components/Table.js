@@ -4,6 +4,7 @@ import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import Client from '../lib/client.js';
 import { bind } from 'decko';
+import classNames from 'classnames';
 
 const dayInSeconds = 60 * 60 * 24;
 
@@ -31,7 +32,7 @@ class Table extends Component {
   @bind
   fetchRecords(before, after) {
     this.setState({ loading: true });
-  
+
     Client.request(`${this.props.endpoint}?before=${before}&after=${after}&limit=${this.state.limit}`)
       .then((d) => {
          // request finished; check if timestamp range is still the one user wants to see
@@ -39,7 +40,7 @@ class Table extends Component {
           return;
         }
 
-        this.setState({ 
+        this.setState({
           loading: false,
           records: d,
         });
@@ -48,7 +49,7 @@ class Table extends Component {
      // fetch totals too
      Client.request(`${this.props.endpoint}/pageviews?before=${before}&after=${after}`)
       .then((d) => {
-        this.setState({ 
+        this.setState({
           total: d
         });
       });
@@ -59,9 +60,9 @@ class Table extends Component {
     const tableRows = state.records !== null && state.records.length > 0 ? state.records.map((p, i) => {
 
       let href = (p.Hostname + p.Pathname) || p.URL;
-      let classes = "table-row"; 
+      let widthClass = "";
       if(state.total > 0) {
-        classes += " w" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5));
+        widthClass = "w" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5));
       }
 
       let label = p.Pathname
@@ -74,10 +75,10 @@ class Table extends Component {
       }
 
       return(
-      <div class={classes}>
+      <div class={classNames("table-row", widthClass)}>
         <div class="cell main-col"><a href={href}>{label}</a></div>
         <div class="cell">{numbers.formatPretty(p.Pageviews)}</div>
-        <div class="cell">{numbers.formatPretty(p.Visitors)||"-"}</div>           
+        <div class="cell">{numbers.formatPretty(p.Visitors)||"-"}</div>
       </div>
     )}) : <div class="table-row"><div class="cell main-col">Nothing here, yet.</div></div>;
 
@@ -85,8 +86,8 @@ class Table extends Component {
       <div class={(state.loading ? "loading" : '')}>
         <div class="table-row header">
           {props.headers.map((header, i) => {
-            return (<div class={i === 0 ? 'main-col cell' : 'cell'}>{header}</div>) 
-            })}        
+            return (<div class={i === 0 ? 'main-col cell' : 'cell'}>{header}</div>)
+            })}
         </div>
         <div>
           {tableRows}
