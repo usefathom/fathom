@@ -27,16 +27,18 @@ class SiteSettings extends Component {
 
     @bind 
     deleteSite(evt) {
-
+        // TODO: fire request off to server to delete site, then close modal
     }
 
     @bind 
     onSubmit(evt) {
+        evt.preventDefault();
         console.log(evt)
     }
 
     @bind 
     maybeClose(evt) {
+        // don't close if click was inside the modal
         if ( evt.target.matches('.modal *, .modal')) {
             return;
         }
@@ -45,14 +47,15 @@ class SiteSettings extends Component {
     }
 
     render(props, state) {
+        // TODO: Render different form for new sites vs. existing sites
         return (
         <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeClose}>
             <div class="modal">
                 <p>Update your site name or get your tracking code</p>
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
-                        <label>Site Name</label>
-                        <input type="text" name="site-name" id="sitename" placeholder="" value="Paul Jarvis" />
+                        <label for="site-name">Site Name</label>
+                        <input type="text" name="site-name" id="site-name" placeholder="" value={props.site.name} />
                     </fieldset>
 
                     <fieldset>

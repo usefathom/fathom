@@ -16,11 +16,13 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
 
+    // TODO: Fetch sites from server and populate state
+    // TODO: Pass sites to <SiteSwitcher> as props
     this.state = {
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
-      site: {},
+      site: { id: 0, name: "Default site"},
       settingsOpen: false,
     }
   }
@@ -34,8 +36,8 @@ class Dashboard extends Component {
   }
 
   @bind 
-  openSiteSettings() {
-    this.setState({ settingsOpen: true })
+  openSiteSettings(site) {
+    this.setState( { settingsOpen: true, site: site && site.hasOwnProperty('id') ? site : this.state.site })
   }
 
   @bind
@@ -63,7 +65,7 @@ class Dashboard extends Component {
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
               <SiteSwitcher onChange={this.changeSite} onAdd={this.openSiteSettings} />
-              <Gearwheel onClick={this.openSiteSettings} />
+              <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
               <li class="visitors"><Realtime /></li>
           </ul>
         </nav>
@@ -97,7 +99,7 @@ class Dashboard extends Component {
 
       <footer class="section"></footer>
 
-      <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} site={{ name: "Test", id: 50}} />
+      <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} site={state.site} />
     </div>
   )}
 }
