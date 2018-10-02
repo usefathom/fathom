@@ -5,6 +5,9 @@ import LogoutButton from '../components/LogoutButton.js';
 import Realtime from '../components/Realtime.js';
 import DatePicker from '../components/DatePicker.js';
 import Sidebar from '../components/Sidebar.js';
+import SiteSwitcher from '../components/SiteSwitcher.js';
+import SiteSettings from '../components/SiteSettings.js';
+import Gearwheel from '../components/Gearwheel.js';
 import Table from '../components/Table.js';
 import Chart from '../components/Chart.js';
 import { bind } from 'decko';
@@ -41,8 +44,9 @@ class Dashboard extends Component {
         <nav class="main-nav animated fadeInDown">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
+              <SiteSwitcher />
+              <Gearwheel />
               <li class="visitors"><Realtime /></li>
-              {logoutMenuItem}
           </ul>
         </nav>
       </header>
@@ -74,6 +78,8 @@ class Dashboard extends Component {
       </section>
 
       <footer class="section"></footer>
+
+      <SiteSettings visible={false} site={{ name: "Test", id: 50}} />
     </div>
   )}
 }
