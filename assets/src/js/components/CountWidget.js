@@ -3,6 +3,7 @@
 import { h, Component } from 'preact';
 import * as numbers from '../lib/numbers.js';
 import { bind } from 'decko';
+import classNames from 'classnames';
 
 const duration = 600;
 const easeOutQuint = function (t) { return 1+(--t)*t*t*t*t };
@@ -17,8 +18,8 @@ class CountWidget extends Component {
   }
 
   // TODO: Move to component of its own
-  @bind 
-  countUp(fromValue, toValue) { 
+  @bind
+  countUp(fromValue, toValue) {
     const format = this.formatValue.bind(this);
     const startValue = isFinite(fromValue) ? fromValue : 0;
     const numberEl = this.numberEl;
@@ -34,7 +35,7 @@ class CountWidget extends Component {
         window.requestAnimationFrame(tick);
       }
     }
-    
+
     window.requestAnimationFrame(tick);
   }
 
@@ -46,7 +47,7 @@ class CountWidget extends Component {
       switch(this.props.format) {
         case "percentage":
           formattedValue = numbers.formatPercentage(value)
-        break;  
+        break;
 
         default:
         case "number":
@@ -64,7 +65,7 @@ class CountWidget extends Component {
 
   render(props, state) {
     return (
-       <div class={"totals-detail " + ( props.loading ? "loading" : '')}>
+       <div class={classNames("totals-detail", { loading: props.loading })}>
         <div class="total-heading">{props.title}</div>
         <div class="total-numbers" ref={(e) => { this.numberEl = e; }}>{this.formatValue(props.value)}</div>
       </div>
