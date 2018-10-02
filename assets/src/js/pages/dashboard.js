@@ -20,16 +20,34 @@ class Dashboard extends Component {
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
+      site: {},
+      settingsOpen: false,
     }
   }
 
   @bind
-  updateDateRange(s) {
+  changeDateRange(s) {
     this.setState({ 
       before: s.before, 
       after: s.after 
     })
   }
+
+  @bind 
+  openSiteSettings() {
+    this.setState({ settingsOpen: true })
+  }
+
+  @bind
+  closeSiteSettings() {
+    this.setState({settingsOpen: false})
+  }
+
+  @bind 
+  changeSite(evt) {
+    console.log(evt)
+  }
+
 
   render(props, state) {
     // only show logout link if this dashboard is not public
@@ -44,8 +62,8 @@ class Dashboard extends Component {
         <nav class="main-nav animated fadeInDown">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <SiteSwitcher />
-              <Gearwheel />
+              <SiteSwitcher onChange={this.changeSite} onAdd={this.openSiteSettings} />
+              <Gearwheel onClick={this.openSiteSettings} />
               <li class="visitors"><Realtime /></li>
           </ul>
         </nav>
@@ -53,7 +71,7 @@ class Dashboard extends Component {
 
       <section class="section animated fadeInUp delayed_02s">
         <nav class="date-nav">
-          <DatePicker onChange={this.updateDateRange} />
+          <DatePicker onChange={this.changeDateRange} />
         </nav>
 
         <div class="boxes">
@@ -79,7 +97,7 @@ class Dashboard extends Component {
 
       <footer class="section"></footer>
 
-      <SiteSettings visible={false} site={{ name: "Test", id: 50}} />
+      <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} site={{ name: "Test", id: 50}} />
     </div>
   )}
 }

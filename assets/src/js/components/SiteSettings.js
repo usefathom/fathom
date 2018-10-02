@@ -8,19 +8,25 @@ class SiteSettings extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {}
+
+        this.state = {
+            copied: false,
+        }
     }
 
-    componentDidMount() {
-        this.fetchData();
-    }
-
-    componentWillUnmount() {
-
-    }
+    componentDidMount() {}
+    componentWillUnmount() {}
 
     @bind
-    fetchData() {
+    copyToClipboard(evt) {
+        this.textarea.select()
+        document.execCommand('copy')
+        this.setState({ copied: true })
+        window.setTimeout(() => { this.setState({copied: false})}, 2400)
+    }
+
+    @bind 
+    deleteSite(evt) {
 
     }
 
@@ -29,20 +35,29 @@ class SiteSettings extends Component {
         console.log(evt)
     }
 
+    @bind 
+    maybeClose(evt) {
+        if ( evt.target.matches('.modal *, .modal')) {
+            return;
+        }
+
+        this.props.onClose()
+    }
+
     render(props, state) {
         return (
-            <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')}>
-                <div class="modal">
-                    <p>Update your site name or get your tracking code</p>
-                    <form onSubmit={this.onSubmit}>
-                        <fieldset>
-                            <label>Site Name</label>
-                            <input type="text" name="site-name" id="sitename" placeholder="" value="Paul Jarvis" />
-                        </fieldset>
+        <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeClose}>
+            <div class="modal">
+                <p>Update your site name or get your tracking code</p>
+                <form onSubmit={this.onSubmit}>
+                    <fieldset>
+                        <label>Site Name</label>
+                        <input type="text" name="site-name" id="sitename" placeholder="" value="Paul Jarvis" />
+                    </fieldset>
 
-                        <fieldset>
-                            <label>Add this code to your website</label>
-                            <textarea onclick={(evt) => evt.target.select() } readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+                    <fieldset>
+                        <label>Add this code to your website</label>
+                        <textarea ref={(el) => { this.textarea = el }} onClick={(evt) => evt.target.select() } readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
 (function(f, a, t, h, o, m){
 	a[h]=a[h]||function(){
@@ -56,20 +71,19 @@ class SiteSettings extends Component {
 fathom('trackPageview');
 </script>
 <!-- / Fathom -->`}
-                            </textarea>
-                            <small><a href="#">Copy code</a></small>
-                        </fieldset>
+                    </textarea>
+                    <small><a href="javascript:void(0);" onClick={this.copyToClipboard}>{state.copied ? "Copied!" : "Copy code"}</a></small>
+                </fieldset>
 
-                        <fieldset>
-                            <div class="half">
-                                <div class="submit"><button type="submit">Update site name</button></div>
-                                <div class="delete"><a href="#">Delete site</a></div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-            </div>
-        )
+                <fieldset>
+                    <div class="half">
+                        <div class="submit"><button type="submit">Update site name</button></div>
+                        <div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>)
     }
 }
 
