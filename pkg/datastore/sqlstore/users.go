@@ -41,20 +41,36 @@ func (db *sqlstore) GetUserByEmail(email string) (*models.User, error) {
 
 // SaveUser inserts the user model in the connected database
 func (db *sqlstore) SaveUser(u *models.User) error {
+	if u.ID > 0 {
+		return db.updateUser(u)
+	}
+
+	return db.insertUser(u)
+}
+
+// insertUser saves a new user in the database
+func (db *sqlstore) insertUser(u *models.User) error {
 	var query = db.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
 	result, err := db.Exec(query, u.Email, u.Password)
 	if err != nil {
 		return err
 	}
 
-	u.ID, _ = result.LastInsertId()
-	return nil
+	u.ID, err = result.LastInsertId()
+	return err
+}
+
+// updateUser updates an existing user in the database
+func (db *sqlstore) updateUser(u *models.User) error {
+	var query = db.Rebind("UPDATE users SET email = ?, password = ? WHERE id = ?")
+	_, err := db.Exec(query, u.Email, u.Password, u.ID)
+	return err
 }
 
 // DeleteUser deletes the user in the datastore
-func (db *sqlstore) DeleteUser(user *models.User) error {
+func (db *sqlstore) DeleteUser(u *models.User) error {
 	query := db.Rebind("DELETE FROM users WHERE id = ?")
-	_, err := db.Exec(query, user.ID)
+	_, err := db.Exec(query, u.ID)
 	return err
 }
 
