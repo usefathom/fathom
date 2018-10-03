@@ -27,17 +27,40 @@ class SiteSettings extends Component {
 
     @bind 
     deleteSite(evt) {
-        // TODO: fire request off to server to delete site, then close modal
+        if(!confirm("Are you sure you want to delete this site? This action is irreversible - you will lose all the site's data too.")) {
+            return;
+        }
+
+        Client.request(`/sites/${this.props.site.id}`, {
+            method: "DELETE",
+          }).then((r) => {
+              console.log(r)
+          })
     }
 
     @bind 
     onSubmit(evt) {
         evt.preventDefault();
-        console.log(evt)
+       
+        Client.request('sites', {
+            method: "POST",
+            data: {
+              id: this.props.site.id,
+              name: this.props.site.name,
+            }
+          }).then((r) => {
+              console.log(r)
+          })
+
     }
 
     @bind 
-    maybeClose(evt) {
+    onTextareaClick(evt) {
+        evt.target.select()
+    }
+
+    @bind 
+    maybeCloseModal(evt) {
         // don't close if click was inside the modal
         if ( evt.target.matches('.modal *, .modal')) {
             return;
@@ -46,21 +69,26 @@ class SiteSettings extends Component {
         this.props.onClose()
     }
 
+    @bind 
+    updateSiteName(evt) {
+        this.props.site.name = evt.target.value;
+    }
+
     render(props, state) {
         // TODO: Render different form for new sites vs. existing sites
         return (
-        <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeClose}>
+        <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeCloseModal}>
             <div class="modal">
                 <p>Update your site name or get your tracking code</p>
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
                         <label for="site-name">Site Name</label>
-                        <input type="text" name="site-name" id="site-name" placeholder="" value={props.site.name} />
+                        <input type="text" name="site-name" id="site-name" placeholder="" onChange={this.updateSiteName} value={props.site.name} />
                     </fieldset>
 
                     <fieldset>
                         <label>Add this code to your website</label>
-                        <textarea ref={(el) => { this.textarea = el }} onClick={(evt) => evt.target.select() } readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+                        <textarea ref={(el) => { this.textarea = el }} onClick={this.onTextareaClick} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
 (function(f, a, t, h, o, m){
 	a[h]=a[h]||function(){

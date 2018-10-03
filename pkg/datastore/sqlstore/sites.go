@@ -23,7 +23,15 @@ func (db *sqlstore) SaveSite(s *models.Site) error {
 
 // InsertSite saves a new site in the database
 func (db *sqlstore) insertSite(s *models.Site) error {
+
+	// Postgres does not support LastInsertID, so use a "... RETURNING" select query
 	query := db.Rebind(`INSERT INTO sites(tracking_id, name) VALUES(?, ?)`)
+	if db.Driver == POSTGRES {
+		err := db.Get(&s.ID, query+" RETURNING id", s.TrackingID, s.Name)
+		return err
+	}
+
+	// MySQL and SQLite do support LastInsertID, so use that
 	r, err := db.Exec(query, s.TrackingID, s.Name)
 	if err != nil {
 		return err
@@ -31,6 +39,7 @@ func (db *sqlstore) insertSite(s *models.Site) error {
 
 	s.ID, err = r.LastInsertId()
 	return err
+
 }
 
 // UpdateSite updates an existing site in the database

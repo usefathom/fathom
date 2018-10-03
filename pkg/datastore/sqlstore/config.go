@@ -1,8 +1,9 @@
 package sqlstore
 
 import (
-	mysql "github.com/go-sql-driver/mysql"
 	"strings"
+
+	mysql "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
@@ -26,7 +27,7 @@ func (c *Config) DSN() string {
 
 	// otherwise, generate from individual fields
 	switch c.Driver {
-	case "postgres":
+	case POSTGRES:
 		params := map[string]string{
 			"host":     c.Host,
 			"dbname":   c.Name,
@@ -44,7 +45,7 @@ func (c *Config) DSN() string {
 		}
 
 		dsn = strings.TrimSpace(dsn)
-	case "mysql":
+	case MYSQL:
 		mc := mysql.NewConfig()
 		mc.User = c.User
 		mc.Passwd = c.Password
@@ -59,7 +60,7 @@ func (c *Config) DSN() string {
 			mc.Params["tls"] = c.SSLMode
 		}
 		dsn = mc.FormatDSN()
-	case "sqlite3":
+	case SQLITE:
 		dsn = c.Name + "?_loc=auto"
 	}
 

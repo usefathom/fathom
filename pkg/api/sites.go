@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -27,6 +28,10 @@ func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	if s.TrackingID == "" {
+		s.TrackingID = randomString(8)
+	}
+
 	if err := api.database.SaveSite(s); err != nil {
 		return err
 	}
@@ -47,4 +52,13 @@ func (api *API) DeleteSiteHandler(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	return respond(w, http.StatusOK, envelope{Data: true})
+}
+
+func randomString(len int) string {
+	bytes := make([]byte, len)
+	for i := 0; i < len; i++ {
+		bytes[i] = byte(65 + rand.Intn(25)) //A=65 and Z = 65+25
+	}
+
+	return string(bytes)
 }

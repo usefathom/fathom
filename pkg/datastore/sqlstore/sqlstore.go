@@ -14,9 +14,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	MYSQL    = "mysql"
+	POSTGRES = "postgres"
+	SQLITE   = "sqlite3"
+)
+
 type sqlstore struct {
 	*sqlx.DB
 
+	Driver string
 	Config *Config
 }
 
@@ -29,7 +36,7 @@ func New(c *Config) *sqlstore {
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
-	db := &sqlstore{dbx, c}
+	db := &sqlstore{dbx, c.Driver, c}
 
 	// write log statement
 	log.Printf("Connected to %s database: %s", c.Driver, c.DSN())

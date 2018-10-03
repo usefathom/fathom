@@ -17,7 +17,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
 
-    // TODO: Fetch sites from server and populate state
+    // TODO: Update state after adding / deleting site
+    // TODO: Update endpoints to take site ID parameter
     this.state = {
       before: 0,
       after: 0,
@@ -71,10 +72,10 @@ class Dashboard extends Component {
     );
 
     return (
-    <div class="app-page wrapper">
+    <div class="app-page wrapper animated fadeInUp delayed_02s">
 
       <header class="section">
-        <nav class="main-nav animated fadeInDown">
+        <nav class="main-nav">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
               <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSite} onAdd={this.openSiteSettings} />
@@ -84,7 +85,7 @@ class Dashboard extends Component {
         </nav>
       </header>
 
-      <section class="section animated fadeInUp delayed_02s">
+      <section class="section">
         <nav class="date-nav">
           <DatePicker onChange={this.changeDateRange} />
         </nav>
@@ -96,10 +97,10 @@ class Dashboard extends Component {
             <div class="box box-graph">
               <Chart site={state.site} before={state.before} after={state.after}  />
             </div>
-            <div class="box box-pages animated fadeInUp delayed_04s">
+            <div class="box box-pages">
               <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} />
             </div>
-            <div class="box box-referrers animated fadeInUp delayed_04s">
+            <div class="box box-referrers">
               <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} showHostname="true" />
             </div>
           </div>
