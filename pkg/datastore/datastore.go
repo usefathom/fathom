@@ -19,6 +19,11 @@ type Datastore interface {
 	DeleteUser(*models.User) error
 	CountUsers() (int64, error)
 
+	// sites
+	GetSites() ([]*models.Site, error)
+	SaveSite(s *models.Site) error
+	DeleteSite(s *models.Site) error
+
 	// site stats
 	GetSiteStats(time.Time) (*models.SiteStats, error)
 	GetSiteStatsPerDay(time.Time, time.Time) ([]*models.SiteStats, error)
