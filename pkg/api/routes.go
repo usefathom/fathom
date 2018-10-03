@@ -12,6 +12,11 @@ func (api *API) Routes() *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/collect", NewCollector(api.database)).Methods(http.MethodGet)
 
+	r.Handle("/api/sites", HandlerFunc(api.GetSitesHandler)).Methods(http.MethodGet)
+	r.Handle("/api/sites", HandlerFunc(api.SaveSiteHandler)).Methods(http.MethodPost)
+	r.Handle("/api/sites/{id:[0-9]+}", HandlerFunc(api.SaveSiteHandler)).Methods(http.MethodPost)
+	r.Handle("/api/sites/{id:[0-9]+}", HandlerFunc(api.DeleteSiteHandler)).Methods(http.MethodDelete)
+
 	r.Handle("/api/session", HandlerFunc(api.GetSession)).Methods(http.MethodGet)
 	r.Handle("/api/session", HandlerFunc(api.CreateSession)).Methods(http.MethodPost)
 	r.Handle("/api/session", HandlerFunc(api.DeleteSession)).Methods(http.MethodDelete)
