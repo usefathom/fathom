@@ -11,20 +11,33 @@ import Gearwheel from '../components/Gearwheel.js';
 import Table from '../components/Table.js';
 import Chart from '../components/Chart.js';
 import { bind } from 'decko';
+import Client from '../lib/client.js';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props)
 
     // TODO: Fetch sites from server and populate state
-    // TODO: Pass sites to <SiteSwitcher> as props
     this.state = {
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
       site: { id: 0, name: "Default site"},
+      sites: [],
       settingsOpen: false,
     }
+  }
+
+  componentDidMount() {
+    this.fetchSites()
+  }
+
+  @bind 
+  fetchSites() {
+    Client.request(`sites`)
+    .then((data) => { 
+      this.setState({sites: data})
+    })
   }
 
   @bind
@@ -46,8 +59,8 @@ class Dashboard extends Component {
   }
 
   @bind 
-  changeSite(evt) {
-    console.log(evt)
+  changeSite(site) {
+    this.setState({site: site})
   }
 
 
@@ -64,7 +77,7 @@ class Dashboard extends Component {
         <nav class="main-nav animated fadeInDown">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <SiteSwitcher onChange={this.changeSite} onAdd={this.openSiteSettings} />
+              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSite} onAdd={this.openSiteSettings} />
               <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
               <li class="visitors"><Realtime /></li>
           </ul>
@@ -77,17 +90,17 @@ class Dashboard extends Component {
         </nav>
 
         <div class="boxes">
-          <Sidebar before={state.before} after={state.after} />
+          <Sidebar site={state.site} before={state.before} after={state.after} />
 
           <div class="boxes-col">
             <div class="box box-graph">
-              <Chart before={state.before} after={state.after}  />
+              <Chart site={state.site} before={state.before} after={state.after}  />
             </div>
             <div class="box box-pages animated fadeInUp delayed_04s">
-              <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} before={state.before} after={state.after} />
+              <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} />
             </div>
             <div class="box box-referrers animated fadeInUp delayed_04s">
-              <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} before={state.before} after={state.after} showHostname="true" />
+              <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} showHostname="true" />
             </div>
           </div>
         </div>

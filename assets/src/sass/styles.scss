@@ -183,7 +183,7 @@ body {
 
   /* modal */
   .modal-wrap { position: fixed; height: 100%; width: 100%; top: 0; left: 0; z-index: 1977; background: rgba(20,20,20,.8); display: grid; grid-template-columns: 1fr; align-items: center; }
-  .modal { max-width: 420px; margin: 0 auto; text-align: left; background: #fff; z-index: 1978; height: auto; border-radius: 4px; box-shadow: 0 2px 8px 0 rgba(34,34,34,.10); overflow: hidden; }
+  .modal { max-width: 520px; width: 100%; margin: 0 auto; text-align: left; background: #fff; z-index: 1978; height: auto; border-radius: 4px; box-shadow: 0 2px 8px 0 rgba(34,34,34,.10); overflow: hidden; }
   .modal p { padding: 16px; font-size: 12px; color: #aaa; }
   
   small { font-size: 12px; color: #aaa; }
@@ -196,7 +196,7 @@ body {
   .modal input, textarea { background: #f5f7fa; padding: 4px; width: 100%; display: block; font: 400 16px "overpass", sans-serif; color: #222; border-bottom: 2px solid #e6e8eb; }
   .modal textarea { font-size: 12px; min-height: 120px; resize: none; overflow-y: scroll; }
   .modal button { background: #88ffc6; color: #222; padding: 4px 16px; font: 400 16px "overpass", sans-serif; cursor: pointer; border-radius: 4px; }
-  .modal div.delete a { color: #533feb; }
+  .modal div.delete a { color: red; }
 
   @media ( min-width: 1220px ) {
 

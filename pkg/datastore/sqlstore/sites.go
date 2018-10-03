@@ -6,7 +6,7 @@ import (
 
 // GetSites gets all sites in the database
 func (db *sqlstore) GetSites() ([]*models.Site, error) {
-	var results []*models.Site
+	results := []*models.Site{}
 	query := db.Rebind(`SELECT * FROM sites`)
 	err := db.Select(&results, query)
 	return results, err
