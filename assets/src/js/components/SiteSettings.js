@@ -27,7 +27,7 @@ class SiteSettings extends Component {
 
     @bind 
     deleteSite(evt) {
-        if(!confirm("Are you sure you want to delete this site? This action is irreversible - you will lose all the site's data too.")) {
+        if(!confirm("Are you sure you want to delete this site? This action is irreversible - you will lose all the site's data.")) {
             return;
         }
 
