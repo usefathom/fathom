@@ -51,6 +51,14 @@ func (db *sqlstore) SaveUser(u *models.User) error {
 // insertUser saves a new user in the database
 func (db *sqlstore) insertUser(u *models.User) error {
 	var query = db.Rebind("INSERT INTO users(email, password) VALUES(?, ?)")
+
+	// Postgres does not support LastInsertID, so use a "... RETURNING" select query
+	if db.Driver == POSTGRES {
+		err := db.Get(&u.ID, query+" RETURNING id", u.Email, u.Password)
+		return err
+	}
+
+	// MySQL and SQLite don't support RETURNING, but do support LastInsertId
 	result, err := db.Exec(query, u.Email, u.Password)
 	if err != nil {
 		return err
