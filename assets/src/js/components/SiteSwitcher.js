@@ -32,13 +32,15 @@ class SiteSwitcher extends Component {
   }
 
   render(props, state) {
-    let sites = props.sites.map((s) => (<li class="site-switch"><a href="javascript:void(0);" data-id={s.id} onClick={this.selectSite}>{s.name}</a></li>)) 
+    let siteNodes = props.sites.map((s) => (<li class="site-switch"><a href="javascript:void(0);" data-id={s.id} onClick={this.selectSite}>{s.name}</a></li>)) 
+    let addSiteNode = props.showAdd ? (<li class="add-new"><a href="javascript:void(0);" onClick={this.addSite}>+ Add another site</a></li>) : '';
+
     return (
         <li class="sites">
             <a href="javascript:void(0)">{props.selectedSite.name}</a>
             <ul>
-                {sites}
-                <li class="add-new"><a href="javascript:void(0);" onClick={this.addSite}>+ Add another site</a></li>
+                {siteNodes}
+                {addSiteNode}
             </ul>
         </li>
     )
