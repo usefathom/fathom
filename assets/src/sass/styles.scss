@@ -42,7 +42,7 @@ body {
 }
 
 .app-page {
-  &.wrapper { max-width: 1180px; margin: 0 auto; text-align: left; }
+  .wrapper { max-width: 1180px; margin: 0 auto; text-align: left; }
   .section { margin-bottom: 32px; }
   header {}
   section {}

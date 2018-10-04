@@ -31,25 +31,27 @@ class SiteSettings extends Component {
             return;
         }
 
-        Client.request(`/sites/${this.props.site.id}`, {
+        let site = this.props.site;
+        Client.request(`/sites/${site.id}`, {
             method: "DELETE",
-          }).then((r) => {
-              console.log(r)
+          }).then((d) => {
+              this.props.onDelete(site)
           })
     }
 
     @bind 
     onSubmit(evt) {
         evt.preventDefault();
+        let site = this.props.site;
        
         Client.request('sites', {
             method: "POST",
             data: {
-              id: this.props.site.id,
-              name: this.props.site.name,
+              id: site.id,
+              name: site.name,
             }
-          }).then((r) => {
-              console.log(r)
+          }).then((d) => {
+              this.props.onUpdate(d)
           })
 
     }

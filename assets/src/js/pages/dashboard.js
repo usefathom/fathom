@@ -23,7 +23,7 @@ class Dashboard extends Component {
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
-      site: { id: 0, name: "Default site"},
+      site: { id: 0 },
       sites: [],
       settingsOpen: false,
     }
@@ -37,7 +37,12 @@ class Dashboard extends Component {
   fetchSites() {
     Client.request(`sites`)
     .then((data) => { 
-      this.setState({sites: data})
+      // TODO: Account for no sites here
+      // TODO: Get selected site from localstorage
+      this.setState({
+        sites: data, 
+        site: data[0] 
+      })
     })
   }
 
@@ -60,8 +65,33 @@ class Dashboard extends Component {
   }
 
   @bind 
-  changeSite(site) {
+  changeSelectedSite(site) {
     this.setState({site: site})
+  }
+
+  @bind
+  updateSite(site) {
+    let updated = false;
+    let newSites = this.state.sites.map((s) => {
+      if(s.id != site.id) {
+        return s;
+      }
+
+      updated = true;
+      return site;
+    })
+
+    if(!updated) {
+      newSites.push(site);
+    }
+
+    this.setState({sites: newSites, site: site})
+  }
+
+  @bind 
+  deleteSite(site) {
+    let newSites = this.state.sites.filter((s) => (s.id != site.id))
+    this.setState({ sites: newSites, site: newSites[0] })
   }
 
 
@@ -72,13 +102,14 @@ class Dashboard extends Component {
     );
 
     return (
-    <div class="app-page wrapper animated fadeInUp delayed_02s">
+  <div class="app-page ">
+     <div class="wrapper animated fadeInUp delayed_02s">
 
       <header class="section">
         <nav class="main-nav">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSite} onAdd={this.openSiteSettings} />
+              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.openSiteSettings} />
               <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
               <li class="visitors"><Realtime /></li>
           </ul>
@@ -113,8 +144,9 @@ class Dashboard extends Component {
 
       <footer class="section"></footer>
 
-      <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} site={state.site} />
     </div>
+    <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} onUpdate={this.updateSite} onDelete={this.deleteSite} site={state.site} />
+  </div>
   )}
 }
 

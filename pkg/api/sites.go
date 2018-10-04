@@ -28,7 +28,8 @@ func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	if s.TrackingID == "" {
+	// generate tracking ID if this is a new site
+	if s.ID == 0 && s.TrackingID == "" {
 		s.TrackingID = randomString(8)
 	}
 
