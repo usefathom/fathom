@@ -13,6 +13,8 @@ import Chart from '../components/Chart.js';
 import { bind } from 'decko';
 import Client from '../lib/client.js';
 
+const defaultSite = { id: 0, name: "" }
+
 class Dashboard extends Component {
   constructor(props) {
     super(props)
@@ -23,7 +25,7 @@ class Dashboard extends Component {
       before: 0,
       after: 0,
       isPublic: document.cookie.indexOf('auth') < 0,
-      site: { id: 0 },
+      site: defaultSite,
       sites: [],
       settingsOpen: false,
       addingNewSite: false,
@@ -42,7 +44,7 @@ class Dashboard extends Component {
       // TODO: Get selected site from localstorage
       this.setState({
         sites: data, 
-        site: data[0] 
+        site: data.length > 0 ? data[0] : defaultSite,
       })
     })
   }
@@ -105,7 +107,11 @@ class Dashboard extends Component {
   @bind 
   deleteSite(site) {
     let newSites = this.state.sites.filter((s) => (s.id != site.id))
-    this.setState({ sites: newSites, site: newSites[0] })
+    let newSelectedSite = newSites.length > 0 ? newSites[0] : defaultSite;
+    this.setState({ 
+      sites: newSites, 
+      site: newSelectedSite 
+    })
   }
 
   render(props, state) {
