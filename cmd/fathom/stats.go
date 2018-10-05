@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/urfave/cli"
 	"os"
 	"time"
+
+	"github.com/urfave/cli"
 )
 
 var statsCmd = cli.Command{
@@ -40,7 +41,10 @@ func stats(c *cli.Context) error {
 		return errors.New("Invalid argument: supply a valid --end-date")
 	}
 
-	result, err := app.database.GetAggregatedSiteStats(start, end)
+	// TODO: add flag for this
+	// TODO: add method for getting total sum of pageviews across sites
+	var siteID int64 = 0
+	result, err := app.database.GetAggregatedSiteStats(siteID, start, end)
 	if err != nil {
 		return err
 	}

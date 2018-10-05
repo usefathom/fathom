@@ -215,7 +215,7 @@ class Chart extends Component {
   fetchData(before, after) {
     this.setState({ loading: true })
 
-    Client.request(`/stats/site/groupby/day?before=${before}&after=${after}`)
+    Client.request(`/sites/${this.props.site.id}/stats/site/groupby/day?before=${before}&after=${after}`)
       .then((d) => { 
         // request finished; check if timestamp range is still the one user wants to see
         if( this.props.before != before || this.props.after != after ) {

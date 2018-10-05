@@ -12,28 +12,28 @@ func (api *API) Routes() *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/collect", NewCollector(api.database)).Methods(http.MethodGet)
 
+	r.Handle("/api/session", HandlerFunc(api.GetSession)).Methods(http.MethodGet)
+	r.Handle("/api/session", HandlerFunc(api.CreateSession)).Methods(http.MethodPost)
+	r.Handle("/api/session", HandlerFunc(api.DeleteSession)).Methods(http.MethodDelete)
+
 	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.GetSitesHandler))).Methods(http.MethodGet)
 	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.SaveSiteHandler))).Methods(http.MethodPost)
 	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.SaveSiteHandler))).Methods(http.MethodPost)
 	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.DeleteSiteHandler))).Methods(http.MethodDelete)
 
-	r.Handle("/api/session", HandlerFunc(api.GetSession)).Methods(http.MethodGet)
-	r.Handle("/api/session", HandlerFunc(api.CreateSession)).Methods(http.MethodPost)
-	r.Handle("/api/session", HandlerFunc(api.DeleteSession)).Methods(http.MethodDelete)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/groupby/day", api.Authorize(HandlerFunc(api.GetSiteStatsPerDayHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/pageviews", api.Authorize(HandlerFunc(api.GetSiteStatsPageviewsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/visitors", api.Authorize(HandlerFunc(api.GetSiteStatsVisitorsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/duration", api.Authorize(HandlerFunc(api.GetSiteStatsDurationHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/bounces", api.Authorize(HandlerFunc(api.GetSiteStatsBouncesHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/realtime", api.Authorize(HandlerFunc(api.GetSiteStatsRealtimeHandler))).Methods(http.MethodGet)
 
-	r.Handle("/api/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/groupby/day", api.Authorize(HandlerFunc(api.GetSiteStatsPerDayHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/pageviews", api.Authorize(HandlerFunc(api.GetSiteStatsPageviewsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/visitors", api.Authorize(HandlerFunc(api.GetSiteStatsVisitorsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/duration", api.Authorize(HandlerFunc(api.GetSiteStatsDurationHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/bounces", api.Authorize(HandlerFunc(api.GetSiteStatsBouncesHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/site/realtime", api.Authorize(HandlerFunc(api.GetSiteStatsRealtimeHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/pages", api.Authorize(HandlerFunc(api.GetPageStatsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/pages/pageviews", api.Authorize(HandlerFunc(api.GetPageStatsPageviewsHandler))).Methods(http.MethodGet)
 
-	r.Handle("/api/stats/pages", api.Authorize(HandlerFunc(api.GetPageStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/pages/pageviews", api.Authorize(HandlerFunc(api.GetPageStatsPageviewsHandler))).Methods(http.MethodGet)
-
-	r.Handle("/api/stats/referrers", api.Authorize(HandlerFunc(api.GetReferrerStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/stats/referrers/pageviews", api.Authorize(HandlerFunc(api.GetReferrerStatsPageviewsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers", api.Authorize(HandlerFunc(api.GetReferrerStatsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers/pageviews", api.Authorize(HandlerFunc(api.GetReferrerStatsPageviewsHandler))).Methods(http.MethodGet)
 
 	r.Handle("/health", HandlerFunc(api.Health)).Methods(http.MethodGet)
 

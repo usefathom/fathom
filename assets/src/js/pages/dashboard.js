@@ -111,7 +111,7 @@ class Dashboard extends Component {
               <li class="logo"><a href="/">Fathom</a></li>
               <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.openSiteSettings} showAdd={!state.isPublic}/>
               <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
-              <li class="visitors"><Realtime /></li>
+              <li class="visitors"><Realtime site={state.site} /></li>
           </ul>
         </nav>
       </header>

@@ -33,7 +33,7 @@ class Realtime extends Component {
 
   @bind
   fetchData() {
-    Client.request(`stats/site/realtime`)
+    Client.request(`/sites/${this.props.site.id}/stats/site/realtime`)
       .then((d) => { 
         this.setState({ count: d })
         this.setDocumentTitle();

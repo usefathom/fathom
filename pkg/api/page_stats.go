@@ -7,7 +7,7 @@ import (
 // URL: /api/stats/page
 func (api *API) GetPageStatsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := api.database.GetAggregatedPageStats(params.StartDate, params.EndDate, params.Limit)
+	result, err := api.database.GetAggregatedPageStats(params.SiteID, params.StartDate, params.EndDate, params.Limit)
 	if err != nil {
 		return err
 	}
@@ -16,7 +16,7 @@ func (api *API) GetPageStatsHandler(w http.ResponseWriter, r *http.Request) erro
 
 func (api *API) GetPageStatsPageviewsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := api.database.GetAggregatedPageStatsPageviews(params.StartDate, params.EndDate)
+	result, err := api.database.GetAggregatedPageStatsPageviews(params.SiteID, params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}

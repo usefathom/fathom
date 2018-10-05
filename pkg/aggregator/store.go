@@ -17,7 +17,7 @@ func (agg *aggregator) getSiteStats(r *results, t time.Time) (*models.SiteStats,
 	}
 
 	// get from db
-	stats, err := agg.database.GetSiteStats(t)
+	stats, err := agg.database.GetSiteStats(0, t)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (agg *aggregator) getPageStats(r *results, t time.Time, hostname string, pa
 		return stats, nil
 	}
 
-	stats, err := agg.database.GetPageStats(t, hostname, pathname)
+	stats, err := agg.database.GetPageStats(0, t, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string
 	}
 
 	// get from db
-	stats, err := agg.database.GetReferrerStats(t, hostname, pathname)
+	stats, err := agg.database.GetReferrerStats(0, t, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}

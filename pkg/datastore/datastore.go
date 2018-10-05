@@ -25,17 +25,17 @@ type Datastore interface {
 	DeleteSite(s *models.Site) error
 
 	// site stats
-	GetSiteStats(time.Time) (*models.SiteStats, error)
-	GetSiteStatsPerDay(time.Time, time.Time) ([]*models.SiteStats, error)
+	GetSiteStats(int64, time.Time) (*models.SiteStats, error)
+	GetSiteStatsPerDay(int64, time.Time, time.Time) ([]*models.SiteStats, error)
 	InsertSiteStats(*models.SiteStats) error
 	UpdateSiteStats(*models.SiteStats) error
-	GetAggregatedSiteStats(time.Time, time.Time) (*models.SiteStats, error)
-	GetTotalSiteViews(time.Time, time.Time) (int, error)
-	GetTotalSiteVisitors(time.Time, time.Time) (int, error)
-	GetTotalSiteSessions(time.Time, time.Time) (int, error)
-	GetAverageSiteDuration(time.Time, time.Time) (float64, error)
-	GetAverageSiteBounceRate(time.Time, time.Time) (float64, error)
-	GetRealtimeVisitorCount() (int, error)
+	GetAggregatedSiteStats(int64, time.Time, time.Time) (*models.SiteStats, error)
+	GetTotalSiteViews(int64, time.Time, time.Time) (int64, error)
+	GetTotalSiteVisitors(int64, time.Time, time.Time) (int64, error)
+	GetTotalSiteSessions(int64, time.Time, time.Time) (int64, error)
+	GetAverageSiteDuration(int64, time.Time, time.Time) (float64, error)
+	GetAverageSiteBounceRate(int64, time.Time, time.Time) (float64, error)
+	GetRealtimeVisitorCount(int64) (int64, error)
 
 	// pageviews
 	InsertPageviews([]*models.Pageview) error
@@ -45,18 +45,18 @@ type Datastore interface {
 	DeletePageviews([]*models.Pageview) error
 
 	// page stats
-	GetPageStats(time.Time, string, string) (*models.PageStats, error)
+	GetPageStats(int64, time.Time, string, string) (*models.PageStats, error)
 	InsertPageStats(*models.PageStats) error
 	UpdatePageStats(*models.PageStats) error
-	GetAggregatedPageStats(time.Time, time.Time, int) ([]*models.PageStats, error)
-	GetAggregatedPageStatsPageviews(time.Time, time.Time) (int, error)
+	GetAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
+	GetAggregatedPageStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// referrer stats
-	GetReferrerStats(time.Time, string, string) (*models.ReferrerStats, error)
+	GetReferrerStats(int64, time.Time, string, string) (*models.ReferrerStats, error)
 	InsertReferrerStats(*models.ReferrerStats) error
 	UpdateReferrerStats(*models.ReferrerStats) error
-	GetAggregatedReferrerStats(time.Time, time.Time, int) ([]*models.ReferrerStats, error)
-	GetAggregatedReferrerStatsPageviews(time.Time, time.Time) (int, error)
+	GetAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
+	GetAggregatedReferrerStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// misc
 	Health() error
