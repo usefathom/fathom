@@ -30,7 +30,7 @@ func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
 
 	// generate tracking ID if this is a new site
 	if s.ID == 0 && s.TrackingID == "" {
-		s.TrackingID = randomString(8)
+		s.TrackingID = generateTrackingID()
 	}
 
 	if err := api.database.SaveSite(s); err != nil {
@@ -55,10 +55,14 @@ func (api *API) DeleteSiteHandler(w http.ResponseWriter, r *http.Request) error 
 	return respond(w, http.StatusOK, envelope{Data: true})
 }
 
+func generateTrackingID() string {
+	return randomString(2) + "-" + randomString(2)
+}
+
 func randomString(len int) string {
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		bytes[i] = byte(65 + rand.Intn(25)) //A=65 and Z = 65+25
+		bytes[i] = byte(97 + rand.Intn(25)) //a=97 and z = 97+25
 	}
 
 	return string(bytes)

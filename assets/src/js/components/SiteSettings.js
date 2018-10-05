@@ -101,6 +101,7 @@ class SiteSettings extends Component {
 	o.async=1; o.src=t; o.id='fathom-script';
 	m.parentNode.insertBefore(o,m)
 })(document, window, '//stats.usefathom.com/tracker.js', 'fathom');
+fathom('set', 'siteId', '${props.site.trackingId}');
 fathom('trackPageview');
 </script>
 <!-- / Fathom -->`}

@@ -33,7 +33,7 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	}
 
 	// generate placeholders string
-	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),"
+	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),"
 	placeholders := strings.Repeat(placeholderTemplate, n)
 	placeholders = placeholders[:len(placeholders)-1]
 	nPlaceholders := strings.Count(placeholderTemplate, "?")
@@ -47,19 +47,20 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	for i := range pageviews {
 		j = i * nPlaceholders
 		values[j] = pageviews[i].ID
-		values[j+1] = pageviews[i].Hostname
-		values[j+2] = pageviews[i].Pathname
-		values[j+3] = pageviews[i].IsNewVisitor
-		values[j+4] = pageviews[i].IsNewSession
-		values[j+5] = pageviews[i].IsUnique
-		values[j+6] = pageviews[i].IsBounce
-		values[j+7] = pageviews[i].Referrer
-		values[j+8] = pageviews[i].Duration
-		values[j+9] = pageviews[i].Timestamp
+		values[j+1] = pageviews[i].SiteTrackingID
+		values[j+2] = pageviews[i].Hostname
+		values[j+3] = pageviews[i].Pathname
+		values[j+4] = pageviews[i].IsNewVisitor
+		values[j+5] = pageviews[i].IsNewSession
+		values[j+6] = pageviews[i].IsUnique
+		values[j+7] = pageviews[i].IsBounce
+		values[j+8] = pageviews[i].Referrer
+		values[j+9] = pageviews[i].Duration
+		values[j+10] = pageviews[i].Timestamp
 	}
 
 	// string together query & execute with values
-	query := `INSERT INTO pageviews(id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES ` + placeholders
+	query := `INSERT INTO pageviews(id, site_tracking_id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES ` + placeholders
 	query = db.Rebind(query)
 	_, err := db.Exec(query, values...)
 	if err != nil {

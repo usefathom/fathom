@@ -1,12 +1,18 @@
 'use strict';
 
 let queue = window.fathom.q || [];
-let trackerUrl = '';
-
-const commands = {
-  "trackPageview": trackPageview,
-  "setTrackerUrl": setTrackerUrl,
+let config = {
+  'siteId': '',
+  'trackerUrl': '',
 };
+const commands = {
+  "set": set,
+  "trackPageview": trackPageview,
+};
+
+function set(key, value) {
+  config[key] = value;
+}
 
 // convert object to query string
 function stringifyObject(obj) {
@@ -93,15 +99,7 @@ function findTrackerUrl() {
   return el ? el.src.replace('tracker.js', 'collect') : '';
 }
 
-function setTrackerUrl(v) {
-  trackerUrl = v;
-}
-
-function trackPageview() {
-  if(trackerUrl === '') {
-    trackerUrl = findTrackerUrl();
-  }
-
+function trackPageview() { 
   // Respect "Do Not Track" requests
   if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
     return;
@@ -149,10 +147,12 @@ function trackPageview() {
     u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
     nv: data.isNewVisitor ? 1 : 0, 
     ns: data.isNewSession ? 1 : 0,
+    sid: config.siteId,
   };
 
+  let url = config.trackerUrl || findTrackerUrl()
   let i = document.createElement('img');
-  i.src = trackerUrl + stringifyObject(d);
+  i.src = url + stringifyObject(d);
   i.addEventListener('load', function() {
     let now = new Date();
     let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0);

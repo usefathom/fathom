@@ -53,16 +53,17 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// get pageview details
 	pageview := &models.Pageview{
-		ID:           q.Get("id"),
-		Hostname:     parseHostname(q.Get("h")),
-		Pathname:     parsePathname(q.Get("p")),
-		IsNewVisitor: q.Get("nv") == "1",
-		IsNewSession: q.Get("ns") == "1",
-		IsUnique:     q.Get("u") == "1",
-		IsBounce:     q.Get("b") != "0",
-		Referrer:     parseReferrer(q.Get("r")),
-		Duration:     0,
-		Timestamp:    now,
+		ID:             q.Get("id"),
+		SiteTrackingID: q.Get("sid"),
+		Hostname:       parseHostname(q.Get("h")),
+		Pathname:       parsePathname(q.Get("p")),
+		IsNewVisitor:   q.Get("nv") == "1",
+		IsNewSession:   q.Get("ns") == "1",
+		IsUnique:       q.Get("u") == "1",
+		IsBounce:       q.Get("b") != "0",
+		Referrer:       parseReferrer(q.Get("r")),
+		Duration:       0,
+		Timestamp:      now,
 	}
 
 	// push pageview onto channel to be inserted (in batch) later
