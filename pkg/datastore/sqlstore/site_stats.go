@@ -11,10 +11,7 @@ func (db *sqlstore) GetSiteStats(siteID int64, date time.Time) (*models.SiteStat
 	stats := &models.SiteStats{New: false}
 	query := db.Rebind(`SELECT * FROM daily_site_stats WHERE site_id = ? AND date = ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, date.Format("2006-01-02"))
-	if err != nil && err == sql.ErrNoRows {
-		return nil, ErrNoResults
-	}
-	return stats, err
+	return stats, mapError(err)
 }
 
 func (db *sqlstore) SaveSiteStats(s *models.SiteStats) error {
@@ -55,11 +52,7 @@ func (db *sqlstore) GetAggregatedSiteStats(siteID int64, startDate time.Time, en
 		COALESCE(ROUND(SUM(sessions*bounce_rate) / NULLIF(SUM(sessions), 0), 4), 0.00) AS bounce_rate
 	 FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	if err != nil && err == sql.ErrNoRows {
-		return nil, ErrNoResults
-	}
-
-	return stats, err
+	return stats, mapError(err)
 }
 
 func (db *sqlstore) GetTotalSiteViews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
@@ -67,7 +60,7 @@ func (db *sqlstore) GetTotalSiteViews(siteID int64, startDate time.Time, endDate
 	query := db.Rebind(sql)
 	var total int64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, err
+	return total, mapError(err)
 }
 
 func (db *sqlstore) GetTotalSiteVisitors(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
@@ -75,7 +68,7 @@ func (db *sqlstore) GetTotalSiteVisitors(siteID int64, startDate time.Time, endD
 	query := db.Rebind(sql)
 	var total int64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, err
+	return total, mapError(err)
 }
 
 func (db *sqlstore) GetTotalSiteSessions(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
@@ -83,7 +76,7 @@ func (db *sqlstore) GetTotalSiteSessions(siteID int64, startDate time.Time, endD
 	query := db.Rebind(sql)
 	var total int64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, err
+	return total, mapError(err)
 }
 
 func (db *sqlstore) GetAverageSiteDuration(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
@@ -91,7 +84,7 @@ func (db *sqlstore) GetAverageSiteDuration(siteID int64, startDate time.Time, en
 	query := db.Rebind(sql)
 	var total float64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, err
+	return total, mapError(err)
 }
 
 func (db *sqlstore) GetAverageSiteBounceRate(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
@@ -99,20 +92,20 @@ func (db *sqlstore) GetAverageSiteBounceRate(siteID int64, startDate time.Time, 
 	query := db.Rebind(sql)
 	var total float64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, err
+	return total, mapError(err)
 }
 
 func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
 	var siteTrackingID string
 	var total int64
 	if err := db.Get(&siteTrackingID, db.Rebind(`SELECT tracking_id FROM sites WHERE id = ?`), siteID); err != nil && err != sql.ErrNoRows {
-		return 0, err
+		return 0, mapError(err)
 	}
 
 	sql := `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
 	query := db.Rebind(sql)
 	if err := db.Get(&total, query, siteTrackingID, time.Now().Add(-5*time.Minute)); err != nil {
-		return 0, err
+		return 0, mapError(err)
 	}
 
 	return total, nil

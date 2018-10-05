@@ -35,53 +35,23 @@ func (agg *aggregator) Run() int {
 		return 0
 	}
 
-	results := agg.Process(pageviews)
-
-	// update stats
-	for _, site := range results.Sites {
-		err = agg.database.SaveSiteStats(site)
-		if err != nil {
-			log.Error(err)
-		}
+	results := &results{
+		Sites:     map[string]*models.SiteStats{},
+		Pages:     map[string]*models.PageStats{},
+		Referrers: map[string]*models.ReferrerStats{},
 	}
 
-	for _, pageStats := range results.Pages {
-		err = agg.database.SavePageStats(pageStats)
-		if err != nil {
-			log.Error(err)
-		}
-	}
-
-	for _, referrerStats := range results.Referrers {
-		err = agg.database.SaveReferrerStats(referrerStats)
-		if err != nil {
-			log.Error(err)
-		}
-	}
-
-	// finally, remove pageviews that we just processed
-	err = agg.database.DeletePageviews(pageviews)
-	if err != nil {
-		log.Error(err)
-	}
-
-	return n
-}
-
-// Process processes the given pageviews and returns the (aggregated) results per metric per day
-func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 	log.Debugf("processing %d pageviews", len(pageviews))
-	results := newResults()
 
 	sites, err := agg.database.GetSites()
 	if err != nil {
 		log.Error(err)
-		return nil
+		return 0
 	}
 
 	// create map of public tracking ID's => site ID
 	trackingIDMap := make(map[string]int64, len(sites)+1)
-	trackingIDMap["0"] = 0
+	trackingIDMap[""] = 0
 	for _, s := range sites {
 		trackingIDMap[s.TrackingID] = s.ID
 	}
@@ -128,7 +98,35 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 
 	}
 
-	return results
+	// update stats
+	for _, site := range results.Sites {
+		err = agg.database.SaveSiteStats(site)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	for _, pageStats := range results.Pages {
+		err = agg.database.SavePageStats(pageStats)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	for _, referrerStats := range results.Referrers {
+		err = agg.database.SaveReferrerStats(referrerStats)
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	// finally, remove pageviews that we just processed
+	err = agg.database.DeletePageviews(pageviews)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return n
 }
 
 func parseUrlParts(s string) (string, string, error) {

@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 
@@ -84,4 +85,12 @@ func (db *sqlstore) Health() error {
 // Closes the db pool
 func (db *sqlstore) Close() error {
 	return db.DB.Close()
+}
+
+func mapError(err error) error {
+	if err == sql.ErrNoRows {
+		return ErrNoResults
+	}
+
+	return nil
 }

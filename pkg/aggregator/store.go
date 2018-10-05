@@ -23,12 +23,11 @@ func (agg *aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*mod
 		return nil, err
 	}
 
-	// create in db
 	if stats == nil {
 		stats = &models.SiteStats{
 			SiteID: siteID,
-			Date:   t,
 			New:    true,
+			Date:   t,
 		}
 	}
 
@@ -74,7 +73,6 @@ func (agg *aggregator) getReferrerStats(r *results, siteID int64, t time.Time, h
 		return nil, err
 	}
 
-	// create in db
 	if stats == nil {
 		stats = &models.ReferrerStats{
 			SiteID:   siteID,

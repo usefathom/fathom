@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/usefathom/fathom/pkg/models"
@@ -11,10 +10,7 @@ func (db *sqlstore) GetReferrerStats(siteID int64, date time.Time, hostname stri
 	stats := &models.ReferrerStats{}
 	query := db.Rebind(`SELECT * FROM daily_referrer_stats WHERE site_id = ? AND date = ? AND hostname = ? AND pathname = ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, date.Format("2006-01-02"), hostname, pathname)
-	if err != nil && err == sql.ErrNoRows {
-		return nil, ErrNoResults
-	}
-	return stats, err
+	return stats, mapError(err)
 }
 
 func (db *sqlstore) SaveReferrerStats(s *models.ReferrerStats) error {
@@ -61,12 +57,12 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 	query := db.Rebind(sql)
 
 	err := db.Select(&result, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
-	return result, err
+	return result, mapError(err)
 }
 
 func (db *sqlstore) GetAggregatedReferrerStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
 	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM daily_referrer_stats WHERE site_id = ? AND date >= ? AND date <= ?`)
 	err := db.Get(&result, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return result, err
+	return result, mapError(err)
 }

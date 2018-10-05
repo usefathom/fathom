@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"database/sql"
 	"strings"
 	"time"
 
@@ -15,11 +14,7 @@ func (db *sqlstore) GetPageview(id string) (*models.Pageview, error) {
 	err := db.Get(result, query, id)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrNoResults
-		}
-
-		return nil, err
+		return nil, mapError(err)
 	}
 
 	return result, nil

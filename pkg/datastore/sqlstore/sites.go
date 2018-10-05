@@ -1,6 +1,8 @@
 package sqlstore
 
 import (
+	"database/sql"
+
 	"github.com/usefathom/fathom/pkg/models"
 )
 
@@ -9,6 +11,12 @@ func (db *sqlstore) GetSites() ([]*models.Site, error) {
 	results := []*models.Site{}
 	query := db.Rebind(`SELECT * FROM sites`)
 	err := db.Select(&results, query)
+
+	// don't err on no rows
+	if err == sql.ErrNoRows {
+		return results, nil
+	}
+
 	return results, err
 }
 

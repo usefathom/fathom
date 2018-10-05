@@ -28,15 +28,7 @@ func (db *sqlstore) GetUserByEmail(email string) (*models.User, error) {
 	u := &models.User{}
 	query := db.Rebind("SELECT * FROM users WHERE email = ? LIMIT 1")
 	err := db.Get(u, query, email)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrNoResults
-		}
-
-		return nil, err
-	}
-
-	return u, err
+	return u, mapError(err)
 }
 
 // SaveUser inserts the user model in the connected database
