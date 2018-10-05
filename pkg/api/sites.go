@@ -37,6 +37,8 @@ func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	// TODO: If we just created the first site, add existing data (with site_id = 0) to the site we just created
+
 	return respond(w, http.StatusOK, envelope{Data: s})
 }
 

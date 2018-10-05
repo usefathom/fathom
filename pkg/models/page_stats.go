@@ -5,6 +5,7 @@ import (
 )
 
 type PageStats struct {
+	New            bool      `db:"-" json:"-"`
 	SiteID         int64     `db:"site_id"`
 	Hostname       string    `db:"hostname"`
 	Pathname       string    `db:"pathname"`

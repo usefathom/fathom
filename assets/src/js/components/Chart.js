@@ -101,11 +101,11 @@ class Chart extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if(newProps.before == this.props.before && newProps.after == this.props.after) {
+    if(this.props == newProps) {
       return;
     }
 
-    this.fetchData(newProps.before, newProps.after);
+    this.fetchData(newProps);
   }
 
   @bind
@@ -212,17 +212,17 @@ class Chart extends Component {
   }
 
   @bind
-  fetchData(before, after) {
+  fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${this.props.site.id}/stats/site/groupby/day?before=${before}&after=${after}`)
+    Client.request(`/sites/${props.site.id}/stats/site/groupby/day?before=${props.before}&after=${props.after}`)
       .then((d) => { 
-        // request finished; check if timestamp range is still the one user wants to see
-        if( this.props.before != before || this.props.after != after ) {
+        // request finished; check if args changed in the meantime
+        if( props != this.props) {
           return;
         }
 
-        let chartData = prepareData(after, before, d);
+        let chartData = prepareData(props.after, props.before, d);
         this.setState({ 
           loading: false,
           data: chartData,

@@ -8,7 +8,7 @@ import (
 )
 
 func (db *sqlstore) GetSiteStats(siteID int64, date time.Time) (*models.SiteStats, error) {
-	stats := &models.SiteStats{}
+	stats := &models.SiteStats{New: false}
 	query := db.Rebind(`SELECT * FROM daily_site_stats WHERE site_id = ? AND date = ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, date.Format("2006-01-02"))
 	if err != nil && err == sql.ErrNoRows {
@@ -17,13 +17,21 @@ func (db *sqlstore) GetSiteStats(siteID int64, date time.Time) (*models.SiteStat
 	return stats, err
 }
 
-func (db *sqlstore) InsertSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`INSERT INTO daily_site_stats(site_id, visitors, sessions, pageviews, bounce_rate, avg_duration, known_durations, date) VALUES(?, ?, ?, ?, ?, ?, ?)`)
+func (db *sqlstore) SaveSiteStats(s *models.SiteStats) error {
+	if s.New {
+		return db.insertSiteStats(s)
+	}
+
+	return db.updateSiteStats(s)
+}
+
+func (db *sqlstore) insertSiteStats(s *models.SiteStats) error {
+	query := db.Rebind(`INSERT INTO daily_site_stats(site_id, visitors, sessions, pageviews, bounce_rate, avg_duration, known_durations, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	_, err := db.Exec(query, s.SiteID, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Date.Format("2006-01-02"))
 	return err
 }
 
-func (db *sqlstore) UpdateSiteStats(s *models.SiteStats) error {
+func (db *sqlstore) updateSiteStats(s *models.SiteStats) error {
 	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE site_id = ? AND date = ?`)
 	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.SiteID, s.Date.Format("2006-01-02"))
 	return err

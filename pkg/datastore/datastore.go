@@ -27,8 +27,7 @@ type Datastore interface {
 	// site stats
 	GetSiteStats(int64, time.Time) (*models.SiteStats, error)
 	GetSiteStatsPerDay(int64, time.Time, time.Time) ([]*models.SiteStats, error)
-	InsertSiteStats(*models.SiteStats) error
-	UpdateSiteStats(*models.SiteStats) error
+	SaveSiteStats(*models.SiteStats) error
 	GetAggregatedSiteStats(int64, time.Time, time.Time) (*models.SiteStats, error)
 	GetTotalSiteViews(int64, time.Time, time.Time) (int64, error)
 	GetTotalSiteVisitors(int64, time.Time, time.Time) (int64, error)
@@ -46,15 +45,13 @@ type Datastore interface {
 
 	// page stats
 	GetPageStats(int64, time.Time, string, string) (*models.PageStats, error)
-	InsertPageStats(*models.PageStats) error
-	UpdatePageStats(*models.PageStats) error
+	SavePageStats(*models.PageStats) error
 	GetAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
 	GetAggregatedPageStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// referrer stats
 	GetReferrerStats(int64, time.Time, string, string) (*models.ReferrerStats, error)
-	InsertReferrerStats(*models.ReferrerStats) error
-	UpdateReferrerStats(*models.ReferrerStats) error
+	SaveReferrerStats(*models.ReferrerStats) error
 	GetAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
 	GetAggregatedReferrerStatsPageviews(int64, time.Time, time.Time) (int64, error)
 

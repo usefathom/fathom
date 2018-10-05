@@ -39,21 +39,21 @@ func (agg *aggregator) Run() int {
 
 	// update stats
 	for _, site := range results.Sites {
-		err = agg.database.UpdateSiteStats(site)
+		err = agg.database.SaveSiteStats(site)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, pageStats := range results.Pages {
-		err = agg.database.UpdatePageStats(pageStats)
+		err = agg.database.SavePageStats(pageStats)
 		if err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, referrerStats := range results.Referrers {
-		err = agg.database.UpdateReferrerStats(referrerStats)
+		err = agg.database.SaveReferrerStats(referrerStats)
 		if err != nil {
 			log.Error(err)
 		}
@@ -73,15 +73,36 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 	log.Debugf("processing %d pageviews", len(pageviews))
 	results := newResults()
 
+	sites, err := agg.database.GetSites()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	// create map of public tracking ID's => site ID
+	trackingIDMap := make(map[string]int64, len(sites)+1)
+	trackingIDMap["0"] = 0
+	for _, s := range sites {
+		trackingIDMap[s.TrackingID] = s.ID
+	}
+
 	for _, p := range pageviews {
-		site, err := agg.getSiteStats(results, p.Timestamp)
+
+		// discard pageview if site tracking ID is unknown
+		siteID, ok := trackingIDMap[p.SiteTrackingID]
+		if !ok {
+			continue
+		}
+
+		// get existing site stats so we can add this pageview to it
+		site, err := agg.getSiteStats(results, siteID, p.Timestamp)
 		if err != nil {
 			log.Error(err)
 			continue
 		}
 		site.HandlePageview(p)
 
-		pageStats, err := agg.getPageStats(results, p.Timestamp, p.Hostname, p.Pathname)
+		pageStats, err := agg.getPageStats(results, siteID, p.Timestamp, p.Hostname, p.Pathname)
 		if err != nil {
 			log.Error(err)
 			continue
@@ -97,7 +118,7 @@ func (agg *aggregator) Process(pageviews []*models.Pageview) *results {
 				continue
 			}
 
-			referrerStats, err := agg.getReferrerStats(results, p.Timestamp, hostname, pathname)
+			referrerStats, err := agg.getReferrerStats(results, siteID, p.Timestamp, hostname, pathname)
 			if err != nil {
 				log.Error(err)
 				continue

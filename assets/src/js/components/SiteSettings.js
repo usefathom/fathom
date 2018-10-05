@@ -89,7 +89,7 @@ class SiteSettings extends Component {
                     </fieldset>
 
                     <fieldset>
-                        <label>Add this code to your website</label>
+                        <label>Add this code to your website    <small class="right">(site ID = {props.site.trackingId})</small></label>
                         <textarea ref={(el) => { this.textarea = el }} onClick={this.onTextareaClick} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
 (function(f, a, t, h, o, m){

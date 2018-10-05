@@ -17,22 +17,24 @@ class Sidebar extends Component {
   }
 
   componentWillReceiveProps(newProps, newState) {
-    if(newProps.before == this.props.before && newProps.after == this.props.after) {
+    if(newProps == this.props) {
       return;
     }
 
-    this.fetchData(newProps.before, newProps.after);
+    this.fetchData(newProps);
   }
 
 
+
+
   @bind
-  fetchData(before, after) {
+  fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${this.props.site.id}/stats/site?before=${before}&after=${after}`)
+    Client.request(`/sites/${props.site.id}/stats/site?before=${props.before}&after=${props.after}`)
       .then((data) => { 
         // request finished; check if timestamp range is still the one user wants to see
-        if( this.props.before != before || this.props.after != after ) {
+        if( props != this.props ) {
           return;
         }
 

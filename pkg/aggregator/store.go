@@ -1,6 +1,7 @@
 package aggregator
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -8,16 +9,16 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-func (agg *aggregator) getSiteStats(r *results, t time.Time) (*models.SiteStats, error) {
+func (agg *aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*models.SiteStats, error) {
 	// get from map
-	date := t.Format("2006-01-02")
-	if stats, ok := r.Sites[date]; ok {
+	cacheKey := fmt.Sprintf("%d-%s", siteID, t.Format("2006-01-02"))
+	if stats, ok := r.Sites[cacheKey]; ok {
 		return stats, nil
 
 	}
 
 	// get from db
-	stats, err := agg.database.GetSiteStats(0, t)
+	stats, err := agg.database.GetSiteStats(siteID, t)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -25,54 +26,50 @@ func (agg *aggregator) getSiteStats(r *results, t time.Time) (*models.SiteStats,
 	// create in db
 	if stats == nil {
 		stats = &models.SiteStats{
-			Date: t,
-		}
-
-		err = agg.database.InsertSiteStats(stats)
-		if err != nil {
-			return nil, err
+			SiteID: siteID,
+			Date:   t,
+			New:    true,
 		}
 	}
 
-	r.Sites[date] = stats
+	r.Sites[cacheKey] = stats
 	return stats, nil
 }
 
-func (agg *aggregator) getPageStats(r *results, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
-	date := t.Format("2006-01-02")
-	if stats, ok := r.Pages[date+hostname+pathname]; ok {
+func (agg *aggregator) getPageStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
+	cacheKey := fmt.Sprintf("%d-%s-%s-%s", siteID, t.Format("2006-01-02"), hostname, pathname)
+	if stats, ok := r.Pages[cacheKey]; ok {
 		return stats, nil
 	}
 
-	stats, err := agg.database.GetPageStats(0, t, hostname, pathname)
+	stats, err := agg.database.GetPageStats(siteID, t, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
 
 	if stats == nil {
 		stats = &models.PageStats{
+			SiteID:   siteID,
+			New:      true,
 			Hostname: hostname,
 			Pathname: pathname,
 			Date:     t,
 		}
-		err = agg.database.InsertPageStats(stats)
-		if err != nil {
-			return nil, err
-		}
+
 	}
 
-	r.Pages[date+hostname+pathname] = stats
+	r.Pages[cacheKey] = stats
 	return stats, nil
 }
 
-func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
-	date := t.Format("2006-01-02")
-	if stats, ok := r.Referrers[date+hostname+pathname]; ok {
+func (agg *aggregator) getReferrerStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
+	cacheKey := fmt.Sprintf("%d-%s-%s-%s", siteID, t.Format("2006-01-02"), hostname, pathname)
+	if stats, ok := r.Referrers[cacheKey]; ok {
 		return stats, nil
 	}
 
 	// get from db
-	stats, err := agg.database.GetReferrerStats(0, t, hostname, pathname)
+	stats, err := agg.database.GetReferrerStats(siteID, t, hostname, pathname)
 	if err != nil && err != datastore.ErrNoResults {
 		return nil, err
 	}
@@ -80,6 +77,8 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string
 	// create in db
 	if stats == nil {
 		stats = &models.ReferrerStats{
+			SiteID:   siteID,
+			New:      true,
 			Hostname: hostname,
 			Pathname: pathname,
 			Date:     t,
@@ -90,13 +89,8 @@ func (agg *aggregator) getReferrerStats(r *results, t time.Time, hostname string
 		if strings.Contains(stats.Hostname, "www.google.") {
 			stats.Group = "Google"
 		}
-
-		err = agg.database.InsertReferrerStats(stats)
-		if err != nil {
-			return nil, err
-		}
 	}
 
-	r.Referrers[date+hostname+pathname] = stats
+	r.Referrers[cacheKey] = stats
 	return stats, nil
 }
