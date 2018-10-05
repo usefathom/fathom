@@ -53,8 +53,11 @@ func (db *sqlstore) insertSite(s *models.Site) error {
 	}
 
 	s.ID, err = r.LastInsertId()
-	return err
+	if err != nil {
+		return err
+	}
 
+	return nil
 }
 
 // UpdateSite updates an existing site in the database

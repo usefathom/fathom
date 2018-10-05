@@ -51,7 +51,7 @@ func (agg *aggregator) Run() int {
 
 	// create map of public tracking ID's => site ID
 	trackingIDMap := make(map[string]int64, len(sites)+1)
-	trackingIDMap[""] = 0
+	trackingIDMap[""] = 1
 	for _, s := range sites {
 		trackingIDMap[s.TrackingID] = s.ID
 	}

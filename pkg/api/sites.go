@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -53,12 +52,9 @@ func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	log.Printf("Site tracking ID: %s\n", s.TrackingID)
 	if err := api.database.SaveSite(s); err != nil {
 		return err
 	}
-
-	// TODO: If we just created the first site, add existing data (with site_id = 0) to the site we just created
 
 	return respond(w, http.StatusOK, envelope{Data: s})
 }
