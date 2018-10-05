@@ -21,6 +21,7 @@ type Datastore interface {
 
 	// sites
 	GetSites() ([]*models.Site, error)
+	GetSite(id int64) (*models.Site, error)
 	SaveSite(s *models.Site) error
 	DeleteSite(s *models.Site) error
 

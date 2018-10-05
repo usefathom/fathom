@@ -21,22 +21,26 @@ class Table extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
-      if(this.props == newProps) {
-        return;
-      }
+  componentWillReceiveProps(newProps, newState) {
+    if(!this.paramsChanged(this.props, newProps)) {
+      return;
+    }
 
-      this.fetchData(newProps);
+    this.fetchData(newProps)
   }
 
+  paramsChanged(o, n) {
+    return o.siteId != n.siteId || o.before != n.before && o.after != n.after;
+  }
+  
   @bind
   fetchData(props) {
     this.setState({ loading: true });
 
-    Client.request(`/sites/${props.site.id}/${props.endpoint}?before=${props.before}&after=${props.after}&limit=${this.state.limit}`)
+    Client.request(`/sites/${props.siteId}/${props.endpoint}?before=${props.before}&after=${props.after}&limit=${this.state.limit}`)
       .then((d) => {
          // request finished; check if timestamp range is still the one user wants to see
-        if( this.props != props ) {
+        if( this.paramsChanged(props, this.props) ) {
           return;
         }
 
@@ -47,7 +51,7 @@ class Table extends Component {
       });
 
      // fetch totals too
-     Client.request(`/sites/${props.site.id}/${props.endpoint}/pageviews?before=${props.before}&after=${props.after}`)
+     Client.request(`/sites/${props.siteId}/${props.endpoint}/pageviews?before=${props.before}&after=${props.after}`)
       .then((d) => {
         this.setState({
           total: d

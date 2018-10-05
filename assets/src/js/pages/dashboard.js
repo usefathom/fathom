@@ -111,7 +111,7 @@ class Dashboard extends Component {
               <li class="logo"><a href="/">Fathom</a></li>
               <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.openSiteSettings} showAdd={!state.isPublic}/>
               <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
-              <li class="visitors"><Realtime site={state.site} /></li>
+              <li class="visitors"><Realtime siteId={state.site.id} /></li>
           </ul>
         </nav>
       </header>
@@ -122,17 +122,17 @@ class Dashboard extends Component {
         </nav>
 
         <div class="boxes">
-          <Sidebar site={state.site} before={state.before} after={state.after} />
+          <Sidebar siteId={state.site.id} before={state.before} after={state.after} />
 
           <div class="boxes-col">
             <div class="box box-graph">
-              <Chart site={state.site} before={state.before} after={state.after}  />
+              <Chart siteId={state.site.id} before={state.before} after={state.after}  />
             </div>
             <div class="box box-pages">
-              <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} />
+              <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
             </div>
             <div class="box box-referrers">
-              <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} site={state.site} before={state.before} after={state.after} showHostname="true" />
+              <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
             </div>
           </div>
         </div>

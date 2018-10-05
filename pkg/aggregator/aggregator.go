@@ -56,6 +56,7 @@ func (agg *aggregator) Run() int {
 		trackingIDMap[s.TrackingID] = s.ID
 	}
 
+	// add each pageview to the various statistics we gather
 	for _, p := range pageviews {
 
 		// discard pageview if site tracking ID is unknown
@@ -81,7 +82,6 @@ func (agg *aggregator) Run() int {
 
 		// referrer stats
 		if p.Referrer != "" {
-
 			hostname, pathname, err := parseUrlParts(p.Referrer)
 			if err != nil {
 				log.Error(err)

@@ -20,6 +20,13 @@ func (db *sqlstore) GetSites() ([]*models.Site, error) {
 	return results, err
 }
 
+func (db *sqlstore) GetSite(id int64) (*models.Site, error) {
+	s := &models.Site{}
+	query := db.Rebind("SELECT * FROM sites WHERE id = ?")
+	err := db.Get(s, query, id)
+	return s, mapError(err)
+}
+
 // SaveSite saves the website in the database (inserts or updates)
 func (db *sqlstore) SaveSite(s *models.Site) error {
 	if s.ID > 0 {

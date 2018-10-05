@@ -2,13 +2,20 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/usefathom/fathom/pkg/models"
 )
+
+// seed rand pkg on program init
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
 
 // GET /api/sites
 func (api *API) GetSitesHandler(w http.ResponseWriter, r *http.Request) error {
@@ -22,17 +29,31 @@ func (api *API) GetSitesHandler(w http.ResponseWriter, r *http.Request) error {
 // POST /api/sites
 // POST /api/sites/{id}
 func (api *API) SaveSiteHandler(w http.ResponseWriter, r *http.Request) error {
-	s := &models.Site{}
+	var s *models.Site
+	vars := mux.Vars(r)
+	sid, ok := vars["id"]
+	if ok {
+		id, err := strconv.ParseInt(sid, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		s, err = api.database.GetSite(id)
+		if err != nil {
+			return err
+		}
+	} else {
+		s = &models.Site{
+			TrackingID: generateTrackingID(),
+		}
+	}
+
 	err := json.NewDecoder(r.Body).Decode(s)
 	if err != nil {
 		return err
 	}
 
-	// generate tracking ID if this is a new site
-	if s.ID == 0 && s.TrackingID == "" {
-		s.TrackingID = generateTrackingID()
-	}
-
+	log.Printf("Site tracking ID: %s\n", s.TrackingID)
 	if err := api.database.SaveSite(s); err != nil {
 		return err
 	}

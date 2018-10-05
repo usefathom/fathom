@@ -24,6 +24,18 @@ class Realtime extends Component {
       clearInterval(this.interval);
   }
 
+  componentWillReceiveProps(newProps, newState) {
+    if(!this.paramsChanged(this.props, newProps)) {
+      return;
+    }
+
+    this.fetchData()
+  }
+
+  paramsChanged(o, n) {
+    return o.siteId != n.siteId || o.before != n.before && o.after != n.after;
+  }
+
   @bind
   setDocumentTitle() {
     // update document title
@@ -33,15 +45,11 @@ class Realtime extends Component {
 
   @bind
   fetchData() {
-    Client.request(`/sites/${this.props.site.id}/stats/site/realtime`)
+    let url = `/sites/${this.props.siteId}/stats/site/realtime`
+    Client.request(url)
       .then((d) => { 
         this.setState({ count: d })
         this.setDocumentTitle();
-      })
-      .catch((e) => {
-        if(e.message == 401) {
-          this.props.onError();
-        }
       })
   }
 

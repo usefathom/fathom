@@ -100,14 +100,18 @@ class Chart extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
-    if(this.props == newProps) {
+  componentWillReceiveProps(newProps, newState) {
+    if(!this.paramsChanged(this.props, newProps)) {
       return;
     }
 
-    this.fetchData(newProps);
+    this.fetchData(newProps)
   }
 
+  paramsChanged(o, n) {
+    return o.siteId != n.siteId || o.before != n.before && o.after != n.after;
+  }
+  
   @bind
   prepareChart() {
     let padding = { top: 12, right: 12, bottom: 24, left: 40 };
@@ -215,10 +219,10 @@ class Chart extends Component {
   fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${props.site.id}/stats/site/groupby/day?before=${props.before}&after=${props.after}`)
+    Client.request(`/sites/${props.siteId}/stats/site/groupby/day?before=${props.before}&after=${props.after}`)
       .then((d) => { 
-        // request finished; check if args changed in the meantime
-        if( props != this.props) {
+        // request finished; check if params changed in the meantime
+        if( this.paramsChanged(props, this.props)) {
           return;
         }
 

@@ -43,8 +43,8 @@ class SiteSettings extends Component {
     onSubmit(evt) {
         evt.preventDefault();
         let site = this.props.site;
-       
-        Client.request('sites', {
+        let url = site.id > 0 ? `/sites/${site.id}` : `/sites`
+        Client.request(url, {
             method: "POST",
             data: {
               id: site.id,
@@ -77,18 +77,20 @@ class SiteSettings extends Component {
     }
 
     render(props, state) {
+        let newSite = props.site.id == 0;
+
         // TODO: Render different form for new sites vs. existing sites
         return (
         <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeCloseModal}>
             <div class="modal">
-                <p>Update your site name or get your tracking code</p>
+                <p>{newSite ? 'Add a new site to track with Fathom' : 'Update your site name or get your tracking code'}</p>
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
-                        <label for="site-name">Site Name</label>
+                        <label for="site-name">Site name</label>
                         <input type="text" name="site-name" id="site-name" placeholder="" onChange={this.updateSiteName} value={props.site.name} />
                     </fieldset>
 
-                    <fieldset>
+                    <fieldset style={newSite ? 'display: none;' : ''}>
                         <label>Add this code to your website    <small class="right">(site ID = {props.site.trackingId})</small></label>
                         <textarea ref={(el) => { this.textarea = el }} onClick={this.onTextareaClick} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
@@ -111,8 +113,8 @@ fathom('trackPageview');
 
                 <fieldset>
                     <div class="half">
-                        <div class="submit"><button type="submit">Update site name</button></div>
-                        <div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>
+                        <div class="submit"><button type="submit">{newSite ? 'Create site' : 'Update site name'}</button></div>
+                        {newSite ? '' : (<div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>)}
                     </div>
                 </fieldset>
             </form>
