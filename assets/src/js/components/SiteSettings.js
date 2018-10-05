@@ -14,7 +14,9 @@ class SiteSettings extends Component {
         }
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleKeydownEvent);
+    }
     componentWillUnmount() {}
 
     @bind
@@ -53,22 +55,34 @@ class SiteSettings extends Component {
           }).then((d) => {
               this.props.onUpdate(d)
           })
-
     }
 
     @bind 
-    onTextareaClick(evt) {
+    handleTextareaClickEvent(evt) {
         evt.target.select()
     }
 
     @bind 
-    maybeCloseModal(evt) {
+    handleClickEvent(evt) {
         // don't close if click was inside the modal
         if ( evt.target.matches('.modal *, .modal')) {
             return;
         }
 
         this.props.onClose()
+    }
+
+    @bind 
+    handleKeydownEvent(evt) {
+        // close modal when pressing ESC 
+        if(evt.keyCode == 27) {
+            this.props.onClose()
+        }
+    }
+
+    @bind
+    setTextarea(el) {
+       this.textarea = el
     }
 
     @bind 
@@ -81,7 +95,7 @@ class SiteSettings extends Component {
 
         // TODO: Render different form for new sites vs. existing sites
         return (
-        <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.maybeCloseModal}>
+        <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.handleClickEvent}>
             <div class="modal">
                 <p>{newSite ? 'Add a new site to track with Fathom' : 'Update your site name or get your tracking code'}</p>
                 <form onSubmit={this.onSubmit}>
@@ -92,7 +106,7 @@ class SiteSettings extends Component {
 
                     <fieldset style={newSite ? 'display: none;' : ''}>
                         <label>Add this code to your website    <small class="right">(site ID = {props.site.trackingId})</small></label>
-                        <textarea ref={(el) => { this.textarea = el }} onClick={this.onTextareaClick} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+                        <textarea ref={this.setTextarea} onClick={this.handleTextareaClickEvent} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
 (function(f, a, t, h, o, m){
 	a[h]=a[h]||function(){

@@ -79,13 +79,13 @@ func (api *API) DeleteSiteHandler(w http.ResponseWriter, r *http.Request) error 
 }
 
 func generateTrackingID() string {
-	return randomString(2) + "-" + randomString(2)
+	return randomString(5)
 }
 
 func randomString(len int) string {
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		bytes[i] = byte(97 + rand.Intn(25)) //a=97 and z = 97+25
+		bytes[i] = byte(65 + rand.Intn(25)) //a=65 and z = 65+25
 	}
 
 	return string(bytes)

@@ -26,6 +26,7 @@ class Dashboard extends Component {
       site: { id: 0 },
       sites: [],
       settingsOpen: false,
+      addingNewSite: false,
     }
   }
 
@@ -55,18 +56,31 @@ class Dashboard extends Component {
   }
 
   @bind 
-  openSiteSettings(site) {
-    this.setState( { settingsOpen: true, site: site && site.hasOwnProperty('id') ? site : this.state.site })
+  showSiteSettings(site) {
+    site = site && site.id == 0 ? site : this.state.site;
+    this.setState({ 
+      settingsOpen: true, 
+      site: site,
+      previousSite: this.state.site,
+    })
   }
 
   @bind
   closeSiteSettings() {
-    this.setState({settingsOpen: false})
+    this.setState({
+      settingsOpen: false, 
+
+      // switch back to previous site if we were showing site settings to add a new site
+      site: this.state.site.id > 0 ? this.state.site : this.state.previousSite,
+    })
   }
 
   @bind 
   changeSelectedSite(site) {
-    this.setState({site: site})
+    this.setState({
+      site: site,
+      previousSite: this.state.site,
+    })
   }
 
   @bind
@@ -94,7 +108,6 @@ class Dashboard extends Component {
     this.setState({ sites: newSites, site: newSites[0] })
   }
 
-
   render(props, state) {
     // only show logout link if this dashboard is not public
     let logoutMenuItem = state.isPublic ? '' : (
@@ -109,8 +122,8 @@ class Dashboard extends Component {
         <nav class="main-nav">
             <ul>
               <li class="logo"><a href="/">Fathom</a></li>
-              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.openSiteSettings} showAdd={!state.isPublic}/>
-              <Gearwheel onClick={this.openSiteSettings} visible={!state.isPublic} />
+              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.showSiteSettings} showAdd={!state.isPublic}/>
+              <Gearwheel onClick={this.showSiteSettings} visible={!state.isPublic} />
               <li class="visitors"><Realtime siteId={state.site.id} /></li>
           </ul>
         </nav>
