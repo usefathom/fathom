@@ -162,7 +162,9 @@ class DatePicker extends Component {
 
   @bind
   handleKeyPress(evt) {
-    if( ! evt.altKey ) {
+    // Don't handle input when the user is in a text field or text area.
+    let tag = event.target.tagName;
+    if(tag === "INPUT" || tag === "TEXTAREA") {
       return;
     }
 
@@ -171,14 +173,14 @@ class DatePicker extends Component {
     let newStartDate, newEndDate;
 
     switch(evt.keyCode) {
-      // ALT + left-arrow
+      // left-arrow
       case 37:
         newStartDate = new Date(+this.state.startDate - diff)
         newEndDate = new Date(+this.state.endDate - diff)
         this.setDateRange(newStartDate, newEndDate)
       break;
 
-      // ALT + right-arrow
+      //right-arrow
       case 39:
       newStartDate = new Date(+this.state.startDate + diff)
       newEndDate = new Date(+this.state.endDate + diff)
