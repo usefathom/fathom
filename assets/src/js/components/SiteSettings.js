@@ -11,6 +11,7 @@ class SiteSettings extends Component {
 
         this.state = {
             copied: false,
+            updated: false,
         }
     }
 
@@ -20,11 +21,19 @@ class SiteSettings extends Component {
     componentWillUnmount() {}
 
     @bind
+    revertTemporaryState() {
+        this.setState({
+            copied: false, 
+            updated: false
+        })
+    }
+
+    @bind
     copyToClipboard(evt) {
         this.textarea.select()
         document.execCommand('copy')
         this.setState({ copied: true })
-        window.setTimeout(() => { this.setState({copied: false})}, 2400)
+        window.setTimeout(this.revertTemporaryState, 2400)
     }
 
     @bind 
@@ -53,6 +62,8 @@ class SiteSettings extends Component {
               name: site.name,
             }
           }).then((d) => {
+              this.setState({ updated: true})
+              window.setTimeout(this.revertTemporaryState, 2400)
               this.props.onUpdate(d)
           })
     }
@@ -93,7 +104,6 @@ class SiteSettings extends Component {
     render(props, state) {
         let newSite = props.site.id == 0;
 
-        // TODO: Render different form for new sites vs. existing sites
         return (
         <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.handleClickEvent}>
             <div class="modal">
@@ -127,7 +137,7 @@ fathom('trackPageview');
 
                 <fieldset>
                     <div class="half">
-                        <div class="submit"><button type="submit">{newSite ? 'Create site' : 'Update site name'}</button></div>
+                        <div class="submit"><button type="submit">{newSite ? 'Create site' : 'Update site name'}</button> &nbsp; {state.updated ? 'Saved!' : ''}</div>
                         {newSite ? '' : (<div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>)}
                     </div>
                 </fieldset>
