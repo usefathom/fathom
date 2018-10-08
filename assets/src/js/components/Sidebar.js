@@ -25,7 +25,7 @@ class Sidebar extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.before != n.before && o.after != n.after;
+    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
   }
 
   @bind
@@ -53,7 +53,7 @@ class Sidebar extends Component {
 
   render(props, state) {
     return (
-      <div class="box box-totals animated fadeInUp delayed_03s">
+      <div class="box box-totals">
         <CountWidget title="Unique visitors" value={state.data.Visitors} loading={state.loading} />
         <CountWidget title="Pageviews" value={state.data.Pageviews} loading={state.loading} />
         <CountWidget title="Avg time on site" value={state.data.AvgDuration} format="duration" loading={state.loading} />

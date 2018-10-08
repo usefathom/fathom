@@ -56,7 +56,8 @@ class Dashboard extends Component {
   changeDateRange(s) {
     this.setState({ 
       before: s.before, 
-      after: s.after 
+      after: s.after,
+      period: s.period,
     })
   }
 
@@ -127,7 +128,7 @@ class Dashboard extends Component {
 
     return (
   <div class="app-page ">
-     <div class="wrapper animated fadeInUp delayed_02s">
+     <div class={"rapper animated fadeInUp delayed_02s " + state.period }>
 
       <header class="section">
         <nav class="main-nav">
@@ -141,29 +142,37 @@ class Dashboard extends Component {
       </header>
 
       <section class="section">
-        <nav class="date-nav">
+        <nav>
           <DatePicker onChange={this.changeDateRange} />
         </nav>
 
         <div class="boxes">
           <Sidebar siteId={state.site.id} before={state.before} after={state.after} />
 
-          <div class="boxes-col">
-            <div class="box box-graph">
-              <Chart siteId={state.site.id} before={state.before} after={state.after}  />
-            </div>
-            <div class="box box-pages">
-              <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
-            </div>
-            <div class="box box-referrers">
-              <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
-            </div>
+          <div class="box box-graph">
+            <Chart siteId={state.site.id} before={state.before} after={state.after}  />
+          </div>
+          <div class="box box-pages">
+            <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
+          </div>
+          <div class="box box-referrers">
+            <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
           </div>
         </div>
 
-        <div class="footer hide-on-mobile">
-          <p>Use <strong>the arrow keys</strong> to cycle through date ranges.</p>
-        </div>
+        <footer class="section">
+          <div class="half">
+          <nav>
+            <ul>
+              <li><a href="https://usefathom.com/terms/">Terms of use</a></li>
+              <li><a href="https://usefathom.com/privacy/">Privacy policy</a></li>
+              <li><a href="https://usefathom.com/data/">Our data policy</a></li>
+              <li><LogoutButton onSuccess={props.onLogout} /></li>
+            </ul>
+          </nav>
+          <div class="hide-on-mobile">Use <strong>the arrow keys</strong> to cycle through date ranges.</div>
+          </div>
+        </footer>
       </section>
 
       <footer class="section"></footer>

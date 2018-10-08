@@ -200,13 +200,13 @@ class DatePicker extends Component {
       let p = availablePeriods[id];
       return (
         <li class={classNames({ active: id == state.period })}>
-          <a href="#" data-value={id} onClick={this.setPeriod}>{p.label}</a>
+          <a href="javascript:void(0);" data-value={id} onClick={this.setPeriod}>{p.label}</a>
         </li>
       );
     });
 
     return (
-      <ul>
+      <ul class="date-nav cf">
         {links}
         <li class="custom">
           <Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} />

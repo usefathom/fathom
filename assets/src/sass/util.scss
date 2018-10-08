@@ -3,6 +3,16 @@
    margin-bottom: 20px;
 }
 
+.cf:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media(max-width: 600px) {
+  .hide-on-mobile { display: none !important; }
+}
+
 .right {
   float: right;
 }
@@ -43,7 +53,6 @@
 .delayed_04s { animation-delay: .4s; }
 .delayed_05s { animation-delay: .5s; }
 .delayed_06s { animation-delay: .6s; }
-
 
 .fadeInUp { animation-name: fadeInUp; }
 .fadeInDown { animation-name: fadeInDown; }
