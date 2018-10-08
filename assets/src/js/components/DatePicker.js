@@ -81,10 +81,16 @@ class DatePicker extends Component {
       after: 0, // UTC timestamp
       startDate: null, // local date object
       endDate: null, // local date object
-    }
-
+    }    
     this.updateDatesFromPeriod(this.state.period)
+  }
+
+  componentDidMount() {
     window.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyPress)
   }
 
   @bind
@@ -99,7 +105,7 @@ class DatePicker extends Component {
   @bind
   setDateRange(startDate, endDate, period) {
     // don't update state if start > end. user may be busy picking dates.
-    // todo: show error
+    // TODO: show error
     if(startDate > endDate) {
       return;
     }

@@ -13,7 +13,10 @@ import Chart from '../components/Chart.js';
 import { bind } from 'decko';
 import Client from '../lib/client.js';
 
-const defaultSite = { id: 0, name: "" }
+const defaultSite = { 
+  id: window.localStorage.getItem('site_id') || 0, 
+  name: "",
+};
 
 class Dashboard extends Component {
   constructor(props) {
@@ -39,12 +42,14 @@ class Dashboard extends Component {
   @bind 
   fetchSites() {
     Client.request(`sites`)
-    .then((data) => { 
-      // TODO: Account for no sites here
-      // TODO: Get selected site from localstorage
+    .then((sites) => { 
+      let site = sites.length > 0 ? sites[0] : defaultSite
+      let s = sites.find(s => s.id == defaultSite.id)
+      site = s ? s : site;
+
       this.setState({
-        sites: data, 
-        site: data.length > 0 ? data[0] : defaultSite,
+        sites: sites, 
+        site: site,
       })
     })
   }
@@ -83,6 +88,8 @@ class Dashboard extends Component {
       site: site,
       previousSite: this.state.site,
     })
+
+    window.localStorage.setItem('site_id', site.id)
   }
 
   @bind
