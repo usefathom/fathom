@@ -15,6 +15,10 @@ var statsCmd = cli.Command{
 	Usage:  "view stats",
 	Action: stats,
 	Flags: []cli.Flag{
+		cli.Int64Flag{
+			Name:  "site-id",
+			Usage: "ID of the site to retrieve stats for",
+		},
 		cli.StringFlag{
 			Name:  "start-date",
 			Usage: "start date, expects a date in format 2006-01-02",
@@ -41,9 +45,8 @@ func stats(c *cli.Context) error {
 		return errors.New("Invalid argument: supply a valid --end-date")
 	}
 
-	// TODO: add flag for this
 	// TODO: add method for getting total sum of pageviews across sites
-	var siteID int64 = 0
+	siteID := c.Int64("site-id")
 	result, err := app.database.GetAggregatedSiteStats(siteID, start, end)
 	if err != nil {
 		return err

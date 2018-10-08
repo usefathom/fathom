@@ -22,8 +22,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
 
-    // TODO: Update state after adding / deleting site
-    // TODO: Update endpoints to take site ID parameter
     this.state = {
       before: 0,
       after: 0,
