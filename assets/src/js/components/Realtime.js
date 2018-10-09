@@ -17,11 +17,11 @@ class Realtime extends Component {
 
   componentDidMount() {
       this.fetchData();
-      this.interval = window.setInterval(this.fetchData, 15000);
+      this.interval = window.setInterval(this.handleIntervalEvent, 15000);
   }
 
   componentWillUnmount() {
-      clearInterval(this.interval);
+      window.clearInterval(this.interval);
   }
 
   componentWillReceiveProps(newProps, newState) {
@@ -29,12 +29,11 @@ class Realtime extends Component {
       return;
     }
 
-    this.fetchData()
+    this.fetchData(newProps.siteId)
   }
 
   paramsChanged(o, n) {
-    
-    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
+    return o.siteId != n.siteId;
   }
 
   @bind
@@ -44,9 +43,14 @@ class Realtime extends Component {
     document.title = ( this.state.count > 0 ? `${numbers.formatPretty(this.state.count)} current ${visitorText} — Fathom` : 'Fathom' );
   }
 
+  @bind 
+  handleIntervalEvent() {
+    this.fetchData(this.props.siteId)
+  }
+
   @bind
-  fetchData() {
-    let url = `/sites/${this.props.siteId}/stats/site/realtime`
+  fetchData(siteId) {
+    let url = `/sites/${siteId}/stats/site/realtime`
     Client.request(url)
       .then((d) => { 
         this.setState({ count: d })
