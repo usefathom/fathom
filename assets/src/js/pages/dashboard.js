@@ -57,6 +57,10 @@ class Dashboard extends Component {
         sites: sites, 
         site: site,
       })
+    }).catch((e) => {
+      if(e.code === 'unauthorized') {
+        this.props.onLogout()
+      }
     })
   }
 

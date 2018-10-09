@@ -111,19 +111,19 @@ func (api *API) Authorize(next http.Handler) http.Handler {
 			session, err := api.sessions.Get(r, "auth")
 			// an err is returned if cookie has been tampered with, so check that
 			if err != nil {
-				w.WriteHeader(http.StatusUnauthorized)
+				respond(w, http.StatusUnauthorized, envelope{Error: "unauthorized"})
 				return
 			}
 
 			userID, ok := session.Values["user_id"]
 			if session.IsNew || !ok {
-				w.WriteHeader(http.StatusUnauthorized)
+				respond(w, http.StatusUnauthorized, envelope{Error: "unauthorized"})
 				return
 			}
 
 			// validate user ID in session
 			if _, err := api.database.GetUser(userID.(int64)); err != nil {
-				w.WriteHeader(http.StatusUnauthorized)
+				respond(w, http.StatusUnauthorized, envelope{Error: "unauthorized"})
 				return
 			}
 		}
