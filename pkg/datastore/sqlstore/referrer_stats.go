@@ -28,7 +28,7 @@ func (db *sqlstore) insertReferrerStats(s *models.ReferrerStats) error {
 }
 
 func (db *sqlstore) updateReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ?, groupname = ? WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ?`)
+	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ?, groupname = ? WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ?`)
 	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
 	return err
 }
@@ -42,8 +42,8 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 		COALESCE(MIN(groupname), '') AS groupname,  
 		SUM(visitors) AS visitors, 
 		SUM(pageviews) AS pageviews, 
-		COALESCE(ROUND(SUM(pageviews*NULLIF(bounce_rate, 0)) / SUM(pageviews), 4), 0.00) AS bounce_rate, 
-		COALESCE(ROUND(SUM(avg_duration*pageviews) / SUM(pageviews), 4), 0.00) AS avg_duration 
+		COALESCE(SUM(pageviews*NULLIF(bounce_rate, 0)) / SUM(pageviews), 0.00) AS bounce_rate, 
+		COALESCE(SUM(avg_duration*pageviews) / SUM(pageviews), 0.00) AS avg_duration 
 	FROM daily_referrer_stats 
 	WHERE site_id = ? AND date >= ? AND date <= ? `
 

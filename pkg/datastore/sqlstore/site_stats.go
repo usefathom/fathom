@@ -29,7 +29,7 @@ func (db *sqlstore) insertSiteStats(s *models.SiteStats) error {
 }
 
 func (db *sqlstore) updateSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE site_id = ? AND date = ?`)
+	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ? WHERE site_id = ? AND date = ?`)
 	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.SiteID, s.Date.Format("2006-01-02"))
 	return err
 }
@@ -48,8 +48,8 @@ func (db *sqlstore) GetAggregatedSiteStats(siteID int64, startDate time.Time, en
 		COALESCE(SUM(pageviews), 0) AS pageviews,
 		COALESCE(SUM(visitors), 0) AS visitors,
 		COALESCE(SUM(sessions), 0) AS sessions,
-		COALESCE(ROUND(SUM(pageviews*avg_duration) / NULLIF(SUM(pageviews), 0), 4), 0.00) AS avg_duration,
-		COALESCE(ROUND(SUM(sessions*bounce_rate) / NULLIF(SUM(sessions), 0), 4), 0.00) AS bounce_rate
+		COALESCE(SUM(pageviews*avg_duration) / NULLIF(SUM(pageviews), 0), 0.00) AS avg_duration,
+		COALESCE(SUM(sessions*bounce_rate) / NULLIF(SUM(sessions), 0), 0.00) AS bounce_rate
 	 FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
 	return stats, mapError(err)
@@ -80,7 +80,7 @@ func (db *sqlstore) GetTotalSiteSessions(siteID int64, startDate time.Time, endD
 }
 
 func (db *sqlstore) GetAverageSiteDuration(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
-	sql := `SELECT COALESCE(ROUND(SUM(pageviews*avg_duration)/SUM(pageviews), 4), 0.00) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
+	sql := `SELECT COALESCE(SUM(pageviews*avg_duration)/SUM(pageviews), 0.00) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
 	query := db.Rebind(sql)
 	var total float64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
@@ -88,7 +88,7 @@ func (db *sqlstore) GetAverageSiteDuration(siteID int64, startDate time.Time, en
 }
 
 func (db *sqlstore) GetAverageSiteBounceRate(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
-	sql := `SELECT COALESCE(ROUND(SUM(sessions*bounce_rate)/SUM(sessions), 4), 0.00) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
+	sql := `SELECT COALESCE(SUM(sessions*bounce_rate)/SUM(sessions), 4) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
 	query := db.Rebind(sql)
 	var total float64
 	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))

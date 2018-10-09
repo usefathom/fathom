@@ -28,7 +28,7 @@ func (db *sqlstore) insertPageStats(s *models.PageStats) error {
 }
 
 func (db *sqlstore) updatePageStats(s *models.PageStats) error {
-	query := db.Rebind(`UPDATE daily_page_stats SET pageviews = ?, visitors = ?, entries = ?, bounce_rate = ROUND(?, 4), avg_duration = ROUND(?, 4), known_durations = ? WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ?`)
+	query := db.Rebind(`UPDATE daily_page_stats SET pageviews = ?, visitors = ?, entries = ?, bounce_rate = ?, avg_duration = ?, known_durations = ? WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ?`)
 	_, err := db.Exec(query, s.Pageviews, s.Visitors, s.Entries, s.BounceRate, s.AvgDuration, s.KnownDurations, s.SiteID, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
 	return err
 }
@@ -41,8 +41,8 @@ func (db *sqlstore) GetAggregatedPageStats(siteID int64, startDate time.Time, en
 		SUM(pageviews) AS pageviews, 
 		SUM(visitors) AS visitors, 
 		SUM(entries) AS entries, 
-		COALESCE(ROUND(SUM(entries*bounce_rate) / NULLIF(SUM(entries), 0), 4), 0.00) AS bounce_rate, 
-		COALESCE(ROUND(SUM(avg_duration*pageviews) / SUM(pageviews), 4), 0.00) AS avg_duration 
+		COALESCE(SUM(entries*bounce_rate) / NULLIF(SUM(entries), 0), 0.00) AS bounce_rate, 
+		COALESCE(SUM(avg_duration*pageviews) / SUM(pageviews), 0.00) AS avg_duration 
 		FROM daily_page_stats WHERE site_id = ? AND date >= ? AND date <= ? 
 		GROUP BY hostname, pathname 
 		ORDER BY pageviews DESC LIMIT ?`)
