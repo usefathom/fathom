@@ -41,8 +41,15 @@ class Dashboard extends Component {
   fetchSites() {
     Client.request(`sites`)
     .then((sites) => { 
-      let site = sites.length > 0 ? sites[0] : defaultSite
-      let s = sites.find(s => s.id == defaultSite.id)
+      // open site settings when there are no sites yet
+      if(sites.length == 0) {
+        this.showSiteSettings({ id: 0, name: "yoursite.com"})
+        return;
+      }
+
+      // if there are sites, use remembered site as selected site
+      let site = sites[0];
+      let s = sites.find(s => s.id == defaultSite.id);
       site = s ? s : site;
 
       this.setState({

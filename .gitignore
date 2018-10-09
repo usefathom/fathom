@@ -3,7 +3,7 @@ node_modules
 !.env.example
 coverage.out
 build
-fathom.db
+*.db
 fathom
 !cmd/fathom
 
