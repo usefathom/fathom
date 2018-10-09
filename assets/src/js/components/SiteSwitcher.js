@@ -4,15 +4,6 @@ import { h, Component } from 'preact';
 import { bind } from 'decko';
 
 class SiteSwitcher extends Component {
-
-  componentDidMount() {
-     
-  }
-
-  componentWillUnmount() {
-      
-  }
-
   @bind 
   selectSite(evt) {
     let itemId = evt.target.getAttribute("data-id")  
@@ -28,7 +19,7 @@ class SiteSwitcher extends Component {
 
   @bind 
   addSite() {
-      this.props.onAdd({ id: 0, name: "New site"})
+      this.props.onAdd({ id: 1, name: "New site", unsaved: true })
   }
 
   render(props, state) {

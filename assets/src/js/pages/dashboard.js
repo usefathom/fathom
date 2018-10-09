@@ -14,8 +14,9 @@ import { bind } from 'decko';
 import Client from '../lib/client.js';
 
 const defaultSite = { 
-  id: window.localStorage.getItem('site_id') || 0, 
+  id: window.localStorage.getItem('site_id') || 1, 
   name: "",
+  unsaved: true,
 };
 
 class Dashboard extends Component {
@@ -43,7 +44,7 @@ class Dashboard extends Component {
     .then((sites) => { 
       // open site settings when there are no sites yet
       if(sites.length == 0) {
-        this.showSiteSettings({ id: 0, name: "yoursite.com"})
+        this.showSiteSettings({ id: 1, name: "yoursite.com", unsaved: true })
         return;
       }
 
@@ -70,7 +71,7 @@ class Dashboard extends Component {
 
   @bind 
   showSiteSettings(site) {
-    site = site && site.id == 0 ? site : this.state.site;
+    site = site && site.unsaved ? site : this.state.site;
     this.setState({ 
       settingsOpen: true, 
       site: site,
@@ -84,17 +85,21 @@ class Dashboard extends Component {
       settingsOpen: false, 
 
       // switch back to previous site if we were showing site settings to add a new site
-      site: this.state.site.id > 0 ? this.state.site : this.state.previousSite,
+      site: this.state.site.unsaved && this.state.previousSite ? this.state.previousSite : this.state.site,
     })
   }
 
   @bind 
   changeSelectedSite(site) {
-    this.setState({
+    let newState = {
       site: site,
-      previousSite: this.state.site,
-    })
+    }
 
+    if(!this.state.site.unsaved) {
+      newState.previousSite = this.state.site
+    } 
+
+    this.setState(newState)
     window.localStorage.setItem('site_id', site.id)
   }
 
@@ -105,8 +110,10 @@ class Dashboard extends Component {
       if(s.id != site.id) {
         return s;
       }
-
+      
       updated = true;
+      
+      // replace site in sites array with parameter
       return site;
     })
 

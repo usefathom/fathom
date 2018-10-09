@@ -5,7 +5,6 @@ import Client from '../lib/client.js';
 import { bind } from 'decko';
 
 class SiteSettings extends Component {
-
     constructor(props) {
         super(props)
 
@@ -18,7 +17,9 @@ class SiteSettings extends Component {
     componentDidMount() {
         document.addEventListener('keydown', this.handleKeydownEvent);
     }
-    componentWillUnmount() {}
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleKeydownEvent)
+    }
 
     @bind
     revertTemporaryState() {
@@ -54,17 +55,19 @@ class SiteSettings extends Component {
     onSubmit(evt) {
         evt.preventDefault();
         let site = this.props.site;
-        let url = site.id > 0 ? `/sites/${site.id}` : `/sites`
+        let url = site.unsaved ? `/sites` : `/sites/${site.id}`
+
         Client.request(url, {
             method: "POST",
             data: {
-              id: site.id,
-              name: site.name,
-            }
-          }).then((d) => {
-              this.setState({ updated: true})
-              window.setTimeout(this.revertTemporaryState, 2400)
-              this.props.onUpdate(d)
+                name: site.name,
+            },
+          }).then((site) => {
+            this.setState({ updated: true})
+            window.setTimeout(this.revertTemporaryState, 2400)
+
+            site.unsaved = false
+            this.props.onUpdate(site)
           })
     }
 
@@ -102,19 +105,17 @@ class SiteSettings extends Component {
     }
 
     render(props, state) {
-        let newSite = props.site.id == 0;
-
         return (
         <div class="modal-wrap" style={"display: " + ( props.visible ? '' : 'none')} onClick={this.handleClickEvent}>
             <div class="modal">
-                <p>{newSite ? 'Add a new site to track with Fathom' : 'Update your site name or get your tracking code'}</p>
+                <p>{props.site.unsaved ? 'Add a new site to track with Fathom' : 'Update your site name or get your tracking code'}</p>
                 <form onSubmit={this.onSubmit}>
                     <fieldset>
                         <label for="site-name">Site name</label>
                         <input type="text" name="site-name" id="site-name" placeholder="" onChange={this.updateSiteName} value={props.site.name} />
                     </fieldset>
 
-                    <fieldset style={newSite ? 'display: none;' : ''}>
+                    <fieldset style={props.site.unsaved ? 'display: none;' : ''}>
                         <label>Add this code to your website    <small class="right">(site ID = {props.site.trackingId})</small></label>
                         <textarea ref={this.setTextarea} onFocus={this.handleTextareaClickEvent} readonly="readonly">{`<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
 <script>
@@ -137,8 +138,8 @@ fathom('trackPageview');
 
                 <fieldset>
                     <div class="half">
-                        <div class="submit"><button type="submit">{newSite ? 'Create site' : 'Update site name'}</button> &nbsp; {state.updated ? 'Saved!' : ''}</div>
-                        {newSite ? '' : (<div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>)}
+                        <div class="submit"><button type="submit">{props.site.unsaved ? 'Create site' : 'Update site name'}</button> &nbsp; {state.updated ? 'Saved!' : ''}</div>
+                        {props.site.unsaved ? '' : (<div class="delete"><a href="javascript:void(0);" onClick={this.deleteSite}>Delete site</a></div>)}
                     </div>
                 </fieldset>
             </form>
