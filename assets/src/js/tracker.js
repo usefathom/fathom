@@ -172,8 +172,8 @@ function trackPageview() {
     data.lastSeen = +new Date();
     setCookie('_fathom', JSON.stringify(data), { expires: midnight, path: '/' });
   });
+  i.addEventListener('load', () => document.body.removeChild(i));
   document.body.appendChild(i);
-  window.setTimeout(() => { document.body.removeChild(i)}, 1000);
 }
 
 // override global fathom object
