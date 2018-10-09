@@ -172,20 +172,20 @@ function trackPageview() {
 }
 
 // add listener for history.pushState to detect SPA navigation
-var h = window.history
+var h = window.history;
 if (h && h.pushState && Event && window.dispatchEvent) {
   var stateListener = function(type) {
-    var orig = h[type]
+    var orig = h[type];
     return function() {
-      var rv = orig.apply(this, arguments)
-      var event = new Event(type)
-      event.arguments = arguments
-      window.dispatchEvent(event)
-      return rv
+      var rv = orig.apply(this, arguments);
+      var event = new Event(type);
+      event.arguments = arguments;
+      window.dispatchEvent(event);
+      return rv;
     }
   }
-  h.pushState = stateListener('pushState')
-  window.addEventListener('pushState', trackPageview)
+  h.pushState = stateListener('pushState');
+  window.addEventListener('pushState', trackPageview);
 }
 
 // override global fathom object
