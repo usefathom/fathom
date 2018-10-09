@@ -172,10 +172,10 @@ function trackPageview() {
 }
 
 // add listener for history.pushState to detect SPA navigation
-var his = window.history
-if (his && his.pushState && Event && window.dispatchEvent) {
+var h = window.history
+if (h && h.pushState && Event && window.dispatchEvent) {
   var stateListener = function(type) {
-    var orig = his[type]
+    var orig = h[type]
     return function() {
       var rv = orig.apply(this, arguments)
       var event = new Event(type)
@@ -184,7 +184,7 @@ if (his && his.pushState && Event && window.dispatchEvent) {
       return rv
     }
   }
-  his.pushState = stateListener('pushState')
+  h.pushState = stateListener('pushState')
   window.addEventListener('pushState', trackPageview)
 }
 
