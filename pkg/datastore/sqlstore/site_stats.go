@@ -102,9 +102,9 @@ func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
 		return 0, mapError(err)
 	}
 
-	sql := `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
+	sql := `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR ( ? = 1 AND site_tracking_id = "" )) AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
 	query := db.Rebind(sql)
-	if err := db.Get(&total, query, siteTrackingID, time.Now().Add(-5*time.Minute)); err != nil {
+	if err := db.Get(&total, query, siteTrackingID, siteID, time.Now().Add(-5*time.Minute)); err != nil {
 		return 0, mapError(err)
 	}
 
