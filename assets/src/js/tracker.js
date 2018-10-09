@@ -8,10 +8,15 @@ let config = {
 const commands = {
   "set": set,
   "trackPageview": trackPageview,
+  "setTrackerUrl": setTrackerUrl,
 };
 
 function set(key, value) {
   config[key] = value;
+}
+
+function setTrackerUrl(value) {
+  return set("trackerUrl", value);
 }
 
 // convert object to query string
