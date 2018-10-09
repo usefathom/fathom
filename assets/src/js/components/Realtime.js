@@ -33,7 +33,8 @@ class Realtime extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.before != n.before && o.after != n.after;
+    
+    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
   }
 
   @bind
