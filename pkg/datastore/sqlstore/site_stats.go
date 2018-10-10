@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/usefathom/fathom/pkg/models"
 )
 
@@ -102,14 +103,23 @@ func (db *sqlstore) GetAverageSiteBounceRate(siteID int64, startDate time.Time, 
 
 func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
 	var siteTrackingID string
-	var total int64
-	if err := db.Get(&siteTrackingID, db.Rebind(`SELECT tracking_id FROM sites WHERE id = ?`), siteID); err != nil && err != sql.ErrNoRows {
+	if err := db.Get(&siteTrackingID, db.Rebind(`SELECT tracking_id FROM sites WHERE id = ? LIMIT 1`), siteID); err != nil && err != sql.ErrNoRows {
+		log.Error(err)
 		return 0, mapError(err)
 	}
 
-	sql := `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR ( ? = 1 AND site_tracking_id = "" )) AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
+	var sql string
+	var total int64
+
+	// for backwards compatibility with tracking snippets without an explicit site tracking ID (< 1.1.0)
+	if siteID == 1 {
+		sql = `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR site_tracking_id = '' ) AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
+	} else {
+		sql = `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND ( duration = 0 OR is_bounce = TRUE) AND timestamp > ?`
+	}
+
 	query := db.Rebind(sql)
-	if err := db.Get(&total, query, siteTrackingID, siteID, time.Now().Add(-5*time.Minute)); err != nil {
+	if err := db.Get(&total, query, siteTrackingID, time.Now().Add(-5*time.Minute)); err != nil {
 		return 0, mapError(err)
 	}
 

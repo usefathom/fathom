@@ -16,7 +16,7 @@ class Realtime extends Component {
   }
 
   componentDidMount() {
-      this.fetchData();
+      this.fetchData(this.props.siteId);
       this.interval = window.setInterval(this.handleIntervalEvent, 15000);
   }
 
