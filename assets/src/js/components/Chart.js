@@ -136,6 +136,8 @@ class Chart extends Component {
   @bind
   redrawChart() {
     let data = this.state.data;
+
+    // hide chart & bail if we're trying to show less than 1 day worth of data
     this.base.parentNode.style.display = data.length <= 1 ? 'none' : '';
     if(data.length <= 1) {
       return;

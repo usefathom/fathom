@@ -12,6 +12,7 @@ import Table from '../components/Table.js';
 import Chart from '../components/Chart.js';
 import { bind } from 'decko';
 import Client from '../lib/client.js';
+import classNames from 'classnames';
 
 const defaultSite = { 
   id: window.localStorage.getItem('site_id') || 1, 
@@ -146,7 +147,7 @@ class Dashboard extends Component {
 
     return (
   <div class="app-page ">
-     <div class={"rapper animated fadeInUp delayed_02s " + state.period }>
+     <div class={`rapper animated fadeInUp delayed_02s ${state.period} ` + classNames({ ltday: state.before - state.after < 86400 })}>
 
       <header class="section">
         <nav class="main-nav">
