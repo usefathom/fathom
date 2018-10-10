@@ -9,19 +9,25 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type aggregator struct {
+type Aggregator struct {
 	database datastore.Datastore
 }
 
+type results struct {
+	Sites     map[string]*models.SiteStats
+	Pages     map[string]*models.PageStats
+	Referrers map[string]*models.ReferrerStats
+}
+
 // New returns a new aggregator instance with the database dependency injected.
-func New(db datastore.Datastore) *aggregator {
-	return &aggregator{
+func New(db datastore.Datastore) *Aggregator {
+	return &Aggregator{
 		database: db,
 	}
 }
 
 // Run processes the pageviews which are ready to be processed and adds them to daily aggregation
-func (agg *aggregator) Run() int {
+func (agg *Aggregator) Run() int {
 	// Get unprocessed pageviews
 	pageviews, err := agg.database.GetProcessablePageviews()
 	if err != nil && err != datastore.ErrNoResults {
@@ -51,10 +57,12 @@ func (agg *aggregator) Run() int {
 
 	// create map of public tracking ID's => site ID
 	trackingIDMap := make(map[string]int64, len(sites)+1)
-	trackingIDMap[""] = 1
 	for _, s := range sites {
 		trackingIDMap[s.TrackingID] = s.ID
 	}
+
+	// if no explicit site ID was given in the tracking request, default to site with ID 1
+	trackingIDMap[""] = 1
 
 	// add each pageview to the various statistics we gather
 	for _, p := range pageviews {
@@ -62,6 +70,7 @@ func (agg *aggregator) Run() int {
 		// discard pageview if site tracking ID is unknown
 		siteID, ok := trackingIDMap[p.SiteTrackingID]
 		if !ok {
+			log.Debugf("discarding pageview because of unrecognized site tracking ID %s", p.SiteTrackingID)
 			continue
 		}
 
@@ -100,29 +109,25 @@ func (agg *aggregator) Run() int {
 
 	// update stats
 	for _, site := range results.Sites {
-		err = agg.database.SaveSiteStats(site)
-		if err != nil {
+		if err := agg.database.SaveSiteStats(site); err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, pageStats := range results.Pages {
-		err = agg.database.SavePageStats(pageStats)
-		if err != nil {
+		if err := agg.database.SavePageStats(pageStats); err != nil {
 			log.Error(err)
 		}
 	}
 
 	for _, referrerStats := range results.Referrers {
-		err = agg.database.SaveReferrerStats(referrerStats)
-		if err != nil {
+		if err := agg.database.SaveReferrerStats(referrerStats); err != nil {
 			log.Error(err)
 		}
 	}
 
 	// finally, remove pageviews that we just processed
-	err = agg.database.DeletePageviews(pageviews)
-	if err != nil {
+	if err := agg.database.DeletePageviews(pageviews); err != nil {
 		log.Error(err)
 	}
 

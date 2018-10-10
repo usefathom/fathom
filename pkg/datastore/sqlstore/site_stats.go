@@ -10,7 +10,12 @@ import (
 func (db *sqlstore) GetSiteStats(siteID int64, date time.Time) (*models.SiteStats, error) {
 	stats := &models.SiteStats{New: false}
 	query := db.Rebind(`SELECT * FROM daily_site_stats WHERE site_id = ? AND date = ? LIMIT 1`)
+
 	err := db.Get(stats, query, siteID, date.Format("2006-01-02"))
+	if err == sql.ErrNoRows {
+		return nil, ErrNoResults
+	}
+
 	return stats, mapError(err)
 }
 

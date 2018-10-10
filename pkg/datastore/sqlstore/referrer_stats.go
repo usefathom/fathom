@@ -1,15 +1,20 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/usefathom/fathom/pkg/models"
 )
 
 func (db *sqlstore) GetReferrerStats(siteID int64, date time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
-	stats := &models.ReferrerStats{}
+	stats := &models.ReferrerStats{New: false}
 	query := db.Rebind(`SELECT * FROM daily_referrer_stats WHERE site_id = ? AND date = ? AND hostname = ? AND pathname = ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, date.Format("2006-01-02"), hostname, pathname)
+	if err == sql.ErrNoRows {
+		return nil, ErrNoResults
+	}
+
 	return stats, mapError(err)
 }
 

@@ -1,15 +1,20 @@
 package sqlstore
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/usefathom/fathom/pkg/models"
 )
 
 func (db *sqlstore) GetPageStats(siteID int64, date time.Time, hostname string, pathname string) (*models.PageStats, error) {
-	stats := &models.PageStats{}
+	stats := &models.PageStats{New: false}
 	query := db.Rebind(`SELECT * FROM daily_page_stats WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, hostname, pathname, date.Format("2006-01-02"))
+	if err == sql.ErrNoRows {
+		return nil, ErrNoResults
+	}
+
 	return stats, mapError(err)
 }
 

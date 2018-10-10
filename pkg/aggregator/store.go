@@ -9,7 +9,7 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-func (agg *aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*models.SiteStats, error) {
+func (agg *Aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*models.SiteStats, error) {
 	// get from map
 	cacheKey := fmt.Sprintf("%d-%s", siteID, t.Format("2006-01-02"))
 	if stats, ok := r.Sites[cacheKey]; ok {
@@ -35,7 +35,7 @@ func (agg *aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*mod
 	return stats, nil
 }
 
-func (agg *aggregator) getPageStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
+func (agg *Aggregator) getPageStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.PageStats, error) {
 	cacheKey := fmt.Sprintf("%d-%s-%s-%s", siteID, t.Format("2006-01-02"), hostname, pathname)
 	if stats, ok := r.Pages[cacheKey]; ok {
 		return stats, nil
@@ -61,7 +61,7 @@ func (agg *aggregator) getPageStats(r *results, siteID int64, t time.Time, hostn
 	return stats, nil
 }
 
-func (agg *aggregator) getReferrerStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
+func (agg *Aggregator) getReferrerStats(r *results, siteID int64, t time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
 	cacheKey := fmt.Sprintf("%d-%s-%s-%s", siteID, t.Format("2006-01-02"), hostname, pathname)
 	if stats, ok := r.Referrers[cacheKey]; ok {
 		return stats, nil
