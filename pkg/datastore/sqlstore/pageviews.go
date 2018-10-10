@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/usefathom/fathom/pkg/models"
 )
 
@@ -20,7 +21,8 @@ func (db *sqlstore) GetPageview(id string) (*models.Pageview, error) {
 	return result, nil
 }
 
-// InsertPageviews inserts multiple pageviews using a single INSERT statement
+// InsertPageviews bulks-insert multiple pageviews using a single INSERT statement
+// IMPORTANT: This does not insert the actual IsBounce, Duration and IsFinished values
 func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	n := len(pageviews)
 	if n == 0 {
@@ -28,7 +30,7 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	}
 
 	// generate placeholders string
-	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?),"
+	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, FALSE, 0),"
 	placeholders := strings.Repeat(placeholderTemplate, n)
 	placeholders = placeholders[:len(placeholders)-1]
 	nPlaceholders := strings.Count(placeholderTemplate, "?")
@@ -40,6 +42,12 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	// overwrite nil values in slice
 	j := 0
 	for i := range pageviews {
+
+		// test for columns with ignored values
+		if pageviews[i].IsBounce != false || pageviews[i].Duration > 0 || pageviews[i].IsFinished != false {
+			log.Warnf("inserting pageview with invalid column values for bulk-insert")
+		}
+
 		j = i * nPlaceholders
 		values[j] = pageviews[i].ID
 		values[j+1] = pageviews[i].SiteTrackingID
@@ -48,14 +56,12 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 		values[j+4] = pageviews[i].IsNewVisitor
 		values[j+5] = pageviews[i].IsNewSession
 		values[j+6] = pageviews[i].IsUnique
-		values[j+7] = pageviews[i].IsBounce
-		values[j+8] = pageviews[i].Referrer
-		values[j+9] = pageviews[i].Duration
-		values[j+10] = pageviews[i].Timestamp
+		values[j+7] = pageviews[i].Referrer
+		values[j+8] = pageviews[i].Timestamp
 	}
 
 	// string together query & execute with values
-	query := `INSERT INTO pageviews(id, site_tracking_id, hostname, pathname, is_new_visitor, is_new_session, is_unique, is_bounce, referrer, duration, timestamp) VALUES ` + placeholders
+	query := `INSERT INTO pageviews(id, site_tracking_id, hostname, pathname, is_new_visitor, is_new_session, is_unique, referrer, timestamp, is_bounce, is_finished, duration) VALUES ` + placeholders
 	query = db.Rebind(query)
 	_, err := db.Exec(query, values...)
 	if err != nil {
@@ -66,7 +72,7 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 }
 
 // UpdatePageviews updates multiple pageviews using a single transaction
-// Please note that this function only updates the IsBounce and Duration properties
+// IMPORTANT: this function only updates the IsFinished, IsBounce and Duration values
 func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 	if len(pageviews) == 0 {
 		return nil

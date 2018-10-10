@@ -27,8 +27,8 @@ type Collector struct {
 }
 
 func NewCollector(store datastore.Datastore) *Collector {
-	bufferCap := 90                         // persist every 90 pageviews, see https://github.com/usefathom/fathom/issues/132
-	bufferTimeout := 900 * time.Millisecond // or every 900 ms, whichever comes first
+	bufferCap := 100                         // persist every 100 pageviews, see https://github.com/usefathom/fathom/issues/132
+	bufferTimeout := 1000 * time.Millisecond // or every 1000 ms, whichever comes first
 
 	c := &Collector{
 		Store:     store,
@@ -59,10 +59,8 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		IsNewVisitor:   q.Get("nv") == "1",
 		IsNewSession:   q.Get("ns") == "1",
 		IsUnique:       q.Get("u") == "1",
-		IsBounce:       q.Get("b") != "0",
 		Referrer:       parseReferrer(q.Get("r")),
 		IsFinished:     false,
-		Duration:       0,
 		Timestamp:      now,
 	}
 
@@ -138,8 +136,7 @@ func (c *Collector) worker(cap int, timeout time.Duration) {
 }
 
 func (c *Collector) buffer(p *models.Pageview) int {
-	// a bounce is always an insert
-	if p.IsBounce {
+	if !p.IsFinished {
 		c.inserts[c.sizei] = p
 		c.sizei++
 	} else {
