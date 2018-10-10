@@ -10,7 +10,6 @@ import (
 )
 
 func (agg *Aggregator) getSiteStats(r *results, siteID int64, t time.Time) (*models.SiteStats, error) {
-	// get from map
 	cacheKey := fmt.Sprintf("%d-%s", siteID, t.Format("2006-01-02"))
 	if stats, ok := r.Sites[cacheKey]; ok {
 		return stats, nil
