@@ -113,9 +113,9 @@ func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
 
 	// for backwards compatibility with tracking snippets without an explicit site tracking ID (< 1.1.0)
 	if siteID == 1 {
-		sql = `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR site_tracking_id = '' ) AND ( duration = 0 OR is_bounce = TRUE) AND  timestamp > ?`
+		sql = `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR site_tracking_id = '' ) AND is_finished = FALSE AND  timestamp > ?`
 	} else {
-		sql = `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND ( duration = 0 OR is_bounce = TRUE) AND timestamp > ?`
+		sql = `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND is_finished = FALSE AND timestamp > ?`
 	}
 
 	query := db.Rebind(sql)

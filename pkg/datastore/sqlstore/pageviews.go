@@ -77,14 +77,14 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 		return err
 	}
 
-	query := tx.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ? WHERE id = ?`)
+	query := tx.Rebind(`UPDATE pageviews SET is_bounce = ?, duration = ?, is_finished = ? WHERE id = ?`)
 	stmt, err := tx.Preparex(query)
 	if err != nil {
 		return err
 	}
 
 	for i := range pageviews {
-		_, err := stmt.Exec(pageviews[i].IsBounce, pageviews[i].Duration, pageviews[i].ID)
+		_, err := stmt.Exec(pageviews[i].IsBounce, pageviews[i].Duration, pageviews[i].IsFinished, pageviews[i].ID)
 
 		if err != nil {
 			tx.Rollback()
@@ -100,8 +100,7 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 func (db *sqlstore) GetProcessablePageviews() ([]*models.Pageview, error) {
 	var results []*models.Pageview
 	thirtyMinsAgo := time.Now().Add(-30 * time.Minute)
-	// We use FALSE here, even though SQLite has no BOOLEAN value. If it fails, maybe we can roll our own Rebind?
-	query := db.Rebind(`SELECT * FROM pageviews WHERE ( duration > 0 AND is_bounce = FALSE ) OR timestamp < ? LIMIT 500`)
+	query := db.Rebind(`SELECT * FROM pageviews WHERE is_finished = TRUE OR timestamp < ? LIMIT 5000`)
 	err := db.Select(&results, query, thirtyMinsAgo)
 	return results, err
 }

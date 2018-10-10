@@ -51,7 +51,6 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	now := time.Now()
 
-	// get pageview details
 	pageview := &models.Pageview{
 		ID:             q.Get("id"),
 		SiteTrackingID: q.Get("sid"),
@@ -62,6 +61,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		IsUnique:       q.Get("u") == "1",
 		IsBounce:       q.Get("b") != "0",
 		Referrer:       parseReferrer(q.Get("r")),
+		IsFinished:     false,
 		Duration:       0,
 		Timestamp:      now,
 	}
@@ -96,6 +96,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if previousPageview != nil && previousPageview.Timestamp.After(now.Add(-30*time.Minute)) {
 			previousPageview.Duration = (now.Unix() - previousPageview.Timestamp.Unix())
 			previousPageview.IsBounce = false
+			previousPageview.IsFinished = true
 
 			// push onto channel to be updated (in batch) later
 			c.Pageviews <- previousPageview
