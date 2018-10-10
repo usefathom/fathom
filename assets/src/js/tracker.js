@@ -156,9 +156,9 @@ function trackPageview() {
   };
 
   let url = config.trackerUrl || findTrackerUrl()
-  let i = document.createElement('img');
-  i.src = url + stringifyObject(d);
-  i.addEventListener('load', function() {
+  let img = document.createElement('img');
+  img.src = url + stringifyObject(d);
+  img.addEventListener('load', function() {
     let now = new Date();
     let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0);
 
@@ -171,9 +171,23 @@ function trackPageview() {
     data.isNewSession = false;
     data.lastSeen = +new Date();
     setCookie('_fathom', JSON.stringify(data), { expires: midnight, path: '/' });
+
+    // remove tracking img from DOM
+    document.body.removeChild(img)
   });
-  i.addEventListener('load', () => document.body.removeChild(i));
-  document.body.appendChild(i);
+  
+  // in case img.onload never fires, remove img after 1s & reset src attribute to cancel request
+  window.setTimeout(() => { 
+    if(!img.parentNode) {
+      return;
+    }
+
+    img.src = ''; 
+    document.body.removeChild(img)
+  }, 1000);
+
+  // add to DOM to fire request
+  document.body.appendChild(img);  
 }
 
 // override global fathom object
