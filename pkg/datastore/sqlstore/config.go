@@ -61,7 +61,7 @@ func (c *Config) DSN() string {
 		}
 		dsn = mc.FormatDSN()
 	case SQLITE:
-		dsn = c.Name + "?_loc=auto"
+		dsn = c.Name + "?_loc=auto&_busy_timeout=10000"
 	}
 
 	return dsn
