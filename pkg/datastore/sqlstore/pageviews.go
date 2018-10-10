@@ -30,7 +30,7 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	}
 
 	// generate placeholders string
-	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, FALSE, 0),"
+	placeholderTemplate := "(?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE, FALSE, 0),"
 	placeholders := strings.Repeat(placeholderTemplate, n)
 	placeholders = placeholders[:len(placeholders)-1]
 	nPlaceholders := strings.Count(placeholderTemplate, "?")
@@ -44,7 +44,7 @@ func (db *sqlstore) InsertPageviews(pageviews []*models.Pageview) error {
 	for i := range pageviews {
 
 		// test for columns with ignored values
-		if pageviews[i].IsBounce != false || pageviews[i].Duration > 0 || pageviews[i].IsFinished != false {
+		if pageviews[i].IsBounce != true || pageviews[i].Duration > 0 || pageviews[i].IsFinished != false {
 			log.Warnf("inserting pageview with invalid column values for bulk-insert")
 		}
 

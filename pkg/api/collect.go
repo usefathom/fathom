@@ -61,6 +61,8 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		IsUnique:       q.Get("u") == "1",
 		Referrer:       parseReferrer(q.Get("r")),
 		IsFinished:     false,
+		IsBounce:       true,
+		Duration:       0,
 		Timestamp:      now,
 	}
 
