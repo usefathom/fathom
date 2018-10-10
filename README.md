@@ -44,24 +44,7 @@ To run [our pre-built Docker image](https://hub.docker.com/r/usefathom/fathom/),
 
 ## Tracking snippet
 
-To start tracking, include the following JavaScript on your site and replace `yourfathom.com` with the URL to your Fathom instance.
-
-```html
-<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
-<script>
-(function(f, a, t, h, o, m){
-	a[h]=a[h]||function(){
-		(a[h].q=a[h].q||[]).push(arguments)
-	};
-	o=f.createElement('script'),
-	m=f.getElementsByTagName('script')[0];
-	o.async=1; o.src=t; o.id='fathom-script';
-	m.parentNode.insertBefore(o,m)
-})(document, window, '//yourfathom.com/tracker.js', 'fathom');
-fathom('trackPageview');
-</script>
-<!-- / Fathom -->
-```
+To start tracking, create a site in your Fathom dashboard and copy the tracking snippet to the website(s) you want to track.
 
 ### Content Security Policy
 
