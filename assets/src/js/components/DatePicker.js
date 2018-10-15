@@ -169,7 +169,7 @@ class DatePicker extends Component {
   @bind
   handleKeyPress(evt) {
     // Don't handle input when the user is in a text field or text area.
-    let tag = event.target.tagName;
+    let tag = evt.target.tagName;
     if(tag === "INPUT" || tag === "TEXTAREA") {
       return;
     }
