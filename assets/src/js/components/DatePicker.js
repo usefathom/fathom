@@ -178,7 +178,7 @@ class DatePicker extends Component {
     let diff = this.state.endDate - this.state.startDate + 1000;
     let newStartDate, newEndDate;
 
-    switch(evt.keyCode) {
+    switch(evt.which) {
       // left-arrow
       case 37:
         newStartDate = new Date(+this.state.startDate - diff)
