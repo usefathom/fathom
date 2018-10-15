@@ -25,7 +25,7 @@ func main() {
 	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
-	app.Version = "1.0.1"
+	app.Version = "1.1.0"
 	app.HelpName = "fathom"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
