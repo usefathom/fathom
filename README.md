@@ -22,12 +22,12 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 For getting a development version of Fathom up & running, go through the following steps.
 
-1. Ensure you have [Golang](https://golang.org/doc/install#install) installed properly
-1. Get code: `git clone https://github.com/usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
-1. Compile into binary & prepare assets: `make build` 
-1. (Optional) Set your [custom configuration values](https://github.com/usefathom/fathom/wiki/Configuration-file).
-1. Register your user account: `fathom user add --email=<email> --password=<password>`
-1. Start the webserver: `fathom server` and then visit **http://localhost:8080** to access your analytics dashboard.
+1. Ensure you have [Go](https://golang.org/doc/install#install) installed
+1. Download the code: `git clone https://github.com/usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
+1. Compile the project: `make build` 
+1. (Optional) Set [custom configuration values](https://github.com/usefathom/fathom/wiki/Configuration-file).
+1. (Optional) Register a user account: `fathom user add --email=<email> --password=<password>`
+1. Start the webserver: `fathom server` and then visit **http://localhost:8080** to access your analytics dashboard
 
 To install and run Fathom in production, [have a look at the installation instructions](https://github.com/usefathom/fathom/wiki/Installing-&-running-Fathom).
 
