@@ -13,6 +13,7 @@
     "browserify": "^16.2.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^8.0.0",
+    "gulp-cache-bust": "^1.4.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.1",
     "gulp-uglify": "^3.0.0",

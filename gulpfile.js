@@ -8,9 +8,11 @@ const rename = require('gulp-rename')
 const gutil = require('gulp-util')
 const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
+const babel = require('gulp-babel');
+const cachebust = require('gulp-cache-bust');
+
 const debug = process.env.NODE_ENV !== 'production';
 let defaultTasks = [ 'app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ] ;
-const babel = require('gulp-babel');
 
 gulp.task('default', defaultTasks);
 
@@ -31,8 +33,8 @@ gulp.task('app-js', function () {
   
     if(!debug) {
       stream.pipe(buffer()).pipe(uglify())
-    }    
-
+    }
+    
     return stream.pipe(gulp.dest(`./assets/build/js`))  
 });  
 
@@ -57,6 +59,9 @@ gulp.task('img', function() {
 
 gulp.task('html', function() {
   return gulp.src('./assets/src/**/*.html')
+    .pipe(cachebust({
+      type: 'timestamp'
+    }))
     .pipe(gulp.dest(`./assets/build/`))
 });
 
