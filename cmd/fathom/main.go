@@ -15,6 +15,10 @@ type App struct {
 	config   *config.Config
 }
 
+// Version of build, supplied at compile time
+var Version = "latest-development"
+
+// CLI application
 var app *App
 
 func main() {
@@ -25,7 +29,7 @@ func main() {
 	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
-	app.Version = "1.1.0"
+	app.Version = Version
 	app.HelpName = "fathom"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{

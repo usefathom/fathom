@@ -1,6 +1,6 @@
 DIST := build
 EXECUTABLE := fathom
-LDFLAGS += -extldflags "-static"
+LDFLAGS += -extldflags "-static" -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')"
 MAIN_PKG := ./cmd/fathom
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 JS_SOURCES ?= $(shell find assets/src/. -name "*.js" -type f)
@@ -8,6 +8,9 @@ GO_SOURCES ?= $(shell find . -name "*.go" -type f)
 SQL_SOURCES ?= $(shell find . -name "*.sql" -type f)
 ENV ?= $(shell export $(cat .env | xargs))
 GOPATH=$(shell go env GOPATH)
+
+$(EXECUTABLE): $(GO_SOURCES) assets/build
+	go build -o $@ $(MAIN_PKG)
 
 .PHONY: all
 all: build 
@@ -23,23 +26,23 @@ build: $(EXECUTABLE)
 docker: $(GO_SOURCES) 
 	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
-$(EXECUTABLE): $(GO_SOURCES) assets/build
-	go build -o $@ $(MAIN_PKG)
-
-dist: assets/dist build/fathom-linux-amd64
-
-build/fathom-linux-amd64: $(GOPATH)/bin/packr $(SQL_SOURCES) $(GO_SOURCES) $(JS_SOURCES)
-	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $@ $(MAIN_PKG)
+.PHONY: dist
+dist: assets/dist 
+	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-amd64 $(MAIN_PKG)
+	GOOS=linux GOARCH=arm64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-arm64 $(MAIN_PKG)	
+	GOOS=linux GOARCH=386 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-386 $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
 	GOBIN=$(GOPATH)/bin go get github.com/gobuffalo/packr/...
 
-assets/build: $(JS_SOURCES)
+.PHONY: npm 
+npm:
 	if [ ! -d "node_modules" ]; then npm install; fi
+
+assets/build: $(JS_SOURCES) npm
 	./node_modules/gulp/bin/gulp.js	
 
-assets/dist: $(JS_SOURCES)
-	if [ ! -d "node_modules" ]; then npm install; fi
+assets/dist: $(JS_SOURCES) npm
 	NODE_ENV=production ./node_modules/gulp/bin/gulp.js
 
 .PHONY: clean
