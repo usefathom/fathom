@@ -89,7 +89,7 @@ class SiteSettings extends Component {
     @bind 
     handleKeydownEvent(evt) {
         // close modal when pressing ESC 
-        if(evt.keyCode == 27) {
+        if(evt.which == 27) {
             this.props.onClose()
         }
     }
