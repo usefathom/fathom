@@ -116,6 +116,12 @@
       return;
     }
 
+    // if <body> did not load yet, try again at dom ready event
+    if( document.body === null ) {
+      document.addEventListener("DOMContentLoaded", trackPageview)
+      return;
+    }
+
     let req = window.location;
 
     // parse canonical, if page has one
