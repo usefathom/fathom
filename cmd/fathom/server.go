@@ -66,20 +66,21 @@ func server(c *cli.Context) error {
 	// start server without letsencrypt / tls enabled
 	if !c.Bool("lets-encrypt") {
 		// start listening
-		log.Printf("Server is now listening on %s", addr)
 		server := &http.Server{
 			Addr:         addr,
 			Handler:      h,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
 		}
+
+		log.Infof("Server is now listening on %s", server.Addr)
 		log.Fatal(server.ListenAndServe())
 		return nil
 	}
 
 	// start server with autocert (letsencrypt)
 	hostname := c.String("hostname")
-	log.Printf("Server is now listening on %s:443", hostname)
+	log.Infof("Server is now listening on %s:443", hostname)
 	log.Fatal(http.Serve(autocert.NewListener(hostname), h))
 	return nil
 }
