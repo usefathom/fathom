@@ -22,7 +22,7 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 For getting a development version of Fathom up & running, go through the following steps.
 
-1. Ensure you have [Go](https://golang.org/doc/install#install) installed
+1. Ensure you have [Go](https://golang.org/doc/install#install) and NPM (https://www.npmjs.com) installed
 1. Download the code: `git clone https://github.com/usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
 1. Compile the project: `make build` 
 1. (Optional) Set [custom configuration values](https://github.com/usefathom/fathom/wiki/Configuration-file).
