@@ -26,7 +26,7 @@ Fathom version 1.0.0
 
 To start serving up the updated Fathom web application, you will have to restart the Fathom process that is running the web server.
 
-If you've followed the [installation instructions](https://github.com/usefathom/fathom/wiki/Installing-&-running-Fathom) then you are using Systemd to manage the Fathom process. Run `systemctl restart <your-fathom-service>` to restart it.
+If you've followed the [installation instructions](Installation%20instructions.md) then you are using Systemd to manage the Fathom process. Run `systemctl restart <your-fathom-service>` to restart it.
 
 ```
 systemctl restart my-fathom-site
