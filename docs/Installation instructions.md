@@ -16,7 +16,7 @@ Fathom version 1.0.0
 
 ## Starting the Fathom web server
 
-To run the Fathom web server we will need to [configure Fathom](https://github.com/usefathom/fathom/wiki/Configuration-file) so that it can connect with your database of choice. 
+To run the Fathom web server we will need to [configure Fathom](https://github.com/usefathom/fathom/blob/master/docs/Configuration.md) so that it can connect with your database of choice. 
 
 Let's create a new directory where we can store our configuration file & SQLite database.
 
@@ -37,7 +37,7 @@ FATHOM_SECRET="random-secret-string"
 
 If you now run `fathom server` then Fathom will start serving up a website on port 9000 using a SQLite database file named `fathom.db`. If that port is exposed then you should now see your Fathom instance running by browsing to `http://server-ip-address-here:9000`.
 
-Check out the [configuration file documentation](https://github.com/usefathom/fathom/wiki/Configuration-file) for all possible configuration values, eg if you want to use MySQL or Postgres instead.
+Check out the [configuration file documentation](https://github.com/usefathom/fathom/blob/master/docs/Configuration.md) for all possible configuration values, eg if you want to use MySQL or Postgres instead.
 
 ## Register your admin user
 
@@ -116,24 +116,7 @@ systemctl start my-fathom-site
 
 ## Tracking snippet
 
-To actually track pageviews, add the following tracking snippet to all pages that you want to track. Replace `my-fathom-site.com` with the URL to your Fathom installation.
-
-```html
-<!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
-<script>
-(function(f, a, t, h, o, m){
-	a[h]=a[h]||function(){
-		(a[h].q=a[h].q||[]).push(arguments)
-	};
-	o=f.createElement('script'),
-	m=f.getElementsByTagName('script')[0];
-	o.async=1; o.src=t; o.id='fathom-script';
-	m.parentNode.insertBefore(o,m)
-})(document, window, '//my-fathom-site.com/tracker.js', 'fathom');
-fathom('trackPageview');
-</script>
-<!-- / Fathom -->
-```
+To start tracking pageviews, copy the tracking snippet shown in your Fathom dashboard to all pages of the website you want to track.
 
 
 ### SSL certificate

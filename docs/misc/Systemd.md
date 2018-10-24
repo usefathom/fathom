@@ -38,7 +38,7 @@ sudo systemctl stop fathom
 
 ### Using a custom configuration file
 
-If you want to [modify the configuration values for your Fathom service](https://github.com/usefathom/fathom/wiki/Configuration-file), then change the line starting with `ExecStart=...` to include the path to your configuration file.
+If you want to [modify the configuration values for your Fathom service](https://github.com/usefathom/fathom/blob/master/docs/Configuration.md), then change the line starting with `ExecStart=...` to include the path to your configuration file.
 
 For example, if you have a configuration file `/home/john/fathom.env` then the line should look like this:
 

@@ -2,13 +2,13 @@
 
 ### How do I install Fathom on my server?
 
-Have a look at the [installation instructions](https://github.com/usefathom/fathom/wiki/Installing-&-running-Fathom).
+Have a look at the [installation instructions](https://github.com/usefathom/fathom/blob/master/docs/Installation%20instructions.md).
 
 ---
 
 ### How do I upgrade Fathom to the latest version?
 
-By overwriting the fathom binary with the new version. Make sure to restart any running processes for the changes to take effect. More detailed instructions can be found here: [upgrading Fathom](https://github.com/usefathom/fathom/wiki/Upgrading-Fathom).
+By overwriting the fathom binary with the new version. Make sure to restart any running processes for the changes to take effect. More detailed instructions can be found here: [upgrading Fathom](https://github.com/usefathom/fathom/blob/master/docs/Updating%20to%20the%20latest%20version.md).
 
 ---
 
@@ -21,7 +21,7 @@ You can use Fathom with either Postgres, MySQL or SQLite.
 
 ### How to configure Fathom?
 
-Create a file named `.env` in the working directory of your Fathom process. You can [find a list of accepted configuration values here](https://github.com/usefathom/fathom/wiki/Configuration-file).
+Create a file named `.env` in the working directory of your Fathom process. You can [find a list of accepted configuration values here](https://github.com/usefathom/fathom/blob/master/docs/Configuration.md).
 
 ---
 
