@@ -19,7 +19,8 @@ gulp.task('default', defaultTasks);
 gulp.task('app-js', function () {
     let stream = browserify({
         entries: './assets/src/js/script.js',
-        debug: debug
+        debug: debug,
+        ignoreMissing: true,
     })
     .transform("babelify", {
       presets: ["@babel/preset-env"],
