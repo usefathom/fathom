@@ -116,9 +116,8 @@ class DatePicker extends Component {
 
     // create unix timestamps from local date objects
     let before, after;
-    const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
-    before = Math.round((+endDate) / 1000) - timezoneOffset;
-    after = Math.round((+startDate) / 1000) - timezoneOffset;
+    before = Math.round((+endDate) / 1000) - endDate.getTimezoneOffset() * 60;
+    after = Math.round((+startDate) / 1000) - startDate.getTimezoneOffset() * 60;
 
     this.setState({
       period: period || '',
