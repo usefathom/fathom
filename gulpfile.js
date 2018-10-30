@@ -76,9 +76,9 @@ gulp.task('sass', function () {
 gulp.task('default', gulp.series('app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ) );
 
 gulp.task('watch', gulp.series('default', function() {
-  gulp.watch(['./assets/src/js/**/*.js'], ['app-js', 'tracker-js'] );
-  gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
-  gulp.watch(['./assets/src/**/*.html'], ['html'] );
-  gulp.watch(['./assets/src/img/**/*'], ['img'] );
-  gulp.watch(['./assets/src/fonts/**/*'], ['fonts'] );
+  gulp.watch(['./assets/src/js/**/*.js'], gulp.parallel('app-js', 'tracker-js') );
+  gulp.watch(['./assets/src/sass/**/**/*.scss'], gulp.parallel( 'sass') );
+  gulp.watch(['./assets/src/**/*.html'], gulp.parallel( 'html') );
+  gulp.watch(['./assets/src/img/**/*'], gulp.parallel( 'img') );
+  gulp.watch(['./assets/src/fonts/**/*'], gulp.parallel( 'fonts') );
 }));
