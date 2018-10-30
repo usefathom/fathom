@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"os"
@@ -15,13 +15,10 @@ type App struct {
 	config   *config.Config
 }
 
-// Version of build, supplied at compile time
-var Version = "latest-development"
-
 // CLI application
 var app *App
 
-func main() {
+func Run(v string) error {
 	// force all times in UTC, regardless of server timezone
 	os.Setenv("TZ", "")
 
@@ -29,7 +26,7 @@ func main() {
 	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
-	app.Version = Version
+	app.Version = v
 	app.HelpName = "fathom"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -52,11 +49,10 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		return err
 	}
 
-	os.Exit(0)
+	return nil
 }
 
 func before(c *cli.Context) error {

@@ -24,10 +24,10 @@ For getting a development version of Fathom up & running, go through the followi
 
 1. Ensure you have [Go](https://golang.org/doc/install#install) and [NPM](https://www.npmjs.com) installed
 1. Download the code: `git clone https://github.com/usefathom/fathom.git $GOPATH/src/github.com/usefathom/fathom` 
-1. Compile the project: `make build` 
+1. Compile the project into an executable: `make build` 
 1. (Optional) Set [custom configuration values](docs/Configuration.md)
-1. (Optional) Register a user account: `fathom user add --email=<email> --password=<password>`
-1. Start the webserver: `fathom server` and then visit **http://localhost:8080** to access your analytics dashboard
+1. (Optional) Register a user account: `./fathom user add --email=<email> --password=<password>`
+1. Start the webserver: `./fathom server` and then visit **http://localhost:8080** to access your analytics dashboard
 
 To install and run Fathom in production, [see the installation instructions](docs/Installation%20instructions.md).
 

@@ -1,36 +1,23 @@
-DIST := build
 EXECUTABLE := fathom
-LDFLAGS += -extldflags "-static" -X "main.Version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')"
-MAIN_PKG := ./cmd/fathom
+LDFLAGS += -extldflags "-static" -X "main.version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')" -X "main.commit=$(shell git rev-parse HEAD)"
+MAIN_PKG := ./main.go
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
-JS_SOURCES ?= $(shell find assets/src/. -name "*.js" -type f)
+ASSET_SOURCES ?= $(shell find assets/src/. -type f)
 GO_SOURCES ?= $(shell find . -name "*.go" -type f)
-SQL_SOURCES ?= $(shell find . -name "*.sql" -type f)
-ENV ?= $(shell export $(cat .env | xargs))
 GOPATH=$(shell go env GOPATH)
-
-$(EXECUTABLE): $(GO_SOURCES) assets/build
-	go build -o $@ $(MAIN_PKG)
 
 .PHONY: all
 all: build 
 
-.PHONY: install
-install: $(wildcard *.go) $(GOPATH)/bin/packr
-	$(GOPATH)/bin/packr install -v -ldflags '-w $(LDFLAGS)' $(MAIN_PKG)
-
 .PHONY: build
 build: $(EXECUTABLE)
+
+$(EXECUTABLE): $(GO_SOURCES) assets/build
+	go build -o $@ $(MAIN_PKG)
 
 .PHONY: docker
 docker: $(GO_SOURCES) 
 	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
-
-.PHONY: dist
-dist: assets/dist 
-	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-amd64 $(MAIN_PKG)
-	GOOS=linux GOARCH=arm64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-arm64 $(MAIN_PKG)	
-	GOOS=linux GOARCH=386 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o build/fathom-linux-386 $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
 	GOBIN=$(GOPATH)/bin go get github.com/gobuffalo/packr/...
@@ -39,17 +26,17 @@ $(GOPATH)/bin/packr:
 npm:
 	if [ ! -d "node_modules" ]; then npm install; fi
 
-assets/build: $(JS_SOURCES) npm
+assets/build: $(ASSET_SOURCES) npm
 	./node_modules/gulp/bin/gulp.js	
 
-assets/dist: $(JS_SOURCES) npm
+assets/dist: $(ASSET_SOURCES) npm
 	NODE_ENV=production ./node_modules/gulp/bin/gulp.js
 
 .PHONY: clean
 clean:
 	go clean -i ./...
 	packr clean
-	rm -rf $(EXECUTABLE) $(DIST) 
+	rm -rf $(EXECUTABLE)
 
 .PHONY: fmt
 fmt:
