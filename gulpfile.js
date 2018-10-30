@@ -12,9 +12,7 @@ const babel = require('gulp-babel');
 const cachebust = require('gulp-cache-bust');
 
 const debug = process.env.NODE_ENV !== 'production';
-let defaultTasks = [ 'app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ] ;
 
-gulp.task('default', defaultTasks);
 
 gulp.task('app-js', function () {
     let stream = browserify({
@@ -75,10 +73,12 @@ gulp.task('sass', function () {
 		.pipe(gulp.dest(`./assets/build/css`))
 });
 
-gulp.task('watch', ['default'], function() {
+gulp.task('default', gulp.series('app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ) );
+
+gulp.task('watch', gulp.series('default', function() {
   gulp.watch(['./assets/src/js/**/*.js'], ['app-js', 'tracker-js'] );
   gulp.watch(['./assets/src/sass/**/**/*.scss'], ['sass'] );
   gulp.watch(['./assets/src/**/*.html'], ['html'] );
   gulp.watch(['./assets/src/img/**/*'], ['img'] );
   gulp.watch(['./assets/src/fonts/**/*'], ['fonts'] );
-});
+}));

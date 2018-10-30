@@ -11,7 +11,7 @@
     "@babel/preset-env": "^7.0.0",
     "babelify": "^10.0.0",
     "browserify": "^16.2.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-cache-bust": "^1.4.0",
     "gulp-rename": "^1.2.2",
