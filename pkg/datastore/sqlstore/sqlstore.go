@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"regexp"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql" // mysql driver
@@ -39,8 +40,9 @@ func New(c *Config) *sqlstore {
 	}
 	db := &sqlstore{dbx, c.Driver, c}
 
-	// write log statement
-	log.Printf("Connected to %s database: %s", c.Driver, c.DSN())
+	// write log statement, sanitize password
+	re := regexp.MustCompile(`password=[^ ]+`)
+	log.Printf("Connected to %s database: %s", c.Driver, re.ReplaceAllString(c.DSN(), `xxxxx`))
 
 	// run migrations
 	db.Migrate()
