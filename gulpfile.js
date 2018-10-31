@@ -6,16 +6,16 @@ const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 const rename = require('gulp-rename')
 const gutil = require('gulp-util')
-const sass = require('gulp-sass')
 const uglify = require('gulp-uglify')
 const babel = require('gulp-babel');
 const cachebust = require('gulp-cache-bust');
+const concat = require('gulp-concat');
+const gulpif = require('gulp-if')
 
 const debug = process.env.NODE_ENV !== 'production';
 
-
 gulp.task('app-js', function () {
-    let stream = browserify({
+    return browserify({
         entries: './assets/src/js/script.js',
         debug: debug,
         ignoreMissing: true,
@@ -29,12 +29,9 @@ gulp.task('app-js', function () {
     })    
     .bundle()  
     .pipe(source('script.js'))
-  
-    if(!debug) {
-      stream.pipe(buffer()).pipe(uglify())
-    }
-    
-    return stream.pipe(gulp.dest(`./assets/build/js`))  
+	.pipe(buffer())
+	.pipe(gulpif(!debug, uglify()))
+  	.pipe(gulp.dest(`./assets/build/js`))  
 });  
 
 gulp.task('tracker-js', function () {
@@ -42,7 +39,7 @@ gulp.task('tracker-js', function () {
         .pipe(babel({
             presets: ["@babel/preset-env"],
         }))
-        .pipe(uglify())
+        .pipe(gulpif(!debug, uglify()))
         .pipe(gulp.dest('./assets/build/js'));
 });
 
@@ -64,20 +61,17 @@ gulp.task('html', function() {
     .pipe(gulp.dest(`./assets/build/`))
 });
 
-gulp.task('sass', function () {
-	var files = './assets/src/sass/[^_]*.scss';
-	return gulp.src(files)
-		.pipe(sass())
-    .on('error', gutil.log)
-		.pipe(rename({ extname: '.css' }))
+gulp.task('css', function () {
+	return gulp.src('./assets/src/css/*.css')
+		.pipe(concat('styles.css'))
 		.pipe(gulp.dest(`./assets/build/css`))
 });
 
-gulp.task('default', gulp.series('app-js', 'tracker-js', 'sass', 'html', 'img', 'fonts' ) );
+gulp.task('default', gulp.series('app-js', 'tracker-js', 'css', 'html', 'img', 'fonts' ) );
 
 gulp.task('watch', gulp.series('default', function() {
   gulp.watch(['./assets/src/js/**/*.js'], gulp.parallel('app-js', 'tracker-js') );
-  gulp.watch(['./assets/src/sass/**/**/*.scss'], gulp.parallel( 'sass') );
+  gulp.watch(['./assets/src/sass/**/**/*.scss'], gulp.parallel( 'css') );
   gulp.watch(['./assets/src/**/*.html'], gulp.parallel( 'html') );
   gulp.watch(['./assets/src/img/**/*'], gulp.parallel( 'img') );
   gulp.watch(['./assets/src/fonts/**/*'], gulp.parallel( 'fonts') );

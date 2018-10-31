@@ -1,0 +1,78 @@
+.box-graph {
+	background: white;
+	margin-left: 0 !important;
+}
+
+#chart * { 
+	box-sizing: content-box; 
+}
+
+#chart .muted { 
+	fill: #98a0a6;
+}
+
+#chart {
+	height: 240px;
+}
+
+.bar-pageviews {
+	fill: #88ffc6;
+}
+
+.bar-visitors {
+	fill: #533feb;
+}
+
+.axis .domain{ 
+	stroke: none; 
+}
+
+.axis line {
+	stroke: rgba(218, 218, 218, 0.5);
+}
+
+.axis text {
+	font-size: 12px;
+	fill: #98a0a6;
+}
+
+.d3-tip {
+	font-size: 12px;
+	color: #959da5;
+	text-align: left;
+	background: rgba(0,0,0,.8);
+	border-radius: 3px;
+}
+
+.tip-heading {
+	font-weight: 600;
+	padding: 10px;
+	line-height: 1;
+}
+
+.tip-content {
+	display: flex;
+
+}
+
+.tip-content > div {
+	padding: 5px 10px;
+	width: 50%;
+	display: block;
+	flex: 1;
+	min-width: 90px;
+}
+
+
+.tip-pageviews {
+	border-top: 3px solid rgb(136, 255, 198);
+}
+
+.tip-visitors {
+	border-top: 3px solid rgb(83, 63, 235);
+}
+
+.tip-number {
+	color: #dfe2e5;
+	font-weight: 600;
+}
