@@ -7,13 +7,13 @@ import (
 )
 
 type Config struct {
-	URL      string `default:""`
 	Driver   string `default:"sqlite3"`
-	Host     string `default:""`
-	User     string `default:""`
-	Password string `default:""`
-	Name     string `default:"fathom.db"`
-	SSLMode  string `default:""`
+	url      string `default:""`
+	host     string `default:""`
+	user     string `default:""`
+	password string `default:""`
+	name     string `default:"fathom.db"`
+	sslmode  string `default:""`
 }
 
 func (c *Config) DSN() string {
@@ -21,47 +21,48 @@ func (c *Config) DSN() string {
 
 	// if FATHOM_DATABASE_URL was set, use that
 	// this relies on the user to set the appropriate parameters, eg ?parseTime=true when using MySQL
-	if c.URL != "" {
-		return c.URL
+	if c.url != "" {
+		return c.url
 	}
 
 	// otherwise, generate from individual fields
 	switch c.Driver {
 	case POSTGRES:
-		params := map[string]string{
-			"host":     c.Host,
-			"dbname":   c.Name,
-			"user":     c.User,
-			"password": c.Password,
-			"sslmode":  c.SSLMode,
+
+		if c.host != "" {
+			dsn += " host=" + c.host
 		}
-
-		for k, v := range params {
-			if v == "" {
-				continue
-			}
-
-			dsn = dsn + k + "=" + v + " "
+		if c.name != "" {
+			dsn += " dbname=" + c.name
+		}
+		if c.user != "" {
+			dsn += " user=" + c.user
+		}
+		if c.password != "" {
+			dsn += " password=" + c.password
+		}
+		if c.sslmode != "" {
+			dsn += " sslmode=" + c.sslmode
 		}
 
 		dsn = strings.TrimSpace(dsn)
 	case MYSQL:
 		mc := mysql.NewConfig()
-		mc.User = c.User
-		mc.Passwd = c.Password
-		mc.Addr = c.Host
+		mc.User = c.user
+		mc.Passwd = c.password
+		mc.Addr = c.host
 		mc.Net = "tcp"
-		mc.DBName = c.Name
+		mc.DBName = c.name
 		mc.Params = map[string]string{
 			"parseTime": "true",
 			"loc":       "Local",
 		}
-		if c.SSLMode != "" {
-			mc.Params["tls"] = c.SSLMode
+		if c.sslmode != "" {
+			mc.Params["tls"] = c.sslmode
 		}
 		dsn = mc.FormatDSN()
 	case SQLITE:
-		dsn = c.Name + "?_loc=auto&_busy_timeout=5000"
+		dsn = c.name + "?_loc=auto&_busy_timeout=5000"
 	}
 
 	return dsn
