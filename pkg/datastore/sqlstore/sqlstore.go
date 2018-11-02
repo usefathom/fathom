@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"regexp"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql" // mysql driver
@@ -34,15 +33,18 @@ var ErrNoResults = errors.New("datastore: query returned 0 results")
 
 // New creates a new database pool
 func New(c *Config) *sqlstore {
-	dbx, err := sqlx.Connect(c.Driver, c.DSN())
+	dsn := c.DSN()
+	dbx, err := sqlx.Connect(c.Driver, dsn)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
 	db := &sqlstore{dbx, c.Driver, c}
 
-	// write log statement, sanitize password
-	re := regexp.MustCompile(`password=[^ ]+`)
-	log.Printf("Connected to %s database: %s", c.Driver, re.ReplaceAllString(c.DSN(), `xxxxx`))
+	if c.Host == "" || c.Driver == SQLITE {
+		log.Printf("Connected to %s database: %s", c.Driver, c.Dbname())
+	} else {
+		log.Printf("Connected to %s database: %s on %s", c.Driver, c.Dbname(), c.Host)
+	}
 
 	// run migrations
 	db.Migrate()

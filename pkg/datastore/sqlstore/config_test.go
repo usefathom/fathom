@@ -27,3 +27,28 @@ func TestConfigDSN(t *testing.T) {
 		t.Errorf("Invalid DSN. Expected %s, got %s", e, v)
 	}
 }
+
+func TestConfigDbname(t *testing.T) {
+	var c Config
+
+	c = Config{
+		url: "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full",
+	}
+	if e, v := "pqgotest", c.Dbname(); v != e {
+		t.Errorf("Expected %q, got %q", e, v)
+	}
+
+	c = Config{
+		url: "root@tcp(host.myhost)/mysqltest?loc=Local",
+	}
+	if e, v := "mysqltest", c.Dbname(); v != e {
+		t.Errorf("Expected %q, got %q", e, v)
+	}
+
+	c = Config{
+		url: "/mysqltest?loc=Local&parseTime=true",
+	}
+	if e, v := "mysqltest", c.Dbname(); v != e {
+		t.Errorf("Expected %q, got %q", e, v)
+	}
+}
