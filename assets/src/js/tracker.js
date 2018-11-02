@@ -105,7 +105,9 @@
     return el ? el.src.replace('tracker.js', 'collect') : '';
   }
 
-  function trackPageview() { 
+  function trackPageview(vars) { 
+    vars = vars || {};
+
     // Respect "Do Not Track" requests
     if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
       return;
@@ -118,13 +120,14 @@
 
     // if <body> did not load yet, try again at dom ready event
     if( document.body === null ) {
-      document.addEventListener("DOMContentLoaded", trackPageview)
+      document.addEventListener("DOMContentLoaded", () => {
+        trackPageview(vars);
+      })
       return;
     }
 
+    //  parse request, use canonical if there is one
     let req = window.location;
-
-    // parse canonical, if page has one
     let canonical = document.querySelector('link[rel="canonical"][href]');
     if(canonical) {
       let a = document.createElement('a');
@@ -133,19 +136,18 @@
       // use parsed canonical as location object
       req = a;
     }
-
-    // get path and pathname from location or canonical
-    let path = req.pathname + req.search;
-    let hostname = req.protocol + "//" + req.hostname;
-
-    // if parsing path failed, default to main page
+    
+    let path = vars.path || ( req.pathname + req.search );
     if(!path) {
       path = '/';
     }
 
+    // determine hostname
+    let hostname = vars.hostname || ( req.protocol + "//" + req.hostname );
+
     // only set referrer if not internal
-    let referrer = '';
-    if(document.referrer.indexOf(location.hostname) < 0) {
+    let referrer = vars.referrer || '';
+    if(document.referrer.indexOf(hostname) < 0) {
       referrer = document.referrer;
     }
 
