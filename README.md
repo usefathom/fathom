@@ -20,6 +20,12 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 ## Installation
 
+### Production
+
+To install and run Fathom in production, [see the installation instructions](docs/Installation%20instructions.md).
+
+### Development
+
 For getting a development version of Fathom up & running, go through the following steps.
 
 1. Ensure you have [Go](https://golang.org/doc/install#install) and [NPM](https://www.npmjs.com) installed
@@ -28,8 +34,6 @@ For getting a development version of Fathom up & running, go through the followi
 1. (Optional) Set [custom configuration values](docs/Configuration.md)
 1. (Optional) Register a user account: `./fathom user add --email=<email> --password=<password>`
 1. Start the webserver: `./fathom server` and then visit **http://localhost:8080** to access your analytics dashboard
-
-To install and run Fathom in production, [see the installation instructions](docs/Installation%20instructions.md).
 
 ## Docker
 
