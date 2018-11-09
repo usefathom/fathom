@@ -64,3 +64,7 @@ lint:
 test:
 	for PKG in $(PACKAGES); do go test -cover -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG || exit 1; done;
 
+.PHONY: referrer-spam-blacklist
+referrer-spam-blacklist:
+	wget https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt -O pkg/aggregator/data/blacklist.txt
+	go-bindata -prefix "pkg/aggregator/data/" -o pkg/aggregator/bindata.go -pkg aggregator pkg/aggregator/data/

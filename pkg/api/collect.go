@@ -59,7 +59,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		IsNewVisitor:   q.Get("nv") == "1",
 		IsNewSession:   q.Get("ns") == "1",
 		IsUnique:       q.Get("u") == "1",
-		Referrer:       parseReferrer(q.Get("r")),
+		Referrer:       q.Get("r"),
 		IsFinished:     false,
 		IsBounce:       true,
 		Duration:       0,
@@ -191,29 +191,6 @@ func shouldCollect(r *http.Request) bool {
 
 func parsePathname(p string) string {
 	return "/" + strings.TrimLeft(p, "/")
-}
-
-// TODO: Move this to aggregator, as we need this endpoint to be as fast as possible
-func parseReferrer(r string) string {
-	u, err := url.Parse(r)
-	if err != nil {
-		return ""
-	}
-
-	// remove AMP & UTM vars
-	q := u.Query()
-	keys := []string{"amp", "utm_campaign", "utm_medium", "utm_source"}
-	for _, k := range keys {
-		q.Del(k)
-	}
-	u.RawQuery = q.Encode()
-
-	// remove /amp/
-	if strings.HasSuffix(u.Path, "/amp/") {
-		u.Path = u.Path[0:(len(u.Path) - 5)]
-	}
-
-	return u.String()
 }
 
 func parseHostname(r string) string {
