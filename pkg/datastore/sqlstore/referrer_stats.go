@@ -7,10 +7,10 @@ import (
 	"github.com/usefathom/fathom/pkg/models"
 )
 
-func (db *sqlstore) GetReferrerStats(siteID int64, date time.Time, hostname string, pathname string) (*models.ReferrerStats, error) {
+func (db *sqlstore) GetReferrerStats(siteID int64, date time.Time, hostnameID int64, pathnameID int64) (*models.ReferrerStats, error) {
 	stats := &models.ReferrerStats{New: false}
-	query := db.Rebind(`SELECT * FROM daily_referrer_stats WHERE site_id = ? AND date = ? AND hostname = ? AND pathname = ? LIMIT 1`)
-	err := db.Get(stats, query, siteID, date.Format("2006-01-02"), hostname, pathname)
+	query := db.Rebind(`SELECT * FROM daily_referrer_stats WHERE site_id = ? AND date = ? AND hostname_id = ? AND pathname_id = ? LIMIT 1`)
+	err := db.Get(stats, query, siteID, date.Format("2006-01-02"), hostnameID, pathnameID)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoResults
 	}
@@ -27,14 +27,14 @@ func (db *sqlstore) SaveReferrerStats(s *models.ReferrerStats) error {
 }
 
 func (db *sqlstore) insertReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, known_durations, groupname, site_id, hostname, pathname, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, known_durations, groupname, site_id, hostname_id, pathname_id, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format("2006-01-02"))
 	return err
 }
 
 func (db *sqlstore) updateReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ?, groupname = ? WHERE site_id = ? AND hostname = ? AND pathname = ? AND date = ?`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.Hostname, s.Pathname, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ?, groupname = ? WHERE site_id = ? AND hostname_id = ? AND pathname_id = ? AND date = ?`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format("2006-01-02"))
 	return err
 }
 
@@ -42,14 +42,16 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 	var result []*models.ReferrerStats
 
 	sql := `SELECT 
-		MIN(hostname) AS hostname,
-		MIN(pathname) AS pathname,
-		COALESCE(MIN(groupname), '') AS groupname,  
+		h.name AS hostname,
+		p.name AS pathname,
+		COALESCE(groupname, '') AS groupname,  
 		SUM(visitors) AS visitors, 
 		SUM(pageviews) AS pageviews, 
 		COALESCE(SUM(pageviews*NULLIF(bounce_rate, 0)) / SUM(pageviews), 0.00) AS bounce_rate, 
-		COALESCE(SUM(avg_duration*pageviews) / SUM(pageviews), 0.00) AS avg_duration 
-	FROM daily_referrer_stats 
+		COALESCE(SUM(pageviews*avg_duration) / SUM(pageviews), 0.00) AS avg_duration 
+	FROM daily_referrer_stats s
+		LEFT JOIN hostnames h ON h.id = s.hostname_id 
+		LEFT JOIN pathnames p ON p.id = s.pathname_id 
 	WHERE site_id = ? AND date >= ? AND date <= ? `
 
 	if db.Config.Driver == "sqlite3" {

@@ -45,16 +45,20 @@ type Datastore interface {
 	DeletePageviews([]*models.Pageview) error
 
 	// page stats
-	GetPageStats(int64, time.Time, string, string) (*models.PageStats, error)
+	GetPageStats(int64, time.Time, int64, int64) (*models.PageStats, error)
 	SavePageStats(*models.PageStats) error
 	GetAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
 	GetAggregatedPageStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// referrer stats
-	GetReferrerStats(int64, time.Time, string, string) (*models.ReferrerStats, error)
+	GetReferrerStats(int64, time.Time, int64, int64) (*models.ReferrerStats, error)
 	SaveReferrerStats(*models.ReferrerStats) error
 	GetAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
 	GetAggregatedReferrerStatsPageviews(int64, time.Time, time.Time) (int64, error)
+
+	// hostnames
+	HostnameID(name string) (int64, error)
+	PathnameID(name string) (int64, error)
 
 	// misc
 	Health() error
