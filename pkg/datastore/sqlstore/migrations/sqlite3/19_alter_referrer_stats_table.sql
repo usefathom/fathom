@@ -19,7 +19,6 @@ INSERT INTO daily_referrer_stats
     LEFT JOIN hostnames h ON h.name = s.hostname 
     LEFT JOIN pathnames p ON p.name = s.pathname;
 DROP TABLE daily_referrer_stats_old;
-VACUUM;
 
 -- +migrate Down
 
