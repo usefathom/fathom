@@ -123,9 +123,6 @@ div.delete a { color: red; }
 	.box-pages { grid-column: 2; grid-row: 2 ; }
 	.box-referrers { grid-column: 3; grid-row: 2; }
 
-	/* since we hide chart for views with less than a day worth of data, move tables to row 1 */
-	.ltday .box-pages, .ltday .box-referrers{ grid-row: 1; }
-
 	.half { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 12px; align-items: center; }
 	.half div { text-align: right; }
 	.half div.submit { text-align: left; }
@@ -135,8 +132,6 @@ div.delete a { color: red; }
 	.total-numbers { font-size: 68px; font-weight: 200; letter-spacing: -.06em; text-align: left; }
 
 }
-
-
 
 
 .login-page.flex-rapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }

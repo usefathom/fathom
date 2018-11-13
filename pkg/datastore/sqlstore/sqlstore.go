@@ -19,6 +19,8 @@ const (
 	MYSQL    = "mysql"
 	POSTGRES = "postgres"
 	SQLITE   = "sqlite3"
+
+	DATE_FORMAT = "2006-01-02 15:00:00"
 )
 
 type sqlstore struct {

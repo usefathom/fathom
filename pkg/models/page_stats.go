@@ -17,7 +17,7 @@ type PageStats struct {
 	BounceRate     float64   `db:"bounce_rate"`
 	AvgDuration    float64   `db:"avg_duration"`
 	KnownDurations int64     `db:"known_durations"`
-	Date           time.Time `db:"date" json:",omitempty"`
+	Date           time.Time `db:"ts" json:",omitempty"`
 }
 
 func (s *PageStats) HandlePageview(p *Pageview) {

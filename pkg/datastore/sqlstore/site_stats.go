@@ -10,9 +10,9 @@ import (
 
 func (db *sqlstore) GetSiteStats(siteID int64, date time.Time) (*models.SiteStats, error) {
 	stats := &models.SiteStats{New: false}
-	query := db.Rebind(`SELECT * FROM daily_site_stats WHERE site_id = ? AND date = ? LIMIT 1`)
+	query := db.Rebind(`SELECT * FROM site_stats WHERE site_id = ? AND ts = ? LIMIT 1`)
 
-	err := db.Get(stats, query, siteID, date.Format("2006-01-02"))
+	err := db.Get(stats, query, siteID, date.Format(DATE_FORMAT))
 	if err == sql.ErrNoRows {
 		return nil, ErrNoResults
 	}
@@ -29,22 +29,21 @@ func (db *sqlstore) SaveSiteStats(s *models.SiteStats) error {
 }
 
 func (db *sqlstore) insertSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`INSERT INTO daily_site_stats(site_id, visitors, sessions, pageviews, bounce_rate, avg_duration, known_durations, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.SiteID, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO site_stats(site_id, visitors, sessions, pageviews, bounce_rate, avg_duration, known_durations, ts) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.SiteID, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Date.Format(DATE_FORMAT))
 	return err
 }
 
 func (db *sqlstore) updateSiteStats(s *models.SiteStats) error {
-	query := db.Rebind(`UPDATE daily_site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ? WHERE site_id = ? AND date = ?`)
-	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.SiteID, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE site_stats SET visitors = ?, sessions = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ? WHERE site_id = ? AND ts = ?`)
+	_, err := db.Exec(query, s.Visitors, s.Sessions, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.SiteID, s.Date.Format(DATE_FORMAT))
 	return err
 }
 
 func (db *sqlstore) GetSiteStatsPerDay(siteID int64, startDate time.Time, endDate time.Time) ([]*models.SiteStats, error) {
 	results := []*models.SiteStats{}
-	sql := `SELECT * FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	err := db.Select(&results, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	query := db.Rebind(`SELECT * FROM site_stats WHERE site_id = ? AND ts >= ? AND ts <= ? ORDER BY ts DESC`)
+	err := db.Select(&results, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return results, err
 }
 
@@ -56,49 +55,10 @@ func (db *sqlstore) GetAggregatedSiteStats(siteID int64, startDate time.Time, en
 		COALESCE(SUM(sessions), 0) AS sessions,
 		COALESCE(SUM(pageviews*avg_duration) / NULLIF(SUM(pageviews), 0), 0.00) AS avg_duration,
 		COALESCE(SUM(sessions*bounce_rate) / NULLIF(SUM(sessions), 0), 0.00) AS bounce_rate
-	 FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ? LIMIT 1`)
-	err := db.Get(stats, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	 FROM site_stats 
+	 WHERE site_id = ? AND ts >= ? AND ts <= ? LIMIT 1`)
+	err := db.Get(stats, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return stats, mapError(err)
-}
-
-func (db *sqlstore) GetTotalSiteViews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
-	sql := `SELECT COALESCE(SUM(pageviews), 0) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	var total int64
-	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, mapError(err)
-}
-
-func (db *sqlstore) GetTotalSiteVisitors(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
-	sql := `SELECT COALESCE(SUM(visitors), 0) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	var total int64
-	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, mapError(err)
-}
-
-func (db *sqlstore) GetTotalSiteSessions(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
-	sql := `SELECT COALESCE(SUM(sessions), 0) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	var total int64
-	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, mapError(err)
-}
-
-func (db *sqlstore) GetAverageSiteDuration(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
-	sql := `SELECT COALESCE(SUM(pageviews*avg_duration)/SUM(pageviews), 0.00) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	var total float64
-	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, mapError(err)
-}
-
-func (db *sqlstore) GetAverageSiteBounceRate(siteID int64, startDate time.Time, endDate time.Time) (float64, error) {
-	sql := `SELECT COALESCE(SUM(sessions*bounce_rate)/SUM(sessions), 4) FROM daily_site_stats WHERE site_id = ? AND date >= ? AND date <= ?`
-	query := db.Rebind(sql)
-	var total float64
-	err := db.Get(&total, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
-	return total, mapError(err)
 }
 
 func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
@@ -113,7 +73,7 @@ func (db *sqlstore) GetRealtimeVisitorCount(siteID int64) (int64, error) {
 
 	// for backwards compatibility with tracking snippets without an explicit site tracking ID (< 1.1.0)
 	if siteID == 1 {
-		sql = `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR site_tracking_id = '' ) AND is_finished = FALSE AND  timestamp > ?`
+		sql = `SELECT COUNT(*) FROM pageviews p WHERE ( site_tracking_id = ? OR site_tracking_id = '' ) AND is_finished = FALSE AND timestamp > ?`
 	} else {
 		sql = `SELECT COUNT(*) FROM pageviews p WHERE site_tracking_id = ? AND is_finished = FALSE AND timestamp > ?`
 	}

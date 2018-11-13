@@ -55,14 +55,13 @@ func (c *Config) DSN() string {
 		mc.DBName = c.Name
 		mc.Params = map[string]string{
 			"parseTime": "true",
-			"loc":       "Local",
 		}
 		if c.SSLMode != "" {
 			mc.Params["tls"] = c.SSLMode
 		}
 		dsn = mc.FormatDSN()
 	case SQLITE:
-		dsn = c.Name + "?_loc=auto&_busy_timeout=5000"
+		dsn = c.Name + "?_busy_timeout=5000"
 	}
 
 	return dsn
