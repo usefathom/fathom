@@ -63,6 +63,11 @@ func serveFile(box *packr.Box, filename string) Handler {
 			return err
 		}
 
+		// setting security and cache headers
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Xss-Protection", "1; mode=block")
+		w.Header().Set("Cache-Control", "max-age=432000") // 5 days
+
 		http.ServeContent(w, r, filename, d.ModTime(), f)
 		return nil
 	}

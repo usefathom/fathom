@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     environment:
       - "FATHOM_SERVER_ADDR=:8080"
+      - "FATHOM_GZIP=true"
       - "FATHOM_DEBUG=false"
       - "FATHOM_DATABASE_DRIVER=mysql"
       - "FATHOM_DATABASE_NAME=fathom"
