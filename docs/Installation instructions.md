@@ -29,6 +29,7 @@ Then, create a file named `.env` with the following contents.
 
 ```
 FATHOM_SERVER_ADDR=9000
+FATHOM_GZIP=true
 FATHOM_DEBUG=true
 FATHOM_DATABASE_DRIVER="sqlite3"
 FATHOM_DATABASE_NAME="fathom.db"

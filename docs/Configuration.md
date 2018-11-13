@@ -13,6 +13,7 @@ fathom --config=/home/john/fathom.env server
 The default configuration looks like this:
 
 ```
+FATHOM_GZIP=true
 FATHOM_DEBUG=true
 FATHOM_DATABASE_DRIVER="sqlite3"
 FATHOM_DATABASE_NAME="./fathom.db"
@@ -29,6 +30,7 @@ FATHOM_SECRET="random-secret-string"
 | :---- | :---| :---
 | FATHOM_DEBUG | `false` | If `true` will write more log messages.
 | FATHOM_SERVER_ADDR | `:8080` | The server address to listen on
+| FATHOM_GZIP | `false` | if `true` will HTTP content gzipped
 | FATHOM_DATABASE_DRIVER | `sqlite3` | The database driver to use: `mysql`, `postgres` or `sqlite3`
 | FATHOM_DATABASE_NAME |  | The name of the database to connect to (or path to database file if using sqlite3)
 | FATHOM_DATABASE_USER |  | Database connection user

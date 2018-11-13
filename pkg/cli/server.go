@@ -31,6 +31,12 @@ var serverCmd = cli.Command{
 			Name:   "lets-encrypt",
 		},
 
+		cli.BoolFlag{
+			EnvVar: "FATHOM_GZIP",
+			Name:   "gzip",
+			Usage:  "enable gzip compression",
+		},
+
 		cli.StringFlag{
 			EnvVar: "FATHOM_HOSTNAME",
 			Name:   "hostname",
@@ -55,6 +61,11 @@ func server(c *cli.Context) error {
 		h = handlers.LoggingHandler(log.StandardLogger().Writer(), h)
 	} else {
 		log.SetLevel(log.WarnLevel)
+	}
+
+	// set gzip compression if --gzip was passed
+	if c.Bool("gzip") {
+		h = handlers.CompressHandler(h)
 	}
 
 	// if addr looks like a number, prefix with :
