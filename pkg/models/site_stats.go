@@ -7,7 +7,7 @@ import (
 
 type SiteStats struct {
 	New            bool      `db:"-" json:"-" `
-	SiteID         int64     `db:"site_id"`
+	SiteID         int64     `db:"site_id" json:"-"`
 	Visitors       int64     `db:"visitors"`
 	Pageviews      int64     `db:"pageviews"`
 	Sessions       int64     `db:"sessions"`

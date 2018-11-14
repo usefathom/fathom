@@ -38,7 +38,7 @@ func (db *sqlstore) updateReferrerStats(s *models.ReferrerStats) error {
 	return err
 }
 
-func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time, endDate time.Time, limit int64) ([]*models.ReferrerStats, error) {
+func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.Time, endDate time.Time, limit int64) ([]*models.ReferrerStats, error) {
 	var result []*models.ReferrerStats
 
 	sql := `SELECT 
@@ -69,7 +69,7 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 
 func (db *sqlstore) GetAggregatedReferrerStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
-	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM referrer_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
+	query := db.Rebind(`SELECT SUM(pageviews) FROM referrer_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
 	err := db.Get(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return result, mapError(err)
 }

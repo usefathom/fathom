@@ -38,7 +38,7 @@ func (db *sqlstore) updatePageStats(s *models.PageStats) error {
 	return err
 }
 
-func (db *sqlstore) GetAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, limit int64) ([]*models.PageStats, error) {
+func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, limit int64) ([]*models.PageStats, error) {
 	var result []*models.PageStats
 	query := db.Rebind(`SELECT 
 		h.name AS hostname,
@@ -60,7 +60,7 @@ func (db *sqlstore) GetAggregatedPageStats(siteID int64, startDate time.Time, en
 
 func (db *sqlstore) GetAggregatedPageStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
-	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM page_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
+	query := db.Rebind(`SELECT SUM(pageviews) FROM page_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
 	err := db.Get(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return result, err
 }

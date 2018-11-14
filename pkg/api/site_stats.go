@@ -4,8 +4,8 @@ import (
 	"net/http"
 )
 
-// URL: /api/stats/site
-func (api *API) GetSiteStatsHandler(w http.ResponseWriter, r *http.Request) error {
+// URL: /api/sites/{id:[0-9]+}/stats/site/agg
+func (api *API) GetAggregatedSiteStatsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
 	result, err := api.database.GetAggregatedSiteStats(params.SiteID, params.StartDate, params.EndDate)
 	if err != nil {
@@ -14,7 +14,7 @@ func (api *API) GetSiteStatsHandler(w http.ResponseWriter, r *http.Request) erro
 	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
-// URL: /api/stats/site/realtime
+// URL: /api/sites/{id:[0-9]+}/stats/site/realtime
 func (api *API) GetSiteStatsRealtimeHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
 	result, err := api.database.GetRealtimeVisitorCount(params.SiteID)
@@ -24,10 +24,10 @@ func (api *API) GetSiteStatsRealtimeHandler(w http.ResponseWriter, r *http.Reque
 	return respond(w, http.StatusOK, envelope{Data: result})
 }
 
-// URL: /api/stats/site/groupby/day
-func (api *API) GetSiteStatsPerDayHandler(w http.ResponseWriter, r *http.Request) error {
+// URL: /api/sites/{id:[0-9]+}/stats/site
+func (api *API) GetSiteStatsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := api.database.GetSiteStatsPerDay(params.SiteID, params.StartDate, params.EndDate)
+	result, err := api.database.SelectSiteStats(params.SiteID, params.StartDate, params.EndDate)
 	if err != nil {
 		return err
 	}

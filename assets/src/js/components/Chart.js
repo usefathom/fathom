@@ -249,7 +249,7 @@ class Chart extends Component {
   fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${props.siteId}/stats/site/groupby/day?before=${props.before}&after=${props.after}`)
+    Client.request(`/sites/${props.siteId}/stats/site?before=${props.before}&after=${props.after}`)
       .then((d) => { 
         // request finished; check if params changed in the meantime
         if( this.paramsChanged(props, this.props)) {

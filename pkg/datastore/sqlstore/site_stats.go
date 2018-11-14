@@ -40,7 +40,7 @@ func (db *sqlstore) updateSiteStats(s *models.SiteStats) error {
 	return err
 }
 
-func (db *sqlstore) GetSiteStatsPerDay(siteID int64, startDate time.Time, endDate time.Time) ([]*models.SiteStats, error) {
+func (db *sqlstore) SelectSiteStats(siteID int64, startDate time.Time, endDate time.Time) ([]*models.SiteStats, error) {
 	results := []*models.SiteStats{}
 	query := db.Rebind(`SELECT *
 		FROM site_stats 

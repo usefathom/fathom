@@ -32,7 +32,7 @@ class Sidebar extends Component {
   fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${props.siteId}/stats/site?before=${props.before}&after=${props.after}`)
+    Client.request(`/sites/${props.siteId}/stats/site/agg?before=${props.before}&after=${props.after}`)
       .then((data) => { 
         // request finished; check if timestamp range is still the one user wants to see
         if(this.paramsChanged(props, this.props)) {

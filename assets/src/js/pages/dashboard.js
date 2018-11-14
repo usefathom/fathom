@@ -172,10 +172,10 @@ class Dashboard extends Component {
             <Chart siteId={state.site.id} before={state.before} after={state.after}  />
           </div>
           <div class="box box-pages">
-            <Table endpoint="stats/pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
+            <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
           </div>
           <div class="box box-referrers">
-            <Table endpoint="stats/referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
+            <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
           </div>
         </div>
 

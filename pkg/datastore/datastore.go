@@ -27,10 +27,10 @@ type Datastore interface {
 
 	// site stats
 	GetSiteStats(int64, time.Time) (*models.SiteStats, error)
-	GetSiteStatsPerDay(int64, time.Time, time.Time) ([]*models.SiteStats, error)
-	SaveSiteStats(*models.SiteStats) error
 	GetAggregatedSiteStats(int64, time.Time, time.Time) (*models.SiteStats, error)
+	SelectSiteStats(int64, time.Time, time.Time) ([]*models.SiteStats, error)
 	GetRealtimeVisitorCount(int64) (int64, error)
+	SaveSiteStats(*models.SiteStats) error
 
 	// pageviews
 	InsertPageviews([]*models.Pageview) error
@@ -42,13 +42,13 @@ type Datastore interface {
 	// page stats
 	GetPageStats(int64, time.Time, int64, int64) (*models.PageStats, error)
 	SavePageStats(*models.PageStats) error
-	GetAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
+	SelectAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
 	GetAggregatedPageStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// referrer stats
 	GetReferrerStats(int64, time.Time, int64, int64) (*models.ReferrerStats, error)
 	SaveReferrerStats(*models.ReferrerStats) error
-	GetAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
+	SelectAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
 	GetAggregatedReferrerStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// hostnames
