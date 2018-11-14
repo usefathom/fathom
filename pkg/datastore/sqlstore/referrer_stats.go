@@ -42,9 +42,9 @@ func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.T
 	var result []*models.ReferrerStats
 
 	sql := `SELECT 
-		h.name AS hostname,
-		p.name AS pathname,
-		COALESCE(groupname, '') AS groupname,  
+		MIN(h.name) AS hostname,
+		MIN(p.name) AS pathname,
+		COALESCE(MIN(groupname), '') AS groupname,  
 		SUM(visitors) AS visitors, 
 		SUM(pageviews) AS pageviews, 
 		SUM(pageviews*bounce_rate) / SUM(pageviews) AS bounce_rate, 
@@ -55,9 +55,9 @@ func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.T
 	WHERE site_id = ? AND ts >= ? AND ts <= ? `
 
 	if db.Config.Driver == "sqlite3" {
-		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), hostname || pathname ) `
+		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), hostname_id || pathname_id ) `
 	} else {
-		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), CONCAT(hostname, pathname) ) `
+		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), CONCAT(hostname_id, pathname_id) ) `
 	}
 	sql = sql + ` ORDER BY pageviews DESC LIMIT ?`
 
@@ -69,7 +69,7 @@ func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.T
 
 func (db *sqlstore) GetAggregatedReferrerStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
-	query := db.Rebind(`SELECT SUM(pageviews) FROM referrer_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
+	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM referrer_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
 	err := db.Get(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return result, mapError(err)
 }

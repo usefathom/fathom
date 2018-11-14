@@ -43,11 +43,11 @@ func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time,
 	query := db.Rebind(`SELECT 
 		h.name AS hostname,
 		p.name AS pathname,
-		MAX(SUM(pageviews), 1) AS pageviews, 
-		MAX(SUM(visitors), 1) AS visitors, 
+		SUM(pageviews) AS pageviews, 
+		SUM(visitors) AS visitors, 
 		SUM(entries) AS entries, 
-		COALESCE(SUM(entries*bounce_rate) / SUM(entries), 0.00) AS bounce_rate, 
-		SUM(pageviews*avg_duration) / SUM(pageviews) AS avg_duration 
+		COALESCE(SUM(entries*bounce_rate) / NULLIF(SUM(entries), 0), 0.00) AS bounce_rate, 
+		COALESCE(SUM(pageviews*avg_duration) / SUM(pageviews), 0.00) AS avg_duration 
 		FROM page_stats s 
 			LEFT JOIN hostnames h ON h.id = s.hostname_id 
 			LEFT JOIN pathnames p ON p.id = s.pathname_id 
@@ -60,7 +60,7 @@ func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time,
 
 func (db *sqlstore) GetAggregatedPageStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
-	query := db.Rebind(`SELECT SUM(pageviews) FROM page_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
+	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM page_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
 	err := db.Get(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return result, err
 }
