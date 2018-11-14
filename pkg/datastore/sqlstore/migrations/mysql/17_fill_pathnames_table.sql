@@ -1,6 +1,5 @@
 -- +migrate Up
-INSERT IGNORE INTO pathnames(name) SELECT DISTINCT(pathname) FROM daily_page_stats;
-INSERT IGNORE INTO pathnames(name) SELECT DISTINCT(pathname) FROM daily_referrer_stats;
+INSERT INTO pathnames(name) SELECT pathname FROM daily_page_stats UNION SELECT pathname FROM daily_referrer_stats;
 
 -- +migrate Down
 

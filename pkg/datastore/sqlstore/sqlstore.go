@@ -48,7 +48,7 @@ func New(c *Config) *sqlstore {
 		log.Printf("Connected to %s database: %s on %s", c.Driver, c.Dbname(), c.Host)
 	}
 
-	// run migrations
+	// apply database migrations (if any)
 	db.Migrate()
 
 	return db
