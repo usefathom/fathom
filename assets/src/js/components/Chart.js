@@ -80,7 +80,7 @@ class Chart extends Component {
 
     // instantiate JS Date objects
     data = data.map((d) => {
-      d.Date = new Date(d.Date)
+      d.Date = new Date(d.Date);
       return d
     })
   
@@ -98,7 +98,9 @@ class Chart extends Component {
 
       // grab data that falls between currentDate & nextDate
       for(let i=data.length-offset-1; i>=0; i--) {
-        if( data[i].Date > nextDate) {
+
+        // Because 9AM should be included in 9AM-10AM range, check for equality here
+        if( data[i].Date >= nextDate) {
           break;
         }
 
@@ -145,7 +147,10 @@ class Chart extends Component {
 
       // tooltip
     this.tip = d3.tip().attr('class', 'd3-tip').html((d) => {
-      let title = this.state.diffInDays <= 1 ? d.Date.toLocaleString() : d.Date.toLocaleDateString();
+      let title =  d.Date.toLocaleDateString();
+      if(this.state.diffInDays <= 1) {
+        title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
+      }
       return (`<div class="tip-heading">${title}</div>
       <div class="tip-content">
         <div class="tip-pageviews">
