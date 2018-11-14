@@ -2,6 +2,7 @@ package cli
 
 import (
 	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -20,7 +21,7 @@ var app *App
 
 func Run(v string) error {
 	// force all times in UTC, regardless of server timezone
-	os.Setenv("TZ", "")
+	time.Local = time.UTC
 
 	// setup CLI app
 	app = &App{cli.NewApp(), nil, nil}
