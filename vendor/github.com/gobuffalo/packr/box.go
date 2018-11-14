@@ -11,8 +11,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/gobuffalo/packd"
-	"github.com/markbates/oncer"
 	"github.com/pkg/errors"
 )
 
@@ -20,14 +18,6 @@ var (
 	// ErrResOutsideBox gets returned in case of the requested resources being outside the box
 	ErrResOutsideBox = errors.New("Can't find a resource outside the box")
 )
-
-var _ packd.Box = Box{}
-var _ packd.HTTPBox = Box{}
-var _ packd.Lister = Box{}
-var _ packd.Addable = Box{}
-var _ packd.Walkable = Box{}
-var _ packd.Finder = Box{}
-var _ packd.LegacyBox = Box{}
 
 // NewBox returns a Box that can be used to
 // retrieve files from either disk or the embedded
@@ -63,53 +53,36 @@ type Box struct {
 }
 
 // AddString converts t to a byteslice and delegates to AddBytes to add to b.data
-func (b Box) AddString(path string, t string) error {
+func (b Box) AddString(path string, t string) {
 	b.AddBytes(path, []byte(t))
-	return nil
 }
 
 // AddBytes sets t in b.data by the given path
-func (b Box) AddBytes(path string, t []byte) error {
+func (b Box) AddBytes(path string, t []byte) {
 	b.data[path] = t
-	return nil
 }
 
-// String is deprecated. Use Find instead
+// String of the file asked for or an empty string.
 func (b Box) String(name string) string {
-	oncer.Deprecate(0, "github.com/gobuffalo/packr#Box.String", "Use github.com/gobuffalo/packr#Box.FindString instead.")
-	bb, _ := b.FindString(name)
-	return bb
+	return string(b.Bytes(name))
 }
 
-// MustString is deprecated. Use FindString instead
-func (b Box) MustString(name string) (string, error) {
-	oncer.Deprecate(0, "github.com/gobuffalo/packr#Box.MustString", "Use github.com/gobuffalo/packr#Box.FindString instead.")
-	return b.FindString(name)
-}
-
-// Bytes is deprecated. Use Find instead
-func (b Box) Bytes(name string) []byte {
-	oncer.Deprecate(0, "github.com/gobuffalo/packr#Box.Bytes", "Use github.com/gobuffalo/packr#Box.Find instead.")
-	bb, _ := b.Find(name)
-	return bb
-}
-
-// Bytes is deprecated. Use Find instead
-func (b Box) MustBytes(name string) ([]byte, error) {
-	oncer.Deprecate(0, "github.com/gobuffalo/packr#Box.MustBytes", "Use github.com/gobuffalo/packr#Box.Find instead.")
-	return b.Find(name)
-}
-
-// FindString returns either the string of the requested
+// MustString returns either the string of the requested
 // file or an error if it can not be found.
-func (b Box) FindString(name string) (string, error) {
-	bb, err := b.Find(name)
+func (b Box) MustString(name string) (string, error) {
+	bb, err := b.MustBytes(name)
 	return string(bb), err
 }
 
-// Find returns either the byte slice of the requested
+// Bytes of the file asked for or an empty byte slice.
+func (b Box) Bytes(name string) []byte {
+	bb, _ := b.MustBytes(name)
+	return bb
+}
+
+// MustBytes returns either the byte slice of the requested
 // file or an error if it can not be found.
-func (b Box) Find(name string) ([]byte, error) {
+func (b Box) MustBytes(name string) ([]byte, error) {
 	f, err := b.find(name)
 	if err == nil {
 		bb := &bytes.Buffer{}
@@ -142,9 +115,8 @@ func (b Box) decompress(bb []byte) []byte {
 
 func (b Box) find(name string) (File, error) {
 	if bb, ok := b.data[name]; ok {
-		return packd.NewFile(name, bytes.NewReader(bb))
+		return newVirtualFile(name, bb), nil
 	}
-
 	if b.directories == nil {
 		b.indexDirectories()
 	}
@@ -157,13 +129,14 @@ func (b Box) find(name string) (File, error) {
 	// Absolute name is considered as relative to the box root
 	cleanName = strings.TrimPrefix(cleanName, "/")
 
+	// Try to get the resource from the box
 	if _, ok := data[b.Path]; ok {
 		if bb, ok := data[b.Path][cleanName]; ok {
 			bb = b.decompress(bb)
-			return packd.NewFile(cleanName, bytes.NewReader(bb))
+			return newVirtualFile(cleanName, bb), nil
 		}
 		if _, ok := b.directories[cleanName]; ok {
-			return packd.NewDir(cleanName)
+			return newVirtualDir(cleanName), nil
 		}
 		if filepath.Ext(cleanName) != "" {
 			// The Handler created by http.FileSystem checks for those errors and
@@ -222,10 +195,10 @@ func fileFor(p string, name string) (File, error) {
 		return nil, err
 	}
 	if fi.IsDir() {
-		return packd.NewDir(p)
+		return newVirtualDir(p), nil
 	}
 	if bb, err := ioutil.ReadFile(p); err == nil {
-		return packd.NewFile(name, bytes.NewReader(bb))
+		return newVirtualFile(name, bb), nil
 	}
 	return nil, os.ErrNotExist
 }

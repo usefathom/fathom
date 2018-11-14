@@ -10,16 +10,8 @@ To get an idea of the what and why of packr, please enjoy this short video: [htt
 
 ## Installation
 
-To install Packr utility
-
 ```text
-$ go get -u github.com/gobuffalo/packr/packr
-```
-
-To get the dependency
-
-```text
-$ go get -u github.com/gobuffalo/packr
+$ go get -u github.com/gobuffalo/packr/...
 ```
 
 ## Usage
@@ -32,11 +24,17 @@ The first step in using Packr is to create a new box. A box represents a folder 
 // set up a new box by giving it a (relative) path to a folder on disk:
 box := packr.NewBox("./templates")
 
+// Get the string representation of a file:
+html := box.String("index.html")
+
 // Get the string representation of a file, or an error if it doesn't exist:
-html, err := box.FindString("index.html")
+html, err := box.MustString("index.html")
+
+// Get the []byte representation of a file:
+html := box.Bytes("index.html")
 
 // Get the []byte representation of a file, or an error if it doesn't exist:
-html, err := box.FindBytes("index.html")
+html, err := box.MustBytes("index.html")
 ```
 
 ### What is a Box?
@@ -87,7 +85,7 @@ Packr uses the following resolution rules when looking for a file:
 
 Because Packr knows how to fall through to the file system, developers don't need to worry about constantly compiling their static files into a binary. They can work unimpeded.
 
-Packr takes file resolution a step further. When declaring a new box you use a relative path, `./templates`. When Packr receives this call it calculates out the absolute path to that directory. By doing this it means you can be guaranteed that Packr can find your files correctly, even if you're not running in the directory that the box was created in. This helps with the problem of testing, where Go changes the `pwd` for each package, making relative paths difficult to work with. This is not a problem when using Packr.
+Packr takes file resolution a step further. When declaring a new box you use a relative path, `./templates`. When Packr recieves this call it calculates out the absolute path to that directory. By doing this it means you can be guaranteed that Packr can find your files correctly, even if you're not running in the directory that the box was created in. This helps with the problem of testing, where Go changes the `pwd` for each package, making relative paths difficult to work with. This is not a problem when using Packr.
 
 ---
 
@@ -164,7 +162,7 @@ Linux/macOS/Windows (bash)
 mv ./project_name ./releases
 ```
 
-Windows (cmd):
+Windows (cmd): 
 
 ```cmd
 move ./project_name ./releases

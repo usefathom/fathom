@@ -5,14 +5,20 @@ github.com/gobuffalo/packr does not try to reinvent the wheel! Instead, it uses 
 Thank you to the following **GIANTS**:
 
 
-* [github.com/gobuffalo/envy](https://godoc.org/github.com/gobuffalo/envy)
-
-* [github.com/gobuffalo/packd](https://godoc.org/github.com/gobuffalo/packd)
-
-* [github.com/gobuffalo/packr](https://godoc.org/github.com/gobuffalo/packr)
-
-* [github.com/joho/godotenv](https://godoc.org/github.com/joho/godotenv)
-
-* [github.com/markbates/oncer](https://godoc.org/github.com/markbates/oncer)
-
 * [github.com/pkg/errors](https://godoc.org/github.com/pkg/errors)
+
+* [github.com/spf13/cobra](https://godoc.org/github.com/spf13/cobra)
+
+* [github.com/spf13/pflag](https://godoc.org/github.com/spf13/pflag)
+
+* [github.com/stretchr/testify/assert](https://godoc.org/github.com/stretchr/testify/assert)
+
+* [github.com/stretchr/testify/require](https://godoc.org/github.com/stretchr/testify/require)
+
+* [github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew](https://godoc.org/github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew)
+
+* [github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib](https://godoc.org/github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib)
+
+* [golang.org/x/net/context](https://godoc.org/golang.org/x/net/context)
+
+* [golang.org/x/sync/errgroup](https://godoc.org/golang.org/x/sync/errgroup)

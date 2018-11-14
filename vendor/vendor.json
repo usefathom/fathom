@@ -149,10 +149,10 @@
 			"revisionTime": "2018-11-11T19:53:23Z"
 		},
 		{
-			"checksumSHA1": "3VDhVe92VF1ZEx1W4RDOZNaEub8=",
+			"checksumSHA1": "GIaTlYXPnioIh7fkBEUnCfOBaPI=",
 			"path": "github.com/gobuffalo/packr",
-			"revision": "04ea9bbf60d4f0e275bcd529eac2d1055db7396b",
-			"revisionTime": "2018-11-12T17:37:45Z"
+			"revision": "5a2cbb54c4e7d482e3f518c56f1f86f133d5204f",
+			"revisionTime": "2018-09-24T03:11:23Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -245,10 +245,10 @@
 			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
-			"checksumSHA1": "0MwBZflejTXJSgMEGbFGpQPhcl4=",
+			"checksumSHA1": "N11d95+f/kzeTCb408INaeNcPCE=",
 			"path": "github.com/rubenv/sql-migrate",
-			"revision": "ba2c6a7295c59448dbc195cef2f41df5163b3892",
-			"revisionTime": "2018-11-06T12:12:04Z"
+			"revision": "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c",
+			"revisionTime": "2018-07-04T11:13:56Z"
 		},
 		{
 			"checksumSHA1": "rkHieYOGBsxJaDbC7vl/e4KSatw=",
