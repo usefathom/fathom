@@ -42,7 +42,10 @@ func (db *sqlstore) updateSiteStats(s *models.SiteStats) error {
 
 func (db *sqlstore) GetSiteStatsPerDay(siteID int64, startDate time.Time, endDate time.Time) ([]*models.SiteStats, error) {
 	results := []*models.SiteStats{}
-	query := db.Rebind(`SELECT * FROM site_stats WHERE site_id = ? AND ts >= ? AND ts <= ? ORDER BY ts DESC`)
+	query := db.Rebind(`SELECT *
+		FROM site_stats 
+		WHERE site_id = ? AND ts >= ? AND ts <= ? 
+		ORDER BY ts DESC`)
 	err := db.Select(&results, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return results, err
 }
@@ -50,11 +53,11 @@ func (db *sqlstore) GetSiteStatsPerDay(siteID int64, startDate time.Time, endDat
 func (db *sqlstore) GetAggregatedSiteStats(siteID int64, startDate time.Time, endDate time.Time) (*models.SiteStats, error) {
 	stats := &models.SiteStats{}
 	query := db.Rebind(`SELECT 
-		COALESCE(SUM(pageviews), 0) AS pageviews,
-		COALESCE(SUM(visitors), 0) AS visitors,
-		COALESCE(SUM(sessions), 0) AS sessions,
-		COALESCE(SUM(pageviews*avg_duration) / NULLIF(SUM(pageviews), 0), 0.00) AS avg_duration,
-		COALESCE(SUM(sessions*bounce_rate) / NULLIF(SUM(sessions), 0), 0.00) AS bounce_rate
+		SUM(pageviews) AS pageviews,
+		SUM(visitors) AS visitors,
+		SUM(sessions) AS sessions,
+		SUM(pageviews*avg_duration) / SUM(pageviews) AS avg_duration,
+		COALESCE(SUM(sessions*bounce_rate) / SUM(sessions), 0.00) AS bounce_rate
 	 FROM site_stats 
 	 WHERE site_id = ? AND ts >= ? AND ts <= ? LIMIT 1`)
 	err := db.Get(stats, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))

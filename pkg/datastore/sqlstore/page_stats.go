@@ -43,11 +43,11 @@ func (db *sqlstore) GetAggregatedPageStats(siteID int64, startDate time.Time, en
 	query := db.Rebind(`SELECT 
 		h.name AS hostname,
 		p.name AS pathname,
-		SUM(pageviews) AS pageviews, 
-		SUM(visitors) AS visitors, 
+		MAX(SUM(pageviews), 1) AS pageviews, 
+		MAX(SUM(visitors), 1) AS visitors, 
 		SUM(entries) AS entries, 
-		COALESCE(SUM(entries*bounce_rate) / NULLIF(SUM(entries), 0), 0.00) AS bounce_rate, 
-		COALESCE(SUM(pageviews*avg_duration) / SUM(pageviews), 0.00) AS avg_duration 
+		COALESCE(SUM(entries*bounce_rate) / SUM(entries), 0.00) AS bounce_rate, 
+		SUM(pageviews*avg_duration) / SUM(pageviews) AS avg_duration 
 		FROM page_stats s 
 			LEFT JOIN hostnames h ON h.id = s.hostname_id 
 			LEFT JOIN pathnames p ON p.id = s.pathname_id 

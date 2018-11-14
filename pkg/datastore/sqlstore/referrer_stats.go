@@ -47,8 +47,8 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 		COALESCE(groupname, '') AS groupname,  
 		SUM(visitors) AS visitors, 
 		SUM(pageviews) AS pageviews, 
-		COALESCE(SUM(pageviews*NULLIF(bounce_rate, 0)) / SUM(pageviews), 0.00) AS bounce_rate, 
-		COALESCE(SUM(pageviews*avg_duration) / SUM(pageviews), 0.00) AS avg_duration 
+		SUM(pageviews*bounce_rate) / SUM(pageviews) AS bounce_rate, 
+		SUM(pageviews*avg_duration) / SUM(pageviews) AS avg_duration 
 	FROM referrer_stats s
 		LEFT JOIN hostnames h ON h.id = s.hostname_id 
 		LEFT JOIN pathnames p ON p.id = s.pathname_id 
