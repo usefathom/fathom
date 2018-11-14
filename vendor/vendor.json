@@ -131,16 +131,28 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "k9izYoyobR8Upb3Yjsw9htgE/Mk=",
+			"checksumSHA1": "ANMYkuezaW7Pl/JJBiEs0KLzTOg=",
 			"path": "github.com/go-sql-driver/mysql",
-			"revision": "99ff426eb706cffe92ff3d058e168b278cabf7c7",
-			"revisionTime": "2018-07-19T07:19:42Z"
+			"revision": "369b5d6e5e8e108ed4ae2f2b1607d444b3807dfb",
+			"revisionTime": "2018-11-13T02:38:49Z"
 		},
 		{
-			"checksumSHA1": "miq6rtrLoaiB6tqIWAp+gmaPVGk=",
+			"checksumSHA1": "neHnlLCthYNy8yvSWjeFA4JNzrE=",
+			"path": "github.com/gobuffalo/envy",
+			"revision": "910ef88c9d32c6e779231577dfcf6ed8959bea2f",
+			"revisionTime": "2018-11-10T02:19:45Z"
+		},
+		{
+			"checksumSHA1": "W+fA3n3Dj+UNznwcRVmVR5fV/2E=",
+			"path": "github.com/gobuffalo/packd",
+			"revision": "b2e760a5f0ff7ebdac92dc43c2af310351dbc03f",
+			"revisionTime": "2018-11-11T19:53:23Z"
+		},
+		{
+			"checksumSHA1": "3VDhVe92VF1ZEx1W4RDOZNaEub8=",
 			"path": "github.com/gobuffalo/packr",
-			"revision": "147bee9cde84aeca6693d1b1aedc595298f24d5b",
-			"revisionTime": "2018-07-22T18:22:49Z"
+			"revision": "04ea9bbf60d4f0e275bcd529eac2d1055db7396b",
+			"revisionTime": "2018-11-12T17:37:45Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -173,10 +185,10 @@
 			"revisionTime": "2018-06-06T15:52:11Z"
 		},
 		{
-			"checksumSHA1": "F45m6rdNc9pgzu5vWN1n1Rwbk4A=",
+			"checksumSHA1": "SVzanxaLYK43jeNWQqNs5P+uhow=",
 			"path": "github.com/jmoiron/sqlx",
-			"revision": "0dae4fefe7c0e190f7b5a78dac28a1c82cc8d849",
-			"revisionTime": "2018-06-14T18:06:43Z"
+			"revision": "82935fac6c1a317907c8f43ed3f7f85ea844a78b",
+			"revisionTime": "2018-10-24T16:34:19Z"
 		},
 		{
 			"checksumSHA1": "bXFrevmVL5Q2EwYlRHlPihxvAJA=",
@@ -197,10 +209,10 @@
 			"revisionTime": "2018-05-17T19:45:57Z"
 		},
 		{
-			"checksumSHA1": "s6eyIXpJ7VAU06FM27GcEBM/5lo=",
+			"checksumSHA1": "xxLSo5tKtXc7jGrR70yoEfza8Cw=",
 			"path": "github.com/lib/pq",
-			"revision": "90697d60dd844d5ef6ff15135d0203f65d2f53b8",
-			"revisionTime": "2018-05-23T17:54:26Z"
+			"revision": "9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee",
+			"revisionTime": "2018-10-16T16:26:27Z"
 		},
 		{
 			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
@@ -209,10 +221,16 @@
 			"revisionTime": "2018-05-23T17:54:26Z"
 		},
 		{
-			"checksumSHA1": "tTx90HHLD8waQ+mlpd7kRzp9kyY=",
+			"checksumSHA1": "jCc5Bvs2cAR/ODaRM5aMffO6qEA=",
+			"path": "github.com/markbates/oncer",
+			"revision": "05fccaae8fc423476d98fd4c3e4699ba0fbbde48",
+			"revisionTime": "2018-10-14T19:46:34Z"
+		},
+		{
+			"checksumSHA1": "/a5Jwxjp4yLm6YcsEnxNHch6O70=",
 			"path": "github.com/mattn/go-sqlite3",
-			"revision": "b3511bfdd742af558b54eb6160aca9446d762a19",
-			"revisionTime": "2018-07-18T00:29:43Z"
+			"revision": "eed79b86572f203cc92e92048ba06b56a8ca06e8",
+			"revisionTime": "2018-11-09T09:53:04Z"
 		},
 		{
 			"checksumSHA1": "Byaa390AhImHSUlSXz14tOCRBHo=",
@@ -227,10 +245,10 @@
 			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
-			"checksumSHA1": "N11d95+f/kzeTCb408INaeNcPCE=",
+			"checksumSHA1": "0MwBZflejTXJSgMEGbFGpQPhcl4=",
 			"path": "github.com/rubenv/sql-migrate",
-			"revision": "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c",
-			"revisionTime": "2018-07-04T11:13:56Z"
+			"revision": "ba2c6a7295c59448dbc195cef2f41df5163b3892",
+			"revisionTime": "2018-11-06T12:12:04Z"
 		},
 		{
 			"checksumSHA1": "rkHieYOGBsxJaDbC7vl/e4KSatw=",

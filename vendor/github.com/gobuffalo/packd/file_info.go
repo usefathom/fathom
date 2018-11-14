@@ -1,9 +1,11 @@
-package packr
+package packd
 
 import (
 	"os"
 	"time"
 )
+
+var _ os.FileInfo = fileInfo{}
 
 type fileInfo struct {
 	Path     string

@@ -280,7 +280,7 @@ func (a AssetMigrationSource) FindMigrations() ([]*Migration, error) {
 // packr.Box that we need.
 type PackrBox interface {
 	List() []string
-	Bytes(name string) []byte
+	Find(name string) ([]byte, error)
 }
 
 // Migrations from a packr box.
@@ -313,7 +313,10 @@ func (p PackrMigrationSource) FindMigrations() ([]*Migration, error) {
 		}
 
 		if strings.HasSuffix(name, ".sql") {
-			file := p.Box.Bytes(item)
+			file, err := p.Box.Find(item)
+			if err != nil {
+				return nil, err
+			}
 
 			migration, err := ParseMigration(name, bytes.NewReader(file))
 			if err != nil {
@@ -647,7 +650,8 @@ func getMigrationDbMap(db *sql.DB, dialect string) (*gorp.DbMap, error) {
 		err := db.QueryRow("SELECT NOW()").Scan(&out)
 		if err != nil {
 			if err.Error() == "sql: Scan error on column index 0: unsupported driver -> Scan pair: []uint8 -> *time.Time" ||
-				err.Error() == "sql: Scan error on column index 0: unsupported Scan, storing driver.Value type []uint8 into type *time.Time" {
+				err.Error() == "sql: Scan error on column index 0: unsupported Scan, storing driver.Value type []uint8 into type *time.Time" ||
+				err.Error() == "sql: Scan error on column index 0, name \"NOW()\": unsupported Scan, storing driver.Value type []uint8 into type *time.Time" {
 				return nil, errors.New(`Cannot parse dates.
 
 Make sure that the parseTime option is supplied to your database connection.
