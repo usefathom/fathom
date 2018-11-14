@@ -23,10 +23,6 @@ func (api *API) Routes() *mux.Router {
 
 	r.Handle("/api/sites/{id:[0-9]+}/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler))).Methods(http.MethodGet)
 	r.Handle("/api/sites/{id:[0-9]+}/stats/site/groupby/day", api.Authorize(HandlerFunc(api.GetSiteStatsPerDayHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/pageviews", api.Authorize(HandlerFunc(api.GetSiteStatsPageviewsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/visitors", api.Authorize(HandlerFunc(api.GetSiteStatsVisitorsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/duration", api.Authorize(HandlerFunc(api.GetSiteStatsDurationHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/bounces", api.Authorize(HandlerFunc(api.GetSiteStatsBouncesHandler))).Methods(http.MethodGet)
 	r.Handle("/api/sites/{id:[0-9]+}/stats/site/realtime", api.Authorize(HandlerFunc(api.GetSiteStatsRealtimeHandler))).Methods(http.MethodGet)
 
 	r.Handle("/api/sites/{id:[0-9]+}/stats/pages", api.Authorize(HandlerFunc(api.GetPageStatsHandler))).Methods(http.MethodGet)

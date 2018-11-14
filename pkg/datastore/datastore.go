@@ -30,11 +30,6 @@ type Datastore interface {
 	GetSiteStatsPerDay(int64, time.Time, time.Time) ([]*models.SiteStats, error)
 	SaveSiteStats(*models.SiteStats) error
 	GetAggregatedSiteStats(int64, time.Time, time.Time) (*models.SiteStats, error)
-	GetTotalSiteViews(int64, time.Time, time.Time) (int64, error)
-	GetTotalSiteVisitors(int64, time.Time, time.Time) (int64, error)
-	GetTotalSiteSessions(int64, time.Time, time.Time) (int64, error)
-	GetAverageSiteDuration(int64, time.Time, time.Time) (float64, error)
-	GetAverageSiteBounceRate(int64, time.Time, time.Time) (float64, error)
 	GetRealtimeVisitorCount(int64) (int64, error)
 
 	// pageviews

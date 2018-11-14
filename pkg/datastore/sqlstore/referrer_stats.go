@@ -9,8 +9,8 @@ import (
 
 func (db *sqlstore) GetReferrerStats(siteID int64, date time.Time, hostnameID int64, pathnameID int64) (*models.ReferrerStats, error) {
 	stats := &models.ReferrerStats{New: false}
-	query := db.Rebind(`SELECT * FROM daily_referrer_stats WHERE site_id = ? AND date = ? AND hostname_id = ? AND pathname_id = ? LIMIT 1`)
-	err := db.Get(stats, query, siteID, date.Format("2006-01-02"), hostnameID, pathnameID)
+	query := db.Rebind(`SELECT * FROM referrer_stats WHERE site_id = ? AND ts = ? AND hostname_id = ? AND pathname_id = ? LIMIT 1`)
+	err := db.Get(stats, query, siteID, date.Format(DATE_FORMAT), hostnameID, pathnameID)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoResults
 	}
@@ -27,14 +27,14 @@ func (db *sqlstore) SaveReferrerStats(s *models.ReferrerStats) error {
 }
 
 func (db *sqlstore) insertReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`INSERT INTO daily_referrer_stats(visitors, pageviews, bounce_rate, avg_duration, known_durations, groupname, site_id, hostname_id, pathname_id, date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`INSERT INTO referrer_stats(visitors, pageviews, bounce_rate, avg_duration, known_durations, groupname, site_id, hostname_id, pathname_id, ts) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format(DATE_FORMAT))
 	return err
 }
 
 func (db *sqlstore) updateReferrerStats(s *models.ReferrerStats) error {
-	query := db.Rebind(`UPDATE daily_referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ?, groupname = ? WHERE site_id = ? AND hostname_id = ? AND pathname_id = ? AND date = ?`)
-	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format("2006-01-02"))
+	query := db.Rebind(`UPDATE referrer_stats SET visitors = ?, pageviews = ?, bounce_rate = ?, avg_duration = ?, known_durations = ?, groupname = ? WHERE site_id = ? AND hostname_id = ? AND pathname_id = ? AND ts = ?`)
+	_, err := db.Exec(query, s.Visitors, s.Pageviews, s.BounceRate, s.AvgDuration, s.KnownDurations, s.Group, s.SiteID, s.HostnameID, s.PathnameID, s.Date.Format(DATE_FORMAT))
 	return err
 }
 
@@ -49,10 +49,10 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 		SUM(pageviews) AS pageviews, 
 		COALESCE(SUM(pageviews*NULLIF(bounce_rate, 0)) / SUM(pageviews), 0.00) AS bounce_rate, 
 		COALESCE(SUM(pageviews*avg_duration) / SUM(pageviews), 0.00) AS avg_duration 
-	FROM daily_referrer_stats s
+	FROM referrer_stats s
 		LEFT JOIN hostnames h ON h.id = s.hostname_id 
 		LEFT JOIN pathnames p ON p.id = s.pathname_id 
-	WHERE site_id = ? AND date >= ? AND date <= ? `
+	WHERE site_id = ? AND ts >= ? AND ts <= ? `
 
 	if db.Config.Driver == "sqlite3" {
 		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), hostname || pathname ) `
@@ -63,13 +63,13 @@ func (db *sqlstore) GetAggregatedReferrerStats(siteID int64, startDate time.Time
 
 	query := db.Rebind(sql)
 
-	err := db.Select(&result, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), limit)
+	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), limit)
 	return result, mapError(err)
 }
 
 func (db *sqlstore) GetAggregatedReferrerStatsPageviews(siteID int64, startDate time.Time, endDate time.Time) (int64, error) {
 	var result int64
-	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM daily_referrer_stats WHERE site_id = ? AND date >= ? AND date <= ?`)
-	err := db.Get(&result, query, siteID, startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+	query := db.Rebind(`SELECT COALESCE(SUM(pageviews), 0) FROM referrer_stats WHERE site_id = ? AND ts >= ? AND ts <= ?`)
+	err := db.Get(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT))
 	return result, mapError(err)
 }

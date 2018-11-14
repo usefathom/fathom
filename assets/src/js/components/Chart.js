@@ -8,27 +8,14 @@ import * as d3 from 'd3';
 import 'd3-transition';
 d3.tip = require('d3-tip');
 
-const formatDay = d3.timeFormat("%e"),
-    formatMonth = d3.timeFormat("%b"),
-    formatMonthDay = d3.timeFormat("%b %e"),
-    formatYear = d3.timeFormat("%Y");
+const 
+  formatHour = d3.timeFormat("%H"),
+  formatDay = d3.timeFormat("%e"),
+  formatMonth = d3.timeFormat("%b"),
+  formatMonthDay = d3.timeFormat("%b %e"),
+  formatYear = d3.timeFormat("%Y");
 
 const t = d3.transition().duration(600).ease(d3.easeQuadOut);
-
-// tooltip
-const tip = d3.tip().attr('class', 'd3-tip').html((d) => (`
-  <div class="tip-heading">${d.Date.toLocaleDateString()}</div>
-  <div class="tip-content">
-    <div class="tip-pageviews">
-      <div class="tip-number">${d.Pageviews}</div>
-      <div class="tip-metric">Pageviews</div>
-    </div>
-    <div class="tip-visitors">
-      <div class="tip-number">${d.Visitors}</div>
-      <div class="tip-metric">Visitors</div>
-    </div>
-  </div>
-`));
 
 function padZero(s) {
   return s < 10 ? "0" + s : s;
@@ -36,6 +23,10 @@ function padZero(s) {
 
 function timeFormatPicker(n) {
   return function(d, i) {
+    if( n === 24 ) {
+      return formatHour(d);
+    }
+    
     if(d.getDate() === 1) {
       return d.getMonth() === 0 ? formatYear(d) : formatMonth(d) 
     } 
@@ -50,46 +41,6 @@ function timeFormatPicker(n) {
   }
 }
 
-function prepareData(startUnix, endUnix, data) {
-  // add timezone offset back in to get local start date
-  const timezoneOffset = (new Date()).getTimezoneOffset() * 60;
-  let startDate = new Date((startUnix + timezoneOffset) * 1000);
-  let endDate = new Date((endUnix + timezoneOffset) * 1000);
-  let datamap = [];
-  let newData = [];
-
-   // create keyed array for quick date access
-  let length = data.length;
-  let d, dateParts, date, key;
-  for(var i=0;i<length;i++) {
-    d = data[i];
-    // replace date with actual date object & store in datamap
-    dateParts = d.Date.split('T')[0].split('-');
-    date = new Date(dateParts[0], dateParts[1]-1, dateParts[2], 0, 0, 0)
-    key = date.getFullYear() + "-" + padZero(date.getMonth() + 1) + "-" + padZero(date.getDate());
-    d.Date = date;
-    datamap[key] = d;
-  }
-
-  // make sure we have values for each date
-  let currentDate = startDate;
-  while(currentDate < endDate) {
-    key = currentDate.getFullYear() + "-" + padZero(currentDate.getMonth() + 1) + "-" + padZero(currentDate.getDate());
-    data = datamap[key] ? datamap[key] : {
-        "Pageviews": 0,
-        "Visitors": 0,
-        "Date": new Date(currentDate),
-     };
-
-    newData.push(data);  
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
- return newData;
-}
-
-
-
 class Chart extends Component {
   constructor(props) {
     super(props)
@@ -97,6 +48,8 @@ class Chart extends Component {
     this.state = {
       loading: false,
       data: [],
+      diffInDays: 1,
+      hoursPerTick: 24,
     }
   }
 
@@ -104,6 +57,13 @@ class Chart extends Component {
     if(!this.paramsChanged(this.props, newProps)) {
       return;
     }
+    
+    let daysDiff = Math.round((newProps.before-newProps.after)/24/60/60);
+    let stepHours = daysDiff > 1 ? 24 : 1;
+    this.setState({
+      diffInDays: daysDiff,
+      hoursPerTick: stepHours,
+    })
 
     this.fetchData(newProps)
   }
@@ -111,6 +71,60 @@ class Chart extends Component {
   paramsChanged(o, n) {
     return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
   }
+
+  @bind
+  prepareData(data) {
+    let startDate = new Date(this.props.after * 1000);
+    let endDate = new Date(this.props.before * 1000);
+    let newData = [];
+
+    // instantiate JS Date objects
+    data = data.map((d) => {
+      d.Date = new Date(d.Date);
+      return d
+    })
+  
+    // make sure we have values for each date (so 0 value for gaps)
+    let currentDate = startDate, nextDate, tick, offset = 0;
+    while(currentDate < endDate) {
+      tick = {
+          "Pageviews": 0,
+          "Visitors": 0,
+          "Date": new Date(currentDate),
+      };
+
+      nextDate = new Date(currentDate)
+      nextDate.setHours(nextDate.getHours() + this.state.hoursPerTick);
+
+      // grab data that falls between currentDate & nextDate
+      for(let i=data.length-offset-1; i>=0; i--) {
+
+        // Because 9AM should be included in 9AM-10AM range, check for equality here
+        if( data[i].Date >= nextDate) {
+          break;
+        }
+
+         // increment offset so subsequent dates can skip first X items in array
+         offset += 1;
+
+        // continue to next item in array if we're still below our target date
+        if( data[i].Date < currentDate) {
+          continue;
+        }
+
+        // add to tick data
+        tick.Pageviews += data[i].Pageviews;
+        tick.Visitors += data[i].Visitors;
+      }
+
+      newData.push(tick);  
+      currentDate = nextDate;
+    }
+
+  return newData;
+  }
+
+
   
   @bind
   prepareChart() {
@@ -130,18 +144,30 @@ class Chart extends Component {
 
     this.x = d3.scaleBand().range([0, this.innerWidth]).padding(0.1)
     this.y = d3.scaleLinear().range([this.innerHeight, 0])
-    this.ctx.call(tip)
+
+      // tooltip
+    this.tip = d3.tip().attr('class', 'd3-tip').html((d) => {
+      let title =  d.Date.toLocaleDateString();
+      if(this.state.diffInDays <= 1) {
+        title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
+      }
+      return (`<div class="tip-heading">${title}</div>
+      <div class="tip-content">
+        <div class="tip-pageviews">
+          <div class="tip-number">${d.Pageviews}</div>
+          <div class="tip-metric">Pageviews</div>
+        </div>
+        <div class="tip-visitors">
+          <div class="tip-number">${d.Visitors}</div>
+          <div class="tip-metric">Visitors</div>
+        </div>
+      </div>`)});
+    this.ctx.call(this.tip)
   }
 
   @bind
   redrawChart() {
     let data = this.state.data;
-
-    // hide chart & bail if we're trying to show less than 1 day worth of data
-    this.base.parentNode.style.display = data.length <= 1 ? 'none' : '';
-    if(data.length <= 1) {
-      return;
-    }
 
     if( ! this.ctx ) {
       this.prepareChart()
@@ -156,8 +182,8 @@ class Chart extends Component {
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
 
-     // hide all "day" ticks if we're watching more than 100 days of data
-    if(data.length > 100) {
+     // hide all "day" ticks if we're watching more than 31 days of data
+    if(data.length > 31) {
       xAxis.tickValues(data.filter(d => d.Date.getDate() === 1).map(d => d.Date))
     }
 
@@ -214,7 +240,7 @@ class Chart extends Component {
       .attr('y', (d) => y(d.Visitors))   
       
     // add event listeners for tooltips
-    days.on('mouseover', tip.show).on('mouseout', tip.hide)   
+    days.on('mouseover', this.tip.show).on('mouseout', this.tip.hide)   
   }
 
   @bind
@@ -228,7 +254,7 @@ class Chart extends Component {
           return;
         }
 
-        let chartData = prepareData(props.after, props.before, d);
+        let chartData = this.prepareData(d);
         this.setState({ 
           loading: false,
           data: chartData,

@@ -10,16 +10,6 @@ const padZero = function(n){return n<10? '0'+n:''+n;}
 
 function getNow() {
   let now = new Date()
-  let tzOffset = now.getTimezoneOffset()  * 60 * 1000;
-
-  // if we're ahead of UTC, stick to UTC's "now"
-  // this is ugly but a sad necessity for now because we store and aggregate statistics using UTC dates (without time data)
-  // For those ahead of UTC, "today" will always be empty if they're checking early on in their day
-  // see https://github.com/usefathom/fathom/issues/134
-  if (tzOffset < 0) {
-    now.setTime(now.getTime() + tzOffset )
-  }
-
   return now
 }
 
@@ -116,8 +106,8 @@ class DatePicker extends Component {
 
     // create unix timestamps from local date objects
     let before, after;
-    before = Math.round((+endDate) / 1000) - endDate.getTimezoneOffset() * 60;
-    after = Math.round((+startDate) / 1000) - startDate.getTimezoneOffset() * 60;
+    before = Math.round((+endDate) / 1000);
+    after = Math.round((+startDate) / 1000);
 
     this.setState({
       period: period || '',
