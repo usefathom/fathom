@@ -21,9 +21,9 @@ function padZero(s) {
   return s < 10 ? "0" + s : s;
 }
 
-function timeFormatPicker(n) {
+function timeFormatPicker(n, days) {
   return function(d, i) {
-    if( n === 24 ) {
+    if( days <= 1 ) {
       return formatHour(d);
     }
     
@@ -148,9 +148,11 @@ class Chart extends Component {
       // tooltip
     this.tip = d3.tip().attr('class', 'd3-tip').html((d) => {
       let title =  d.Date.toLocaleDateString();
+
       if(this.state.diffInDays <= 1) {
         title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
       }
+
       return (`<div class="tip-heading">${title}</div>
       <div class="tip-content">
         <div class="tip-pageviews">
@@ -177,12 +179,12 @@ class Chart extends Component {
     let innerWidth = this.innerWidth
     let innerHeight = this.innerHeight
     const max = d3.max(data, d => d.Pageviews); 
-    let x = this.x.domain(data.map((d) => d.Date))
+    let x = this.x.domain(data.map(d => d.Date))
     let y = this.y.domain([0, max*1.1])
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
-    let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length))
+    let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length, this.state.diffInDays))
 
-     // hide all "day" ticks if we're watching more than 31 days of data
+     // hide all "day" ticks if we're watching more than 31 items of data
     if(data.length > 31) {
       xAxis.tickValues(data.filter(d => d.Date.getDate() === 1).map(d => d.Date))
     }
@@ -191,7 +193,7 @@ class Chart extends Component {
     graph.selectAll('*').remove()
 
     // add text indicating there's no data yet
-    if(max===0) {
+    if( max === 0 ) {
       graph.append('text')
         .attr('class', 'muted')
         .attr("text-anchor", "middle")
@@ -210,23 +212,23 @@ class Chart extends Component {
       .attr('transform', 'translate(0,' + innerHeight + ')')
       .call(xAxis)
     
-    // add data for each day that we have something to show for
-    let barWidth = 0.5 * x.bandwidth()
-    let days = graph.selectAll('.day')
+    // add data for each tick that we have something to show for
+    let barWidth = x.bandwidth()
+    let ticks = graph.selectAll('.item')
       .data(data.filter(d => d.Pageviews > 0 || d.Visitors > 0)).enter()
       .append('g')
-      .attr('class', 'day') 
+      .attr('class', 'item') 
       
-    let pageviews = days.append('rect')
+    let pageviews = ticks.append('rect')
       .attr('class', 'bar-pageviews') 
       .attr('x', d => x(d.Date))
       .attr('width', barWidth)
       .attr("y", innerHeight)
       .attr("height", 0)
       
-    let visitors = days.append('rect')
+    let visitors = ticks.append('rect')
       .attr('class', 'bar-visitors')
-      .attr('x', d => x(d.Date) + barWidth)
+      .attr('x', d => x(d.Date) )
       .attr('width', barWidth)
       .attr("y", innerHeight)
       .attr("height", 0)
@@ -240,7 +242,7 @@ class Chart extends Component {
       .attr('y', (d) => y(d.Visitors))   
       
     // add event listeners for tooltips
-    days.on('mouseover', this.tip.show).on('mouseout', this.tip.hide)   
+    ticks.on('mouseover', this.tip.show).on('mouseout', this.tip.hide)   
   }
 
   @bind
