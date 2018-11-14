@@ -9,7 +9,7 @@ CREATE TABLE page_stats(
    bounce_rate FLOAT NOT NULL,
    known_durations INTEGER NOT NULL DEFAULT 0,
    avg_duration FLOAT NOT NULL,
-   ts TIMESTAMP NOT NULL
+   ts TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 INSERT INTO page_stats 
     SELECT site_id, hostname_id, pathname_id, pageviews, visitors, entries, bounce_rate, known_durations, avg_duration, (date || ' 00:00:00')::timestamp
