@@ -166,6 +166,8 @@
 
     let url = config.trackerUrl || findTrackerUrl()
     let img = document.createElement('img');
+    img.setAttribute('alt', '');
+    img.setAttribute('aria-hidden', 'true');
     img.src = url + stringifyObject(d);
     img.addEventListener('load', function() {
       let now = new Date();
