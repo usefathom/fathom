@@ -12,9 +12,9 @@ builds:
   goarch:
     - amd64
     - 386
-    - arm64    
-  env:
-    - CGO_ENABLED=0  
+    - arm64   
+  ldflags: 
+    - -extldflags "-static"
   hooks:
     pre: packr
     post: packr clean
