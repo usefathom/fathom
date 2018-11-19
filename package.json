@@ -16,10 +16,7 @@
     "gulp-cache-bust": "^1.4.0",
     "gulp-concat": "^2.6.1",
     "gulp-if": "^2.0.2",
-    "gulp-rename": "^1.2.2",
     "gulp-uglify": "^3.0.0",
-    "gulp-util": "^3.0.7",
-    "node-sass": "^4.9.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^2.0.0"
   },
