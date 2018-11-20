@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -19,7 +21,8 @@ type App struct {
 // CLI application
 var app *App
 
-func Run(v string) error {
+// Run parses the CLI arguments & run application command
+func Run(version string, commit string, buildDate string) error {
 	// force all times in UTC, regardless of server timezone
 	time.Local = time.UTC
 
@@ -27,7 +30,7 @@ func Run(v string) error {
 	app = &App{cli.NewApp(), nil, nil}
 	app.Name = "Fathom"
 	app.Usage = "simple & transparent website analytics"
-	app.Version = v
+	app.Version = fmt.Sprintf("%v, commit %v, built at %v", strings.TrimPrefix(version, "v"), commit, buildDate)
 	app.HelpName = "fathom"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -45,7 +48,7 @@ func Run(v string) error {
 	}
 
 	if len(os.Args) < 2 || os.Args[1] != "--version" {
-		log.Printf("%s %s", app.Name, app.Version)
+		log.Printf("%s version %s", app.Name, app.Version)
 	}
 
 	err := app.Run(os.Args)

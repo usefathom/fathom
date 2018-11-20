@@ -1,5 +1,5 @@
 EXECUTABLE := fathom
-LDFLAGS += -extldflags "-static" -X "main.version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')" -X "main.commit=$(shell git rev-parse HEAD)"
+LDFLAGS += -extldflags "-static" -X "main.version=$(shell git describe --tags --always | sed 's/-/+/' | sed 's/^v//')" -X "main.commit=$(shell git rev-parse HEAD)"  -X "main.date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
 MAIN_PKG := ./main.go
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 ASSET_SOURCES ?= $(shell find assets/src/. -type f)
