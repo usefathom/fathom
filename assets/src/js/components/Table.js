@@ -103,7 +103,7 @@ class Table extends Component {
     )}) : <div class="table-row"><div class="cell main-col">Nothing here, yet.</div></div>;
 
   // pagination row: only show when total # of results doesn't fit in one table page  
-  const pagination = state.total > state.limit ? (
+  const pagination = tableRows.length == state.limit || state.offset >= state.limit ? (
     <div class="row pag">
       <a href="javascript:void(0)" onClick={this.paginatePrev} class="back">‹</a>
       <a href="javascript:void(0)" onClick={this.paginateNext} class="next right">›</a>
