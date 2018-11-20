@@ -6,7 +6,7 @@ import (
 
 func (api *API) GetAggregatedReferrerStatsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := api.database.SelectAggregatedReferrerStats(params.SiteID, params.StartDate, params.EndDate, params.Limit)
+	result, err := api.database.SelectAggregatedReferrerStats(params.SiteID, params.StartDate, params.EndDate, params.Offset, params.Limit)
 	if err != nil {
 		return err
 	}

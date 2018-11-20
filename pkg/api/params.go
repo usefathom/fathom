@@ -12,6 +12,7 @@ import (
 // Params defines the commonly used API parameters
 type Params struct {
 	SiteID    int64
+	Offset    int64
 	Limit     int64
 	StartDate time.Time
 	EndDate   time.Time
@@ -22,6 +23,7 @@ func GetRequestParams(r *http.Request) *Params {
 	params := &Params{
 		SiteID:    0,
 		Limit:     20,
+		Offset:    0,
 		StartDate: time.Now(),
 		EndDate:   time.Now().AddDate(0, 0, -7),
 	}
@@ -49,6 +51,12 @@ func GetRequestParams(r *http.Request) *Params {
 	if q.Get("limit") != "" {
 		if limit, err := strconv.ParseInt(q.Get("limit"), 10, 64); err == nil && limit > 0 {
 			params.Limit = limit
+		}
+	}
+
+	if q.Get("offset") != "" {
+		if offset, err := strconv.ParseInt(q.Get("offset"), 10, 64); err == nil && offset > 0 {
+			params.Offset = offset
 		}
 	}
 

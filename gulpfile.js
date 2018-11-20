@@ -69,7 +69,7 @@ gulp.task('default', gulp.series('app-js', 'tracker-js', 'css', 'html', 'img', '
 
 gulp.task('watch', gulp.series('default', function() {
   gulp.watch(['./assets/src/js/**/*.js'], gulp.parallel('app-js', 'tracker-js') );
-  gulp.watch(['./assets/src/sass/**/**/*.scss'], gulp.parallel( 'css') );
+  gulp.watch(['./assets/src/css/**/*.css'], gulp.parallel( 'css') );
   gulp.watch(['./assets/src/**/*.html'], gulp.parallel( 'html') );
   gulp.watch(['./assets/src/img/**/*'], gulp.parallel( 'img') );
   gulp.watch(['./assets/src/fonts/**/*'], gulp.parallel( 'fonts') );

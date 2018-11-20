@@ -38,7 +38,7 @@ func (db *sqlstore) updatePageStats(s *models.PageStats) error {
 	return err
 }
 
-func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, limit int64) ([]*models.PageStats, error) {
+func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, offset int64, limit int64) ([]*models.PageStats, error) {
 	var result []*models.PageStats
 	query := db.Rebind(`SELECT 
 		h.name AS hostname,
@@ -53,8 +53,8 @@ func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time,
 			LEFT JOIN pathnames p ON p.id = s.pathname_id 
 		WHERE site_id = ? AND ts >= ? AND ts <= ? 
 		GROUP BY hostname, pathname 
-		ORDER BY pageviews DESC LIMIT ?`)
-	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), limit)
+		ORDER BY pageviews DESC LIMIT ?, ?`)
+	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), offset, limit)
 	return result, err
 }
 

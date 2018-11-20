@@ -7,7 +7,7 @@ import (
 // URL: /api/sites/{id:[0-9]+}/stats/pages/agg
 func (api *API) GetAggregatedPageStatsHandler(w http.ResponseWriter, r *http.Request) error {
 	params := GetRequestParams(r)
-	result, err := api.database.SelectAggregatedPageStats(params.SiteID, params.StartDate, params.EndDate, params.Limit)
+	result, err := api.database.SelectAggregatedPageStats(params.SiteID, params.StartDate, params.EndDate, params.Offset, params.Limit)
 	if err != nil {
 		return err
 	}

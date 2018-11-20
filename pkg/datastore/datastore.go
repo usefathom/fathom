@@ -42,13 +42,13 @@ type Datastore interface {
 	// page stats
 	GetPageStats(int64, time.Time, int64, int64) (*models.PageStats, error)
 	SavePageStats(*models.PageStats) error
-	SelectAggregatedPageStats(int64, time.Time, time.Time, int64) ([]*models.PageStats, error)
+	SelectAggregatedPageStats(int64, time.Time, time.Time, int64, int64) ([]*models.PageStats, error)
 	GetAggregatedPageStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// referrer stats
 	GetReferrerStats(int64, time.Time, int64, int64) (*models.ReferrerStats, error)
 	SaveReferrerStats(*models.ReferrerStats) error
-	SelectAggregatedReferrerStats(int64, time.Time, time.Time, int64) ([]*models.ReferrerStats, error)
+	SelectAggregatedReferrerStats(int64, time.Time, time.Time, int64, int64) ([]*models.ReferrerStats, error)
 	GetAggregatedReferrerStatsPageviews(int64, time.Time, time.Time) (int64, error)
 
 	// hostnames
