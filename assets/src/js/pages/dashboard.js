@@ -160,11 +160,9 @@ class Dashboard extends Component {
         </nav>
       </header>
 
-      <section class="section">
-        <nav>
-          <DatePicker onChange={this.changeDateRange} />
-        </nav>
+      <DatePicker onChange={this.changeDateRange} />
 
+      <section class="section">
         <div class="boxes">
           <Sidebar siteId={state.site.id} before={state.before} after={state.after} />
 

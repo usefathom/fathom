@@ -8,57 +8,69 @@ import classNames from 'classnames';
 const defaultPeriod = 'last-7-days';
 const padZero = function(n){return n<10? '0'+n:''+n;}
 
-function getNow() {
-  let now = new Date()
-  return now
-}
+let now = new Date();
+window.setInterval(() => {
+  now = new Date();
+}, 60000 );
 
 // today, yesterday, this week, last 7 days, last 30 days
 const availablePeriods = {
-  'today': {
-    label: 'Today',
+  '1w': {
+    label: '1w',
     start: function() {
-      const now = getNow();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    },
-    end: function() {
-      const now = getNow();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    },
- },
-  'last-7-days': {
-    label: 'Last 7 days',
-    start: function() {
-      const now = getNow();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate()-6);
     },
     end: function() {
-      const now = getNow();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
-  'last-30-days': {
-    label: 'Last 30 days',
+ '4w': {
+    label: '4w',
     start: function() {
-      const now = getNow();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-29);
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate()-4*7+1);
     },
     end: function() {
-      const now = getNow();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     },
  },
-  'this-year': {
-    label: 'This year',
+ 'mtd': {
+    label: 'Mtd',
     start: function() {
-      const now = getNow();
-      return new Date(now.getFullYear(), 0, 1);
+      return new Date(now.getFullYear(),  now.getMonth(), 1);
     },
     end: function() {
-      const now = getNow();
-      return new Date(this.start().getFullYear() + 1, 0, 0);
+      return new Date(now.getFullYear(), now.getMonth()+1, 0);
     },
  },
+'qtd': {
+  label: 'Qtd',
+  start: function() {
+    return new Date(now.getFullYear(), Math.ceil(now.getMonth() / 3), 1);
+
+  },
+  end: function() {
+    let start = this.start();
+    return new Date(start.getFullYear(), start.getMonth() + 3, 0);
+  },
+ },
+ 'ytd': {
+  label: 'Ytd',
+  start: function() {
+    return new Date(now.getFullYear(), 0, 1);
+  },
+  end: function() {
+    return new Date(now.getFullYear()+1, 0, 0);
+  },
+ },
+ 'all': {
+  label: 'All',
+  start: function() {
+    return new Date(2018, 6, 1);
+  },
+  end: function() {
+    return new Date();
+  },
+ }
 }
 
 class DatePicker extends Component {
@@ -86,7 +98,7 @@ class DatePicker extends Component {
   @bind
   updateDatesFromPeriod(period) {
     if(typeof(availablePeriods[period]) !== "object") {
-      return;
+      period = "1w";
     }
     let p = availablePeriods[period];
     this.setDateRange(p.start(), p.end(), period);
@@ -125,7 +137,7 @@ class DatePicker extends Component {
 
         window.localStorage.setItem('period', this.state.period)
         window.history.replaceState(this.state, null, `#!${this.state.period}`)
-      }, 2)
+      }, 5)
     }
   }
 
@@ -188,22 +200,30 @@ class DatePicker extends Component {
     const links = Object.keys(availablePeriods).map((id) => {
       let p = availablePeriods[id];
       return (
-        <li class={classNames({ active: id == state.period })}>
+        <li class={classNames({ current: id == state.period })}>
           <a href="javascript:void(0);" data-value={id} onClick={this.setPeriod}>{p.label}</a>
         </li>
       );
     });
 
     return (
-      <ul class="date-nav cf">
-        {links}
-        <li class="custom">
-          <Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} />
-          <span style="margin: 0 8px"> to </span>
-          <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  />
-        </li>
-      </ul>
+      <nav class="date-nav sm ac">
+        <ul>
+          {links}
+        </ul>
+        <ul>
+          <li><Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} /> <span>›</span> <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  /></li>
+        </ul>
+      </nav>
     )
+
+    /*
+    <ul>
+        <li class="current"><a href="#">Daily</a></li>
+        <li><a href="#">Monthly</a></li>
+    </ul>
+    */
+
   }
 }
 
