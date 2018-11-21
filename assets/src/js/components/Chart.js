@@ -58,7 +58,7 @@ class Chart extends Component {
       return;
     }
     
-    let daysDiff = Math.round((newProps.before-newProps.after)/24/60/60);
+    let daysDiff = Math.round((newProps.dateRange[1]-newProps.dateRange[0])/24/60/60);
     let stepHours = daysDiff > 1 ? 24 : 1;
     this.setState({
       diffInDays: daysDiff,
@@ -69,13 +69,13 @@ class Chart extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
+    return o.siteId != n.siteId || o.dateRange != n.dateRange;
   }
 
   @bind
   prepareData(data) {
-    let startDate = new Date(this.props.after * 1000);
-    let endDate = new Date(this.props.before * 1000);
+    let startDate = this.props.dateRange[0];
+    let endDate = this.props.dateRange[1];
     let newData = [];
 
     // instantiate JS Date objects
@@ -249,7 +249,10 @@ class Chart extends Component {
   fetchData(props) {
     this.setState({ loading: true })
 
-    Client.request(`/sites/${props.siteId}/stats/site?before=${props.before}&after=${props.after}`)
+    let before = props.dateRange[1]/1000;
+    let after = props.dateRange[0]/1000;
+
+    Client.request(`/sites/${props.siteId}/stats/site?before=${before}&after=${after}`)
       .then((d) => { 
         // request finished; check if params changed in the meantime
         if( this.paramsChanged(props, this.props)) {

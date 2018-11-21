@@ -25,8 +25,7 @@ class Dashboard extends Component {
     super(props)
 
     this.state = {
-      before: 0,
-      after: 0,
+      dateRange: [],
       isPublic: document.cookie.indexOf('auth') < 0,
       site: defaultSite,
       sites: [],
@@ -68,8 +67,7 @@ class Dashboard extends Component {
   @bind
   changeDateRange(s) {
     this.setState({ 
-      before: s.before, 
-      after: s.after,
+      dateRange: [ s.startDate, s.endDate ],
       period: s.period,
     })
   }
@@ -147,7 +145,7 @@ class Dashboard extends Component {
 
     return (
   <div class="app-page ">
-     <div class={`rapper animated fadeInUp delayed_02s ${state.period} ` + classNames({ ltday: state.before - state.after < 86400 })}>
+     <div class={`rapper animated fadeInUp delayed_02s ${state.period} ` + classNames({ ltday: state.dateRange[1] - state.dateRange[0] < 86400 })}>
 
       <header class="section">
         <nav class="main-nav">
@@ -164,16 +162,16 @@ class Dashboard extends Component {
 
       <section class="section">
         <div class="boxes">
-          <Sidebar siteId={state.site.id} before={state.before} after={state.after} />
+          <Sidebar siteId={state.site.id} dateRange={state.dateRange} />
 
           <div class="box box-graph">
-            <Chart siteId={state.site.id} before={state.before} after={state.after}  />
+            <Chart siteId={state.site.id} dateRange={state.dateRange}  />
           </div>
           <div class="box box-pages">
-            <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} />
+            <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} />
           </div>
           <div class="box box-referrers">
-            <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} before={state.before} after={state.after} showHostname="true" />
+            <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} showHostname="true" />
           </div>
         </div>
 

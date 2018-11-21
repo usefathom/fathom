@@ -25,14 +25,16 @@ class Sidebar extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
+    return o.siteId != n.siteId || o.dateRange != n.dateRange;
   }
 
   @bind
   fetchData(props) {
     this.setState({ loading: true })
+    let before = props.dateRange[1]/1000;
+    let after = props.dateRange[0]/1000;
 
-    Client.request(`/sites/${props.siteId}/stats/site/agg?before=${props.before}&after=${props.after}`)
+    Client.request(`/sites/${props.siteId}/stats/site/agg?before=${before}&after=${after}`)
       .then((data) => { 
         // request finished; check if timestamp range is still the one user wants to see
         if(this.paramsChanged(props, this.props)) {

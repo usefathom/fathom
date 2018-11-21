@@ -32,14 +32,16 @@ class Table extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.before != n.before || o.after != n.after;
+    return o.siteId != n.siteId || o.dateRange != n.dateRange;
   }
   
   @bind
   fetchData(props) {
     this.setState({ loading: true });
+    let before = props.dateRange[1]/1000;
+    let after = props.dateRange[0]/1000;
 
-    Client.request(`/sites/${props.siteId}/stats/${props.endpoint}/agg?before=${props.before}&after=${props.after}&offset=${this.state.offset}&limit=${this.state.limit}`)
+    Client.request(`/sites/${props.siteId}/stats/${props.endpoint}/agg?before=${before}&after=${after}&offset=${this.state.offset}&limit=${this.state.limit}`)
       .then((d) => {
          // request finished; check if timestamp range is still the one user wants to see
         if( this.paramsChanged(props, this.props) ) {
@@ -53,7 +55,7 @@ class Table extends Component {
       });
 
      // fetch totals too
-     Client.request(`/sites/${props.siteId}/stats/${props.endpoint}/agg/pageviews?before=${props.before}&after=${props.after}`)
+     Client.request(`/sites/${props.siteId}/stats/${props.endpoint}/agg/pageviews?before=${before}&after=${after}`)
       .then((d) => {
         this.setState({
           total: d

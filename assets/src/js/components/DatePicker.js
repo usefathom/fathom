@@ -45,7 +45,8 @@ const availablePeriods = {
 'qtd': {
   label: 'Qtd',
   start: function() {
-    return new Date(now.getFullYear(), Math.ceil(now.getMonth() / 3), 1);
+    let qs = Math.ceil((now.getMonth()+1) / 3) * 3 - 3;
+    return new Date(now.getFullYear(), qs, 1);
 
   },
   end: function() {
@@ -79,10 +80,8 @@ class DatePicker extends Component {
 
     this.state = {
       period: window.location.hash.substring(2) || window.localStorage.getItem('period') || defaultPeriod,
-      before: 0, // UTC timestamp
-      after: 0, // UTC timestamp
-      startDate: null, // local date object
-      endDate: null, // local date object
+      startDate: now,
+      endDate: now,
     }    
     this.updateDatesFromPeriod(this.state.period)
   }
@@ -105,28 +104,21 @@ class DatePicker extends Component {
   }
 
   @bind
-  setDateRange(startDate, endDate, period) {
+  setDateRange(start, end, period) {
     // don't update state if start > end. user may be busy picking dates.
     // TODO: show error
-    if(startDate > endDate) {
+    if(start > end) {
       return;
     }
 
     // include start & end day by forcing time
-    startDate.setHours(0, 0, 0);
-    endDate.setHours(23, 59, 59);
-
-    // create unix timestamps from local date objects
-    let before, after;
-    before = Math.round((+endDate) / 1000);
-    after = Math.round((+startDate) / 1000);
-
+    start.setHours(0, 0, 0);
+    end.setHours(23, 59, 59);
+   
     this.setState({
       period: period || '',
-      startDate: startDate,
-      endDate: endDate,
-      before: before,
-      after: after,
+      startDate: start,
+      endDate: end,
     });
 
     // use slight delay for updating rest of application to allow this function to be called again
