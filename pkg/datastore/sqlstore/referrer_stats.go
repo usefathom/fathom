@@ -59,11 +59,11 @@ func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.T
 	} else {
 		sql = sql + `GROUP BY COALESCE(NULLIF(groupname, ''), CONCAT(hostname_id, pathname_id) ) `
 	}
-	sql = sql + ` ORDER BY pageviews DESC LIMIT ?, ?`
+	sql = sql + ` ORDER BY pageviews DESC LIMIT ? OFFSET ?`
 
 	query := db.Rebind(sql)
 
-	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), offset, limit)
+	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), limit, offset)
 	return result, mapError(err)
 }
 

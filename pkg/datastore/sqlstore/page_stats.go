@@ -53,8 +53,8 @@ func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time,
 			LEFT JOIN pathnames p ON p.id = s.pathname_id 
 		WHERE site_id = ? AND ts >= ? AND ts <= ? 
 		GROUP BY hostname, pathname 
-		ORDER BY pageviews DESC LIMIT ?, ?`)
-	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), offset, limit)
+		ORDER BY pageviews DESC LIMIT ? OFFSET ?`)
+	err := db.Select(&result, query, siteID, startDate.Format(DATE_FORMAT), endDate.Format(DATE_FORMAT), limit, offset)
 	return result, err
 }
 
