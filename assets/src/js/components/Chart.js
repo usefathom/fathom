@@ -3,7 +3,7 @@
 import { h, Component } from 'preact';
 import Client from '../lib/client.js';
 import { bind } from 'decko';
-
+import * as numbers from '../lib/numbers.js';
 import * as d3 from 'd3';
 import 'd3-transition';
 d3.tip = require('d3-tip');
@@ -181,7 +181,7 @@ class Chart extends Component {
     const max = d3.max(data, d => d.Pageviews); 
     let x = this.x.domain(data.map(d => d.Date))
     let y = this.y.domain([0, max*1.1])
-    let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth)
+    let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth).tickFormat((v, i) => numbers.formatPretty(v))
     let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length, this.state.diffInDays))
 
      // hide all "day" ticks if we're watching more than 31 items of data
