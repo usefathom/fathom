@@ -54,7 +54,7 @@ nav.date-nav ul { margin: 0 8px 0 0; border-radius: 4px; background: #e8ecee; pa
 nav.date-nav li { display: inline-block; padding: 0; }
 nav.date-nav li a,
 nav.date-nav li input { margin-right: 8px; color: #98a0a6; }
-nav.date-nav li input { background: transparent; border: 0; font-size: inherit; padding: 0; cursor: pointer; display: inline-block; width: 75px; }
+nav.date-nav li input { background: transparent; border: 0; font-size: inherit; padding: 0; cursor: pointer; display: inline-block; width: 9.8ch; min-width: 60px; text-align: center; }
 nav.date-nav li.current a { color: #533feb; }
 nav.date-nav li a:hover { color: #2b2d2f; }
 nav.date-nav li span { margin-right: 8px; }
