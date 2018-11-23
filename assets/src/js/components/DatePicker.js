@@ -82,6 +82,7 @@ class DatePicker extends Component {
       period: window.location.hash.substring(2) || window.localStorage.getItem('period') || defaultPeriod,
       startDate: now,
       endDate: now,
+      groupBy: 'day',
     }    
     this.updateDatesFromPeriod(this.state.period)
   }
@@ -106,7 +107,6 @@ class DatePicker extends Component {
   @bind
   setDateRange(start, end, period) {
     // don't update state if start > end. user may be busy picking dates.
-    // TODO: show error
     if(start > end) {
       return;
     }
@@ -114,11 +114,16 @@ class DatePicker extends Component {
     // include start & end day by forcing time
     start.setHours(0, 0, 0);
     end.setHours(23, 59, 59);
+
+    let diff =  Math.round((end - start) / 1000 / 60 / 60 / 24)
+    let groupBy = diff >= 31 ? 'month' : 'day';
    
     this.setState({
       period: period || '',
       startDate: start,
       endDate: end,
+      diff: diff,
+      groupBy: groupBy,
     });
 
     // use slight delay for updating rest of application to allow this function to be called again
@@ -188,8 +193,16 @@ class DatePicker extends Component {
     }
   }
 
+  @bind
+  setGroupBy(e) {
+    this.setState({
+      groupBy: e.target.getAttribute('data-value')
+    })
+    this.props.onChange(this.state);
+  }
+
   render(props, state) {
-    const links = Object.keys(availablePeriods).map((id) => {
+    const presets = Object.keys(availablePeriods).map((id) => {
       let p = availablePeriods[id];
       return (
         <li class={classNames({ current: id == state.period })}>
@@ -201,10 +214,15 @@ class DatePicker extends Component {
     return (
       <nav class="date-nav sm ac">
         <ul>
-          {links}
+          {presets}
         </ul>
         <ul>
           <li><Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} /> <span>›</span> <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  /></li>
+        </ul>
+        <ul>
+         {state.diff < 30 ? (<li class={classNames({ current: 'hour' === state.groupBy })}><a href="#" data-value="hour" onClick={this.setGroupBy}>Hourly</a></li>) : ''}
+         <li class={classNames({ current: 'day' === state.groupBy })}><a href="#" data-value="day" onClick={this.setGroupBy}>Daily</a></li>
+         {state.diff >= 30 ? (<li class={classNames({ current: 'month' === state.groupBy })}><a href="#" data-value="month" onClick={this.setGroupBy}>Monthly</a></li>) : ''}
         </ul>
       </nav>
     )

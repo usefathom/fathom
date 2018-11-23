@@ -26,6 +26,7 @@ class Dashboard extends Component {
 
     this.state = {
       dateRange: [],
+      groupBy: 'day',
       isPublic: document.cookie.indexOf('auth') < 0,
       site: defaultSite,
       sites: [],
@@ -69,6 +70,7 @@ class Dashboard extends Component {
     this.setState({ 
       dateRange: [ s.startDate, s.endDate ],
       period: s.period,
+      groupBy: s.groupBy,
     })
   }
 
@@ -165,7 +167,7 @@ class Dashboard extends Component {
           <Sidebar siteId={state.site.id} dateRange={state.dateRange} />
 
           <div class="box box-graph">
-            <Chart siteId={state.site.id} dateRange={state.dateRange}  />
+            <Chart siteId={state.site.id} dateRange={state.dateRange} tickStep={state.groupBy} />
           </div>
           <div class="box box-pages">
             <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} />

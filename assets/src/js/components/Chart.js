@@ -8,32 +8,38 @@ import * as d3 from 'd3';
 import 'd3-transition';
 d3.tip = require('d3-tip');
 
-const 
-  formatHour = d3.timeFormat("%H"),
-  formatDay = d3.timeFormat("%e"),
-  formatMonth = d3.timeFormat("%b"),
-  formatMonthDay = d3.timeFormat("%b %e"),
-  formatYear = d3.timeFormat("%Y");
+const formatMonth = d3.timeFormat("%b"),
+  formatMonthDay = d3.timeFormat("%b %e");
 
 const t = d3.transition().duration(600).ease(d3.easeQuadOut);
+const xTickFormat = (len) => {
+  return {
+    hour: (d, i) => {
+      if(len <= 24 && d.getHours() == 0 || d.getHours() == 12) {
+        return d.getHours() + ":00";
+      }
 
-function timeFormatPicker(n, days) {
-  return function(d, i) {
-    if( days <= 1 ) {
-      return formatHour(d);
+      if(i === 0 || i === len-1) {
+        return formatMonthDay(d);
+      }
+
+      return '';
+    },
+
+    day: (d, i) => {
+      if(i === 0 || i === len-1) {
+        return formatMonthDay(d);
+      }
+
+      return '';
+    },
+    month: (d, i) => {
+      if(len>24) {
+        return d.getFullYear();
+      }
+
+      return d.getMonth() === 0 ? d.getFullYear() : formatMonth(d);
     }
-    
-    if(d.getDate() === 1) {
-      return d.getMonth() === 0 ? formatYear(d) : formatMonth(d) 
-    } 
-
-    if(i === 0) {
-      return formatMonthDay(d)
-    } else if(n < 32) {
-      return formatDay(d);
-    }
-
-    return '';
   }
 }
 
@@ -44,38 +50,34 @@ class Chart extends Component {
     this.state = {
       loading: false,
       data: [],
+      chartData: [],
       diffInDays: 1,
-      hoursPerTick: 24,
     }
   }
 
-  componentWillReceiveProps(newProps, newState) {
-    if(!this.paramsChanged(this.props, newProps)) {
-      return;
-    }
-    
+  componentWillReceiveProps(newProps) {
     let daysDiff = Math.round((newProps.dateRange[1]-newProps.dateRange[0])/1000/24/60/60);
-    let stepHours = daysDiff > 1 ? 24 : 1;
     this.setState({
       diffInDays: daysDiff,
-      hoursPerTick: stepHours,
+      tickStep: newProps.tickStep,
     })
 
-    this.fetchData(newProps)
-  }
-
-  paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.dateRange != n.dateRange;
+    if( newProps.siteId != this.props.siteId || newProps.dateRange[0] != this.props.dateRange[0] || newProps.dateRange[1] != this.props.dateRange[1] ) {
+      this.fetchData(newProps)
+    } else if (newProps.tickStep != this.props.tickStep) {
+      this.chartData()
+      this.redrawChart()
+    }
   }
 
   @bind
-  prepareData(data) {
+  chartData() {
     let startDate = this.props.dateRange[0];
     let endDate = this.props.dateRange[1];
     let newData = [];
 
     // instantiate JS Date objects
-    data = data.map((d) => {
+    let data = this.state.data.map(d => {
       d.Date = new Date(d.Date);
       return d
     })
@@ -90,11 +92,23 @@ class Chart extends Component {
       };
 
       nextDate = new Date(currentDate)
-      nextDate.setHours(nextDate.getHours() + this.state.hoursPerTick);
+
+      switch(this.state.tickStep) {
+        case 'hour':
+        nextDate.setHours(nextDate.getHours() + 1);
+        break;
+
+        case 'day':
+        nextDate.setDate(nextDate.getDate() + 1);
+        break;
+
+        case 'month':
+        nextDate.setMonth(nextDate.getMonth() + 1);
+        break;
+      }
 
       // grab data that falls between currentDate & nextDate
       for(let i=data.length-offset-1; i>=0; i--) {
-
         // Because 9AM should be included in 9AM-10AM range, check for equality here
         if( data[i].Date >= nextDate) {
           break;
@@ -117,10 +131,10 @@ class Chart extends Component {
       currentDate = nextDate;
     }
 
-  return newData;
+    this.setState({
+      chartData: newData,
+    })
   }
-
-
   
   @bind
   prepareChart() {
@@ -145,9 +159,9 @@ class Chart extends Component {
     this.tip = d3.tip().attr('class', 'd3-tip').html((d) => {
       let title =  d.Date.toLocaleDateString();
 
-      if(this.state.diffInDays <= 1) {
+      if(this.state.tickStep === 'hour') {
         title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
-      }
+      } 
 
       return (`<div class="tip-heading">${title}</div>
       <div class="tip-content">
@@ -165,7 +179,7 @@ class Chart extends Component {
 
   @bind
   redrawChart() {
-    let data = this.state.data;
+    let data = this.state.chartData;
 
     if( ! this.ctx ) {
       this.prepareChart()
@@ -177,14 +191,12 @@ class Chart extends Component {
     const max = d3.max(data, d => d.Pageviews); 
     let x = this.x.domain(data.map(d => d.Date))
     let y = this.y.domain([0, max*1.1])
-    let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth).tickFormat((v, i) => numbers.formatPretty(v))
-    let xAxis = d3.axisBottom().scale(x).tickFormat(timeFormatPicker(data.length, this.state.diffInDays))
+    let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth).tickFormat(v => numbers.formatPretty(v))
+    let xAxis = d3.axisBottom().scale(x).tickFormat(xTickFormat(data.length)[this.state.tickStep])
 
-     // hide all "day" ticks if we're watching more than 31 items of data
-    if(data.length > 31) {
-      xAxis.tickValues(data.filter(d => d.Date.getDate() === 1).map(d => d.Date))
-    } else if(data.length > 15) {
-      xAxis.tickValues(data.filter((d, i) => d.Date.getDate() === 1 || i === 0 || i == Math.floor((data.length-1)/2)|| i === data.length-1).map(d => d.Date))
+    // only show first and last tick if we have more than 24 ticks to show
+    if(data.length > 24) {
+      xAxis.tickValues(data.map(d => d.Date).filter((d, i) => i === 0 || i === data.length-1))
     }
 
     // empty previous graph
@@ -251,17 +263,14 @@ class Chart extends Component {
     let after = props.dateRange[0]/1000;
 
     Client.request(`/sites/${props.siteId}/stats/site?before=${before}&after=${after}`)
-      .then((d) => { 
-        // request finished; check if params changed in the meantime
-        if( this.paramsChanged(props, this.props)) {
-          return;
-        }
+      .then(data => { 
 
-        let chartData = this.prepareData(d);
         this.setState({ 
           loading: false,
-          data: chartData,
+          data: data,
         })
+
+        this.chartData()
         this.redrawChart()
       })
   }

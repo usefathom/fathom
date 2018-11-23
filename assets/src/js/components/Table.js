@@ -32,7 +32,7 @@ class Table extends Component {
   }
 
   paramsChanged(o, n) {
-    return o.siteId != n.siteId || o.dateRange != n.dateRange;
+    return o.siteId !== n.siteId || o.dateRange[0] != n.dateRange[0] || o.dateRange[1] != n.dateRange[1];
   }
   
   @bind
