@@ -17,10 +17,6 @@ const
 
 const t = d3.transition().duration(600).ease(d3.easeQuadOut);
 
-function padZero(s) {
-  return s < 10 ? "0" + s : s;
-}
-
 function timeFormatPicker(n, days) {
   return function(d, i) {
     if( days <= 1 ) {
@@ -58,7 +54,7 @@ class Chart extends Component {
       return;
     }
     
-    let daysDiff = Math.round((newProps.dateRange[1]-newProps.dateRange[0])/24/60/60);
+    let daysDiff = Math.round((newProps.dateRange[1]-newProps.dateRange[0])/1000/24/60/60);
     let stepHours = daysDiff > 1 ? 24 : 1;
     this.setState({
       diffInDays: daysDiff,
@@ -187,6 +183,8 @@ class Chart extends Component {
      // hide all "day" ticks if we're watching more than 31 items of data
     if(data.length > 31) {
       xAxis.tickValues(data.filter(d => d.Date.getDate() === 1).map(d => d.Date))
+    } else if(data.length > 15) {
+      xAxis.tickValues(data.filter((d, i) => d.Date.getDate() === 1 || i === 0 || i == Math.floor((data.length-1)/2)|| i === data.length-1).map(d => d.Date))
     }
 
     // empty previous graph
