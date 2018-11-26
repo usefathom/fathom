@@ -186,6 +186,15 @@ func shouldCollect(r *http.Request) bool {
 		return false
 	}
 
+	// discard if required query vars are missing
+	requiredQueryVars := []string{"id", "h", "p"}
+	q := r.URL.Query()
+	for _, k := range requiredQueryVars {
+		if q.Get(k) == "" {
+			return false
+		}
+	}
+
 	return true
 }
 
