@@ -12,35 +12,49 @@ const formatMonth = d3.timeFormat("%b"),
   formatMonthDay = d3.timeFormat("%b %e");
 
 const t = d3.transition().duration(600).ease(d3.easeQuadOut);
-const xTickFormat = (len) => {
-  return {
-    hour: (d, i) => {
-      if(len <= 24 && d.getHours() == 0 || d.getHours() == 12) {
-        return d.getHours() + ":00";
-      }
 
-      if(i === 0 || i === len-1) {
+function xTickFormat(tickStep, n) {
+  let formatters = {
+    hour: (d, i) => {
+      if(i === 0 || i === n-1) {
         return formatMonthDay(d);
       }
+
+      if(n <= 24 && d.getHours() === 0 || d.getHours() === 12) {
+        return d.getHours() + ":00";
+      }     
 
       return '';
     },
 
-    day: (d, i) => {
-      if(i === 0 || i === len-1) {
-        return formatMonthDay(d);
+    day: (d, i, o) => {
+      if( i === 0 || i === n-1) {
+       return formatMonthDay(d);
       }
 
       return '';
     },
     month: (d, i) => {
-      if(len>24) {
+      if(n>28) {
         return d.getFullYear();
       }
 
       return d.getMonth() === 0 ? d.getFullYear() : formatMonth(d);
     }
   }
+
+  return formatters[tickStep];
+}
+
+
+const incrementers = {
+  'hour': d => d.setHours(d.getHours() + 1),
+  'day': d => d.setDate(d.getDate() + 1),
+  'month': d => d.setMonth(d.getMonth() + 1)
+}
+
+function incrementDate(date, incr) {
+  return incrementers[incr](date);
 }
 
 class Chart extends Component {
@@ -98,20 +112,7 @@ class Chart extends Component {
       };
 
       nextDate = new Date(currentDate)
-
-      switch(this.state.tickStep) {
-        case 'hour':
-        nextDate.setHours(nextDate.getHours() + 1);
-        break;
-
-        case 'day':
-        nextDate.setDate(nextDate.getDate() + 1);
-        break;
-
-        case 'month':
-        nextDate.setMonth(nextDate.getMonth() + 1);
-        break;
-      }
+      nextDate = incrementDate(nextDate, this.state.tickStep)
 
       // grab data that falls between currentDate & nextDate
       for(let i=data.length-offset-1; i>=0; i--) {
@@ -163,21 +164,25 @@ class Chart extends Component {
 
       // tooltip
     this.tip = d3.tip().attr('class', 'd3-tip').html((d) => {
-      let title =  d.Date.toLocaleDateString();
+      let title;
 
       if(this.state.tickStep === 'hour') {
-        title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
-      } 
+        title = `${d.Date.toLocaleDateString()} ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
+      } else if(this.state.tickStep === 'day' ) {
+        title = `${d.Date.toLocaleDateString()} (${d3.timeFormat("%a")(d.Date)})`
+      } else {
+        title = d3.timeFormat("%B %Y")(d.Date)
+      }
 
       return (`
       <div class="tip-heading">${title}</div>
       <div class="tip-content">
         <div class="tip-pageviews">
-          <div class="tip-number">${d.Pageviews}</div>
+          <div class="tip-number">${numbers.formatPretty(d.Pageviews)}</div>
           <div class="tip-metric">Pageviews</div>
         </div>
         <div class="tip-visitors">
-          <div class="tip-number">${d.Visitors}</div>
+          <div class="tip-number">${numbers.formatPretty(d.Visitors)}</div>
           <div class="tip-metric">Visitors</div>
         </div>
       </div>`
@@ -201,11 +206,13 @@ class Chart extends Component {
     let x = this.x.domain(data.map(d => d.Date))
     let y = this.y.domain([0, max*1.1])
     let yAxis = d3.axisLeft().scale(y).ticks(3).tickSize(-innerWidth).tickFormat(v => numbers.formatPretty(v))
-    let xAxis = d3.axisBottom().scale(x).tickFormat(xTickFormat(data.length)[this.state.tickStep])
+    let xAxis = d3.axisBottom().scale(x).tickFormat(xTickFormat(this.state.tickStep, data.length))
 
-    // only show first and last tick if we have more than 24 ticks to show
-    if(data.length > 24) {
-      xAxis.tickValues(data.map(d => d.Date).filter((d, i) => i === 0 || i === data.length-1))
+    // only show first and last tick if we have more than 28 ticks to show
+    if(data.length > 28) {
+      let tickValues = data.map(d => d.Date).filter((d, i) => i === 0 || i === data.length-1);
+      xAxis.tickValues(tickValues)
+      xAxis.tickFormat(xTickFormat(this.state.tickStep, tickValues.length))
     }
 
     // empty previous graph

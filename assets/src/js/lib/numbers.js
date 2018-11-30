@@ -11,7 +11,7 @@ function formatPretty(num) {
   if (num >= M) {
     num /= M
     decimals = 3 - ((Math.round(num) + "").length) || 0;
-    return num.toFixed(decimals > -1 ? decimals : 0).replace(rx, '') + 'M';
+    return (num.toFixed(decimals > -1 ? decimals : 0).replace(rx, '') + 'M').replace('.00', '');
   }
 
   if (num >= (K * 10)) {

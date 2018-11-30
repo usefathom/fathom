@@ -220,9 +220,9 @@ class DatePicker extends Component {
           <li><Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} /> <span>›</span> <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  /></li>
         </ul>
         <ul>
-         {state.diff < 30 ? (<li class={classNames({ current: 'hour' === state.groupBy })}><a href="#" data-value="hour" onClick={this.setGroupBy}>Hourly</a></li>) : ''}
+         {state.diff < 31 ? (<li class={classNames({ current: 'hour' === state.groupBy })}><a href="#" data-value="hour" onClick={this.setGroupBy}>Hourly</a></li>) : ''}
          <li class={classNames({ current: 'day' === state.groupBy })}><a href="#" data-value="day" onClick={this.setGroupBy}>Daily</a></li>
-         {state.diff >= 30 ? (<li class={classNames({ current: 'month' === state.groupBy })}><a href="#" data-value="month" onClick={this.setGroupBy}>Monthly</a></li>) : ''}
+         {state.diff >= 31 ? (<li class={classNames({ current: 'month' === state.groupBy })}><a href="#" data-value="month" onClick={this.setGroupBy}>Monthly</a></li>) : ''}
         </ul>
       </nav>
     )
