@@ -128,6 +128,13 @@
 
     //  parse request, use canonical if there is one
     let req = window.location;
+
+    // do not track if not served over HTTP or HTTPS (eg from local filesystem)
+    if(req.host === '') {
+      return;
+    }
+
+    // find canonical URL
     let canonical = document.querySelector('link[rel="canonical"][href]');
     if(canonical) {
       let a = document.createElement('a');
