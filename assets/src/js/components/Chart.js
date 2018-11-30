@@ -57,6 +57,7 @@ class Chart extends Component {
 
   componentWillReceiveProps(newProps) {
     let daysDiff = Math.round((newProps.dateRange[1]-newProps.dateRange[0])/1000/24/60/60);
+
     this.setState({
       diffInDays: daysDiff,
       tickStep: newProps.tickStep,
@@ -72,9 +73,14 @@ class Chart extends Component {
 
   @bind
   chartData() {
-    let startDate = this.props.dateRange[0];
+    let startDate = new Date(this.props.dateRange[0]);
     let endDate = this.props.dateRange[1];
     let newData = [];
+
+    // if grouping by month, fix date to 1st of month
+    if(this.state.tickStep === 'month') {
+      startDate.setDate(1);
+    }
 
     // instantiate JS Date objects
     let data = this.state.data.map(d => {
@@ -163,7 +169,8 @@ class Chart extends Component {
         title += ` ${d.Date.getHours()}:00 - ${d.Date.getHours() + 1}:00`
       } 
 
-      return (`<div class="tip-heading">${title}</div>
+      return (`
+      <div class="tip-heading">${title}</div>
       <div class="tip-content">
         <div class="tip-pageviews">
           <div class="tip-number">${d.Pageviews}</div>
@@ -173,7 +180,9 @@ class Chart extends Component {
           <div class="tip-number">${d.Visitors}</div>
           <div class="tip-metric">Visitors</div>
         </div>
-      </div>`)});
+      </div>`
+      )});
+
     this.ctx.call(this.tip)
   }
 
