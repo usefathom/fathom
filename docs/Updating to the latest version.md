@@ -6,11 +6,10 @@ To update your existing Fathom installation to the latest version, first rename 
 mv /usr/local/bin/fathom /usr/local/bin/fathom-old
 ```
 
-Then, [download the latest release suitable for your system architecture from the releases page](https://github.com/usefathom/fathom/releases) and place it in `/usr/local/bin`.
+Then, [download the latest release archive suitable for your system architecture from the releases page](https://github.com/usefathom/fathom/releases/latest) and place it in `/usr/local/bin`.
 
 ```
-wget https://github.com/usefathom/fathom/releases/download/latest-development/fathom-linux-amd64
-mv fathom-linux-amd64 /usr/local/bin/fathom
+tar -C /usr/local/bin -xzf fathom_$VERSION_$OS_$ARCH.tar.gz
 chmod +x /usr/local/bin/fathom
 ``` 
 

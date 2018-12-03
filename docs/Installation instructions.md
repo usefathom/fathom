@@ -1,12 +1,15 @@
 # Installation instructions for Fathom
 
-To install Fathom on your server, start by [downloading an official binary distribution from the releases page](https://github.com/usefathom/fathom/releases) and place it in `/usr/local/bin`.
+To install Fathom on your server: 
+
+1. [Download the latest Fathom release](https://github.com/usefathom/fathom/releases) suitable for your platform.
+2. Extract the archive to `/usr/local/bin`
 
 ```sh
-wget https://github.com/usefathom/fathom/releases/download/latest-development/fathom-linux-amd64
-mv fathom-linux-amd64 /usr/local/bin/fathom
+tar -C /usr/local/bin -xzf fathom_$VERSION_$OS_$ARCH.tar.gz
 chmod +x /usr/local/bin/fathom
 ```
+
 Confirm that Fathom is installed properly by running `fathom --version`
 
 ```sh
@@ -14,7 +17,9 @@ $ fathom --version
 Fathom version 1.0.0
 ```
 
-## Starting the Fathom web server
+## Configuring Fathom
+
+> This step is optional. By default, Fathom will use a SQLite database file in the current working directory.
 
 To run the Fathom web server we will need to [configure Fathom](Configuration.md) so that it can connect with your database of choice. 
 
@@ -41,6 +46,8 @@ If you now run `fathom server` then Fathom will start serving up a website on po
 Check out the [configuration file documentation](Configuration.md) for all possible configuration values, eg if you want to use MySQL or Postgres instead.
 
 ## Register your admin user
+
+> This step is optional. If you don't register any users, your Fathom dashboard will be public.
 
 To register a user in the Fathom instance we just created, run the following command from the directory where your `.env` file is. 
 
