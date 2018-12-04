@@ -5,8 +5,7 @@ import { bind } from 'decko';
 import Pikadayer from './Pikadayer.js';
 import classNames from 'classnames';
 
-const defaultPeriod = 'last-7-days';
-const padZero = function(n){return n<10? '0'+n:''+n;}
+const padZero = (n) => n < 10 ? '0'+n : ''+n;
 
 let now = new Date();
 window.setInterval(() => {
@@ -87,7 +86,7 @@ class DatePicker extends Component {
     super(props)
 
     this.state = {
-      period: window.location.hash.substring(2) || window.localStorage.getItem('period') || defaultPeriod,
+      period: window.location.hash.substring(2) || window.localStorage.getItem('period') || '1w',
       startDate: now,
       endDate: now,
       groupBy: 'day',
