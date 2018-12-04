@@ -81,17 +81,38 @@ const availablePeriods = {
  }
 }
 
+function hashParams() {
+ var params = {}, 
+  match, 
+  matches =  window.location.hash.substring(2).split("&");
+
+ for(var i=0; i<matches.length; i++) {
+   match = matches[i].split('=')
+   params[match[0]] = decodeURIComponent(match[1]);
+ }
+
+ return params;
+}
+
 class DatePicker extends Component {
   constructor(props) {
     super(props)
 
+    let params = hashParams();
+
     this.state = {
-      period: window.location.hash.substring(2) || window.localStorage.getItem('period') || '1w',
-      startDate: now,
-      endDate: now,
-      groupBy: 'day',
+      period: params.p || window.localStorage.getItem('period') || '1w',
+      startDate: new Date(params.s),
+      endDate: new Date(params.e),
+      groupBy: params.g || 'day',
     }    
-    this.updateDatesFromPeriod(this.state.period)
+    this.state.diff = this.calculateDiff(this.state.startDate, this.state.endDate)
+
+    if(this.state.period !== 'custom') {
+      this.updateDatesFromPeriod(this.state.period, params.g)
+    } else {
+      this.props.onChange(this.state);
+    }
   }
 
   componentDidMount() {
@@ -103,16 +124,16 @@ class DatePicker extends Component {
   }
 
   @bind
-  updateDatesFromPeriod(period) {
+  updateDatesFromPeriod(period, groupBy) {
     if(typeof(availablePeriods[period]) !== "object") {
       period = "1w";
     }
     let p = availablePeriods[period];
-    this.setDateRange(p.start(), p.end(), period);
+    this.setDateRange(p.start(), p.end(), period, groupBy);
   }
 
   @bind
-  setDateRange(start, end, period) {
+  setDateRange(start, end, period, groupBy) {
     // don't update state if start > end. user may be busy picking dates.
     if(start > end) {
       return;
@@ -122,16 +143,20 @@ class DatePicker extends Component {
     start.setHours(0, 0, 0);
     end.setHours(23, 59, 59);
 
-    let diff =  Math.round((end - start) / 1000 / 60 / 60 / 24)
-    let groupBy = 'day';
-    if(diff >= 31) {
-      groupBy = 'month';
-    } else if( diff < 2) {
-      groupBy = 'hour';
+    let diff =  this.calculateDiff(start, end)
+    if(!groupBy) {
+      groupBy = 'day';
+
+      if(diff >= 31) {
+        groupBy = 'month';
+      } else if( diff < 2) {
+        groupBy = 'hour';
+      }
     }
    
+   
     this.setState({
-      period: period || '',
+      period: period,
       startDate: start,
       endDate: end,
       diff: diff,
@@ -142,11 +167,21 @@ class DatePicker extends Component {
     if(!this.timeout) {
       this.timeout = window.setTimeout(() => {
         this.props.onChange(this.state);
+        this.updateURL()
         this.timeout = null;
-
-        window.localStorage.setItem('period', this.state.period)
-        window.history.replaceState(this.state, null, `#!${this.state.period}`)
       }, 5)
+    }
+  }
+
+  calculateDiff(start, end) {
+    return Math.round((end - start) / 1000 / 60 / 60 / 24)
+  }
+
+  updateURL() {
+    if(this.state.period !== 'custom') {
+      window.history.replaceState(this.state, null, `#!p=${this.state.period}&g=${this.state.groupBy}`)
+    } else {
+      window.history.replaceState(this.state, null, `#!p=custom&s=${encodeURIComponent(this.state.startDate.toISOString())}&e=${encodeURIComponent(this.state.endDate.toISOString())}&g=${this.state.groupBy}`)
     }
   }
 
@@ -159,6 +194,7 @@ class DatePicker extends Component {
       return;
     }
 
+    window.localStorage.setItem('period', this.state.period)
     this.updateDatesFromPeriod(newPeriod);
   }
 
@@ -168,12 +204,12 @@ class DatePicker extends Component {
 
   @bind
   setStartDate(date) {
-    this.setDateRange(date, this.state.endDate, '')
+    this.setDateRange(date, this.state.endDate, 'custom')
   }
 
   @bind
   setEndDate(date) {
-    this.setDateRange(this.state.startDate, date, '')
+    this.setDateRange(this.state.startDate, date, 'custom')
   }
 
   @bind
@@ -211,6 +247,7 @@ class DatePicker extends Component {
       groupBy: e.target.getAttribute('data-value')
     })
     this.props.onChange(this.state);
+    this.updateURL()
   }
 
   render(props, state) {
@@ -232,9 +269,9 @@ class DatePicker extends Component {
           <li><Pikadayer value={this.dateValue(state.startDate)} onSelect={this.setStartDate} /> <span>›</span> <Pikadayer value={this.dateValue(state.endDate)} onSelect={this.setEndDate}  /></li>
         </ul>
         <ul>
-         {state.diff < 31 ? (<li class={classNames({ current: 'hour' === state.groupBy })}><a href="#" data-value="hour" onClick={this.setGroupBy}>Hourly</a></li>) : ''}
-         <li class={classNames({ current: 'day' === state.groupBy })}><a href="#" data-value="day" onClick={this.setGroupBy}>Daily</a></li>
-         {state.diff >= 31 ? (<li class={classNames({ current: 'month' === state.groupBy })}><a href="#" data-value="month" onClick={this.setGroupBy}>Monthly</a></li>) : ''}
+         {state.diff < 31 ? (<li class={classNames({ current: 'hour' === state.groupBy })}><a href="javascript:;" data-value="hour" onClick={this.setGroupBy}>Hourly</a></li>) : ''}
+         <li class={classNames({ current: 'day' === state.groupBy })}><a href="javascript:;" data-value="day" onClick={this.setGroupBy}>Daily</a></li>
+         {state.diff >= 31 ? (<li class={classNames({ current: 'month' === state.groupBy })}><a href="javascript:;" data-value="month" onClick={this.setGroupBy}>Monthly</a></li>) : ''}
         </ul>
       </nav>
     )
