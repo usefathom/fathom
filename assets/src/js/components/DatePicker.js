@@ -13,8 +13,16 @@ window.setInterval(() => {
   now = new Date();
 }, 60000 );
 
-// today, yesterday, this week, last 7 days, last 30 days
 const availablePeriods = {
+  '1d': {
+    label: '1d',
+    start: function() {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    },
+    end: function() {
+      return this.start();
+    },
+  },
   '1w': {
     label: '1w',
     start: function() {
@@ -116,7 +124,12 @@ class DatePicker extends Component {
     end.setHours(23, 59, 59);
 
     let diff =  Math.round((end - start) / 1000 / 60 / 60 / 24)
-    let groupBy = diff >= 31 ? 'month' : 'day';
+    let groupBy = 'day';
+    if(diff >= 31) {
+      groupBy = 'month';
+    } else if( diff < 2) {
+      groupBy = 'hour';
+    }
    
     this.setState({
       period: period || '',
