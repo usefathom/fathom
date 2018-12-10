@@ -102,8 +102,8 @@ class DatePicker extends Component {
 
     this.state = {
       period: params.p || window.localStorage.getItem('period') || '1w',
-      startDate: new Date(params.s),
-      endDate: new Date(params.e),
+      startDate: new Date(params.s || 'now'),
+      endDate: new Date(params.e || 'now'),
       groupBy: params.g || 'day',
     }    
     this.state.diff = this.calculateDiff(this.state.startDate, this.state.endDate)
