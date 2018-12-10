@@ -37,6 +37,7 @@ func (api *API) Routes() *mux.Router {
 	box := packr.NewBox("./../../assets/build")
 	r.Path("/tracker.js").Handler(serveTrackerFile(&box))
 	r.Path("/").Handler(serveFileHandler(&box, "index.html"))
+	r.Path("/index.html").Handler(serveFileHandler(&box, "index.html"))
 	r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", http.FileServer(box)))
 	r.NotFoundHandler = NotFoundHandler(&box)
 
