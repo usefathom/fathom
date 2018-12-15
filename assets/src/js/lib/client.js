@@ -22,7 +22,7 @@ Client.request = function(url, args) {
   // trim leading slash from URL
   url = (url[0] === '/') ? url.substring(1) : url;
 
-  return window.fetch(`/api/${url}`, args)
+  return window.fetch(`api/${url}`, args)
     .then(handleRequestErrors)
     .then(parseJSON)
     .then(parseData)
