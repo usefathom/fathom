@@ -20,7 +20,7 @@ docker: $(GO_SOURCES)
 	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
-	GOBIN=$(GOPATH)/bin go get github.com/gobuffalo/packr/...
+	GOBIN=$(GOPATH)/bin go get -u github.com/gobuffalo/packr/packr
 
 .PHONY: npm 
 npm:
