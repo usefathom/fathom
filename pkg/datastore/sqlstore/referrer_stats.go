@@ -38,7 +38,7 @@ func (db *sqlstore) updateReferrerStats(s *models.ReferrerStats) error {
 	return err
 }
 
-func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.Time, endDate time.Time, offset int64, limit int64) ([]*models.ReferrerStats, error) {
+func (db *sqlstore) SelectAggregatedReferrerStats(siteID int64, startDate time.Time, endDate time.Time, offset int, limit int) ([]*models.ReferrerStats, error) {
 	var result []*models.ReferrerStats
 
 	sql := `SELECT 

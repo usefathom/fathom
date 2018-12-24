@@ -103,11 +103,11 @@ func (db *sqlstore) UpdatePageviews(pageviews []*models.Pageview) error {
 }
 
 // GetProcessablePageviews selects all pageviews which are "done" (ie not still waiting for bounce flag or duration)
-func (db *sqlstore) GetProcessablePageviews() ([]*models.Pageview, error) {
+func (db *sqlstore) GetProcessablePageviews(limit int) ([]*models.Pageview, error) {
 	var results []*models.Pageview
 	thirtyMinsAgo := time.Now().Add(-30 * time.Minute)
-	query := db.Rebind(`SELECT * FROM pageviews WHERE is_finished = TRUE OR timestamp < ? LIMIT 5000`)
-	err := db.Select(&results, query, thirtyMinsAgo)
+	query := db.Rebind(`SELECT * FROM pageviews WHERE is_finished = TRUE OR timestamp < ? LIMIT ?`)
+	err := db.Select(&results, query, thirtyMinsAgo, limit)
 	return results, err
 }
 

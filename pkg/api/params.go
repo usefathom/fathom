@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -12,8 +11,8 @@ import (
 // Params defines the commonly used API parameters
 type Params struct {
 	SiteID    int64
-	Offset    int64
-	Limit     int64
+	Offset    int
+	Limit     int
 	StartDate time.Time
 	EndDate   time.Time
 }
@@ -49,24 +48,16 @@ func GetRequestParams(r *http.Request) *Params {
 	}
 
 	if q.Get("limit") != "" {
-		if limit, err := strconv.ParseInt(q.Get("limit"), 10, 64); err == nil && limit > 0 {
+		if limit, err := strconv.Atoi(q.Get("limit")); err == nil && limit > 0 {
 			params.Limit = limit
 		}
 	}
 
 	if q.Get("offset") != "" {
-		if offset, err := strconv.ParseInt(q.Get("offset"), 10, 64); err == nil && offset > 0 {
+		if offset, err := strconv.Atoi(q.Get("offset")); err == nil && offset > 0 {
 			params.Offset = offset
 		}
 	}
 
 	return params
-}
-
-func parseMajorMinor(v string) string {
-	parts := strings.SplitN(v, ".", 3)
-	if len(parts) > 1 {
-		v = parts[0] + "." + parts[1]
-	}
-	return v
 }

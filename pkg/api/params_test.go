@@ -29,17 +29,3 @@ func TestGetRequestParams(t *testing.T) {
 	}
 
 }
-
-func TestParseMajorMinor(t *testing.T) {
-	actual := parseMajorMinor("50.0.0")
-	expected := "50.0"
-	if actual != expected {
-		t.Errorf("Return value should be %s, is %s instead", expected, actual)
-	}
-
-	actual = parseMajorMinor("1.1")
-	expected = "1.1"
-	if actual != expected {
-		t.Errorf("Return value should be %s is %s instead", expected, actual)
-	}
-}

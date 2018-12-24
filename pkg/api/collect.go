@@ -105,15 +105,19 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Collector) aggregate() {
+	var report aggregator.Report
+
 	agg := aggregator.New(c.Store)
 	timeout := 1 * time.Minute
-
-	agg.Run()
+	report = agg.Run()
 
 	for {
 		select {
 		case <-time.After(timeout):
-			agg.Run()
+			// keep running aggregate until pageview pool is empty
+			for !report.PoolEmpty {
+				report = agg.Run()
+			}
 		}
 	}
 }

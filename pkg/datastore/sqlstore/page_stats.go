@@ -38,7 +38,7 @@ func (db *sqlstore) updatePageStats(s *models.PageStats) error {
 	return err
 }
 
-func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, offset int64, limit int64) ([]*models.PageStats, error) {
+func (db *sqlstore) SelectAggregatedPageStats(siteID int64, startDate time.Time, endDate time.Time, offset int, limit int) ([]*models.PageStats, error) {
 	var result []*models.PageStats
 	query := db.Rebind(`SELECT 
 		h.name AS hostname,

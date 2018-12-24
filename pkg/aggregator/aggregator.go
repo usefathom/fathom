@@ -15,6 +15,11 @@ type Aggregator struct {
 	database datastore.Datastore
 }
 
+type Report struct {
+	Processed int
+	PoolEmpty bool
+}
+
 type results struct {
 	Sites     map[string]*models.SiteStats
 	Pages     map[string]*models.PageStats
@@ -29,18 +34,22 @@ func New(db datastore.Datastore) *Aggregator {
 }
 
 // Run processes the pageviews which are ready to be processed and adds them to daily aggregation
-func (agg *Aggregator) Run() int {
+func (agg *Aggregator) Run() Report {
 	// Get unprocessed pageviews
-	pageviews, err := agg.database.GetProcessablePageviews()
+	limit := 10000
+	pageviews, err := agg.database.GetProcessablePageviews(limit)
+	emptyReport := Report{
+		Processed: 0,
+	}
 	if err != nil && err != datastore.ErrNoResults {
 		log.Error(err)
-		return 0
+		return emptyReport
 	}
 
 	//  Do we have anything to process?
 	n := len(pageviews)
 	if n == 0 {
-		return 0
+		return emptyReport
 	}
 
 	results := &results{
@@ -54,7 +63,7 @@ func (agg *Aggregator) Run() int {
 	sites, err := agg.database.GetSites()
 	if err != nil {
 		log.Error(err)
-		return 0
+		return emptyReport
 	}
 
 	// create map of public tracking ID's => site ID
@@ -70,7 +79,7 @@ func (agg *Aggregator) Run() int {
 	blacklist, err := newBlacklist()
 	if err != nil {
 		log.Error(err)
-		return 0
+		return emptyReport
 	}
 
 	// add each pageview to the various statistics we gather
@@ -146,7 +155,10 @@ func (agg *Aggregator) Run() int {
 		log.Error(err)
 	}
 
-	return n
+	return Report{
+		Processed: n,
+		PoolEmpty: n < limit,
+	}
 }
 
 // parseReferrer parses the referrer string & normalizes it
