@@ -44,6 +44,7 @@ func (agg *Aggregator) Run() Report {
 	pageviews, err := agg.database.GetProcessablePageviews(limit)
 	emptyReport := Report{
 		Processed: 0,
+		PoolEmpty: true,
 	}
 	if err != nil && err != datastore.ErrNoResults {
 		log.Error(err)
