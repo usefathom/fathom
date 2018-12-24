@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/usefathom/fathom/pkg/datastore"
 	"github.com/usefathom/fathom/pkg/models"
@@ -18,6 +19,7 @@ type Aggregator struct {
 type Report struct {
 	Processed int
 	PoolEmpty bool
+	Duration  time.Duration
 }
 
 type results struct {
@@ -35,6 +37,8 @@ func New(db datastore.Datastore) *Aggregator {
 
 // Run processes the pageviews which are ready to be processed and adds them to daily aggregation
 func (agg *Aggregator) Run() Report {
+	startTime := time.Now()
+
 	// Get unprocessed pageviews
 	limit := 10000
 	pageviews, err := agg.database.GetProcessablePageviews(limit)
@@ -57,8 +61,6 @@ func (agg *Aggregator) Run() Report {
 		Pages:     map[string]*models.PageStats{},
 		Referrers: map[string]*models.ReferrerStats{},
 	}
-
-	log.Debugf("processing %d pageviews", len(pageviews))
 
 	sites, err := agg.database.GetSites()
 	if err != nil {
@@ -155,10 +157,16 @@ func (agg *Aggregator) Run() Report {
 		log.Error(err)
 	}
 
-	return Report{
+	endTime := time.Now()
+	dur := endTime.Sub(startTime)
+
+	report := Report{
 		Processed: n,
 		PoolEmpty: n < limit,
+		Duration:  dur,
 	}
+	log.Debugf("processed %d pageviews. took: %s, pool empty: %v", report.Processed, report.Duration, report.PoolEmpty)
+	return report
 }
 
 // parseReferrer parses the referrer string & normalizes it

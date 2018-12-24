@@ -109,12 +109,15 @@ func (c *Collector) aggregate() {
 
 	agg := aggregator.New(c.Store)
 	timeout := 1 * time.Minute
-	report = agg.Run()
+	agg.Run()
 
 	for {
 		select {
 		case <-time.After(timeout):
-			// keep running aggregate until pageview pool is empty
+			// run aggregator at least once
+			report = agg.Run()
+
+			// if pool is not empty yet, keep running
 			for !report.PoolEmpty {
 				report = agg.Run()
 			}

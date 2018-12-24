@@ -58,7 +58,6 @@ func server(c *cli.Context) error {
 	// set debug log level if --debug was passed
 	if c.Bool("debug") {
 		log.SetLevel(log.DebugLevel)
-		h = handlers.LoggingHandler(log.StandardLogger().Writer(), h)
 	} else {
 		log.SetLevel(log.WarnLevel)
 	}
