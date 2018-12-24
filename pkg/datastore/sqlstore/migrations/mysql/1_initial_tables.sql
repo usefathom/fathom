@@ -4,7 +4,7 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   email VARCHAR(100) NOT NULL,
   password VARCHAR(255) NOT NULL
-) CHARACTER SET=utf8;
+) CHARACTER SET=utf8 ENGINE=INNODB;
 
 CREATE TABLE pageviews(
    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE pageviews(
    referrer VARCHAR(255) NULL,
    duration INT(4) NULL,
    timestamp DATETIME NOT NULL
-) CHARACTER SET=utf8;
+) CHARACTER SET=utf8 ENGINE=INNODB;
 
 CREATE TABLE daily_page_stats(
    hostname VARCHAR(255) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE daily_page_stats(
    bounce_rate FLOAT NOT NULL,
    avg_duration FLOAT NOT NULL,
    date DATE NOT NULL
-) CHARACTER SET=utf8;
+) CHARACTER SET=utf8 ENGINE=INNODB;
 
 CREATE TABLE daily_site_stats(
    pageviews INT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE daily_site_stats(
    bounce_rate FLOAT NOT NULL,
    avg_duration FLOAT NOT NULL,
    date DATE NOT NULL
-) CHARACTER SET=utf8;
+) CHARACTER SET=utf8 ENGINE=INNODB;
 
 CREATE TABLE daily_referrer_stats(
    url VARCHAR(255) NOT NULL,
@@ -47,12 +47,12 @@ CREATE TABLE daily_referrer_stats(
    bounce_rate FLOAT NOT NULL,
    avg_duration FLOAT NOT NULL,
    date DATE NOT NULL
-) CHARACTER SET=utf8;
+) CHARACTER SET=utf8 ENGINE=INNODB;
 
 CREATE UNIQUE INDEX unique_user_email ON users(email);
 CREATE UNIQUE INDEX unique_daily_site_stats ON daily_site_stats(date);
-CREATE UNIQUE INDEX unique_daily_page_stats ON daily_page_stats(hostname, pathname, date);
-CREATE UNIQUE INDEX unique_daily_referrer_stats ON daily_referrer_stats(url, date);
+CREATE UNIQUE INDEX unique_daily_page_stats ON daily_page_stats(hostname(100), pathname(100), date);
+CREATE UNIQUE INDEX unique_daily_referrer_stats ON daily_referrer_stats(url(100), date);
 
 
 -- +migrate Down
