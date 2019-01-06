@@ -9,7 +9,8 @@ FROM golang:latest AS binarybuilder
 WORKDIR /go/src/github.com/usefathom/fathom
 COPY . /go/src/github.com/usefathom/fathom
 COPY --from=assetbuilder /app/assets/build ./assets/build
-RUN make docker
+ARG GOARCH=amd64
+RUN make ARCH=${GOARCH} docker
 
 FROM alpine:latest
 EXPOSE 8080
