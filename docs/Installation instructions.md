@@ -59,7 +59,7 @@ fathom user add --email="john@email.com" --password="strong-password"
 
 ## Using NGINX with Fathom
 
-We recommend using NGINX with Fathom it, as it simplifies running multiple sites from the same server and handling SSL certificates with LetsEncrypt.
+We recommend using NGINX with Fathom, as it simplifies running multiple sites from the same server and handling SSL certificates with LetsEncrypt.
 
 Create a new file in `/etc/nginx/sites-enabled/my-fathom-site` with the following contents. Replace `my-fathom-site.com` with the domain you would like to use for accessing your Fathom installation.
 
