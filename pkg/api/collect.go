@@ -30,9 +30,7 @@ type Collector struct {
 
 	// event-trigger buffer vars
 	eventInserts []*models.EventTrigger
-	eventUpdates []*models.EventTrigger
 
-	sizeEventUpdates int
 	sizeEventInserts int
 }
 
@@ -46,11 +44,9 @@ func NewCollector(store datastore.Datastore) *Collector {
 		EventTriggers:    make(chan *models.EventTrigger),
 		pageUpdates:      make([]*models.Pageview, bufferCap),
 		pageInserts:      make([]*models.Pageview, bufferCap),
-		eventInserts:     make([]*models.EventTrigger, bufferCap),
-		eventUpdates:     make([]*models.EventTrigger, bufferCap),
 		sizePageUpdates:  0,
 		sizePageInserts:  0,
-		sizeEventUpdates: 0,
+		eventInserts:     make([]*models.EventTrigger, bufferCap),
 		sizeEventInserts: 0,
 	}
 	go c.aggregate()
@@ -172,8 +168,8 @@ func (c *Collector) worker(cap int, timeout time.Duration) {
 			if size >= cap {
 				err := c.persistPageviews(c.sizePageInserts, c.sizePageUpdates, c.pageInserts, c.pageUpdates)
 				if err == nil {
-					c.sizeEventInserts = 0
-					c.sizeEventUpdates = 0
+					c.sizePageInserts = 0
+					c.sizePageUpdates = 0
 				}
 			}
 
@@ -181,10 +177,9 @@ func (c *Collector) worker(cap int, timeout time.Duration) {
 		case e := <-c.EventTriggers:
 			size = c.eventTriggerBuffer(e)
 			if size >= cap {
-				err := c.persistEventTriggers(c.sizeEventInserts, c.sizeEventUpdates, c.eventInserts, c.eventUpdates)
+				err := c.persistEventTriggers(c.sizeEventInserts, c.eventInserts)
 				if err == nil {
 					c.sizeEventInserts = 0
-					c.sizeEventUpdates = 0
 				}
 			}
 
@@ -192,16 +187,16 @@ func (c *Collector) worker(cap int, timeout time.Duration) {
 		case <-time.After(timeout):
 			err := c.persistPageviews(c.sizePageInserts, c.sizePageUpdates, c.pageInserts, c.pageUpdates)
 			if err == nil {
-				c.sizeEventInserts = 0
-				c.sizeEventUpdates = 0
+				c.sizePageInserts = 0
+				c.sizePageUpdates = 0
 			}
 
 		case <-time.After(timeout):
-			err := c.persistEventTriggers(c.sizeEventInserts, c.sizeEventUpdates, c.eventInserts, c.eventUpdates)
+			err := c.persistEventTriggers(c.sizeEventInserts, c.eventInserts)
 			if err == nil {
 				c.sizeEventInserts = 0
-				c.sizeEventUpdates = 0
 			}
+		}
 	}
 }
 
@@ -218,24 +213,10 @@ func (c *Collector) pageviewBuffer(p *models.Pageview) int {
 }
 
 func (c *Collector) eventTriggerBuffer(e *models.EventTrigger) int {
-	if !e.IsFinished {
-		c.eventInserts[c.sizeEventInserts] = e
-		c.sizeEventInserts++
-	} else {
-		c.eventUpdates[c.sizeEventUpdates] = e
-		c.sizeEventUpdates++
-	}
+	c.eventInserts[c.sizeEventInserts] = e
+	c.sizeEventInserts++
 
-	return (c.sizeEventUpdates + c.sizeEventInserts)
-}
-
-func (c *Collector) persist(sizei, sizeu int) {
-	
-
-	log.Debugf("persisting %d pageviews (%d inserts, %d updates)", (sizeu + sizei), sizei, sizeu)
-
-	// reset buffer
-	return 0, 0, nil
+	return c.sizeEventInserts
 }
 
 func (c *Collector) persistPageviews(sizei, sizeu int, inserts, updates []*models.Pageview) error {
@@ -251,24 +232,19 @@ func (c *Collector) persistPageviews(sizei, sizeu int, inserts, updates []*model
 		log.Errorf("error updating pageviews: %s", err)
 	}
 
-	return  nil
+	return nil
 }
 
-func (c *Collector) persistEventTriggers(sizei, sizeu int, inserts, updates []*models.EventTrigger) (int, int, error) {
-	si, su, err := c.persist(sizei, sizeu)
-	if err != nil {
-		return si, su, err
+func (c *Collector) persistEventTriggers(sizei int, inserts []*models.EventTrigger) error {
+	if sizei == 0 {
+		return fmt.Errorf("No need to reset as `%d == 0`", sizei)
 	}
 
 	if err := c.Store.InsertEventTriggers(inserts[0:sizei]); err != nil {
 		log.Errorf("error inserting event-trriggers: %s", err)
 	}
 
-	if err := c.Store.UpdateEventTriggers(updates[0:sizeu]); err != nil {
-		log.Errorf("error updating event-triggers: %s", err)
-	}
-
-	return si, su, nil
+	return nil
 }
 
 func shouldCollect(r *http.Request) bool {

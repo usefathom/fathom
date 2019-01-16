@@ -41,9 +41,7 @@ type Datastore interface {
 
 	// event-triggers
 	InsertEventTriggers([]*models.EventTrigger) error
-	UpdateEventTriggers([]*models.EventTrigger) error
 	GetEventTrigger(string) (*models.EventTrigger, error)
-	GetProcessableEventTriggers(limit int) ([]*models.EventTrigger, error)
 	DeleteEventTriggers([]*models.EventTrigger) error
 
 	// page stats
