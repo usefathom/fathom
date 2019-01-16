@@ -28,14 +28,14 @@ class Dashboard extends Component {
     this.state = {
       dateRange: [],
       groupBy: 'day',
-      isPublic: props.autherized(),
+      isPublic: props.authorized(),
       site: defaultSite,
       sites: [],
       settingsOpen: false,
       loginOpen: false,
       addingNewSite: false,
 
-      autherized: props.autherized(),
+      authorized: props.authorized(),
     }
   }
 
@@ -46,7 +46,7 @@ class Dashboard extends Component {
   @bind
   onLogin() {
     this.props.onLogin()
-    this.setState({ autherized: this.props.autherized() })
+    this.setState({ authorized: this.props.authorized() })
     this.fetchSites()
     this.closeLogin()
   }
@@ -167,7 +167,7 @@ class Dashboard extends Component {
 
   render(props, state) {
     // only show logout link if this dashboard is not public
-    let logoutMenuItem = !props.autherized() ? '' : (
+    let logoutMenuItem = !props.authorized() ? '' : (
       <li class="signout"><span class="spacer">&middot;</span><LogoutButton onSuccess={props.onLogout} /></li>
     );
 
@@ -211,7 +211,7 @@ class Dashboard extends Component {
                   <li><a href="https://usefathom.com/terms/">Terms of use</a></li>
                   <li><a href="https://usefathom.com/privacy/">Privacy policy</a></li>
                   <li><a href="https://usefathom.com/data/">Our data policy</a></li>
-                  <li><a href='#' onClick={this.openLogin} style={"display: " + ( state.autherized ? 'none' : '')}>Login</a></li>
+                  <li><a href='#' onClick={this.openLogin} style={"display: " + ( state.authorized ? 'none' : '')}>Login</a></li>
                   <li><LogoutButton onSuccess={props.onLogout} /></li>
                 </ul>
               </nav>

@@ -12,7 +12,7 @@ class App extends Component {
 
     this.state = {
       authenticated: document.cookie.indexOf('auth') > -1,
-      autherized: document.cookie.indexOf('auth') > -1,
+      authorized: document.cookie.indexOf('auth') > -1,
     }
 
     this.fetchAuthStatus()
@@ -23,7 +23,7 @@ class App extends Component {
     Client.request(`session`, {}, true)
       .then(({ d, status }) => {
         this.setState({
-          autherized: status === 200,
+          authorized: status === 200,
           authenticated: d,
         })
       })
@@ -33,13 +33,13 @@ class App extends Component {
   logout() {
     this.setState({ 
       authenticated: false,
-      autherized: false,
+      authorized: false,
     })
   }
 
   @bind
-  autherized() {
-    return this.state.autherized
+  authorized() {
+    return this.state.authorized
   }
 
   @bind
@@ -49,8 +49,8 @@ class App extends Component {
 
   render(props, state) {
     // logged-in
-    if( state.autherized || state.authenticated ) {
-      return <Dashboard onLogout={this.logout} onLogin={this.fetchAuthStatus} autherized={this.autherized} authenticated={this.authenticated} />
+    if( state.authorized || state.authenticated ) {
+      return <Dashboard onLogout={this.logout} onLogin={this.fetchAuthStatus} authorized={this.authorized} authenticated={this.authenticated} />
     }
 
     // logged-out

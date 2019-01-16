@@ -58,7 +58,7 @@ class SiteSwitcher extends Component {
 
     // otherwise, render list of sites + add button
     return (
-        <li style={{display: props.visble ? '' : 'none'}} class={`sites ${state.isExpanded ? 'expanded' : ''}`} onClick={this.toggleExpanded} onMouseEnter={this.expand} onMouseLeave={this.collapse}>
+        <li style={{display: props.visible ? '' : 'none'}} class={`sites ${state.isExpanded ? 'expanded' : ''}`} onClick={this.toggleExpanded} onMouseEnter={this.expand} onMouseLeave={this.collapse}>
             <a href="javascript:void(0)">{props.selectedSite.name}</a>
             <ul>
                 {props.sites.map((s) => (<li class="site-switch"><a href="javascript:void(0);" data-id={s.id} onClick={this.selectSite}>{s.name}</a></li>)) }
