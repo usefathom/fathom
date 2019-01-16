@@ -66,6 +66,7 @@ class LoginForm extends Component {
         </div>
          
         <div><button type="submit">Sign in</button></div>
+        <small><button onClick={props.close}>Cancel</button></small>
 
         <Notification message={state.message} kind="" onDismiss={this.clearMessage} />
       </form>

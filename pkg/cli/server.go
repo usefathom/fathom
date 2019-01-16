@@ -47,12 +47,18 @@ var serverCmd = cli.Command{
 			EnvVar: "FATHOM_DEBUG",
 			Name:   "debug, d",
 		},
+
+		cli.BoolFlag{
+			EnvVar: "FATHOM_PUBLIC_DASHBOARD",
+			Name:   "public-dashboard",
+			Usage:  "use a public dashboard for non-registered users",
+		},
 	},
 }
 
 func server(c *cli.Context) error {
 	var h http.Handler
-	a := api.New(app.database, app.config.Secret)
+	a := api.New(app.database, app.config.Secret, c.Bool("public-dashboard"))
 	h = a.Routes()
 
 	// set debug log level if --debug was passed

@@ -16,20 +16,20 @@ func (api *API) Routes() *mux.Router {
 	r.Handle("/api/session", HandlerFunc(api.CreateSession)).Methods(http.MethodPost)
 	r.Handle("/api/session", HandlerFunc(api.DeleteSession)).Methods(http.MethodDelete)
 
-	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.GetSitesHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.SaveSiteHandler))).Methods(http.MethodPost)
-	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.SaveSiteHandler))).Methods(http.MethodPost)
-	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.DeleteSiteHandler))).Methods(http.MethodDelete)
+	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.GetSitesHandler), false)).Methods(http.MethodGet)
+	r.Handle("/api/sites", api.Authorize(HandlerFunc(api.SaveSiteHandler), true)).Methods(http.MethodPost)
+	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.SaveSiteHandler), true)).Methods(http.MethodPost)
+	r.Handle("/api/sites/{id:[0-9]+}", api.Authorize(HandlerFunc(api.DeleteSiteHandler), true)).Methods(http.MethodDelete)
 
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/agg", api.Authorize(HandlerFunc(api.GetAggregatedSiteStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/site/realtime", api.Authorize(HandlerFunc(api.GetSiteStatsRealtimeHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site", api.Authorize(HandlerFunc(api.GetSiteStatsHandler), false)).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/agg", api.Authorize(HandlerFunc(api.GetAggregatedSiteStatsHandler), false)).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/site/realtime", api.Authorize(HandlerFunc(api.GetSiteStatsRealtimeHandler), false)).Methods(http.MethodGet)
 
-	r.Handle("/api/sites/{id:[0-9]+}/stats/pages/agg", api.Authorize(HandlerFunc(api.GetAggregatedPageStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/pages/agg/pageviews", api.Authorize(HandlerFunc(api.GetAggregatedPageStatsPageviewsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/pages/agg", api.Authorize(HandlerFunc(api.GetAggregatedPageStatsHandler), false)).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/pages/agg/pageviews", api.Authorize(HandlerFunc(api.GetAggregatedPageStatsPageviewsHandler), false)).Methods(http.MethodGet)
 
-	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers/agg", api.Authorize(HandlerFunc(api.GetAggregatedReferrerStatsHandler))).Methods(http.MethodGet)
-	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers/agg/pageviews", api.Authorize(HandlerFunc(api.GetAggregatedReferrerStatsPageviewsHandler))).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers/agg", api.Authorize(HandlerFunc(api.GetAggregatedReferrerStatsHandler), false)).Methods(http.MethodGet)
+	r.Handle("/api/sites/{id:[0-9]+}/stats/referrers/agg/pageviews", api.Authorize(HandlerFunc(api.GetAggregatedReferrerStatsPageviewsHandler), false)).Methods(http.MethodGet)
 
 	r.Handle("/health", HandlerFunc(api.Health)).Methods(http.MethodGet)
 

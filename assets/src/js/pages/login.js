@@ -8,7 +8,7 @@ class Login extends Component {
     return (
       <div class="flex-rapper login-page animated fadeInUp delayed_02s">
         <div class="login-rapper">
-          <LoginForm onSuccess={props.onLogin} />
+          <LoginForm onSuccess={props.onLogin} close={props.close} />
           <small><a href="https://usefathom.com">Fathom Analytics</a>{/* &middot; <a href="#lost">Password reset</a> */}</small>
         </div>
       </div>

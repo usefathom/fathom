@@ -2,6 +2,7 @@
 
 import { h, Component } from 'preact';
 import LogoutButton from '../components/LogoutButton.js';
+import Login from './login.js';
 import Realtime from '../components/Realtime.js';
 import DatePicker from '../components/DatePicker.js';
 import Sidebar from '../components/Sidebar.js';
@@ -27,11 +28,14 @@ class Dashboard extends Component {
     this.state = {
       dateRange: [],
       groupBy: 'day',
-      isPublic: document.cookie.indexOf('auth') < 0,
+      isPublic: props.autherized(),
       site: defaultSite,
       sites: [],
       settingsOpen: false,
+      loginOpen: false,
       addingNewSite: false,
+
+      autherized: props.autherized(),
     }
   }
 
@@ -39,10 +43,32 @@ class Dashboard extends Component {
     this.fetchSites()
   }
 
-  @bind 
+  @bind
+  onLogin() {
+    this.props.onLogin()
+    this.setState({ autherized: this.props.autherized() })
+    this.fetchSites()
+    this.closeLogin()
+  }
+
+  @bind
+  closeLogin() {
+    this.setState({
+      loginOpen: false,
+    })
+  }
+
+  @bind
+  openLogin() {
+    this.setState({
+      loginOpen: true,
+    })
+  }
+
+  @bind
   fetchSites() {
     Client.request(`sites`)
-    .then((sites) => { 
+    .then((sites) => {
       // open site settings when there are no sites yet
       if(sites.length == 0) {
         this.showSiteSettings({ id: 1, name: "yoursite.com", unsaved: true })
@@ -141,61 +167,69 @@ class Dashboard extends Component {
 
   render(props, state) {
     // only show logout link if this dashboard is not public
-    let logoutMenuItem = state.isPublic ? '' : (
+    let logoutMenuItem = !props.autherized() ? '' : (
       <li class="signout"><span class="spacer">&middot;</span><LogoutButton onSuccess={props.onLogout} /></li>
     );
 
     return (
-  <div class="app-page ">
-     <div class={`rapper animated fadeInUp delayed_02s ${state.period} ` + classNames({ ltday: state.dateRange[1] - state.dateRange[0] < 86400 })}>
+      <div class="app-page ">
+        <div class={`rapper animated fadeInUp delayed_02s ${state.period} ` + classNames({ ltday: state.dateRange[1] - state.dateRange[0] < 86400 })}>
 
-      <header class="section">
-        <nav class="main-nav">
-            <ul>
-              <li class="logo"><a href="/">{state.site.name || "Fathom"}</a></li>
-              <SiteSwitcher sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.showSiteSettings} showAdd={!state.isPublic}/>
-              <Gearwheel onClick={this.showSiteSettings} visible={!state.isPublic} />
-              <li class="visitors"><Realtime siteId={state.site.id} /></li>
-          </ul>
-        </nav>
-      </header>
+          <header class="section">
+            <nav class="main-nav">
+                <ul>
+                  <li class="logo"><a href="/">{state.site.name || "Fathom"}</a></li>
+                  <SiteSwitcher visible={!state.isPublic} sites={state.sites} selectedSite={state.site} onChange={this.changeSelectedSite} onAdd={this.showSiteSettings} showAdd={!state.isPublic}/>
+                  <Gearwheel onClick={this.showSiteSettings} visible={!state.isPublic} />
+                  <li class="visitors"><Realtime siteId={state.site.id} /></li>
+              </ul>
+            </nav>
+          </header>
 
-      <DatePicker onChange={this.changeDateRange} />
+          <DatePicker onChange={this.changeDateRange} />
 
-      <section class="section">
-        <div class="boxes">
-          <Sidebar siteId={state.site.id} dateRange={state.dateRange} />
+          <section class="section">
+            <div class="boxes">
+              <Sidebar siteId={state.site.id} dateRange={state.dateRange} />
 
-          <div class="box box-graph">
-            <Chart siteId={state.site.id} dateRange={state.dateRange} tickStep={state.groupBy} />
-          </div>
-          <div class="box box-pages">
-            <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} />
-          </div>
-          <div class="box box-referrers">
-            <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} showHostname="true" />
+              <div class="box box-graph">
+                <Chart siteId={state.site.id} dateRange={state.dateRange} tickStep={state.groupBy} />
+              </div>
+              <div class="box box-pages">
+                <Table endpoint="pages" headers={["Top pages", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} />
+              </div>
+              <div class="box box-referrers">
+                <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} showHostname="true" />
+              </div>
+            </div>
+
+            <footer class="section">
+              <div class="half">
+              <nav>
+                <ul>
+                  <li><a href="https://usefathom.com/">Fathom</a></li>
+                  <li><a href="https://usefathom.com/terms/">Terms of use</a></li>
+                  <li><a href="https://usefathom.com/privacy/">Privacy policy</a></li>
+                  <li><a href="https://usefathom.com/data/">Our data policy</a></li>
+                  <li><a href='#' onClick={this.openLogin} style={"display: " + ( state.autherized ? 'none' : '')}>Login</a></li>
+                  <li><LogoutButton onSuccess={props.onLogout} /></li>
+                </ul>
+              </nav>
+              <div class="hide-on-mobile">Use <strong>the arrow keys</strong> to cycle through date ranges.</div>
+              </div>
+            </footer>
+          </section>
+        </div>
+        <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} onUpdate={this.updateSite} onDelete={this.deleteSite} site={state.site} />
+        <div class="modal-wrap" style={"display: " + ( state.loginOpen ? '' : 'none')}>
+          <div class="modal">
+            <p>
+              <Login onLogin={this.onLogin} close={this.closeLogin}/>
+            </p>
           </div>
         </div>
-
-        <footer class="section">
-          <div class="half">
-          <nav>
-            <ul>
-              <li><a href="https://usefathom.com/">Fathom</a></li>
-              <li><a href="https://usefathom.com/terms/">Terms of use</a></li>
-              <li><a href="https://usefathom.com/privacy/">Privacy policy</a></li>
-              <li><a href="https://usefathom.com/data/">Our data policy</a></li>
-              <li><LogoutButton onSuccess={props.onLogout} /></li>
-            </ul>
-          </nav>
-          <div class="hide-on-mobile">Use <strong>the arrow keys</strong> to cycle through date ranges.</div>
-          </div>
-        </footer>
-      </section>
-    </div>
-    <SiteSettings visible={state.settingsOpen} onClose={this.closeSiteSettings} onUpdate={this.updateSite} onDelete={this.deleteSite} site={state.site} />
-  </div>
-  )}
+      </div>
+    )}
 }
 
 export default Dashboard

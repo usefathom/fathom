@@ -38,7 +38,7 @@ func (api *API) GetSession(w http.ResponseWriter, r *http.Request) error {
 
 	// if existing session, assume logged-in
 	session, _ := api.sessions.Get(r, "auth")
-	if !session.IsNew {
+	if !session.IsNew || api.publicDashboard {
 		return respond(w, http.StatusOK, envelope{Data: true})
 	}
 
@@ -93,7 +93,7 @@ func (api *API) DeleteSession(w http.ResponseWriter, r *http.Request) error {
 }
 
 // Authorize is middleware that aborts the request if unauthorized
-func (api *API) Authorize(next http.Handler) http.Handler {
+func (api *API) Authorize(next http.Handler, requireLogin bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// clear context from request after it is handled
 		// see http://www.gorillatoolkit.org/pkg/sessions#overview
@@ -107,7 +107,7 @@ func (api *API) Authorize(next http.Handler) http.Handler {
 			return
 		}
 
-		if userCount > 0 {
+		if userCount > 0 && requireLogin {
 			session, err := api.sessions.Get(r, "auth")
 			// an err is returned if cookie has been tampered with, so check that
 			if err != nil {

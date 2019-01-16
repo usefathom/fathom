@@ -1,7 +1,7 @@
 'use strict';
 
 var Client = {};
-Client.request = function(url, args) {
+Client.request = function(url, args, status) {
   args = args || {};
   args.credentials = 'same-origin'
   args.headers = args.headers || {};
@@ -25,7 +25,7 @@ Client.request = function(url, args) {
   return window.fetch(`api/${url}`, args)
     .then(handleRequestErrors)
     .then(parseJSON)
-    .then(parseData)
+    .then(parseData(status || false))
 }
 
 function handleRequestErrors(r) {
@@ -41,15 +41,20 @@ function parseJSON(r) {
   return r.json()
 }
 
-function parseData(d) {
-
+function parseData(status) {
+  return (d) => {
   // if JSON response contains an Error property, use that as error code
-  // Message is generic here, so that individual components can set their own specific messages based on the error code
-  if(d.Error) {
-    throw { code: d.Error, message: "An error occurred" }
-  }
+    // Message is generic here, so that individual components can set their own specific messages based on the error code
+    if(d.Error) {
+      throw { code: d.Error, message: "An error occurred" }
+    }
 
-  return d.Data
+    if (status) {
+      return { d: d.Data, status: d.status }
+    }
+
+    return d.Data;
+  }
 }
 
 export default Client

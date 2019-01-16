@@ -6,14 +6,16 @@ import (
 )
 
 type API struct {
-	database datastore.Datastore
-	sessions sessions.Store
+	database        datastore.Datastore
+	sessions        sessions.Store
+	publicDashboard bool
 }
 
 // New instantiates a new API object
-func New(db datastore.Datastore, secret string) *API {
+func New(db datastore.Datastore, secret string, publicDashboard bool) *API {
 	return &API{
-		database: db,
-		sessions: sessions.NewCookieStore([]byte(secret)),
+		database:        db,
+		sessions:        sessions.NewCookieStore([]byte(secret)),
+		publicDashboard: publicDashboard,
 	}
 }
