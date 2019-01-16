@@ -29,6 +29,9 @@ npm:
 assets/build: $(ASSET_SOURCES) npm
 	./node_modules/gulp/bin/gulp.js	
 
+assets/watch: $(ASSET_SOURCES) npm
+	./node_modules/gulp/bin/gulp.js watch	
+
 assets/dist: $(ASSET_SOURCES) npm
 	NODE_ENV=production ./node_modules/gulp/bin/gulp.js
 

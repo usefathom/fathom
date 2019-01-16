@@ -9,6 +9,7 @@
   const commands = {
     "set": set,
     "trackPageview": trackPageview,
+    "trackCustomEvent": trackCustomEvent,
     "setTrackerUrl": setTrackerUrl,
   };
 
@@ -169,6 +170,127 @@
       nv: data.isNewVisitor ? 1 : 0, 
       ns: data.isNewSession ? 1 : 0,
       sid: config.siteId,
+    };
+
+    let url = config.trackerUrl || findTrackerUrl()
+    let img = document.createElement('img');
+    img.setAttribute('alt', '');
+    img.setAttribute('aria-hidden', 'true');
+    img.src = url + stringifyObject(d);
+    img.addEventListener('load', function() {
+      let now = new Date();
+      let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0);
+
+      // update data in cookie
+      if( data.pagesViewed.indexOf(path) == -1 ) {
+        data.pagesViewed.push(path);
+      }
+      data.previousPageviewId = d.id;
+      data.isNewVisitor = false;
+      data.isNewSession = false;
+      data.lastSeen = +new Date();
+      setCookie('_fathom', JSON.stringify(data), { expires: midnight, path: '/' });
+
+      // remove tracking img from DOM
+      document.body.removeChild(img)
+    });
+    
+    // in case img.onload never fires, remove img after 1s & reset src attribute to cancel request
+    window.setTimeout(() => { 
+      if(!img.parentNode) {
+        return;
+      }
+
+      img.src = ''; 
+      document.body.removeChild(img)
+    }, 1000);
+
+    // add to DOM to fire request
+    document.body.appendChild(img);  
+  }
+  
+  function trackCustomEvent(vars) { 
+    vars = vars || {};
+
+    // "A man has no name" -- or rather, has to have
+    if (
+      !vars.hasOwnProperty('name') &&
+      !vars.name.length < 1
+    ) {
+      return;
+    }
+
+    // A man with contents is not fat, but fluffy-boned
+    if (
+      !vars.hasOwnProperty('content') &&
+      !vars.content.length < 1
+    ) {
+      return;
+    }
+
+    // Respect "Do Not Track" requests
+    if('doNotTrack' in navigator && navigator.doNotTrack === "1") {
+      return;
+    }
+
+    // ignore prerendered pages
+    if( 'visibilityState' in document && document.visibilityState === 'prerender' ) {
+      return;
+    }
+
+    // if <body> did not load yet, try again at dom ready event
+    if( document.body === null ) {
+      document.addEventListener("DOMContentLoaded", () => {
+        trackCustomEvent(vars);
+      })
+      return;
+    }
+
+    //  parse request, use canonical if there is one
+    let req = window.location;
+
+    // do not track if not served over HTTP or HTTPS (eg from local filesystem)
+    if(req.host === '') {
+      return;
+    }
+
+    // find canonical URL
+    let canonical = document.querySelector('link[rel="canonical"][href]');
+    if(canonical) {
+      let a = document.createElement('a');
+      a.href = canonical.href;
+
+      // use parsed canonical as location object
+      req = a;
+    }
+    
+    let path = vars.path || ( req.pathname + req.search );
+    if(!path) {
+      path = '/';
+    }
+
+    // determine hostname
+    let hostname = vars.hostname || ( req.protocol + "//" + req.hostname );
+
+    // only set referrer if not internal
+    let referrer = vars.referrer || '';
+    if(document.referrer.indexOf(hostname) < 0) {
+      referrer = document.referrer;
+    }
+
+    let data = getData();
+    const d = {
+      id: randomString(20),
+      pid: data.previousPageviewId || '',
+      p: path,
+      h: hostname,
+      r: referrer,
+      u: data.pagesViewed.indexOf(path) == -1 ? 1 : 0,
+      nv: data.isNewVisitor ? 1 : 0, 
+      ns: data.isNewSession ? 1 : 0,
+      sid: config.siteId,
+      n: vars.name,
+      c: vars.content,
     };
 
     let url = config.trackerUrl || findTrackerUrl()
