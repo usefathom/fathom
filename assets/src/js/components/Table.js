@@ -87,7 +87,7 @@ class Table extends Component {
         widthClass = "w" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5));
       }
 
-      let label = p.Pathname
+      let label = decodeURIComponent(p.Pathname)
       if( props.showHostname ) {
         if( p.Group) {
           label = p.Group
