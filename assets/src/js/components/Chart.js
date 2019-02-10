@@ -39,7 +39,7 @@ function xTickFormat(tickStep, n) {
         return d.getFullYear();
       }
 
-      return d.getMonth() === 0 ? d.getFullYear() : formatMonth(d);
+      return formatMonth(d);
     }
   }
 
