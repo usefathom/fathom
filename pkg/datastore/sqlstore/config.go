@@ -1,16 +1,19 @@
 package sqlstore
 
 import (
+	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
-	mysql "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
 	Driver   string `default:"sqlite3"`
 	URL      string `default:""`
 	Host     string `default:""`
+	Port     int    `default:""`
 	User     string `default:""`
 	Password string `default:""`
 	Name     string `default:"fathom.db"`
@@ -32,6 +35,9 @@ func (c *Config) DSN() string {
 		if c.Host != "" {
 			dsn += " host=" + c.Host
 		}
+		if c.Port > 0 {
+			dsn += " port=" + strconv.Itoa(c.Port)
+		}
 		if c.Name != "" {
 			dsn += " dbname=" + c.Name
 		}
@@ -50,7 +56,11 @@ func (c *Config) DSN() string {
 		mc := mysql.NewConfig()
 		mc.User = c.User
 		mc.Passwd = c.Password
-		mc.Addr = c.Host
+		addr := c.Host
+		if c.Port > 0 {
+			addr = fmt.Sprintf("%s:%d", c.Host, c.Port)
+		}
+		mc.Addr = addr
 		mc.Net = "tcp"
 		mc.DBName = c.Name
 		mc.Params = map[string]string{

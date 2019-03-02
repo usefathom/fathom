@@ -8,21 +8,21 @@ import (
 func TestConfigDSN(t *testing.T) {
 	c := Config{
 		Driver:   "postgres",
-		user:     "john",
-		password: "foo",
+		User:     "john",
+		Password: "foo",
 	}
-	e := fmt.Sprintf("user=%s password=%s", c.user, c.password)
+	e := fmt.Sprintf("user=%s password=%s", c.User, c.Password)
 	if v := c.DSN(); v != e {
 		t.Errorf("Invalid DSN. Expected %s, got %s", e, v)
 	}
 
 	c = Config{
 		Driver:   "postgres",
-		user:     "john",
-		password: "foo",
-		sslmode:  "disable",
+		User:     "john",
+		Password: "foo",
+		SSLMode:  "disable",
 	}
-	e = fmt.Sprintf("user=%s password=%s sslmode=%s", c.user, c.password, c.sslmode)
+	e = fmt.Sprintf("user=%s password=%s sslmode=%s", c.User, c.Password, c.SSLMode)
 	if v := c.DSN(); v != e {
 		t.Errorf("Invalid DSN. Expected %s, got %s", e, v)
 	}
@@ -32,21 +32,21 @@ func TestConfigDbname(t *testing.T) {
 	var c Config
 
 	c = Config{
-		url: "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full",
+		URL: "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full",
 	}
 	if e, v := "pqgotest", c.Dbname(); v != e {
 		t.Errorf("Expected %q, got %q", e, v)
 	}
 
 	c = Config{
-		url: "root@tcp(host.myhost)/mysqltest?loc=Local",
+		URL: "root@tcp(host.myhost)/mysqltest?loc=Local",
 	}
 	if e, v := "mysqltest", c.Dbname(); v != e {
 		t.Errorf("Expected %q, got %q", e, v)
 	}
 
 	c = Config{
-		url: "/mysqltest?loc=Local&parseTime=true",
+		URL: "/mysqltest?loc=Local&parseTime=true",
 	}
 	if e, v := "mysqltest", c.Dbname(); v != e {
 		t.Errorf("Expected %q, got %q", e, v)
