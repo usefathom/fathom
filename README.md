@@ -20,9 +20,12 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 ## Installation
 
+
 ### Production
 
-To install and run Fathom in production, [see the installation instructions](docs/Installation%20instructions.md).
+Fathom Analytics can easily be installed on DigitalOcean using our new [One-Click Application](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). You can follow the [installation instructions here](docs/DigitalOcean%20One-Click%20Installation%20Instructions.md) to get started.
+
+Alternatively, you can install Fathom on any another server provider by following [our simple instructions](docs/Installation%20instructions.md).
 
 ### Development
 
