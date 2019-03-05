@@ -12,6 +12,8 @@ The Fathom One-Click application provides a simple way to get started with the s
 
 > [Deploy your own Digital Ocean Droplet with our One-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
 
+> We have created a [video walk-through](https://www.youtube.com/watch?v=KE0NKODYEAM) for the following instructions!
+
 We recommend you have a registered domain name already, and that you use a sub-domain for Fathom Analytics. You’ll need to setup an A record from the domain to point to the IP address of your Fathom Analytics One-Click Droplet, (e.g. `stats.example.com`).
 
 After the Fathom Analytics One-Click Droplet has been created and the DNS records are setup, you’ll need to log into your new Fathom Droplet to finish the setup.
