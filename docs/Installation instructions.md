@@ -47,7 +47,7 @@ Check out the [configuration file documentation](Configuration.md) for all possi
 
 ## Register your admin user
 
-> This step is optional. If you don't register any users, your Fathom dashboard will be public and you won't be able to add sites via the web interface.
+> This step is required.
 
 To register a user in the Fathom instance we just created, run the following command from the directory where your `.env` file is. 
 
