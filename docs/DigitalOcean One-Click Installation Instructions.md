@@ -1,22 +1,22 @@
-# Fathom Analytics One-Click Application
+# Fathom Analytics 1-Click App
 
-> [Deploy your own Digital Ocean Droplet with our One-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
+> [Deploy your own Digital Ocean Droplet with our 1-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
 
 [Fathom Analytics](https://usefathom.com) is a powerful but simple way to track visitors and referrals to your website without compromising their privacy. No personal data is stored, stats are collected in aggregate, making Fathom GDPR and ePrivacy compliant.
 
-The Fathom One-Click application provides a simple way to get started with the software by automatically installing it plus the required software on a single Ubuntu 18.04 Droplet.
+The Fathom 1-Click App provides a simple way to get started with the software by automatically installing it plus the required software on a single Ubuntu 18.04 Droplet.
 
 > NOTE: A fully-managed, automatically updated and hosted service is also available via [Fathom PRO](https://usefathom.com), which lets you configure and manage everything from your browser.
 
 ### Quick Start
 
-> [Deploy your own Digital Ocean Droplet with our One-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
+> [Deploy your own Digital Ocean Droplet with our 1-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
 
 > We have created a [video walk-through](https://www.youtube.com/watch?v=KE0NKODYEAM) for the following instructions!
 
-We recommend you have a registered domain name already, and that you use a sub-domain for Fathom Analytics. You’ll need to setup an A record from the domain to point to the IP address of your Fathom Analytics One-Click Droplet, (e.g. `stats.example.com`).
+We recommend you have a registered domain name already, and that you use a sub-domain for Fathom Analytics. You’ll need to setup an A record from the domain to point to the IP address of your Fathom Analytics 1-Click Droplet, (e.g. `stats.example.com`).
 
-After the Fathom Analytics One-Click Droplet has been created and the DNS records are setup, you’ll need to log into your new Fathom Droplet to finish the setup.
+After the Fathom Analytics 1-Click Droplet has been created and the DNS records are setup, you’ll need to log into your new Fathom Droplet to finish the setup.
 
 From a terminal on your local computer, connect to the Droplet as the `root` user. Make sure to substitute the IP address of the Droplet:
 
@@ -66,4 +66,4 @@ Next you’ll be given your code snippet, with your unique `site id` to add to t
 
 Log into your Fathom dashboard every few days to see the most popular content and biggest referrers to your website. You can also add infinite sites to track from the same dashboard.
 
-> [Deploy your own Digital Ocean Droplet with our One-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
+> [Deploy your own Digital Ocean Droplet with our 1-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
