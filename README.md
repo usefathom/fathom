@@ -1,4 +1,4 @@
-Fathom - simple website analytics
+Fathom - simple website analytics (Community Edition)
 ==============================
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/usefathom/fathom)](https://goreportcard.com/report/github.com/usefathom/fathom)
