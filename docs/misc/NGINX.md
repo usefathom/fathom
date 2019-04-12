@@ -19,7 +19,13 @@ server {
 }
 ```
 
-If you wish to protect your site using a [Let's Encrypt](https://letsencrypt.org/) HTTPS certificate, you can do so using the [Certbot webroot plugin](https://certbot.eff.org/docs/using.html#webroot). Your `/etc/nginx/sites-enabled/yourfathom.com` file should be updated accordingly:
+If you wish to protect your site using a [Let's Encrypt](https://letsencrypt.org/) HTTPS certificate, you can do so using the [Certbot webroot plugin](https://certbot.eff.org/docs/using.html#webroot). 
+
+```
+certbot certonly --webroot --webroot-path /var/www/yourfathom.com -d yourfathom.com
+```
+
+Your `/etc/nginx/sites-enabled/yourfathom.com` file should be updated accordingly:
 
 ```
 server {
@@ -45,10 +51,6 @@ server {
 ```
 
 The `alias` directive should point to the location where your `--webroot-path` is specified when generating the certificate (with `/.well-known` appended).
-
-```
-certbot certonly --webroot --webroot-path /var/www/yourfathom.com -d yourfathom.com
-```
 
 ### Test NGINX configuration
 ```
