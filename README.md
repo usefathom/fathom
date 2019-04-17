@@ -1,6 +1,7 @@
 Fathom - simple website analytics (Community Edition)
 ==============================
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LJ5WZVA9ER9GJ)
 [![Go Report Card](https://goreportcard.com/badge/github.com/usefathom/fathom)](https://goreportcard.com/report/github.com/usefathom/fathom)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/usefathom/fathom/master/LICENSE)
 
@@ -17,6 +18,22 @@ We need to stop giving away our data and our users' privacy for free access to a
 Fathom [respects the privacy of your users and does not collect any personally identifiable information](https://usefathom.com/data/). All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/src/img/fathom.jpg?v=7)
+
+## Community Edition vs PRO Edition
+
+We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. You can also self-host our Community Edition for $5 / month.
+
+Here is what you get for an extra $9 / month with our PRO version:
+
+* Automatic Security / Software updates
+* Automatic scaling (our PRO version is built to handle billions of page views each month)
+* Database Redundancy (In the event of a database hardware failure, we have a live standby database ready to go)
+* Access to our super-fast CDN
+* Faster data aggregation
+* Access to the latest Fathom Analytics software updates
+
+It comes down to your personal needs and how much you value your time.
+
 
 ## Installation
 
@@ -67,6 +84,11 @@ img-src: yourfathom.com;
 Find [our public roadmap here](https://trello.com/b/x2aBwH2J/fathom-roadmap). 
 
 If you have an idea or suggestion for Fathom, [submit it as an issue here on GitHub](https://github.com/usefathom/fathom/issues).
+
+## Donation
+If you're self-hosting Fathom Analytics (Community Edition) and want to support it's development, you can:
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LJ5WZVA9ER9GJ)
 
 ## Copyright and license
 
