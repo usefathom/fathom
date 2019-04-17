@@ -21,7 +21,7 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 ## Community Edition vs PRO Edition
 
-We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. You can also self-host our Community Edition for $5 / month.
+We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. You can also self-host our Community Edition on your own server (est. $5 / month).
 
 Here is what you get for an extra $9 / month with our PRO version:
 
