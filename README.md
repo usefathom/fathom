@@ -23,16 +23,20 @@ Fathom [respects the privacy of your users and does not collect any personally i
 
 We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. You can also self-host our Community Edition on your own server (est. $5 / month).
 
-Here is what you get for an extra $9 / month with our PRO version:
-
-* Automatic Security / Software updates
-* Automatic scaling (our PRO version is built to handle billions of page views each month)
-* Database Redundancy (In the event of a database hardware failure, we have a live standby database ready to go)
-* Access to our super-fast CDN
-* Faster data aggregation
-* Access to the latest Fathom Analytics software updates
-
-It comes down to your personal needs and how much you value your time.
+| Open Source                                                                                   | Paid/Hosted                                                                                                                                         |
+|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| No support (you can post an issue to our repo)                                                | Fast and responsive support from the Fathom founders                                                                                                |
+| No guaranteed uptime                                                                          | Fully redundant cloud-based architecture that keeps your stats online                                                                               |
+| Scaling requires you to power down and then upgrade your server                               | On-demand, automatic scaling, so even if your site goes viral, your stats won’t stop or slow down - we can handle billions of page views each month |
+| Manual backups, if you know how to set them up on your server                                 | Real time backups included in the cost                                                                                                              |
+| No data protection                                                                            | Continuous data protection (in the event of a database hardware failure, we have a live standby database ready to go)                               |
+| Manual updates, via the command line                                                          | Automatic updates, patches and new versions at no extra cost, no coding required                                                                    |
+| Manual server hardening for security                                                          | Totally secure server, monitored and maintained by us, included in the price                                                                        |
+| You pay for hosting, you have to do all the work to maintain the server, the code and backups | You pay us, we take care of everything for you                                                                                                      |
+| Tracker file served via single server, from a single location                                 | Tracker file served via our super-fast CDN, with endpoints located around the world to ensure fast page loads                                       |
+| Data aggregation performed on a single server                                                 | Super fast data-aggregation spread across our cloud architecture                                                                                    |
+| Contribute to our repo                                                                        | Supporting a privacy-focused, indie software company                                                                                                |
+|                                                                                               | [Buy now](https://usefathom.com/#pricing)                                                                                                                                             |
 
 
 ## Installation
