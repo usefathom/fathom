@@ -1,6 +1,6 @@
 # Fathom Analytics 1-Click App
 
-> [Deploy your own Digital Ocean Droplet with our 1-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $100 for 60 days.
+> [Deploy your own Digital Ocean Droplet with our 1-Click installer](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). New Digital Ocean customers will receive $50 for 30 days.
 
 [Fathom Analytics](https://usefathom.com) is a powerful but simple way to track visitors and referrals to your website without compromising their privacy. No personal data is stored, stats are collected in aggregate, making Fathom GDPR and ePrivacy compliant.
 
