@@ -44,9 +44,7 @@ We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) tha
 
 ### Production
 
-Fathom Analytics can easily be installed on DigitalOcean using our new [1-Click Application](https://marketplace.digitalocean.com/apps/fathom-analytics?action=deploy&refcode=a36c0e8abd93). You can follow the [installation instructions here](docs/DigitalOcean%20One-Click%20Installation%20Instructions.md) to get started.
-
-Alternatively, you can install Fathom on any another server provider by following [our simple instructions](docs/Installation%20instructions.md).
+You can install Fathom on your server by following [our simple instructions](docs/Installation%20instructions.md).
 
 ### Development
 
