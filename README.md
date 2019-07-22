@@ -15,7 +15,9 @@ Google Analytics may give you free access to their services but in turn, they’
 
 We need to stop giving away our data and our users' privacy for free access to a tool.
 
-Fathom [respects the privacy of your users and does not collect any personally identifiable information](https://usefathom.com/data/). All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
+Fathom respects the privacy of your users and does not collect any personally identifiable information. All while giving you the information you need about your site, so you can make smarter decisions about your design and content.
+
+At present, Fathom Analytics (Community Edition) is not PECR compliant due to the fact that it uses cookies. Our PRO version is PECR compliant, and we'll be open-sourcing that codebase close to the end of 2019!
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/src/img/fathom.jpg?v=7)
 
