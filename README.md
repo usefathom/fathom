@@ -27,6 +27,7 @@ We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) tha
 
 | Open Source                                                                                   | Paid/Hosted                                                                                                                                         |
 |-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Uses Cookies                                                                                  | Cookie-free       |
 | No support (you can post an issue to our repo)                                                | Fast and responsive support from the Fathom founders                                                                                                |
 | No guaranteed uptime                                                                          | Fully redundant cloud-based architecture that keeps your stats online                                                                               |
 | Scaling requires you to power down and then upgrade your server                               | On-demand, automatic scaling, so even if your site goes viral, your stats won’t stop or slow down - we can handle billions of page views each month |
