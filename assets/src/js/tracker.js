@@ -134,6 +134,11 @@
       return;
     }
 
+    // do not track if served from localhost
+    if(req.hostname === 'localhost') {
+      return;
+    }
+    
     // find canonical URL
     let canonical = document.querySelector('link[rel="canonical"][href]');
     if(canonical) {
