@@ -75,7 +75,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// headers to prevent caching
 	w.Header().Set("Content-Type", "image/gif")
 	w.Header().Set("Expires", "Mon, 01 Jan 1990 00:00:00 GMT")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("Pragma", "no-cache")
 
 	// response, 1x1 px transparent GIF
