@@ -1,4 +1,4 @@
-Fathom - simple website analytics (Community Edition)
+Fathom Lite - simple website analytics
 ==============================
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LJ5WZVA9ER9GJ)
