@@ -89,12 +89,6 @@ script-src: yourfathom.com;
 img-src: yourfathom.com;
 ```
 
-## Roadmap
-
-Find [our public roadmap here](https://trello.com/b/x2aBwH2J/fathom-roadmap). 
-
-If you have an idea or suggestion for Fathom, [submit it as an issue here on GitHub](https://github.com/usefathom/fathom/issues).
-
 ## Donation
 If you're self-hosting Fathom Analytics Lite and want to support it's development, you can:
 
