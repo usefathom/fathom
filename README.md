@@ -23,7 +23,7 @@ At present, Fathom Analytics Lite is not PECR compliant due to the fact that it 
 
 ## Lite vs PRO
 
-We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. If you’d like to become a customer, we’d love to have you on board. You can signup for a [free 7-day trial of Fathom Analytics here](https://app.usefathom.com/register).
+We offer a [PRO version of Fathom Analytics](https://usefathom.com/#pricing) that starts at $14 / month. If you’d like to become a customer, we’d love to have you on board. You can signup for a [free 7-day trial of Fathom Analytics here](https://usefathom.com/ref/GITHUB) **(this link gives you $10 off your first invoice!)**.
 
 ![Screenshot of the PRO Dashboard](https://usefathom.com/assets/fathom-analytics.png)
 
