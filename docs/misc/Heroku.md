@@ -64,7 +64,7 @@ heroku config:set PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/
   FATHOM_DATABASE_DRIVER=postgres \
   FATHOM_DATABASE_URL=$(heroku config:get DATABASE_URL) \
   FATHOM_DEBUG=true \
-  FATHOM_SECRET= $(openssl rand -base64 32) \
+  FATHOM_SECRET=$(openssl rand -base64 32) \
   FATHOM_GZIP=true
 ```
 
