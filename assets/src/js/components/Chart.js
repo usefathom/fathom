@@ -275,8 +275,8 @@ class Chart extends Component {
   fetchData(props) {
     this.setState({ loading: true })
 
-    let before = props.dateRange[1]/1000;
-    let after = props.dateRange[0]/1000;
+    let before = Math.round(props.dateRange[1]/1000);
+    let after = Math.round(props.dateRange[0]/1000);
 
     Client.request(`/sites/${props.siteId}/stats/site?before=${before}&after=${after}`)
       .then(data => { 

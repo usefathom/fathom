@@ -38,8 +38,8 @@ class Table extends Component {
   @bind
   fetchData(props) {
     this.setState({ loading: true });
-    let before = props.dateRange[1]/1000;
-    let after = props.dateRange[0]/1000;
+    let before = Math.round(props.dateRange[1]/1000);
+    let after = Math.round(props.dateRange[0]/1000);
 
     Client.request(`/sites/${props.siteId}/stats/${props.endpoint}/agg?before=${before}&after=${after}&offset=${this.state.offset}&limit=${this.state.limit}`)
       .then((d) => {
