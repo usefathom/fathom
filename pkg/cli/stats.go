@@ -53,8 +53,7 @@ func stats(c *cli.Context) error {
 	}
 
 	if c.Bool("json") {
-		err := json.NewEncoder(os.Stdout).Encode(result)
-		return err
+		return json.NewEncoder(os.Stdout).Encode(result)
 	}
 
 	fmt.Printf("%s - %s\n", start.Format("Jan 01, 2006"), end.Format("Jan 01, 2006"))
