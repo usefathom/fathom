@@ -61,7 +61,9 @@ fathom user add --email="john@email.com" --password="strong-password"
 
 We recommend using NGINX with Fathom, as it simplifies running multiple sites from the same server and handling SSL certificates with LetsEncrypt.
 
-Create a new file in `/etc/nginx/sites-enabled/my-fathom-site` with the following contents. Replace `my-fathom-site.com` with the domain you would like to use for accessing your Fathom installation.
+First remove the defualt configuration file in `/etc/nginx/sites-enabled/default`, not doing this would result in weird problems with nginx not redirecting to your fathom installation.
+
+Create a site configuration in `/etc/nginx/sites-available/my-fathom-site.com` with the following content.Replace `my-fathom-site.com` with the domain you would like to use for accessing your Fathom installation.
 
 ```sh
 server {
@@ -75,6 +77,9 @@ server {
 	}
 }
 ```
+
+Now to enable the configuration, create a symbolic link (like a shortcut) to the `sites-enabled` folder 
+`sudo ln -s /etc/nginx/sites-available/my-fathom-site.com  /etc/nginx/sites-enabled/my-fathom-site.com`
 
 Test your NGINX configuration and reload NGINX.
 
@@ -135,4 +140,19 @@ With [Certbot](https://certbot.eff.org/docs/) for LetsEncrypt installed, adding 
 certbot --nginx -d my-fathom-site.com
 ```
 
+### Secure your fathom server
+Using UFW, you can secure you fathom analytics server from hackers by creating a firewall that restricts access to only the ports you want open, in this case nginx.
 
+Run the command `ufw app list` and you should see a list of nginx config for the firewall:
+```
+Available applications:
+Nginx Full
+Nginx HTTPS
+Nginx HTTP
+```
+
+**Nginx Full**: Opens both port 80 and port 443
+**Nginx HTTPS**: Opens only port 443 
+**Nginx HTTP**: Opens only port 80
+
+To enable a config: `ufw allow 'Nginx Full'`.
