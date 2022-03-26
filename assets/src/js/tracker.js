@@ -64,7 +64,7 @@
       str += ';expires='+args.expires.toUTCString();
     }
 
-    document.cookie = str;
+    document.cookie = str + ';SameSite=None;Secure';
   }
 
   function newVisitorData() {
