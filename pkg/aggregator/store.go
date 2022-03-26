@@ -102,9 +102,18 @@ func (agg *Aggregator) getReferrerStats(r *results, siteID int64, t time.Time, h
 			Group:      "",
 		}
 
-		// TODO: Abstract this so we can add more groupings
 		if strings.Contains(hostname, "www.google.") {
 			stats.Group = "Google"
+		} else if strings.Contains(stats.Hostname, "www.bing.") {
+			stats.Group = "Bing"
+		} else if strings.Contains(stats.Hostname, "www.baidu.") {
+			stats.Group = "Baidu"
+		} else if strings.Contains(stats.Hostname, "www.yandex.") {
+			stats.Group = "Yandex"
+		} else if strings.Contains(stats.Hostname, "search.yahoo.") {
+			stats.Group = "Yahoo!"
+		} else if strings.Contains(stats.Hostname, "www.findx.") {
+			stats.Group = "Findx"
 		}
 	}
 
