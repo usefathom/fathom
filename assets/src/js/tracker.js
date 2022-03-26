@@ -129,8 +129,8 @@
     //  parse request, use canonical if there is one
     let req = window.location;
 
-    // do not track if not served over HTTP or HTTPS (eg from local filesystem)
-    if(req.host === '') {
+    // do not track if not served over HTTP or HTTPS (eg from local filesystem) and we're not in an Electron app
+    if(req.host === '' && navigator.userAgent.indexOf("Electron") < 0) {
       return;
     }
 
