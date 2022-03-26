@@ -54,9 +54,12 @@ func Parse() *Config {
 	}
 
 	if cfg.Database.URL != "" {
-		_, err := url.Parse(cfg.Database.URL)
+		u, err := url.Parse(cfg.Database.URL)
 		if err != nil {
 			log.Fatalf("Error parsing DATABASE_URL from environment: %s", err)
+		}
+		if u.Scheme == "postgres" {
+			cfg.Database.Driver = "postgres"
 		}
 	}
 
