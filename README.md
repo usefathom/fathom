@@ -5,7 +5,7 @@ Fathom Lite - simple website analytics
 [![Go Report Card](https://goreportcard.com/badge/github.com/usefathom/fathom)](https://goreportcard.com/report/github.com/usefathom/fathom)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/usefathom/fathom/master/LICENSE)
 
-[Fathom Analytics](https://usefathom.com/) is a simpler and more privacy-focused alternative to Google Analytics.
+[Fathom Analytics](https://usefathom.com/) is a simpler and more privacy-focused [alternative to Google Analytics](https://usefathom.com/google-analytics-alternative).
 
 Collecting information on the internet is important, but it’s broken. We’ve become complacent in trading information for free access to web services, and then complaining when those web services do crappy things with that data.
 
