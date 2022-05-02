@@ -16,11 +16,11 @@ $(EXECUTABLE): $(GO_SOURCES) assets/build
 	go build -o $@ $(MAIN_PKG)
 
 .PHONY: docker
-docker: $(GO_SOURCES) 
+docker: $(GO_SOURCES) $(GOPATH)/bin/packr
 	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
-	GOBIN=$(GOPATH)/bin go get -u github.com/gobuffalo/packr/packr
+	GOBIN=$(GOPATH)/bin go install github.com/gobuffalo/packr/packr@latest
 
 .PHONY: npm 
 npm:
@@ -35,7 +35,7 @@ assets/dist: $(ASSET_SOURCES) npm
 .PHONY: clean
 clean:
 	go clean -i ./...
-	packr clean
+	$(GOPATH)/bin/packr clean
 	rm -rf $(EXECUTABLE)
 
 .PHONY: fmt
@@ -49,14 +49,14 @@ vet:
 .PHONY: errcheck
 errcheck:
 	@which errcheck > /dev/null; if [ $$? -ne 0 ]; then \
-		go get -u github.com/kisielk/errcheck; \
+		go install github.com/kisielk/errcheck@latest; \
 	fi
 	errcheck $(PACKAGES)
 
 .PHONY: lint
 lint:
 	@which golint > /dev/null; if [ $$? -ne 0 ]; then \
-		go get -u github.com/golang/lint/golint; \
+		go install github.com/golang/lint/golint@latest; \
 	fi
 	for PKG in $(PACKAGES); do golint -set_exit_status $$PKG || exit 1; done;
 
