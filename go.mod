@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/go-sql-driver/mysql v1.4.1-0.20181113023849-369b5d6e5e8e
 	github.com/gobuffalo/packr v1.13.7
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/handlers v1.3.1-0.20180717233320-6257a585e449
 	github.com/gorilla/mux v1.6.3-0.20180605211556-cb4698366aa6
@@ -23,13 +24,8 @@ require (
 
 require (
 	github.com/gorilla/securecookie v1.1.2-0.20180608144417-78f3d318a8bf // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/pkg/errors v0.8.1-0.20180311214515-816c9085562c // indirect
-	github.com/spf13/cobra v0.0.3 // indirect
-	github.com/spf13/pflag v1.0.2 // indirect
 	github.com/ziutek/mymysql v1.5.5-0.20171217234033-ff6cc86d3d93 // indirect
-	golang.org/x/net v0.0.0-20180921000356-2f5d2388922f // indirect
-	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
 	golang.org/x/sys v0.0.0-20180724212812-e072cadbbdc8 // indirect
 	google.golang.org/appengine v1.1.0 // indirect
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
