@@ -84,7 +84,7 @@ class Table extends Component {
       let href = (p.Hostname + p.Pathname) || p.URL;
       let widthClass = "";
       if(state.total > 0) {
-        widthClass = "w" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5));
+        widthClass = "w" + ("" + Math.min(98, Math.round(p.Pageviews / state.total * 100 * 2.5))).padStart(2, '0');
       }
 
       let label = p.Pathname
