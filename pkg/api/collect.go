@@ -207,7 +207,7 @@ func shouldCollect(r *http.Request) bool {
 }
 
 func parsePathname(p string) string {
-	return "/" + strings.TrimLeft(p, "/")
+	return "/" + strings.TrimLeft(strings.TrimRight(p, "/"), "/")
 }
 
 func parseHostname(r string) string {
