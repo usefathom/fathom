@@ -5,6 +5,8 @@ PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 ASSET_SOURCES ?= $(shell find assets/src/. -type f)
 GO_SOURCES ?= $(shell find . -name "*.go" -type f)
 GOPATH=$(shell go env GOPATH)
+ARCH := amd64
+OS := linux
 
 .PHONY: all
 all: build 
@@ -17,7 +19,7 @@ $(EXECUTABLE): $(GO_SOURCES) assets/build
 
 .PHONY: docker
 docker: $(GO_SOURCES) $(GOPATH)/bin/packr
-	GOOS=linux GOARCH=amd64 $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
+	GOOS=S(OS) GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
 	GOBIN=$(GOPATH)/bin go install github.com/gobuffalo/packr/packr@latest
