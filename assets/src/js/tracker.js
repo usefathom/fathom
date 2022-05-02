@@ -169,6 +169,7 @@
     let img = document.createElement('img');
     img.setAttribute('alt', '');
     img.setAttribute('aria-hidden', 'true');
+    img.setAttribute('style', 'position:absolute');
     img.src = url + stringifyObject(d);
     img.addEventListener('load', function() {
       let midnight = new Date();
