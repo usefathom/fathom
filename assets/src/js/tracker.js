@@ -171,8 +171,8 @@
     img.setAttribute('aria-hidden', 'true');
     img.src = url + stringifyObject(d);
     img.addEventListener('load', function() {
-      let now = new Date();
-      let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0);
+      let midnight = new Date();
+      midnight.setHours(24); midnight.setMinutes(0); midnight.setSeconds(0);
 
       // update data in cookie
       if( data.pagesViewed.indexOf(path) == -1 ) {
