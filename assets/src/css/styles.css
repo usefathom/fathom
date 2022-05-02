@@ -172,4 +172,6 @@ div.delete a { color: red; }
 .login-page  small a { color: #98a0a6; font-size: 14px; display: inline-block; padding: 0 8px; }
 
 
-
+.notice { background: #ecedf4; border-radius: 4px; padding: 16px; text-align: left; color: color: #222; font-size: 14px; display: grid; grid-template-columns: 1fr min-content; margin: 32px 0; gap: 32px; align-items: center; }
+.notice a { color: #aaa; }
+.notice .notice-text a { color: #533feb; text-decoration: underline; }

@@ -176,7 +176,9 @@ class Dashboard extends Component {
             <Table endpoint="referrers" headers={["Top referrers", "Views", "Uniques"]} siteId={state.site.id} dateRange={state.dateRange} showHostname="true" />
           </div>
         </div>
-
+        <div class="notice">
+          <div class="notice-text"><strong>Want more features and less maintenance?</strong> Check out the current version of Fathom Analytics and <a href="https://usefathom.com/ref/GITHUB">start your free trial today</a>.</div>
+        </div>
         <footer class="section">
           <div class="half">
           <nav>
