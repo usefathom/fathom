@@ -12,7 +12,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.1-0.20181024163419-82935fac6c1a
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.3.1-0.20180517194557-dd1402a4d99d
-	github.com/lib/pq v1.0.1-0.20181016162627-9eb73efc1fcc
+	github.com/lib/pq v1.10.4
 	github.com/mattn/go-sqlite3 v1.10.1-0.20181109095304-eed79b86572f
 	github.com/mssola/user_agent v0.4.2-0.20180608081648-d7bd3b07ee86
 	github.com/rubenv/sql-migrate v0.0.0-20180704111356-3f452fc0ebeb
