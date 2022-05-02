@@ -22,6 +22,9 @@ func TestParsePathname(t *testing.T) {
 	if v := parsePathname("about"); v != "/about" {
 		t.Errorf("error parsing pathname. expected %#v, got %#v", "/about", v)
 	}
+	if v := parsePathname("about/"); v != "/about" {
+		t.Errorf("error parsing pathname. expected %#v, got %#v", "/about", v)
+	}
 }
 
 func TestParseHostname(t *testing.T) {
