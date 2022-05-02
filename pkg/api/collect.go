@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/mssola/user_agent"
@@ -52,7 +53,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 
 	pageview := &models.Pageview{
-		ID:             q.Get("id"),
+		ID:             uuid.NewString()[0:30],
 		SiteTrackingID: q.Get("sid"),
 		Hostname:       parseHostname(q.Get("h")),
 		Pathname:       parsePathname(q.Get("p")),
@@ -194,7 +195,7 @@ func shouldCollect(r *http.Request) bool {
 	}
 
 	// discard if required query vars are missing
-	requiredQueryVars := []string{"id", "h", "p"}
+	requiredQueryVars := []string{"h", "p"}
 	q := r.URL.Query()
 	for _, k := range requiredQueryVars {
 		if q.Get(k) == "" {

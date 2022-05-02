@@ -30,11 +30,6 @@
         }).join('&');
   }
 
-  function randomString(n) {
-    var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return Array(n).join().split(',').map(() => s.charAt(Math.floor(Math.random() * s.length))).join('');
-  }
-
   function getCookie(name) {
     var cookies = document.cookie ? document.cookie.split('; ') : [];
     
@@ -160,7 +155,6 @@
 
     let data = getData();
     const d = {
-      id: randomString(20),
       pid: data.previousPageviewId || '',
       p: path,
       h: hostname,
