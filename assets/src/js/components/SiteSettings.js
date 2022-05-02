@@ -127,7 +127,7 @@ class SiteSettings extends Component {
 	m=f.getElementsByTagName('script')[0];
 	o.async=1; o.src=t; o.id='fathom-script';
 	m.parentNode.insertBefore(o,m)
-})(document, window, '//${document.domain}/tracker.js', 'fathom');
+})(document, window, '//${location.host}/tracker.js', 'fathom');
 fathom('set', 'siteId', '${props.site.trackingId}');
 fathom('trackPageview');
 </script>
