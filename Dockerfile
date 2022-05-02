@@ -10,7 +10,9 @@ RUN go install github.com/gobuffalo/packr/packr@latest
 WORKDIR /go/src/github.com/usefathom/fathom
 COPY . /go/src/github.com/usefathom/fathom
 COPY --from=assetbuilder /app/assets/build ./assets/build
-RUN make docker
+ARG GOARCH=amd64
+ARG GOOS=linux
+RUN make ARCH=${GOARCH} OS=${GOOS} docker
 
 FROM alpine:latest
 EXPOSE 8080
