@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/usefathom/fathom/pkg/models"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 	"github.com/usefathom/fathom/pkg/datastore"
-	"github.com/usefathom/fathom/pkg/models"
 )
 
 var userCmd = cli.Command{
@@ -58,20 +59,30 @@ func userAdd(c *cli.Context) error {
 		return errors.New("Invalid arguments: missing password")
 	}
 
-	user := models.NewUser(email, password)
+	_, err := app.database.GetUserByEmail(email)
+	if err != nil {
+		if err == datastore.ErrNoResults {
+			user := models.NewUser(email, password)
 
-	// set password manually if --skip-bcrypt was given
-	// this is used to supply an already encrypted password string
-	if c.Bool("skip-bcrypt") {
-		user.Password = password
+			// set password manually if --skip-bcrypt was given
+			// this is used to supply an already encrypted password string
+			if c.Bool("skip-bcrypt") {
+				user.Password = password
+			}
+
+			if err := app.database.SaveUser(&user); err != nil {
+				return fmt.Errorf("Error creating user: %s", err)
+			}
+
+			log.Infof("Created user %s", user.Email)
+			return nil
+		}
+
+		return err
 	}
-
-	if err := app.database.SaveUser(&user); err != nil {
-		return fmt.Errorf("Error creating user: %s", err)
-	}
-
-	log.Infof("Created user %s", user.Email)
+	log.Infof("A user with this email %s already exists", email)
 	return nil
+
 }
 
 func userDelete(c *cli.Context) error {
