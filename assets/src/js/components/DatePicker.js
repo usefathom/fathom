@@ -4,6 +4,7 @@ import { h, Component } from 'preact';
 import { bind } from 'decko';
 import Pikadayer from './Pikadayer.js';
 import classNames from 'classnames';
+import {hashParams} from "../lib/util";
 
 const padZero = (n) => n < 10 ? '0'+n : ''+n;
 
@@ -81,19 +82,6 @@ const availablePeriods = {
  }
 }
 
-function hashParams() {
- var params = {}, 
-  match, 
-  matches =  window.location.hash.substring(2).split("&");
-
- for(var i=0; i<matches.length; i++) {
-   match = matches[i].split('=')
-   params[match[0]] = decodeURIComponent(match[1]);
- }
-
- return params;
-}
-
 class DatePicker extends Component {
   constructor(props) {
     super(props)
@@ -105,6 +93,7 @@ class DatePicker extends Component {
       startDate: new Date(params.s || 'now'),
       endDate: new Date(params.e || 'now'),
       groupBy: params.g || 'day',
+      site: params.site || 1
     }    
     this.state.diff = this.calculateDiff(this.state.startDate, this.state.endDate)
 
@@ -179,9 +168,9 @@ class DatePicker extends Component {
 
   updateURL() {
     if(this.state.period !== 'custom') {
-      window.history.replaceState(this.state, null, `#!p=${this.state.period}&g=${this.state.groupBy}`)
+      window.history.replaceState(this.state, null, `#!p=${this.state.period}&g=${this.state.groupBy}&site=${this.state.site}`)
     } else {
-      window.history.replaceState(this.state, null, `#!p=custom&s=${encodeURIComponent(this.state.startDate.toISOString())}&e=${encodeURIComponent(this.state.endDate.toISOString())}&g=${this.state.groupBy}`)
+      window.history.replaceState(this.state, null, `#!p=custom&s=${encodeURIComponent(this.state.startDate.toISOString())}&e=${encodeURIComponent(this.state.endDate.toISOString())}&g=${this.state.groupBy}&site=${this.state.site}`)
     }
   }
 

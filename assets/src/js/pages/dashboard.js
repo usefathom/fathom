@@ -13,17 +13,19 @@ import Chart from '../components/Chart.js';
 import { bind } from 'decko';
 import Client from '../lib/client.js';
 import classNames from 'classnames';
+import {hashParams} from "../lib/util";
 
-const defaultSite = { 
-  id: window.localStorage.getItem('site_id') || 1, 
-  name: "",
-  unsaved: true,
-};
 
+let defaultSite = {}
 class Dashboard extends Component {
   constructor(props) {
     super(props)
-
+    let params = hashParams()
+    defaultSite = {
+      id: params.site || window.localStorage.getItem('site_id') || 1,
+      name: "",
+      unsaved: true,
+    };
     this.state = {
       dateRange: [],
       groupBy: 'day',
@@ -39,10 +41,10 @@ class Dashboard extends Component {
     this.fetchSites()
   }
 
-  @bind 
+  @bind
   fetchSites() {
     Client.request(`sites`)
-    .then((sites) => { 
+    .then((sites) => {
       // open site settings when there are no sites yet
       if(sites.length == 0) {
         this.showSiteSettings({ id: 1, name: "yoursite.com", unsaved: true })
@@ -55,7 +57,7 @@ class Dashboard extends Component {
       site = s ? s : site;
 
       this.setState({
-        sites: sites, 
+        sites: sites,
         site: site,
       })
     }).catch((e) => {
@@ -67,18 +69,18 @@ class Dashboard extends Component {
 
   @bind
   changeDateRange(s) {
-    this.setState({ 
+    this.setState({
       dateRange: [ s.startDate, s.endDate ],
       period: s.period,
       groupBy: s.groupBy,
     })
   }
 
-  @bind 
+  @bind
   showSiteSettings(site) {
     site = site && site.unsaved ? site : this.state.site;
-    this.setState({ 
-      settingsOpen: true, 
+    this.setState({
+      settingsOpen: true,
       site: site,
       previousSite: this.state.site,
     })
@@ -87,14 +89,14 @@ class Dashboard extends Component {
   @bind
   closeSiteSettings() {
     this.setState({
-      settingsOpen: false, 
+      settingsOpen: false,
 
       // switch back to previous site if we were showing site settings to add a new site
       site: this.state.site.unsaved && this.state.previousSite ? this.state.previousSite : this.state.site,
     })
   }
 
-  @bind 
+  @bind
   changeSelectedSite(site) {
     let newState = {
       site: site,
@@ -102,7 +104,7 @@ class Dashboard extends Component {
 
     if(!this.state.site.unsaved) {
       newState.previousSite = this.state.site
-    } 
+    }
 
     this.setState(newState)
     window.localStorage.setItem('site_id', site.id)
@@ -115,9 +117,9 @@ class Dashboard extends Component {
       if(s.id != site.id) {
         return s;
       }
-      
+
       updated = true;
-      
+
       // replace site in sites array with parameter
       return site;
     })
@@ -129,13 +131,13 @@ class Dashboard extends Component {
     this.setState({sites: newSites, site: site})
   }
 
-  @bind 
+  @bind
   deleteSite(site) {
     let newSites = this.state.sites.filter((s) => (s.id != site.id))
     let newSelectedSite = newSites.length > 0 ? newSites[0] : defaultSite;
-    this.setState({ 
-      sites: newSites, 
-      site: newSelectedSite 
+    this.setState({
+      sites: newSites,
+      site: newSelectedSite
     })
   }
 

@@ -3,6 +3,17 @@
 import { h, Component } from 'preact';
 import { bind } from 'decko';
 
+
+
+function arrayToQueryString(array_in){
+    var out = new Array();
+
+    for(var key in array_in){
+        out.push(key + '=' + encodeURIComponent(array_in[key]));
+    }
+
+    return out.join('&');
+}
 class SiteSwitcher extends Component {
   constructor() {
     super();
@@ -18,7 +29,9 @@ class SiteSwitcher extends Component {
         if (s.id != itemId) {
             return false;
         }
-
+        let params = hashParams()
+        params["site"] = s.id
+        window.history.replaceState(this.state, null, `#!${arrayToQueryString(params)}`)
         this.props.onChange(s)
         return true;
     })   
