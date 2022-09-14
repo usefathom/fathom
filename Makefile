@@ -19,7 +19,7 @@ $(EXECUTABLE): $(GO_SOURCES) assets/build
 
 .PHONY: docker
 docker: $(GO_SOURCES) $(GOPATH)/bin/packr
-	GOOS=S(OS) GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
+	GOOS=$(OS) GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
 $(GOPATH)/bin/packr:
 	GOBIN=$(GOPATH)/bin go install github.com/gobuffalo/packr/packr@latest
