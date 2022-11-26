@@ -2,6 +2,7 @@
 before:
   hooks:
     - make assets/dist
+    - go install github.com/gobuffalo/packr/v2@latest
 builds:
   - main: main.go
     goos:
@@ -15,7 +16,7 @@ builds:
     ldflags:
       - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
     hooks:
-      pre: go install github.com/gobuffalo/packr/v2@latest && packr
+      pre: packr
       post: packr clean
 checksum:
   name_template: 'checksums.txt'
