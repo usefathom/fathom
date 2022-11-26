@@ -21,6 +21,6 @@ jobs:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --rm-dist -p 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
