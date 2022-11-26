@@ -7,8 +7,6 @@ builds:
   - main: main.go
     goos:
       - linux
-      - openbsd
-      - freebsd
     goarch:
       - amd64
       - 386
