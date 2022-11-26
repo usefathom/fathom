@@ -2,7 +2,7 @@
 before:
   hooks:
     - make assets/dist
-    - go install github.com/gobuffalo/packr/v2@latest
+    - go install github.com/gobuffalo/packr/v2/packr2@latest
 builds:
   - main: main.go
     goos:
