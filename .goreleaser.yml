@@ -10,7 +10,7 @@ builds:
       - freebsd
     goarch:
       - amd64
-      - i386
+      - 386
       - arm64
     ldflags:
       - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
