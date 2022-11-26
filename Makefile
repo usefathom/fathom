@@ -18,11 +18,11 @@ $(EXECUTABLE): $(GO_SOURCES) assets/build
 	go build -o $@ $(MAIN_PKG)
 
 .PHONY: docker
-docker: $(GO_SOURCES) $(GOPATH)/bin/packr
-	GOOS=$(OS) GOARCH=$(ARCH) $(GOPATH)/bin/packr build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
+docker: $(GO_SOURCES) $(GOPATH)/bin/packr2
+	GOOS=$(OS) GOARCH=$(ARCH) $(GOPATH)/bin/packr2 build -v -ldflags '-w $(LDFLAGS)' -o $(EXECUTABLE) $(MAIN_PKG)
 
-$(GOPATH)/bin/packr:
-	GOBIN=$(GOPATH)/bin go install github.com/gobuffalo/packr/packr@latest
+$(GOPATH)/bin/packr2:
+	GOBIN=$(GOPATH)/bin go install github.com/gobuffalo/packr/v2/packr2@latest
 
 .PHONY: npm 
 npm:

@@ -16,8 +16,8 @@ builds:
     ldflags:
       - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
     hooks:
-      pre: $GOBIN/packr
-      post: $GOBIN/packr clean
+      pre: packr2
+      post: packr2 clean
 checksum:
   name_template: 'checksums.txt'
 snapshot:

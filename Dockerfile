@@ -6,7 +6,7 @@ COPY assets/ ./assets/
 RUN npm install && NODE_ENV=production ./node_modules/gulp/bin/gulp.js
 
 FROM golang:latest AS binarybuilder
-RUN go install github.com/gobuffalo/packr/packr@latest
+RUN go install github.com/gobuffalo/packr/v2/packr2@latest
 WORKDIR /go/src/github.com/usefathom/fathom
 COPY . /go/src/github.com/usefathom/fathom
 COPY --from=assetbuilder /app/assets/build ./assets/build
