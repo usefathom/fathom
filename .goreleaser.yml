@@ -3,21 +3,20 @@ before:
   hooks:
     - make assets/dist
 builds:
-- 
-  main: main.go
-  goos:
+  - main: main.go
+    goos:
       - linux
       - openbsd
       - freebsd
-  goarch:
-    - amd64
-    - 386
-    - arm64   
-  ldflags: 
-    - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
-  hooks:
-    pre: packr
-    post: packr clean
+    goarch:
+      - amd64
+      - i386
+      - arm64
+    ldflags:
+      - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
+    hooks:
+      pre: packr
+      post: packr clean
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -26,5 +25,8 @@ changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - '^docs:'
+      - '^test:'
+release:
+  draft: true
+  mode: append
