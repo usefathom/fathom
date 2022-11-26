@@ -15,7 +15,7 @@ builds:
     ldflags:
       - -extldflags "-static" -s -w -X "main.version={{.Version}}" -X "main.commit={{.Commit}}" -X "main.date={{.Date}}"
     hooks:
-      pre: packr
+      pre: go install github.com/gobuffalo/packr/v2@latest && packr
       post: packr clean
 checksum:
   name_template: 'checksums.txt'
