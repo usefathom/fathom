@@ -2,6 +2,7 @@
 
 import { h, Component } from 'preact';
 import { bind } from 'decko';
+import { hashParams } from "../lib/util";
 
 
 
