@@ -12,7 +12,7 @@ While we are no longer adding features to this Lite version, we will be continui
 ## Fathom Lite vs Fathom Analytics
 Fathom Analytics is much more detailed, feature-rich, and even more focused on [privacy-law compliance](https://usefathom.com/compliance), than Fathom Lite. 
 
-If you’d like to become a customer of Fathom Analytics, and not have to worry about servers, maintenance, security, you can give our software a try with a [7-day free trial](https://usefathom.com/ref/GITHUB) **(this link will give you $10 credit).**
+If you’d like to become a customer of Fathom Analytics, and not have to worry about servers, maintenance, security, you can give our software a try with a [30-day free trial](https://usefathom.com/ref/GITHUB) **(this link will give you $10 credit).**
 
 ![Screenshot of the Fathom Analytics Dashboard](https://usefathom.com/assets/images/fathom-screenshot.png)
 
