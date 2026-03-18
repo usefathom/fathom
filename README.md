@@ -9,36 +9,27 @@ While we are no longer adding features to this Lite version, we will be continui
 
 ![Screenshot of the Fathom dashboard](https://github.com/usefathom/fathom/raw/master/assets/src/img/fathom.jpg?v=7)
 
-## Fathom Lite vs Fathom Analytics
-Fathom Analytics is much more detailed, feature-rich, and even more focused on [privacy-law compliance](https://usefathom.com/compliance), than Fathom Lite. 
+## Fathom Lite vs Fathom (hosted)
 
-If you’d like to become a customer of Fathom Analytics, and not have to worry about servers, maintenance, security, you can give our software a try with a [30-day free trial](https://usefathom.com/ref/GITHUB) **(this link will give you $10 credit).**
+Today’s [Fathom Analytics](https://usefathom.com) is a hosted product with [simple pricing](https://usefathom.com/pricing) based on monthly pageviews. The same core capabilities are included on every plan: for example [API access](https://usefathom.com/api), up to 50 sites, custom events and ecommerce tracking, unlimited email reports and CSV exports, and [forever data retention](https://usefathom.com/features)—with [privacy-law compliance](https://usefathom.com/compliance) and no cookie banner required for analytics.
+
+If you’d rather not run servers or maintenance yourself, try a [30-day free trial](https://usefathom.com/ref/GITHUB) (that link applies a **$10 credit** on your first invoice). Browse [all features](https://usefathom.com/features) or the [live demo](https://app.usefathom.com/demo).
 
 ![Screenshot of the Fathom Analytics Dashboard](https://usefathom.com/assets/images/fathom-screenshot.png)
 
-| Lite | Pro |
-|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Uses Cookies| Cookie-free|
-|-|[EU Isolation](https://usefathom.com/features/eu-isolation)|
-|-|[Bypass ad-blockers](https://usefathom.com/features/custom-domains)|
-|-|[Email reports](https://usefathom.com/docs/features/email-reports)|
-|-|[Track event completions](https://usefathom.com/docs/features/events)|
-|-|[Share your dashboard publicly or privately](https://usefathom.com/docs/features/shared-dashboards)|
-|-|[Track UTM campaigns](https://usefathom.com/docs/features/campaigns)|
-|-|Device, Browser & Country Data|
-|No support|Fast and responsive support from the Fathom founders|
-|No guaranteed uptime|Fully redundant cloud-based architecture that keeps your analytics online|
-|Scaling requires you to power down and then upgrade your server|On-demand, automatic scaling, so even if your site goes viral, your stats won’t stop or slow down - we handle billions of page views each month|
-|Manual backups by you|Real time backups included in the cost|
-|No data protection|Continuous data protection (in the event of a database hardware failure, we have a live standby database ready to failover to)|
-|Manual updates, via the command line|Automatic updates, patches and new versions at no extra cost, no coding required|
-|Manual server hardening for security|Totally secure servers, monitored and maintained by us, included in the price|
-|You pay for hosting, you do all the work to maintain the server, the code and backups|You pay us, we take care of everything for you|
-|Embed script served via single server, from a single geographical location|Embed script served via our super-fast CDN, with endpoints located around the world to ensure fast page loads|
-|Data aggregation performed on a single server|Super fast data-aggregation spread across our cloud architecture|
-|Fork this repo|Supporting a privacy-focused, indie software company|
-|Offered as-is|New features added all the time|
-|-|[Get started for free](https://app.usefathom.com/register)|
+| Feature | Fathom Lite | Fathom (hosted) |
+|---------|-------------|-----------------|
+| Fully managed | ✗ Self-hosted; you run servers and updates | ✓ Managed for you; [pay per pageviews](https://usefathom.com/pricing) |
+| Cookie-free (no analytics banner) | ✗ Uses cookies | ✓ [Cookie-free](https://usefathom.com/features) tracking |
+| Current dashboard (real-time, live visitors, filters, details) | ✗ Older Lite UI | ✓ Full dashboard — see [features](https://usefathom.com/features) |
+| API | ✗ | ✓ [API](https://usefathom.com/api) on all plans |
+| Custom events, ecommerce, UTMs | ✗ | ✓ Events, revenue, campaigns |
+| [EU isolation](https://usefathom.com/features/eu-isolation) & [custom domains](https://usefathom.com/features/custom-domains) | ✗ | ✓ EU routing, first-party script domains |
+| [GA import](https://usefathom.com/features/ga-importer), email reports, CSV export, [shared dashboards](https://usefathom.com/features) | ✗ | ✓ Unlimited reports & exports |
+| Many sites per account | ✗ Typical single install | ✓ Up to 50 sites (more available) |
+| Email support & SLA | ✗ Community / as-is | ✓ Support on every plan |
+| Global CDN, scaling, backups | ✗ Your responsibility | ✓ Included |
+| Active feature development | ✗ Bugfixes / maintenance | ✓ Ongoing — [trial](https://usefathom.com/ref/GITHUB) · [sign up](https://app.usefathom.com/register) |
 
 
 ## Installation
