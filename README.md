@@ -61,6 +61,15 @@ Run the container with `docker run -d -p 8080:8080 fathom`.
 
 To run [our pre-built Docker image](https://hub.docker.com/r/usefathom/fathom/), run `docker run -d -p 8080:8080 usefathom/fathom:latest`
 
+### Easypanel
+
+[Easypanel](https://easypanel.io) is a self-hosted Docker deployment platform, and Fathom has a one-click deployment template there:
+
+[![Deploy on Easypanel][easypanel-btn]][easypanel-deploy]
+
+[easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
+[easypanel-deploy]: https://easypanel.io/templates/fathom
+
 ## Tracking snippet
 
 To start tracking, create a site in your Fathom dashboard and copy the tracking snippet to the website(s) you want to track.
